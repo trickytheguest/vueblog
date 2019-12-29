@@ -7,7 +7,6 @@ module.exports = {
     port: 80,
     markdown: {
         lineNumbers: true, // 代码显示行号
-        toc: { includeLevel: [2, 3] }
     },
     themeConfig: {
         nav: [
@@ -56,7 +55,6 @@ module.exports = {
                 "web1"
             ],
         },
-        sidebarDepth: 1 // 侧边栏显示深度，默认为1，即显示一级标题
-        lastUpdated: 'Last Updated',
+        sidebarDepth: 2 // 侧边栏显示深度，默认为1，即显示一级标题
     }
 }
