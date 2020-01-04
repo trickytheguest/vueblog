@@ -1,5 +1,7 @@
 # VuePress从零开始搭建自己的博客
 
+[[toc]]
+
 注册域名(hellogitlab.com)后，需要让网站运行起来，发现VuePress不错，尝试使用VuePress搭建自己的博客系统。
 
 ## VuePress是什么？

@@ -1,6 +1,11 @@
 module.exports = {
     title: '个人主页',
     description: '梅朝辉的博客',
+    locales: {
+         '/': {
+             lang: 'zh-CN',
+         }
+    },
     head: [
         ['link', { rel: 'icon', href: '/img/logo.ico' }],
     ],
@@ -9,6 +14,8 @@ module.exports = {
         lineNumbers: true, // 代码显示行号
     },
     themeConfig: {
+        lastUpdated: '上次更新',
+        
         nav: [
             { text:'首页', link: '/'},
             {
@@ -26,7 +33,7 @@ module.exports = {
             '/python/': [
                 {
                     title: 'Python基础知识',
-                    collapsable: false,  // 是否可折叠，默认可折叠true 
+                    collapsable: true,  // 是否可折叠，默认可折叠true 
                     children: [
                         "python1",
                         "python2",
@@ -52,6 +59,7 @@ module.exports = {
             '/web/': [
                 "",
                 "build_your_vuepress_blog",
+                "build_your_vuepress_blog_1",
                 "web1"
             ],
         },
