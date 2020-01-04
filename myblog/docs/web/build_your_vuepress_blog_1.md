@@ -3,7 +3,6 @@
 [[toc]]
 
 
-本文接着上一篇文章[VuePress从零开始搭建自己的博客](http://hellogitlab.com/web/build_your_vuepress_blog.html) 对博客系统进行更多的设置。
 本文接着上一篇文章[VuePress从零开始搭建自己的博客](./build_your_vuepress_blog.md) 对博客系统进行更多的设置。
 
 
@@ -136,6 +135,10 @@ module.exports = {
 
 此时显示的时间不符合国人的使用习惯，设置一下语言本地化。
 
+::: tip 重要提示
+``lastUpdated``是基于git版本管理的文件最后更新提交的时间，如本博客的源码地址[vueblog](https://github.com/meizhaohui/vueblog.git) ,只有将构建过程中的代码存放在基于git版本管理的GitHub或GitLab网站上面才能正常显示出页面的上次更新时间。
+:::
+
 ## 语言本地化设置
 
 在config.js中增加``locales``参数关键字，并配置``lang: 'zh-CN'``，即指定使用中文。
@@ -195,6 +198,11 @@ footer: MIT Licensed | Copyright © 2019-present Zhaohui Mei
 
 再次运行程序，显示如下：
 ![vuepress_set_logo_and_heroImage](/img/vuepress_set_logo_and_heroImage.png)
+
+
+## 背景音乐设置
+
+之前想着给博客增加背景音乐的，但当自己带着耳机，突然打开一个自动播放背景音乐的网站的时候，把我震惊了(吓一跳)，决定放弃这个功能。
 
 
 ## TODO
