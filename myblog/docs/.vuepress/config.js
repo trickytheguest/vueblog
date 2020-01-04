@@ -13,6 +13,23 @@ module.exports = {
     markdown: {
         lineNumbers: true, // 代码显示行号
     },
+    plugins: [
+        [
+            'vuepress-plugin-comment',
+            {
+                choosen: 'valine', 
+                // options选项中的所有参数，会传给Valine的配置
+                options: {
+                    el: '#valine-vuepress-comment',
+                    appId: 'your leancloud appid',
+                    appKey: 'your leancloud appkey',
+                    placeholder: '同道中人，文明留言...',  // 评论框占位提示符
+                    lang: 'zh-cn', // 支持中文
+                    //path: '<%- frontmatter.commentid || frontmatter.permalink %>'
+                }
+            }
+        ]
+    ],
     themeConfig: {
         lastUpdated: '上次更新',
         

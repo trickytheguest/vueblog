@@ -205,12 +205,20 @@ footer: MIT Licensed | Copyright © 2019-present Zhaohui Mei
 之前想着给博客增加背景音乐的，但当自己带着耳机，突然打开一个自动播放背景音乐的网站的时候，把我震惊了(吓一跳)，决定放弃这个功能。
 
 
+## 使用Valine配置评论功能
+
+首先在 https://leancloud.cn 网站上面注册一个账号，并使用支付宝进行实名认证，并创建一个应用，创建应用后，可以在应用设置中查看到应用的Keys信息。
+
+leancloud中显示如下:
+
+![leancloud_keys](/img/leancloud_keys.png)
+
+
 ## TODO
 
 - 评论功能，可参考 基于vuepress的个人博客搭建完全教程
 - 评论功能，可参考  Vuepress使用Valine搭建带有评论系统的博客
 - 标签墙功能
-- 背景音乐播放
 - 部署上线，脚本编写，可参考 VuePress从零开始搭建自己专属博客
 - 多语言配置
 - 不蒜子访问量统计
@@ -240,3 +248,4 @@ footer: MIT Licensed | Copyright © 2019-present Zhaohui Mei
 - [前端进阶积累](http://obkoro1.com/web_accumulate/)
 - [Zhu Zhaohua的博客搭建过程](https://zhuzhaohua.com/technology/vue/20190915_myblog.html#vuepress%E5%AE%89%E8%A3%85)
 - [管鲍切思世所稀的博客](https://blog.usword.cn/)
+- [程序员你为什么这么累？](https://xwjie.github.io/)
