@@ -4,6 +4,7 @@
 
 
 本文接着上一篇文章[VuePress从零开始搭建自己的博客](http://hellogitlab.com/web/build_your_vuepress_blog.html) 对博客系统进行更多的设置。
+本文接着上一篇文章[VuePress从零开始搭建自己的博客](./build_your_vuepress_blog.md) 对博客系统进行更多的设置。
 
 
 ## 增加文档目录(table of contents)
@@ -156,6 +157,45 @@ module.exports = {
 
 参考： [多语言支持](https://vuepress.vuejs.org/zh/guide/i18n.html#%E5%A4%9A%E8%AF%AD%E8%A8%80%E6%94%AF%E6%8C%81)
 
+## logo和博客标题设置
+
+我们可以给自己的博客设置一个自己喜欢的logo，如可以在 [LogoFree](http://www.logofree.cn/logo.html) 上面制作一款自己喜欢的logo。可以付费导出自己的logo的ico图片，也可以通过截图获取自己喜欢的logo，然后在 [在线生成透明ICO图标](http://ico.duduxuexi.com/) 生成32\*32的favicon.ico文件，将favicon.ico文件保存到 ``docs/.vuepress/public/img``目录下，并修改``config.js``文件的``head``属性值。
+
+同时，我们也可以修改一下博客的标题为"梅朝辉的博客"，修改``config.js``文件的``title``属性值为"梅朝辉的博客"即可。
+
+```javascript
+module.exports = {
+    title: '梅朝辉的博客',
+    description: '种一棵树最好的时间是十年前，其次就是现在。',
+    head: [
+        ['link', { rel: 'icon', href: '/img/favicon.ico' }],
+    ],
+    ...省略
+```
+
+另外，我们更新一下根目录docs下的README.md文件，将其中的``heroImage: img/gitlab.jfif``中的图片替换成我们自己的logo图片``heroImage: img/hellogitlab_logo.png``:
+
+```
+[root@hellogitlab docs]# cat README.md 
+---
+home: true
+heroImage: img/hellogitlab_logo.png
+actionText: 查看我的博文 →
+actionLink: /python/
+features:
+- title: Hello Python
+  details: 简单易学的Python编程语言
+- title: Hello Golang
+  details: Go 是互联网时代的C语言
+- title: Hello Web
+  details: 手把手教你学web页面
+footer: MIT Licensed | Copyright © 2019-present Zhaohui Mei
+---
+```
+
+再次运行程序，显示如下：
+![vuepress_set_logo_and_heroImage](/img/vuepress_set_logo_and_heroImage.png)
+
 
 ## TODO
 
@@ -168,7 +208,6 @@ module.exports = {
 - 不蒜子访问量统计
 - 文章置顶功能
 - 全文搜索功能
-- logo修改
 - 增加文章
 - 返回top插件
 - vuepress自动生成侧边栏的插件
@@ -192,3 +231,4 @@ module.exports = {
 - [vuepress自动生成侧边栏](https://fangzheng.xyz/Other/VuePress/1.vuepress-auto-sidebar.html)
 - [前端进阶积累](http://obkoro1.com/web_accumulate/)
 - [Zhu Zhaohua的博客搭建过程](https://zhuzhaohua.com/technology/vue/20190915_myblog.html#vuepress%E5%AE%89%E8%A3%85)
+- [管鲍切思世所稀的博客](https://blog.usword.cn/)

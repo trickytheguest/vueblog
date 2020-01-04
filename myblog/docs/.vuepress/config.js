@@ -1,13 +1,13 @@
 module.exports = {
-    title: '个人主页',
-    description: '梅朝辉的博客',
+    title: '梅朝辉的博客',
+    description: '种一棵树最好的时间是十年前，其次就是现在。',
     locales: {
          '/': {
              lang: 'zh-CN',
          }
     },
     head: [
-        ['link', { rel: 'icon', href: '/img/logo.ico' }],
+        ['link', { rel: 'icon', href: '/img/favicon.ico' }],
     ],
     port: 80,
     markdown: {

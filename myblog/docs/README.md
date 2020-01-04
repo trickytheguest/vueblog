@@ -1,6 +1,6 @@
 ---
 home: true
-heroImage: img/gitlab.jfif
+heroImage: img/hellogitlab_logo.png
 actionText: 查看我的博文 →
 actionLink: /python/
 features:

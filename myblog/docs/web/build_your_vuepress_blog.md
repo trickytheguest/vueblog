@@ -695,7 +695,7 @@ success [23:49:32] Build 5591e0 finished in 173 ms! ( http://localhost:80/ )
 
 ### 自定义页面
 
-默认的主题提供了一个首页（Homepage）的布局(用于这个网站的主页)。想要使用它，需要在你的根级 README.md的home: true，然后添加数据。
+默认的主题提供了一个首页（Homepage）的布局(用于这个网站的主页)。想要使用它，需要在你的根级 README.md设置``home: true``，然后添加数据。
 
 重新定义一下docs目录下的README.md文件：
 ```
