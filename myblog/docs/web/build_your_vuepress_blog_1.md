@@ -199,6 +199,7 @@ footer: MIT Licensed | Copyright © 2019-present Zhaohui Mei
 再次运行程序，显示如下：
 ![vuepress_set_logo_and_heroImage](/img/vuepress_set_logo_and_heroImage.png)
 
+可以看到标签页上面的小图片已经变成了我们的logo图标了，并且页面中间的图片和说明内容也更新了。
 
 ## 背景音乐设置
 
@@ -213,11 +214,83 @@ leancloud中显示如下:
 
 ![leancloud_keys](/img/leancloud_keys.png)
 
+然后按照 [在VuePress中使用Valine](https://valine.js.org/vuepress.html) 的配置方法下载安装``vuepress-plugin-comment``插件，并配置config.js文件。
+
+### 安装``vuepress-plugin-comment``插件
+
+```shell
+yarn add vuepress-plugin-comment -D
+```
+
+::: tip 重要提示
+如果你从我的 [vueblog](https://github.com/meizhaohui/vueblog.git) 上面直接克隆下来的代码的话，切换到myblog目录后，使用``yarn``直接就可以安装相关的插件依赖了。
+:::
+
+### 将``vuepress-plugin-comment``添加到vuepress项目的插件配置中
+
+```javascript
+module.exports = {
+  plugins: [
+    [
+      'vuepress-plugin-comment',
+      {
+        choosen: 'valine', 
+        // options选项中的所有参数，会传给Valine的配置
+        options: {
+          el: '#valine-vuepress-comment',
+          appId: 'Your own appId',
+          appKey: 'Your own appKey'
+        }
+      }
+    ]
+  ]
+}
+```
+
+我这边参照上面的方法，并增加了``placeholder``和``lang``属性，配置如下:
+
+```javascript
+module.exports = {
+    title: '梅朝辉的博客',
+    ...省略
+    plugins: [
+        [
+            'vuepress-plugin-comment',
+            {
+                choosen: 'valine', 
+                // options选项中的所有参数，会传给Valine的配置
+                options: {
+                    el: '#valine-vuepress-comment',
+                    appId: 'your leancloud appid',
+                    appKey: 'your leancloud appkey',
+                    placeholder: '同道中人，文明留言...',  // 评论框占位提示符
+                    lang: 'zh-cn', // 支持中文
+                }
+            }
+        ]
+    ],
+```
+
+重新运行后，打开任意一篇文章，都可以在最下方添加评论信息了。
+
+![vuepress_set_comment](/img/vuepress_set_comment.png)
+
+此时，可以在输入框中添加评论信息了。
+
+如我添加两条评论信息。第一条"写得不错，棒棒哒！"，第二条"与君共勉，加油!👍"。评论后的页面信息如下：
+
+![vuepress_add_comments](/img/vuepress_add_comments.png)
+
+但此时存在一个问题，每个页面都会显示相同的评论信息，后续咨询Valina团队再改进。但过一会再刷新页面，评论又显示是正常的，感觉是API调用延迟的问题。
+
+另外，我们提交了两个评论信息，在leancloud.cn的应用--存储页面也看到提交的Comment评论记录：
+
+![vuepress_leancloud_comments_history](/img/vuepress_leancloud_comments_history.png)
+
+以上说明评论功能配置正常！
 
 ## TODO
 
-- 评论功能，可参考 基于vuepress的个人博客搭建完全教程
-- 评论功能，可参考  Vuepress使用Valine搭建带有评论系统的博客
 - 标签墙功能
 - 部署上线，脚本编写，可参考 VuePress从零开始搭建自己专属博客
 - 多语言配置
@@ -249,3 +322,4 @@ leancloud中显示如下:
 - [Zhu Zhaohua的博客搭建过程](https://zhuzhaohua.com/technology/vue/20190915_myblog.html#vuepress%E5%AE%89%E8%A3%85)
 - [管鲍切思世所稀的博客](https://blog.usword.cn/)
 - [程序员你为什么这么累？](https://xwjie.github.io/)
+- [在VuePress中使用Valine](https://valine.js.org/vuepress.html)
