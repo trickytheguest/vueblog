@@ -289,6 +289,44 @@ module.exports = {
 
 以上说明评论功能配置正常！
 
+## 优化导航栏
+
+在优化导航栏时，我们可以做以下事情：
+
+- 导航栏左侧添加logo图标
+- 导航栏右侧通过repo指定GitHub链接，而不是自己手动指定GitHub的链接地址。
+
+我们更新一下config.js文件，配置如下:
+```javascript
+module.exports = {
+    title: '梅朝辉的博客',
+    ...省略
+    themeConfig: {
+        logo: '/img/favicon.ico', // 导航栏左侧的logo,不写就不显示
+        lastUpdated: '上次更新',
+        repo: 'https://www.github.com/meizhaohui/vueblog',  // 链接的地址
+        repoLabel: 'GitHub',  // 链接的名称
+        nav: [
+            { text:'首页', link: '/'},
+            {
+                text: '博文',
+                items: [
+                    { text: 'Python', link: '/python/' },
+                    { text: 'Golang', link: '/golang/' },
+                    { text: 'Web', link: '/web/' }
+                ]
+            }, 
+            { text:'关于', link: '/about/'},
+            // { text: 'Github', link: 'https://www.github.com/meizhaohui' } 此行被移除
+        ],
+    ...省略
+```
+
+重新运行后，可以看到在导航栏的左侧多出了logo图标，并且通过repo属性也生成了GitHub的超链接。效果如下图所示：
+
+![vuepress_set_nar_logo_and_repo](/img/vuepress_set_nar_logo_and_repo.png)
+
+
 ## TODO
 
 - 标签墙功能
@@ -302,6 +340,7 @@ module.exports = {
 - vuepress自动生成侧边栏的插件
 - 网站文章字数统计 Site words total count
 - https配置
+- Git仓库和编辑链接 https://blog.csdn.net/weixin_34345560/article/details/91457750
 
 
 参考：
@@ -323,3 +362,4 @@ module.exports = {
 - [管鲍切思世所稀的博客](https://blog.usword.cn/)
 - [程序员你为什么这么累？](https://xwjie.github.io/)
 - [在VuePress中使用Valine](https://valine.js.org/vuepress.html)
+- [从今天开始，拿起VuePress打造属于自己的专属博客](https://blog.csdn.net/weixin_34345560/article/details/91457750)

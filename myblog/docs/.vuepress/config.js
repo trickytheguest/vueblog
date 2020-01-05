@@ -25,14 +25,15 @@ module.exports = {
                     appKey: 'your leancloud appkey',
                     placeholder: '同道中人，文明留言...',  // 评论框占位提示符
                     lang: 'zh-cn', // 支持中文
-                    //path: '<%- frontmatter.commentid || frontmatter.permalink %>'
                 }
             }
         ]
     ],
     themeConfig: {
+        logo: '/img/favicon.ico', // 导航栏左侧的logo,不写就不显示
         lastUpdated: '上次更新',
-        
+        repo: 'https://www.github.com/meizhaohui/vueblog',  // 链接的地址
+        repoLabel: 'GitHub',  // 链接的名称
         nav: [
             { text:'首页', link: '/'},
             {
@@ -44,7 +45,6 @@ module.exports = {
                 ]
             }, 
             { text:'关于', link: '/about/'},
-            { text: 'Github', link: 'https://www.github.com/meizhaohui' }
         ],
         sidebar: {
             '/python/': [
