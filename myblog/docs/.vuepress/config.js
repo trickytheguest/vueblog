@@ -34,6 +34,9 @@ module.exports = {
         lastUpdated: '上次更新',
         repo: 'https://www.github.com/meizhaohui/vueblog',  // 链接的地址
         repoLabel: 'GitHub',  // 链接的名称
+        editLinks: true,  // 开启编辑链接功能
+        editLinkText: '帮助我们改善此页面',  // 自定义超链接的文本内容
+        docsDir: 'myblog/docs',  // docs文件的路径，从根目录开始
         nav: [
             { text:'首页', link: '/'},
             {

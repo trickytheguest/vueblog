@@ -201,6 +201,8 @@ footer: MIT Licensed | Copyright © 2019-present Zhaohui Mei
 
 可以看到标签页上面的小图片已经变成了我们的logo图标了，并且页面中间的图片和说明内容也更新了。
 
+参考: [导航栏 Logo](https://vuepress.vuejs.org/zh/theme/default-theme-config.html#%E5%AF%BC%E8%88%AA%E6%A0%8F-logo)
+
 ## 背景音乐设置
 
 之前想着给博客增加背景音乐的，但当自己带着耳机，突然打开一个自动播放背景音乐的网站的时候，把我震惊了(吓一跳)，决定放弃这个功能。
@@ -326,6 +328,42 @@ module.exports = {
 
 ![vuepress_set_nar_logo_and_repo](/img/vuepress_set_nar_logo_and_repo.png)
 
+## 添加编辑此页面超链接
+
+我们在优化导航栏的基础上，给``themeConfig``增加``editLinks``、``editLinkText``、``docsDir``参数，参数的说明详见以下代码，具体如下：
+```javascript
+module.exports = {
+    title: '梅朝辉的博客',
+    ...省略
+    themeConfig: {
+        logo: '/img/favicon.ico', // 导航栏左侧的logo,不写就不显示
+        lastUpdated: '上次更新',
+        repo: 'https://www.github.com/meizhaohui/vueblog',  // 链接的地址
+        repoLabel: 'GitHub',  // 链接的名称
+        editLinks: true,  // 开启编辑链接功能
+        editLinkText: '帮助我们改善此页面',  // 自定义超链接的文本内容
+        docsDir: 'myblog/docs',  // docs文件的路径，从根目录开始
+        nav: [
+            { text:'首页', link: '/'},
+            {
+                text: '博文',
+                items: [
+                    { text: 'Python', link: '/python/' },
+                    { text: 'Golang', link: '/golang/' },
+                    { text: 'Web', link: '/web/' }
+                ]
+            }, 
+            { text:'关于', link: '/about/'},
+        ],
+    ...省略
+```
+
+参考：[Git repository and Edit Links](https://vuepress.vuejs.org/theme/default-theme-config.html#git-repository-and-edit-links)
+
+重新构建后，在页面的底部可以看到多出了"帮助我们改善此页面"超链接，点击超链接可以打开GitHub仓库中文件的编辑页面。效果如下图所示：
+
+![vuepress_set_edit_page_links](/img/vuepress_set_edit_page_links.png)
+
 
 ## TODO
 
@@ -340,7 +378,6 @@ module.exports = {
 - vuepress自动生成侧边栏的插件
 - 网站文章字数统计 Site words total count
 - https配置
-- Git仓库和编辑链接 https://blog.csdn.net/weixin_34345560/article/details/91457750
 
 
 参考：
@@ -363,3 +400,5 @@ module.exports = {
 - [程序员你为什么这么累？](https://xwjie.github.io/)
 - [在VuePress中使用Valine](https://valine.js.org/vuepress.html)
 - [从今天开始，拿起VuePress打造属于自己的专属博客](https://blog.csdn.net/weixin_34345560/article/details/91457750)
+- [导航栏 Logo](https://vuepress.vuejs.org/zh/theme/default-theme-config.html#%E5%AF%BC%E8%88%AA%E6%A0%8F-logo)
+- [Git repository and Edit Links](https://vuepress.vuejs.org/theme/default-theme-config.html#git-repository-and-edit-links)
