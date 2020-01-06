@@ -458,6 +458,9 @@ nothing added to commit but untracked files present (use "git add" to track)
 
 后续，只用在服务器的项目目录中配置``config/secureinfo.js``文件即可，既可以隐藏私密信息，也方便后续提交部署。
 
+具体可参考 [飞跃高山与大洋的鱼 视频教程 一步步搭建 VuePress 及优化](https://www.bilibili.com/video/av43316513?p=8) 视频中第26-31分钟。
+
+
 ## TODO
 
 - 标签墙功能
@@ -467,7 +470,6 @@ nothing added to commit but untracked files present (use "git add" to track)
 - 文章置顶功能
 - 全文搜索功能
 - 增加文章
-- 返回top插件
 - vuepress自动生成侧边栏的插件
 - 网站文章字数统计 Site words total count
 - https配置
