@@ -1,3 +1,5 @@
+const secureConf = require('../../config/secureinfo.js');
+
 module.exports = {
     title: '梅朝辉的博客',
     description: '种一棵树最好的时间是十年前，其次就是现在。',
@@ -21,8 +23,8 @@ module.exports = {
                 // options选项中的所有参数，会传给Valine的配置
                 options: {
                     el: '#valine-vuepress-comment',
-                    appId: 'your leancloud appid',
-                    appKey: 'your leancloud appkey',
+                    appId: secureConf.leancloud_appId,  // 读取secure_info.js中的配置信息
+                    appKey: secureConf.leancloud_appKey,  // 读取secure_info.js中的配置信息
                     placeholder: '同道中人，文明留言...',  // 评论框占位提示符
                     lang: 'zh-cn', // 支持中文
                 }

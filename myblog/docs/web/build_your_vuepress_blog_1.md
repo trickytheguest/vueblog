@@ -364,6 +364,99 @@ module.exports = {
 
 ![vuepress_set_edit_page_links](/img/vuepress_set_edit_page_links.png)
 
+## 隐藏私密信息
+
+
+在[使用Valine配置评论功能](./build_your_vuepress_blog_1.html#使用valine配置评论功能) 中，我们在配置文件中使用了``appId: 'your leancloud appid'``和``appKey: 'your leancloud appkey'``,并上传到了GitHub上面，然后在服务上面再进行手动修改成真实的appid或appkey值，每次部署到服务器上面时都需要重新修改一次，显得非常麻烦。
+
+如果我们将自己的leancloud人appid或appkey上传到GitHub中，别人就可以看到你的私密信息，也不够安全。因此我们需要隐藏这些私密信息。
+
+我们在项目根目录docs目录同级创建一个``config``目录，并在其中创建``secureinfo.js``文件。目录结构如下图：
+
+![vueblog_project_structure](/img/vueblog_project_structure.png)
+
+我们同时创建了``secureinfo.js.txt``文件，用于与``secureinfo.js``文件进行对比，``secureinfo.js.txt``文件中增加一些说明。
+
+``secureinfo.js``文件内容如下:
+
+```javascript
+module.exports = {
+    leancloud_appId: 'your leancloud appid',
+    leancloud_appKey: 'your leancloud appkey'
+}
+```
+注：'your leancloud appid'和'your leancloud appkey'改成你自己的leancloud的appid和appkey值。
+
+``secureinfo.js.txt``文件内容如下:
+
+```javascript
+// please rename this file to secureinfo.js, and then input your secure leancloud info.
+module.exports = {
+    leancloud_appId: 'your leancloud appid',
+    leancloud_appKey: 'your leancloud appkey'
+}
+```
+
+最重要的一步，将``secureinfo.js``文件加入到``.gitignore``文件列表中。在``.gitignore``文件最后加以下内容：
+
+```
+# secure info
+secureinfo.js
+```
+
+检查git查看忽略文件：
+```shell
+$ git check-ignore -v config\secureinfo.js
+.gitignore:107:secureinfo.js    "config\\secureinfo.js"
+
+$ git check-ignore -v config\secureinfo.js.txt
+```
+
+可以看到config\secureinfo.js文件已经被忽略掉，而secureinfo.js.txt文件不会忽略。所以我们提交时config\secureinfo.js不会被提交。
+
+同时，也可以使用``git status``命令来查看这两个文件是否被提交：
+
+```shell
+$ git status config\secureinfo.js
+On branch master
+Your branch is up-to-date with 'origin/master'.
+nothing to commit, working directory clean
+
+
+$ git status config\secureinfo.js.txt
+On branch master
+Your branch is up-to-date with 'origin/master'.
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+        config/secureinfo.js.txt
+
+nothing added to commit but untracked files present (use "git add" to track)
+```
+
+可以看到config\secureinfo.js文件未被跟踪，不会被上传到GitHub中。
+
+另外需要更改一下``.vuepress/config.js``文件：
+
+- 在第1行使用``const secureConf = require('../../config/secureinfo.js');``引入安全文件，注意此处使用的相对引用，``..``表示向上一级目录。
+- 原来``appId: 'your leancloud appid',``内容替换成``appId: secureConf.leancloud_appId,  // 读取secure_info.js中的配置信息``。
+- 原来`` appKey: 'your leancloud appkey',``内容替换成``appKey: secureConf.leancloud_appKey,  // 读取secure_info.js中的配置信息``。
+
+修改后，我们使用正确的``leancloud_appId``和``leancloud_appKey``值时，在本地可以调试时，可以获取到评论信息，显示如下图所示：
+
+![vueblog_set_local_secure_leancloud](/img/vueblog_set_local_secure_leancloud.png)
+
+评论显示正常！
+
+我们修改一下``leancloud_appId``，随机改成其他的值，再运行试一下，显示如下图所示：
+
+![vueblog_set_error_local_secure_leancloud](/img/vueblog_set_error_local_secure_leancloud.png)
+
+此时，可以看到页面显示"Code 401: 未经授权的操作，请检查你的AppId和AppKey."，且在Console界面显示异常。
+
+再将``leancloud_appId``改成正常的值重新运行，又可以正常显示评论信息，说明配置生效。
+
+后续，只用在服务器的项目目录中配置``config/secureinfo.js``文件即可，既可以隐藏私密信息，也方便后续提交部署。
 
 ## TODO
 

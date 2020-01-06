@@ -1,0 +1,5 @@
+// please rename this file to secureinfo.js, and then input your secure leancloud info.
+module.exports = {
+    leancloud_appId: 'your leancloud appid',
+    leancloud_appKey: 'your leancloud appkey'
+}
