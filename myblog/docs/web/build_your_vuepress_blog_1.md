@@ -463,17 +463,11 @@ nothing added to commit but untracked files present (use "git add" to track)
 
 ## TODO
 
-- 标签墙功能
-- 部署上线，脚本编写，可参考 VuePress从零开始搭建自己专属博客
-- 多语言配置
-- 不蒜子访问量统计
-- 文章置顶功能
-- 全文搜索功能
-- 增加文章
 - vuepress自动生成侧边栏的插件
-- 网站文章字数统计 Site words total count
+- 全文搜索功能
 - https配置
-
+- 部署上线，脚本编写，可参考 VuePress从零开始搭建自己专属博客
+- 增加文章
 
 参考：
 
