@@ -460,6 +460,254 @@ nothing added to commit but untracked files present (use "git add" to track)
 
 具体可参考 [飞跃高山与大洋的鱼 视频教程 一步步搭建 VuePress 及优化](https://www.bilibili.com/video/av43316513?p=8) 视频中第26-31分钟。
 
+## 优化config.js将导航栏、插件、侧边栏数据拆分
+
+我们现在只增加了几篇文件，config.js文件已经达到了88行，内容如下:
+
+```javascript
+const secureConf = require('../../config/secureinfo.js');
+
+module.exports = {
+    title: '梅朝辉的博客',
+    description: '种一棵树最好的时间是十年前，其次就是现在。',
+    locales: {
+         '/': {
+             lang: 'zh-CN',
+         }
+    },
+    head: [
+        ['link', { rel: 'icon', href: '/img/favicon.ico' }],
+    ],
+    port: 80,
+    markdown: {
+        lineNumbers: true, // 代码显示行号
+    },
+    plugins: {
+        'vuepress-plugin-comment':
+        {
+            choosen: 'valine', 
+            // options选项中的所有参数，会传给Valine的配置
+            options: {
+                el: '#valine-vuepress-comment',
+                appId: secureConf.leancloud_appId,  // 读取secure_info.js中的配置信息
+                appKey: secureConf.leancloud_appKey,  // 读取secure_info.js中的配置信息
+                placeholder: '同道中人，文明留言...',  // 评论框占位提示符
+                lang: 'zh-cn', // 支持中文
+            }
+        },
+    },
+    themeConfig: {
+        logo: '/img/favicon.ico', // 导航栏左侧的logo,不写就不显示
+        lastUpdated: '上次更新',
+        repo: 'https://www.github.com/meizhaohui/vueblog',  // 链接的地址
+        repoLabel: 'GitHub',  // 链接的名称
+        editLinks: true,  // 开启编辑链接功能
+        editLinkText: '帮助我们改善此页面',  // 自定义超链接的文本内容
+        docsDir: 'myblog/docs',  // docs文件的路径，从根目录开始
+        nav: [
+            { text:'首页', link: '/'},
+            {
+                text: '博文',
+                items: [
+                    { text: 'Python', link: '/python/' },
+                    { text: 'Golang', link: '/golang/' },
+                    { text: 'Web', link: '/web/' }
+                ]
+            }, 
+            { text:'关于', link: '/about/'},
+        ],
+        sidebar: {
+            '/python/': [
+                {
+                    title: 'Python基础知识',
+                    collapsable: true,  // 是否可折叠，默认可折叠true 
+                    children: [
+                        "python1",
+                        "python2",
+                        "python3"
+                    ]
+                },
+                {
+                    title: 'Python Web',
+                    collapsable: false,
+                    children: [
+                        "python4",
+                        "python5",
+                        "python6"
+                    ]
+                },
+            ],
+            '/golang/': [
+                "",
+                "golang1",
+                "golang2",
+                "golang3"
+            ],
+            '/web/': [
+                "",
+                "build_your_vuepress_blog",
+                "build_your_vuepress_blog_1",
+                "web1"
+            ],
+        },
+        sidebarDepth: 2 // 侧边栏显示深度，默认为1，即显示一级标题
+    }
+}
+```
+
+配置文件已经显得比较臃肿了，但我们的文章越来越多时，config.js文件将会越来越大，所以我们应对配置文件进行拆分。
+
+现在主要将导航栏、插件、侧边栏数据拆分出来，放到三个不同的文件里面去。
+
+我们在config目录下新建三个js文件，分别存放导航栏(navConfig.js)、插件(pluginConfig.js)、侧边栏(sidebarConfig.js)数据。
+
+在config.js中插件plugins暴露的是{}对象，因此我们在pluginConfig.js也暴露一个对象，并导入私密配置文件。
+
+pluginConfig.js文件内容如下:
+```javascript
+const secureConf = require('./secureinfo.js');
+module.exports = {
+    'vuepress-plugin-comment': {
+        choosen: 'valine',
+        // options选项中的所有参数，会传给Valine的配置
+        options: {
+            el: '#valine-vuepress-comment',
+            appId: secureConf.leancloud_appId, // 读取secure_info.js中的配置信息
+            appKey: secureConf.leancloud_appKey, // 读取secure_info.js中的配置信息
+            placeholder: '同道中人，文明留言...', // 评论框占位提示符
+            lang: 'zh-cn', // 支持中文
+        }
+    },
+}
+```
+
+在config.js中导航栏nav暴露的是\[\]列表，因此我们在navConfig.js也暴露一个\[\]列表。
+
+navConfig.js文件内容如下:
+```javascript
+module.exports = [{
+        text: '首页',
+        link: '/'
+    },
+    {
+        text: '博文',
+        items: [{
+                text: 'Python',
+                link: '/python/'
+            },
+            {
+                text: 'Golang',
+                link: '/golang/'
+            },
+            {
+                text: 'Web',
+                link: '/web/'
+            }
+        ]
+    },
+    {
+        text: '关于',
+        link: '/about/'
+    },
+]
+```
+
+
+在config.js中侧边栏sidebar暴露的是{}对象，因此我们在sidebarConfig.js也暴露一个对象。
+
+sidebarConfig.js文件内容如下：
+
+```javascript
+module.exports = {
+    '/python/': [{
+            title: 'Python基础知识',
+            collapsable: true, // 是否可折叠，默认可折叠true 
+            children: [
+                "python1",
+                "python2",
+                "python3"
+            ]
+        },
+        {
+            title: 'Python Web',
+            collapsable: false,
+            children: [
+                "python4",
+                "python5",
+                "python6"
+            ]
+        },
+    ],
+    '/golang/': [
+        "",
+        "golang1",
+        "golang2",
+        "golang3"
+    ],
+    '/web/': [
+        "",
+        "build_your_vuepress_blog",
+        "build_your_vuepress_blog_1",
+        "web1"
+    ],
+}
+
+```
+
+然后再在config.js中引入导航栏(navConfig.js)、插件(pluginConfig.js)、侧边栏(sidebarConfig.js)三个配置文件。
+
+并将plugin,nar,sidebar处进行替换，替换后的config.js文件内容如下：
+
+```javascript
+const pluginConf = require('../../config/pluginConfig.js');
+const navConf = require('../../config/navConfig.js');
+const sidebarConf = require('../../config/sidebarConfig.js');
+
+module.exports = {
+    title: '梅朝辉的博客',
+    description: '种一棵树最好的时间是十年前，其次就是现在。',
+    locales: {
+         '/': {
+             lang: 'zh-CN',
+         }
+    },
+    head: [
+        ['link', { rel: 'icon', href: '/img/favicon.ico' }],
+    ],
+    port: 80,
+    markdown: {
+        lineNumbers: true, // 代码显示行号
+    },
+    plugins: pluginConf,
+    themeConfig: {
+        logo: '/img/favicon.ico', // 导航栏左侧的logo,不写就不显示
+        lastUpdated: '上次更新',
+        repo: 'https://www.github.com/meizhaohui/vueblog',  // 链接的地址
+        repoLabel: 'GitHub',  // 链接的名称
+        editLinks: true,  // 开启编辑链接功能
+        editLinkText: '帮助我们改善此页面',  // 自定义超链接的文本内容
+        docsDir: 'myblog/docs',  // docs文件的路径，从根目录开始
+        nav: navConf,
+        sidebar: sidebarConf,
+        sidebarDepth: 2 // 侧边栏显示深度，默认为1，即显示一级标题
+    }
+}
+```
+
+可以看到config.js文件已经变成了33行，后续增加新的文件不需要修改config.js，只需要改navConfig.js和sidebarConfig.js文件即可。
+
+
+我们随意修改一下导航栏(navConfig.js)、插件(pluginConfig.js)、侧边栏(sidebarConfig.js)三个配置文件的数据，分别增加testnav, testplugin, testsidebar字符，然后重新运行，看看效果:
+
+![vueblog_split_plugin_nar_sidebar](/img/vueblog_split_plugin_nar_sidebar.png)
+
+可以发现导航栏、侧边栏、评论插件都发生了变化，并且console中没有提示异常，说明我们的拆分配置正常。
+
+详细可参考 [飞跃高山与大洋的鱼 视频教程 一步步搭建 VuePress 及优化](https://www.bilibili.com/video/av43316513?p=8) 视频中第1-18分钟。
+
+此时侧边栏(sidebarConfig.js)的文件内容相对来说稍微大一些，后续可以再进行优化。
+
+将刚才的测试字符testnav, testplugin, testsidebar删除掉，再重新运行，看看是否能正常运行。能正常运行就说明此次配置正确。
 
 ## TODO
 
