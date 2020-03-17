@@ -709,12 +709,116 @@ module.exports = {
 
 将刚才的测试字符testnav, testplugin, testsidebar删除掉，再重新运行，看看是否能正常运行。能正常运行就说明此次配置正确。
 
+## 自动生成侧边栏
+
+参考[https://github.com/shanyuhai123/vuepress-plugin-auto-sidebar](https://github.com/shanyuhai123/vuepress-plugin-auto-sidebar)安装`Vuepress Plugin Auto Sidebar`插件。
+
+- 安装
+
+```shell
+$ npm i vuepress-plugin-auto-sidebar -D
+
+> core-js@2.6.11 postinstall /Users/yujiawen/Documents/GitHub/vueblog/myblog/node_modules/core-js
+> node -e "try{require('./postinstall')}catch(e){}"
+
+Thank you for using core-js ( https://github.com/zloirock/core-js ) for polyfilling JavaScript standard library!
+
+The project needs your help! Please consider supporting of core-js on Open Collective or Patreon:
+> https://opencollective.com/core-js
+> https://www.patreon.com/zloirock
+
+Also, the author of core-js ( https://github.com/zloirock ) is looking for a good job -)
+
+npm WARN myblog@1.0.0 No description
+npm WARN myblog@1.0.0 No repository field.
+
++ vuepress-plugin-auto-sidebar@1.3.1
+added 11 packages from 10 contributors and audited 11 packages in 19.168s
+found 0 vulnerabilities
+
+$ echo $?
+0
+```
+
+- 配置
+
+在config目录下的`pluginConfig.js`中引入插件，引入后内容如下：
+
+```shell
+$ cat pluginConfig.js
+const secureConf = require('./secureinfo.js');
+module.exports = {
+    'vuepress-plugin-comment': {
+        choosen: 'valine',
+        // options选项中的所有参数，会传给Valine的配置
+        options: {
+            el: '#valine-vuepress-comment',
+            appId: secureConf.leancloud_appId, // 读取secure_info.js中的配置信息
+            appKey: secureConf.leancloud_appKey, // 读取secure_info.js中的配置信息
+            placeholder: '同道中人，文明留言...', // 评论框占位提示符
+            lang: 'zh-cn', // 支持中文
+        }
+    },
+     "vuepress-plugin-auto-sidebar" : {}, // 自动侧边栏
+}
+```
+
+- 移除`docs/.vuepress/config.js`配置的sidebar设置
+
+注释或删除第3行和第30行的`sidebarConf`和`sidebar`设置。
+```shell
+ cat .vuepress/config.js
+const pluginConf = require('../../config/pluginConfig.js');
+const navConf = require('../../config/navConfig.js');
+//const sidebarConf = require('../../config/sidebarConfig.js');
+
+module.exports = {
+    title: '梅朝辉的博客',
+    description: '种一棵树最好的时间是十年前，其次就是现在。',
+    locales: {
+         '/': {
+             lang: 'zh-CN',
+         }
+    },
+    head: [
+        ['link', { rel: 'icon', href: '/img/favicon.ico' }],
+    ],
+    port: 80,
+    markdown: {
+        lineNumbers: true, // 代码显示行号
+    },
+    plugins: pluginConf,
+    themeConfig: {
+        logo: '/img/favicon.ico', // 导航栏左侧的logo,不写就不显示
+        lastUpdated: '上次更新',
+        repo: 'https://www.github.com/meizhaohui/vueblog',  // 链接的地址
+        repoLabel: 'GitHub',  // 链接的名称
+        editLinks: true,  // 开启编辑链接功能
+        editLinkText: '帮助我们改善此页面',  // 自定义超链接的文本内容
+        docsDir: 'myblog/docs',  // docs文件的路径，从根目录开始
+        nav: navConf,
+//        sidebar: sidebarConf,
+        sidebarDepth: 2 // 侧边栏显示深度，默认为1，即显示一级标题
+    }
+}
+```
+
+如在docs中增加php目录，并增加`php学习笔记.md`文件，最后使用`yarn docs:dev`运行项目，可以看到php相关页面会显示出来。
+
+![auto_sidebar](/img/auto_sidebar.png)
+
+
+
+
+
 ## TODO
 
-- vuepress自动生成侧边栏的插件
+
 - 全文搜索功能
+- 博客导航栏设置
 - https配置
 - 部署上线，脚本编写，可参考 VuePress从零开始搭建自己专属博客
+- travis-ci自动构建设置
 - 增加文章
 
 参考：

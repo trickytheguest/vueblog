@@ -1,6 +1,6 @@
 const pluginConf = require('../../config/pluginConfig.js');
 const navConf = require('../../config/navConfig.js');
-const sidebarConf = require('../../config/sidebarConfig.js');
+//const sidebarConf = require('../../config/sidebarConfig.js');
 
 module.exports = {
     title: '梅朝辉的博客',
@@ -27,7 +27,7 @@ module.exports = {
         editLinkText: '帮助我们改善此页面',  // 自定义超链接的文本内容
         docsDir: 'myblog/docs',  // docs文件的路径，从根目录开始
         nav: navConf,
-        sidebar: sidebarConf,
+//        sidebar: sidebarConf,
         sidebarDepth: 2 // 侧边栏显示深度，默认为1，即显示一级标题
     }
 }

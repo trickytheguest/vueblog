@@ -15,6 +15,10 @@ module.exports = [{
             {
                 text: 'Web',
                 link: '/web/'
+            },
+            {
+                text: 'PHP',
+                link: '/php/'
             }
         ]
     },

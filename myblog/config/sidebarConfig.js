@@ -1,3 +1,4 @@
+// 增加自动侧边栏插件后，此文件不再需要
 module.exports = {
     '/python/': [{
             title: 'Python基础知识',

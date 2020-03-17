@@ -105,3 +105,6 @@ dist
 
 # secure info
 secureinfo.js
+
+
+.DS_Store
