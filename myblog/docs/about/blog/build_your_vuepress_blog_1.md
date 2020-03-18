@@ -1,4 +1,4 @@
-# VuePress从零开始搭建自己的博客 高级配置
+# VuePress从零开始搭建自己的博客(1)
 
 [[toc]]
 
@@ -807,124 +807,37 @@ module.exports = {
 
 ![auto_sidebar](/img/auto_sidebar.png)
 
-## 博客导航栏设置
+## 全文搜索
 
-导航栏设置主要是重新修改博客结构，对配置文件`config/navConfig.js`进行重新配置布局即可。
+内置搜索只能对文章标题进行搜索。我们如果想进行全文搜索，可以使用algolia搜索。
 
-我这边修改后的导航栏配置如下：
+algolia提供了简化的方式[Algolia DocSearch](https://docsearch.algolia.com/apply/) ,只需要提交自己的网站和邮箱地址，然后加入少量的脚本，就能使用了。
 
-```shell
-$ cat ../config/navConfig.js
-module.exports = [{
-        text: '首页',
-        link: '/'
-    },
-    {
-        text: '操作系统',
-        items: [{
-                text: 'CentOS',
-                link: '/OS/CentOS/'
-            },
-            {
-                text: 'Ubuntu',
-                link: '/OS/Ubuntu/'
-            },
-            {
-                text: 'Manjaro',
-                link: '/OS/Manjaro/'
-            }
-        ]
-    },
-    {
-        text: '前端',
-        items: [{
-                text: 'Vue',
-                link: '/frontend/vue/'
-            },
-            {
-                text: 'Javascript',
-                link: '/frontend/js/'
-            }
-        ]
-    },
-    {
-        text: '后端',
-        items: [{
-                text: 'Python',
-                link: '/backend/python/'
-            },
-            {
-                text: 'Golang',
-                link: '/backend/golang/'
-            },
-            {
-                text: 'PHP',
-                link: '/backend/php/'
-            }
-        ]
-    },
-    {
-        text: '配置管理',
-        items: [{
-                text: 'Git',
-                link: '/CM/git/'
-            },
-            {
-                text: 'SVN',
-                link: '/CM/svn/'
-            },
-            {
-                text: 'Ansible',
-                link: '/CM/ansible/'
-            }
-        ]
-    },
-    {
-        text: '持续集成',
-        items: [{
-                text: 'Jenkins',
-                link: '/CI/jenkins/'
-            },
-            {
-                text: 'Docker',
-                link: '/CI/docker/'
-            },
-            {
-                text: 'GitLab',
-                link: '/CI/gitlab/'
-            }
-        ]
-    },
-    {
-        text: '友链',
-        link: '/friendlink/'
-    },
-    {
-        text: '关于',
-        items: [{
-                text: '关于我',
-                link: '/about/me/'
-            },
-            {
-                text: '关于博客',
-                link: '/about/blog/'
-            },
-        ]
-    },
-]
-````
+- 申请
+![algolia_docsearch](/img/algolia_docsearch.png)
+
+- 回复确认邮件
+
+Algolia DocSearch会发送确认邮件，收到后需要回复一下这个网站是你自己的，并且可以修改网站代码。
+
+- 查收使用邮件
+
+Algolia DocSearch会发送一封使用邮件，里面有`apiKey`和`indexName`。
+
+- 修改配置文件
+
+在配置文件中添加如下内容, apiKey和indexName就是上面邮件中的内容。
 
 
+## https配置
 
-## TODO
+## 手动部署项目
 
 
-- 全文搜索功能
-- 博客导航栏设置
-- https配置
-- 部署上线，脚本编写，可参考 VuePress从零开始搭建自己专属博客
-- travis-ci自动构建设置
-- 增加文章
+## 使用Travis-CI自动部署项目
+
+
+## 增加文章
 
 参考：
 

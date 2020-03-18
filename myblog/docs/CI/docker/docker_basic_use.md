@@ -1,7 +1,8 @@
 # docker的基本使用
+
 [[toc]]
 
-- 查看docker版本信息
+## 查看docker版本信息
 
 ```shell
 $ docker version
@@ -34,7 +35,7 @@ Server: Docker Engine - Community
   GitCommit:        fec3683
 ```
 
-- 搜索docker镜像
+## 搜索docker镜像
 
 ```shell
 # 搜索镜像时的帮助信息
@@ -57,7 +58,7 @@ hello-world         Hello World! (an example of minimal Dockeriz…   1139      
 ```
 
 
-- 下载docker镜像
+## 下载docker镜像
 
 ```shell
 $ docker pull hello-world
@@ -69,7 +70,7 @@ Status: Downloaded newer image for hello-world:latest
 docker.io/library/hello-world:latest
 ```
 
-- 查看docker镜像信息
+## 查看docker镜像信息
 
 ```shell
 $ docker images
@@ -77,7 +78,7 @@ REPOSITORY             TAG                 IMAGE ID            CREATED          
 hello-world            latest              fce289e99eb9        14 months ago       1.84kB
 ```
 
-- 查看docker容器信息
+## 查看docker容器信息
 
 ```shell
 $ docker ps -a
@@ -86,7 +87,7 @@ c8f5724b95f0        hello-world            "/hello"            2 minutes ago    
 21ad63cdd8fb        meizhaohui/meicentos   "/bin/bash"         11 minutes ago      Exited (0) 10 minutes ago                       pensive_mclaren
 ```
 
-- 运行docker容器
+## 运行docker容器
 
 ```shell
 $ docker run hello-world
@@ -122,7 +123,7 @@ meizhaohui/meicentos   latest              e64cd9abd46d        10 months ago    
 hello-world            latest              fce289e99eb9        14 months ago       1.84kB
 ```
 
-- 停止docker容器
+## 停止docker容器
 
 ```shell
 # docker stop 容器ID
@@ -130,7 +131,7 @@ $ docker stop c8f5724b95f0
 c8f5724b95f0
 ```
 
-- 删除docker容器
+## 删除docker容器
 
 ```shell
 # docker rm 容器ID
@@ -138,7 +139,7 @@ $ docker rm 6861c0c9dc73
 6861c0c9dc73
 ```
 
-- 查看所有的docker容器
+## 查看所有的docker容器
 
 ```shell
 $ docker ps -a
@@ -147,7 +148,7 @@ CONTAINER ID        IMAGE                  COMMAND             CREATED          
 ```
 
 
-- 删除docker镜像
+## 删除docker镜像
 
 若要删除镜像，先要停止并删除容器
 
@@ -180,7 +181,7 @@ $ docker images
 REPOSITORY             TAG                 IMAGE ID            CREATED             SIZE
 meizhaohui/meicentos   latest              e64cd9abd46d        10 months ago       710MB
 ```
-# docker的运行
+## docker的运行
 
 docker的运行主要使用`docker run`命令运行，但有很多参数。
 
@@ -345,7 +346,7 @@ CONTAINER ID        IMAGE               COMMAND                  CREATED        
 可以发现容器也退出了，只有mynginx容器还在后台运行。
 
 
-- 将容器中80端口映射到本机的8088端口
+## 将容器中80端口映射到本机的8088端口
 
 ```shell
 $ docker run --name mynginx2 -p 8088:80 -d nginx:latest
@@ -357,7 +358,7 @@ e424323f60c0        nginx:latest        "nginx -g 'daemon of…"   11 seconds ag
 ```
 此时，在本机访问 [http://localhost:8088/](http://localhost:8088/) 可以看到Nginx的欢迎页面，说明映射正常。
 
-- 进入到在后台运行的容器中，打开容器的交互界面
+## 进入到在后台运行的容器中，打开容器的交互界面
 
 推荐使用`docker exec`方式进入到在后台运行的docker容器中。
 
@@ -387,7 +388,7 @@ root@7b8234a6fd41:/# nginx -v
 nginx version: nginx/1.17.8
 ```
 
-- 将docker容器目录挂载到本地目录
+## 将docker容器目录挂载到本地目录
 
 ```shell
 $ mkdir -p ~/mydocker/local_nginx
@@ -1498,7 +1499,7 @@ Mar 04 01:16:21 a1f530aec186 systemd[1]: Started The Apache HTTP Server.
 
 下面将容器提交到hub仓库中。
 
-# 提交容器镜像到hub仓库
+## 提交容器镜像到hub仓库
 
 - 打包提交
 

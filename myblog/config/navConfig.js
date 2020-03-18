@@ -15,6 +15,10 @@ module.exports = [{
             {
                 text: 'Manjaro',
                 link: '/OS/Manjaro/'
+            },
+            {
+                text: 'MacOS',
+                link: '/OS/MacOS/'
             }
         ]
     },
