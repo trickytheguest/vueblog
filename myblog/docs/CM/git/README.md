@@ -64,6 +64,9 @@ then
 fi
 ' --tag-name-filter cat -- --branches --tags
 ```
+
+下载脚本 [change_history_commit_username_email.sh](/scripts/shell/change_history_commit_username_email.sh)
+
 修改脚本中的OLD_EMAIL、CORRECT_NAME、CORRECT_EMAIL等参数
 
 - 执行shell脚本
