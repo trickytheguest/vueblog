@@ -46,8 +46,8 @@ man命令的实用性非常高，基本上所有的类Unix系统都支持，所�
 
   查找vim相关的手册
 
-  .. image:: ./_static/images/mankvim.png
-  ![](/img/)
+
+![mankvim.png](/img/mankvim.png)
 
 
 - 列出符合关键字的可用手册页
@@ -56,8 +56,7 @@ man命令的实用性非常高，基本上所有的类Unix系统都支持，所�
   
   查找man关键字可用的手册页
   
-  .. image:: ./_static/images/manfman.png
-    ![](/img/)
+![manfman.png](/img/manfman.png)
 
 
 - 打印man帮助文件的路径
@@ -66,8 +65,8 @@ man命令的实用性非常高，基本上所有的类Unix系统都支持，所�
   
   打印man帮助文档存放的路径
   
-  .. image:: ./_static/images/manpath.png
-  ![](/img/)
+
+![manpath.png](/img/manpath.png)
 
 
 ### man帮忙文档分类
@@ -88,10 +87,11 @@ man命令的实用性非常高，基本上所有的类Unix系统都支持，所�
 |    9       |              内核相关的文件                   |
 
 
-下面是引用man手册中关于小节的说明::
+下面是引用man手册中关于小节的说明:
 
-   一个手册页面包含若干个小节。
-   小节名称通常包括NAME,概述(SYNOPSIS),配置(CONFIGURATION),描述(DESCRIPTION),选项(OPTIONS),退出状态(EXIT STATUS),返回值(RETURN VALUE),错误(ERRORS),环境(ENVIRONMENT),文件(FILES),版本(VERSIONS),符合标准(CONFORMING TO),注(NOTES),缺陷(BUGS),示例(EXAMPLE),作者(AUTHORS),和其他帮忙参考(SEE ALSO).
+> 一个手册页面包含若干个小节。
+>  
+> 小节名称通常包括NAME,概述(SYNOPSIS),配置(CONFIGURATION),描述(DESCRIPTION),选项(OPTIONS),退出状态(EXIT STATUS),返回值(RETURN VALUE),错误(ERRORS),环境(ENVIRONMENT),文件(FILES),版本(VERSIONS),符合标准(CONFORMING TO),注(NOTES),缺陷(BUGS),示例(EXAMPLE),作者(AUTHORS),和其他帮忙参考(SEE ALSO).
 
 ## info命令
 
