@@ -1081,6 +1081,46 @@ Done in 33.20s
 [root@hellogitlab myblog]#
 ```
 
+### 同步github与码云
+
+- 查看远程库列表
+```shell
+$ git remote -v
+origin	https://github.com/meizhaohui/vueblog.git (fetch)
+origin	https://github.com/meizhaohui/vueblog.git (push)
+```
+
+- 将码云远程库添加到远程库列表中
+```shell
+$ git remote add gitee git@gitee.com:meizhaohui/vueblog.git
+$ git remote -v
+gitee	git@gitee.com:meizhaohui/vueblog.git (fetch)
+gitee	git@gitee.com:meizhaohui/vueblog.git (push)
+origin	https://github.com/meizhaohui/vueblog.git (fetch)
+origin	https://github.com/meizhaohui/vueblog.git (push)
+```
+
+- 从 GitHub 上拉取最新代码到本地
+```shell
+$ git pull origin master
+Already up to date.
+```
+
+- 推送本地最新代码到 Gitee 上
+
+```shell
+$ git pull origin master
+The authenticity of host 'gitee.com (212.64.62.174)' can't be established.
+ECDSA key fingerprint is SHA256:FQGC9Kn/eye1W8icdBgrQp+KkGYoFgbVr17bmjey0Wc.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added 'gitee.com,212.64.62.174' (ECDSA) to the list of known hosts.
+Everything up-to-date
+```
+
+
+
+
+
 ## 使用Travis-CI自动部署项目
 
 
