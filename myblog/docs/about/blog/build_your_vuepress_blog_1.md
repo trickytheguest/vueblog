@@ -829,7 +829,116 @@ Algolia DocSearch会发送一封使用邮件，里面有`apiKey`和`indexName`�
 在配置文件中添加如下内容, apiKey和indexName就是上面邮件中的内容。
 
 
+::: tip 提示
+遗憾的是，我这边收到DocSearch的邮件通知，说不能爬取我的网站，返回403异常,有可能`IP`或者`user_agent`被过滤了，这个功能没有弄成功。:cry:
+:::
+
+
 ## https配置
+
+现在有很多免费的SSL证书提供商，如[阿里云的云盾证书](https://common-buy.aliyun.com/?spm=5176.7968328.1266638..49fa1232pvNX2B&commodityCode=cas&aly_as=TNsaEK1x4#/buy)，[腾讯的免费版DVSSL证书](https://console.cloud.tencent.com/ssl)，这两种免费证书有效期为一年。
+
+### 申请证书
+我因为购买的是腾讯的云服务器，就申请一个免费的腾讯SSL证书。
+
+在证书申请页面[https://console.cloud.tencent.com/ssl/apply](https://console.cloud.tencent.com/ssl/apply)填写证书的一些信息：
+
+![tencent_SSL_apply](/img/tencent_SSL_apply.png)
+
+按照提示申请完成后，可以在证书管理页面看到申请到的免费SSL证书记录：
+
+![tencent_ssl_item](/img/tencent_ssl_item.png)
+
+点击`详情`可以查看证书的详细信息：
+
+![tencent_SSL_detail](/img/tencent_SSL_detail.png)
+
+点击`下载`下载证书文件，下载下来的文件名为`hellogitlab.com.zip`，解压后文件夹的内容如下:
+
+![tencent_ssl_zip_file_detail](/img/tencent_ssl_zip_file_detail.png)
+
+根据自己使用的web服务器选择不同文件夹里面的SSL文件即可。 [证书安装指引 -> 如何选择证书安装类型？](https://cloud.tencent.com/document/product/400/4143)有手动安装指引。
+
+### 证书配置
+
+如果使用的是Apache httpd服务，可以参考 [https://cloud.tencent.com/document/product/400/35243](https://cloud.tencent.com/document/product/400/35243)。
+
+我的配置文件内容如下：
+
+```shell
+[root@hellogitlab conf.d]# cat vueblog.conf
+<VirtualHost 0.0.0.0:443>
+    DocumentRoot "/var/www/html/vueblog"
+    #填写证书名称
+    ServerName hellogitlab.com
+    #启用 SSL 功能
+    SSLEngine on
+    #证书文件的路径
+    SSLCertificateFile "/etc/httpd/conf.d/2_hellogitlab.com.crt"
+    #私钥文件的路径
+    SSLCertificateKeyFile "/etc/httpd/conf.d/3_hellogitlab.com.key"
+    #证书链文件的路径
+    SSLCertificateChainFile "/etc/httpd/conf.d/1_root_bundle.crt"
+</VirtualHost>
+```
+
+![tencent_vuepress_httpd_conf](/img/tencent_vuepress_httpd_conf.png)
+
+### HTTP 自动跳转 HTTPS 的安全配置
+
+可以参考腾讯的指导手册上面，自动跳转所有非443端口的链接：
+
+```shell
+[root@hellogitlab conf.d]# cat http2https.conf
+<Directory "/var/www/html"> 
+# 新增
+RewriteEngine on
+RewriteCond %{SERVER_PORT} !^443$
+RewriteRule ^(.*)?$ https://%{SERVER_NAME}%{REQUEST_URI} [L,R]
+</Directory>
+```
+
+这种所有非443端口的URL请求都会跳转到https方式请求。
+
+如果仅跳转80端口的请求到443端口，可以按如下方式配置：
+
+```shell {5}
+[root@hellogitlab conf.d]# cat http2https.conf
+<Directory "/var/www/html"> 
+# 新增
+RewriteEngine on
+RewriteCond %{SERVER_PORT} ^80$
+RewriteRule ^(.*)?$ https://%{SERVER_NAME}%{REQUEST_URI} [L,R]
+</Directory>
+```
+
+### 检查配置是否正确
+
+使用`httpd -t`检查配置是否正确：
+
+```shell
+[root@hellogitlab conf.d]# httpd -t
+Syntax OK
+```
+
+如果开启了防火墙，防火墙需要放行80和443端口。
+
+### 重启htttpd服务器
+
+```shell
+[root@hellogitlab conf.d]# systemctl restart httpd
+```
+
+### 检查http和https是否配置成功
+
+访问[http://hellogitlab.ocm/](http://hellogitlab.ocm/)看能否自动跳转到[https://hellogitlab.ocm/](https://hellogitlab.ocm/)，发现可以正常跳转，说明配置正确。
+
+在URL点可以查看网站SSL的具体信息：
+
+![tencent_ssl_info_detail](/img/tencent_ssl_info_detail.png)
+
+至此，网站的SSL证书配置完成。
+
 
 ## 手动部署项目
 
