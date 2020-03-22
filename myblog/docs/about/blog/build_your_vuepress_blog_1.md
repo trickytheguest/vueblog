@@ -942,6 +942,33 @@ Syntax OK
 
 ## 手动部署项目
 
+使用root账号手动部署项目。
+### 克隆代码
+
+```shell
+[root@hellogitlab ~]# git clone git@github.com:meizhaohui/vueblog.git
+```
+
+### 更新代码
+```shell
+[root@hellogitlab vueblog]# pushd vueblog && git pull
+```
+
+### 构建目标文件
+```shell
+[root@hellogitlab vueblog]# pushd myblog && yarn docs:build
+```
+
+### 复制目标文件到`/var/www/html/vueblog/`目录下
+```shell
+[root@hellogitlab myblog]# unalias cp 
+[root@hellogitlab myblog]# cp -rf docs/.vueblog/dist/* /var/www/html/vueblog/
+```
+
+### 重启httpd服务
+```shell
+[root@hellogitlab myblog]# systemctl restart httpd && systemctl status httpd
+```
 
 ## 使用Travis-CI自动部署项目
 
