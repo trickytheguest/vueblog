@@ -943,20 +943,106 @@ Syntax OK
 ## 手动部署项目
 
 使用root账号手动部署项目。
+
+由于国内下载GitHub代码太慢，借助码云进行一次中转，在码云上面创建一个相同的仓库[https://gitee.com/meizhaohui/vueblog](https://gitee.com/meizhaohui/vueblog)。
 ### 克隆代码
 
 ```shell
-[root@hellogitlab ~]# git clone git@github.com:meizhaohui/vueblog.git
+[root@hellogitlab ~]# git clone https://gitee.com/meizhaohui/vueblog.git
+正克隆到 'mayun'...
+remote: Enumerating objects: 411, done.
+remote: Counting objects: 100% (411/411), done.
+remote: Compressing objects: 100% (188/188), done.
+remote: Total 411 (delta 163), reused 411 (delta 163)
+接收对象中: 100% (411/411), 4.13 MiB | 17.35 MiB/s, 完成.
+处理 delta 中: 100% (163/163), 完成.
 ```
+可以看到国内下载码云上面的代码非常的快。
 
 ### 更新代码
 ```shell
-[root@hellogitlab vueblog]# pushd vueblog && git pull
+[root@hellogitlab ~]# pushd vueblog && git pull
 ```
 
-### 构建目标文件
+### 安装插件
 ```shell
-[root@hellogitlab vueblog]# pushd myblog && yarn docs:build
+[root@hellogitlab vueblog]# cd myblog
+[root@hellogitlab myblog]# yarn add vuepress-plugin-comment -D
+[root@hellogitlab myblog]# yarn add vuepress-plugin-auto-sidebar -D
+```
+
+### 修改配置文件`config/secureinfo.js`
+把'your_id'和'your_key'改成自己的。
+```shell
+[root@hellogitlab myblog]# cat config/secureinfo.js
+module.exports = {
+    leancloud_appId: 'your_id',
+    leancloud_appKey: 'your_key'
+}
+```
+
+### 尝试本地运行
+```shell
+[root@hellogitlab myblog]# yarn docs:dev
+yarn run v1.21.1
+$ vuepress dev docs
+wait Extracting site metadata...
+tip Apply theme @vuepress/theme-default ...
+tip Apply plugin container (i.e. "vuepress-plugin-container") ...
+tip Apply plugin @vuepress/last-updated (i.e. "@vuepress/plugin-last-updated") ...
+tip Apply plugin @vuepress/register-components (i.e. "@vuepress/plugin-register-components") ...
+tip Apply plugin @vuepress/active-header-links (i.e. "@vuepress/plugin-active-header-links") ...
+tip Apply plugin @vuepress/search (i.e. "@vuepress/plugin-search") ...
+tip Apply plugin @vuepress/nprogress (i.e. "@vuepress/plugin-nprogress") ...
+tip Apply plugin comment (i.e. "vuepress-plugin-comment") ...
+tip Apply plugin auto-sidebar (i.e. "vuepress-plugin-auto-sidebar") ...
+
+✔ Client
+  Compiled successfully in 4.78s
+
+ℹ ｢wds｣: Project is running at http://0.0.0.0:82/
+ℹ ｢wds｣: webpack output is served from /
+ℹ ｢wds｣: Content not from webpack is served from /root/vueblog/myblog/docs/.vuepress/public
+ℹ ｢wds｣: 404s will fallback to /index.html
+success [00:22:41] Build afd0fe finished in 4778 ms!
+> VuePress dev server listening at http://localhost:82/
+
+✔ Client
+  Compiled successfully in 188.87ms
+success [00:22:42] Build c7597a finished in 190 ms! ( http://localhost:82/ )
+```
+
+发现可以正常运行，则停止本地运行的项目。
+
+### 构建目标文件
+
+开始构建目标文件。
+```shell
+[root@hellogitlab myblog]# yarn docs:build
+yarn run v1.21.1
+$ vuepress build docs
+wait Extracting site metadata...
+tip Apply theme @vuepress/theme-default ...
+tip Apply plugin container (i.e. "vuepress-plugin-container") ...
+tip Apply plugin @vuepress/last-updated (i.e. "@vuepress/plugin-last-updated") ...
+tip Apply plugin @vuepress/register-components (i.e. "@vuepress/plugin-register-components") ...
+tip Apply plugin @vuepress/active-header-links (i.e. "@vuepress/plugin-active-header-links") ...
+tip Apply plugin @vuepress/search (i.e. "@vuepress/plugin-search") ...
+tip Apply plugin @vuepress/nprogress (i.e. "@vuepress/plugin-nprogress") ...
+tip Apply plugin comment (i.e. "vuepress-plugin-comment") ...
+tip Apply plugin auto-sidebar (i.e. "vuepress-plugin-auto-sidebar") ...
+
+✔ Client
+  Compiled successfully in 27.68s
+
+✔ Server
+  Compiled successfully in 27.53s
+
+wait Rendering static HTML...
+Rendering page: /CI/docker/How to use ""valine"" in vuepress-plugin-comment@v0.7.3: https://github.com/dongyuanxin/vuepress-plugin-comment#readme
+success Generated static files in docs/.vuepress/dist.
+
+Done in 33.20s
 ```
 
 ### 复制目标文件到`/var/www/html/vueblog/`目录下
@@ -968,6 +1054,31 @@ Syntax OK
 ### 重启httpd服务
 ```shell
 [root@hellogitlab myblog]# systemctl restart httpd && systemctl status httpd
+● httpd.service - The Apache HTTP Server
+   Loaded: loaded (/usr/lib/systemd/system/httpd.service; enabled; vendor preset: disabled)
+   Active: active (running) since 一 2020-03-23 00:28:16 CST; 1min 4s ago
+     Docs: man:httpd(8)
+           man:apachectl(8)
+  Process: 23435 ExecStop=/bin/kill -WINCH ${MAINPID} (code=exited, status=0/SUCCESS)
+  Process: 29543 ExecReload=/usr/sbin/httpd $OPTIONS -k graceful (code=exited, status=0/SUCCESS)
+ Main PID: 23444 (httpd)
+   Status: "Total requests: 17; Current requests/sec: 0; Current traffic:   0 B/sec"
+   CGroup: /system.slice/httpd.service
+           ├─23444 /usr/sbin/httpd -DFOREGROUND
+           ├─23450 /usr/sbin/httpd -DFOREGROUND
+           ├─23452 /usr/sbin/httpd -DFOREGROUND
+           ├─23453 /usr/sbin/httpd -DFOREGROUND
+           ├─23454 /usr/sbin/httpd -DFOREGROUND
+           ├─23479 /usr/sbin/httpd -DFOREGROUND
+           ├─23480 /usr/sbin/httpd -DFOREGROUND
+           ├─23485 /usr/sbin/httpd -DFOREGROUND
+           ├─23486 /usr/sbin/httpd -DFOREGROUND
+           ├─23487 /usr/sbin/httpd -DFOREGROUND
+           └─23488 /usr/sbin/httpd -DFOREGROUND
+
+3月 23 00:28:15 hellogitlab.com systemd[1]: Starting The Apache HTTP Server...
+3月 23 00:28:16 hellogitlab.com systemd[1]: Started The Apache HTTP Server.
+[root@hellogitlab myblog]#
 ```
 
 ## 使用Travis-CI自动部署项目
