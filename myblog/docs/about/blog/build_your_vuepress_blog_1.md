@@ -1118,6 +1118,50 @@ Everything up-to-date
 ```
 
 
+- 提交最新的修改到GitHub和码云上
+
+```shell
+$ git status
+On branch master
+Your branch is up to date with 'origin/master'.
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+	modified:   myblog/docs/about/blog/build_your_vuepress_blog_1.md
+
+no changes added to commit (use "git add" and/or "git commit -a")
+$ git add -A
+$ git commit -m"sync github to gitee"
+[master 694525d] sync github to gitee
+ 1 file changed, 40 insertions(+)
+ 
+# 提交到GitHub
+$ git push
+Enumerating objects: 13, done.
+Counting objects: 100% (13/13), done.
+Delta compression using up to 8 threads
+Compressing objects: 100% (7/7), done.
+Writing objects: 100% (7/7), 1.06 KiB | 1.06 MiB/s, done.
+Total 7 (delta 5), reused 0 (delta 0)
+remote: Resolving deltas: 100% (5/5), completed with 5 local objects.
+To https://github.com/meizhaohui/vueblog.git
+   3a83131..694525d  master -> master
+   
+# 提交到码云gitee 
+$ git push gitee master
+Enumerating objects: 13, done.
+Counting objects: 100% (13/13), done.
+Delta compression using up to 8 threads
+Compressing objects: 100% (7/7), done.
+Writing objects: 100% (7/7), 1.06 KiB | 1.06 MiB/s, done.
+Total 7 (delta 5), reused 0 (delta 0)
+remote: Powered by GITEE.COM [GNK-3.8]
+To gitee.com:meizhaohui/vueblog.git
+   3a83131..694525d  master -> master
+```
+
 
 
 
