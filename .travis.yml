@@ -32,5 +32,4 @@ script:
 - yarn docs:build
 - echo "Hello Travis"
 after_success:
-- sshpass -p "${DEPLOY_PASSWORD}" ssh "${DEPLOY_USERNAME}@${DEPLOY_DOMAIN}" -p "${DEPLOY_PORT}"
-  'echo "travis" > ~/test.travis'
+- sshpass -p "${DEPLOY_PASSWORD}" ssh "${DEPLOY_USERNAME}@${DEPLOY_DOMAIN}" -p "${DEPLOY_PORT}" 'echo "travis" > ~/test.travis'

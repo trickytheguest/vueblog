@@ -1299,6 +1299,50 @@ travis encrypt DEPLOY_DOMAIN = "hellogitlab.com" --add
 travis encrypt DEPLOY_PORT = "port" --add
 ```
 
+你也可以直接在travis网站上面配置这些键值对信息。
+
+### 配置.travis.yml文件
+
+经过多次修改配置，我的`.travis.yml`文件如下：
+
+```yml
+language: node_js
+node_js:
+- 13.11.0
+env:
+  matrix:
+  - HOST_URL=https://hellogitlab.com
+install:
+- echo "Install sshpass"
+- sudo apt-get update -y && sudo apt-get install sshpass -y && sshpass -h && sshpass -V
+- echo "Install vuepress"
+- yarn global add vuepress
+- echo "Install vuepress plugin"
+notifications:
+  email:
+    recipients:
+    - mzh@hellogitlab.com
+    on_success: always
+    on_failure: always
+script:
+- echo "${TRAVIS_OS_NAME}"
+- uname -a
+- echo "Check Node.js version" && node -v
+- echo "Check yarn version" && yarn -v
+- cd myblog && pwd
+- yarn install
+- yarn add vuepress-plugin-comment -D
+- yarn add vuepress-plugin-auto-sidebar -D
+- echo "change file contents"
+- cp config/secureinfo.js.txt config/secureinfo.js
+- sed -i "s/your leancloud appid/${LEAN_APPID}/g" config/secureinfo.js
+- sed -i "s/your leancloud appkey/${LEAN_APPKEY}/g" config/secureinfo.js
+- yarn docs:build
+- echo "Hello Travis"
+after_success:
+- sshpass -p "${DEPLOY_PASSWORD}" ssh "${DEPLOY_USERNAME}@${DEPLOY_DOMAIN}" -p "${DEPLOY_PORT}"  'echo "travis" > ~/test.travis'
+```
+
 
 
 
