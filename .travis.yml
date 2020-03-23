@@ -3,13 +3,19 @@ node_js:
 - 13.11.0
 env:
   matrix:
-  - HOST_URL=https://hellogitlab.com
+  - HOST_DOMAIN=hellogitlab.com
   global:
     secure: P4qtliLH7audsPRf1HCSgEmC9s+eXDihVqm9wKJPnV5mzBruFeVOH96flqj1DXh4MxS6yZ/MfReQ8Inb33Q5u9eb9RtFetE2hiRSaFWMvilSHutIIoyL5m9GoNnjQhbEjIErmO5DzZwZcOOQbET2VAY30gZgIym36PSO0aTb7nJXJXPLvTNc6agFH9MdWknX0OKkdIQuRaLpvGd153Q9mdXfxI+uHB2/SCMxMAT5/KdqIuwqCawlgRK2S1sJ42BhBF2MFg9yGQpW+aVNbIYv5qOpHjqJrinqTtVzcv+QpAy0KdxkxxEC41zDyDtIav9c61jITft+iaMUYhZuqdRrUJqREB7TjRYF9629NWrg8KyY36z+/3ykn2pKks3RfdC5eo4xOfiHLBowK/SPoSnOpH0xaZGzYqqrITaeNUcGB3z9MoFdkZcI9hKf/t2Dq6XJwuQMMpPh/a+s8G8CnnNdywBYX3rYrrLEufsn06/1bPmZJzv3zD05Od4JhzpCyYav9FRPl0WPsLDBW7ZdGP7KXBmKzeSwJU3geWTdaGqizHxCqHnVBW1jD7mHUMJyUNt+OqcHGbrDpz0AUqEay7w8lwWazkeztVTrmKH1LRLuFysBWG9TNSA+E5F0SE0nliLk/dSDXagc1HW3FQhD5LOXqbSBO5uh7jXnvBID7inmGaI=
 install:
 - yarn add vuepress-plugin-comment -D
 - yarn add vuepress-plugin-auto-sidebar -D
 script:
+- echo "${TRAVIS_OS_NAME}"
+- uname -a
+- echo "Check Node.js version" && node -v
+- echo "Check yarn version" && yarn -v
+- cd myblog && pwd
+- yarn docs:build
 - echo "Hello Travis"
 after_success:
-- ssh meizhaohui@hellogitlab.com -p "${HOST_PORT}" 'echo "travis" > ~/test.travis'
+- ssh "${HOST_USERNAME}@${HOST_DOMAIN}" -p "${HOST_PORT}" 'echo "travis" > ~/test.travis'

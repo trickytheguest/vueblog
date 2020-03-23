@@ -718,7 +718,7 @@ module.exports = {
 ```shell
 $ npm i vuepress-plugin-auto-sidebar -D
 
-> core-js@2.6.11 postinstall /Users/yujiawen/Documents/GitHub/vueblog/myblog/node_modules/core-js
+> core-js@2.6.11 postinstall ~/Documents/GitHub/vueblog/myblog/node_modules/core-js
 > node -e "try{require('./postinstall')}catch(e){}"
 
 Thank you for using core-js ( https://github.com/zloirock/core-js ) for polyfilling JavaScript standard library!
@@ -1167,6 +1167,130 @@ To gitee.com:meizhaohui/vueblog.git
 
 
 ## 使用Travis-CI自动部署项目
+
+参考：
+- [一点都不高大上，手把手教你使用Travis CI实现持续部署](https://zhuanlan.zhihu.com/p/25066056)
+- [利用Travis CI+GitHub实现持续集成和自动部署](https://www.cnblogs.com/champyin/p/11621898.html)
+
+### 获取GitHub Access Token
+
+Travis CI在自动部署的时候，需要push内容到仓库的某个分支，而访问GitHub仓库需要用户授权，授权方式就是用户提供 Access Token 给Travis CI。
+
+获取token的位置：`GitHub->Settings->Developer Settings->Personal access tokens`。
+
+勾选repo下的所有项，以及user下的user:email后，生成一个token，复制token值。
+
+![travis_github_token](/img/travis_github_token.png)
+
+::: warning 注意
+这个token只有现在可以看到，再次进入就看不到了，而且是再也看不到了，忘记了就只能重新生成了，所以要记住保管好。
+:::
+
+### 安装travis
+
+```shell
+# 检查依赖，需要Ruby 2.0以上版本
+$ ruby -v
+ruby 2.7.0p0 (2019-12-25 revision 647ee6f091) [x86_64-darwin19]
+
+# 安装
+$ gem install travis
+
+# 查看版本信息
+$ travis -v
+1.8.11
+
+# 查看帮助信息
+$ travis --help
+Usage: travis COMMAND ...
+
+Available commands:
+
+	accounts       displays accounts and their subscription status
+	branches       displays the most recent build for each branch
+	cache          lists or deletes repository caches
+	cancel         cancels a job or build
+	console        interactive shell
+	disable        disables a project
+	enable         enables a project
+	encrypt        encrypts values for the .travis.yml
+	encrypt-file   encrypts a file and adds decryption steps to .travis.yml
+	endpoint       displays or changes the API endpoint
+	env            show or modify build environment variables
+	help           helps you out when in dire need of information
+	history        displays a projects build history
+	init           generates a .travis.yml and enables the project
+	lint           display warnings for a .travis.yml
+	login          authenticates against the API and stores the token
+	logout         deletes the stored API token
+	logs           streams test logs
+	monitor        live monitor for what's going on
+	open           opens a build or job in the browser
+	pubkey         prints out a repository's public key
+	raw            makes an (authenticated) API call and prints out the result
+	report         generates a report useful for filing issues
+	repos          lists repositories the user has certain permissions on
+	requests       lists recent requests
+	restart        restarts a build or job
+	settings       access repository settings
+	setup          sets up an addon or deploy target
+	show           displays a build or job
+	sshkey         checks, updates or deletes an SSH key
+	status         checks status of the latest build
+	sync           triggers a new sync with GitHub
+	token          outputs the secret API token
+	version        outputs the client version
+	whatsup        lists most recent builds
+	whoami         outputs the current user
+
+run `/usr/local/bin//travis help COMMAND` for more infos
+```
+
+### 切换到项目目录再登陆
+
+```shell
+# 可以通过用户名密码登陆
+$ travis login
+We need your GitHub login to identify you.
+This information will not be sent to Travis CI, only to api.github.com.
+The password will not be displayed.
+
+Try running with --github-token or --auto if you don't want to enter your password anyway.
+
+Username: meizhaohui
+Password for meizhaohui: ***********
+server error (500: "Sorry, we experienced an error.\n\nrequest_id:ff721d1a6198c4a7705c1bf261eed365\n")
+$ cd Documents/GitHub/vueblog
+$ travis login
+We need your GitHub login to identify you.
+This information will not be sent to Travis CI, only to api.github.com.
+The password will not be displayed.
+
+Try running with --github-token or --auto if you don't want to enter your password anyway.
+
+Username: meizhaohui
+Password for meizhaohui: ***********
+Successfully logged in as meizhaohui!
+
+
+# 也可以通过token登陆
+# 此处的secure_github_token就是前面获取的"GitHub Access Token"值
+$ export GITHUB_TOKEN="secure_github_token"
+$ travis login --github-token=$GITHUB_TOKEN
+Successfully logged in as meizhaohui!
+
+# 使用假名
+$ alias tl="travis login --github-token=${GITHUB_TOKEN}"
+# 使用tl命令就可以登陆了
+$ tl
+Successfully logged in as meizhaohui!
+
+# 注销
+$ travis logout
+Successfully logged out!
+```
+
+
 
 
 ## 增加文章
