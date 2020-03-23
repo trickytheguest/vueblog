@@ -1343,7 +1343,17 @@ after_success:
 - sshpass -p "${DEPLOY_PASSWORD}" ssh "${DEPLOY_USERNAME}@${DEPLOY_DOMAIN}" -p "${DEPLOY_PORT}"  'echo "travis" > ~/test.travis'
 ```
 
+travis网站上面也可以看到构建过程：
 
+![travis_ci_build_history](/img/travis_ci_build_history.png)
+
+可以将下面的内容加入到markdown文件中，显示出构建状态：
+
+```
+[![Build Status](https://travis-ci.org/meizhaohui/vueblog.svg?branch=master)](https://travis-ci.org/meizhaohui/vueblog)
+```
+
+[![Build Status](https://travis-ci.org/meizhaohui/vueblog.svg?branch=master)](https://travis-ci.org/meizhaohui/vueblog)
 
 
 
