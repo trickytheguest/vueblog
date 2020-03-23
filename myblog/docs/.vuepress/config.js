@@ -12,6 +12,7 @@ module.exports = {
     },
     head: [
         ['link', { rel: 'icon', href: '/img/favicon.ico' }],
+        ['meta', { name: 'baidu-site-verification', content: 'mLsFdUPFmo' }],
     ],
     port: 80,
     markdown: {

@@ -1083,6 +1083,7 @@ Done in 33.20s
 
 ### 同步github与码云
 
+参考： [GitHub仓库快速导入Gitee及同步更新](https://gitee.com/help/articles/4284#article-header0)
 - 查看远程库列表
 ```shell
 $ git remote -v
