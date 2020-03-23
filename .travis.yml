@@ -17,6 +17,12 @@ install:
 - echo "Install vuepress plugin"
 - yarn add vuepress-plugin-comment -D
 - yarn add vuepress-plugin-auto-sidebar -D
+notifications:
+  email:
+    recipients:
+    - mzh@hellogitlab.com
+    on_success: always
+    on_failure: always
 script:
 - echo "${TRAVIS_OS_NAME}"
 - uname -a
@@ -27,7 +33,7 @@ script:
 - cp config/secureinfo.js.txt config/secureinfo.js
 - sed -i "s/your leancloud appid/${LEAN_APPID}/g" config/secureinfo.js
 - sed -i "s/your leancloud appkey/${LEAN_APPKEY}/g" config/secureinfo.js
-- yarn docs:build
+- yarn docs:dev && yarn docs:build
 - echo "Hello Travis"
 after_success:
 - sshpass -p "${DEPLOY_PASSWORD}" ssh "${DEPLOY_USERNAME}@${DEPLOY_DOMAIN}" -p "${DEPLOY_PORT}"
