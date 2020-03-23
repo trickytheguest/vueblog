@@ -14,10 +14,7 @@ install:
 - sudo apt-get update -y && sudo apt-get install sshpass -y && sshpass -h && sshpass -V 
 - echo "Install vuepress"
 - yarn global add vuepress
-- yarn install
 - echo "Install vuepress plugin"
-- yarn add vuepress-plugin-comment -D
-- yarn add vuepress-plugin-auto-sidebar -D
 notifications:
   email:
     recipients:
@@ -30,6 +27,9 @@ script:
 - echo "Check Node.js version" && node -v
 - echo "Check yarn version" && yarn -v
 - cd myblog && pwd
+- yarn install
+- yarn add vuepress-plugin-comment -D
+- yarn add vuepress-plugin-auto-sidebar -D
 - echo "change file contents"
 - cp config/secureinfo.js.txt config/secureinfo.js
 - sed -i "s/your leancloud appid/${LEAN_APPID}/g" config/secureinfo.js
