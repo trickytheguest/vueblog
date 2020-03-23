@@ -106,3 +106,28 @@ To https://github.com/meizhaohui/vueblog.git
 提交完成后，可以发现Github个人页面上面的贡献图示位置已经变成绿色，说明修改成功。
 
 参考: [修改Github历史提交记录中的username和email信息](https://blog.csdn.net/Kexiii/article/details/86561273)
+
+
+## github合并分支到master
+
+
+
+在写项目的时候习惯创建一个dev分支用于更新代码，等到整个或者阶段性完成的时候再合并到master上
+
+步骤如下:
+
+```shell
+# 切换到master分支
+$ git checkout master
+Switched to branch 'master'
+# 将dev分支的代合并到master
+$ git merge dev
+
+# 查看状态
+git status
+
+# 推送
+git push origin master
+```
+
+
