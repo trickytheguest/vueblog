@@ -1294,7 +1294,7 @@ Successfully logged out!
 
 ```shell
 travis encrypt DEPLOY_USER =  "meizhaohui" --add
-travis encrypt DEPLOY_PASSWORD = "password" --add
+travis encrypt DEPLOY_PASSWORD = "mzh6" --add
 travis encrypt DEPLOY_DOMAIN = "hellogitlab.com" --add
 travis encrypt DEPLOY_PORT = "port" --add
 ```
