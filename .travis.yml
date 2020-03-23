@@ -24,9 +24,9 @@ script:
 - echo "Check yarn version" && yarn -v
 - cd myblog && pwd
 - echo "change file contents"
-- unalias cp &&  cp config/secureinfo.js.txt config/secureinfo.js
-- sed -i "s/your leancloud appid/${LEAN_APPID}/g" config.secureinfo.js
-- sed -i "s/your leancloud appkey/${LEAN_APPKEY}/g" config.secureinfo.js
+- cp config/secureinfo.js.txt config/secureinfo.js
+- sed -i "s/your leancloud appid/${LEAN_APPID}/g" config/secureinfo.js
+- sed -i "s/your leancloud appkey/${LEAN_APPKEY}/g" config/secureinfo.js
 - yarn docs:build
 - echo "Hello Travis"
 after_success:
