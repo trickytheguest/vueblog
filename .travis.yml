@@ -11,8 +11,7 @@ env:
   - secure: b3pztkkTOWgilPIg2T0jC/TgX099qeJLfj7QCo5ujLqAclKbIlWIz0xGiDxk2IhcKlS7J+klNhaiLd/P+Wb67W7XUNJBictgvgPGGMoCDsH87tZExi3npMynNl00VNWTasixIHs63RnKGaNCORdJr1YsbF82iR/slRIDy0eaGIxBO1Ttg80FTkDOIrC9swTcQ6xXP26y9jaE1MlZeFiNm2i/QImUIM230pNYdn3OYDaXIcEnDd0quZW36XEJlEQxOgfWgViC3rc4QtW5hvdnI25yJ3RGBFG74ACSy7OQBExvqm1ycVutBbQFuM3EU9DtEb2X8TSZcjAe+nmDonCtP7zcttStaTEvZVmKh2v7xyy+aDxVzAzrBn0EZi/AjACXtkihKOQ0FAMI7UDFUuofMBhl5i0onS2rMIXkDDBzlSyh6gL7flTwDnBojqKhFamxE/g5RREINtWZNVwHPu4kkdfMK/7599cuOAOUP7ckffxcveKGFUD1l+wOOpPlUoj5qz6JxVUnNrNBNxaNgpNIxvrTDdJizgAT9eP8tojjPudy9lt72ABhuUyEV+GOwEwRT0CG9IF+KHBmNCvoFqrHls5A0mjId6mKuQB0rmfGKQ9UQSt3dUgXgQ9F5/kziosOsNkj+jRWJarXoK25uJ/uvjQtEjNc9EgdnH2ck2nOrnU=  # DEPLU_PASSWORD
 install:
 - echo "Install sshpass"
-- sudo apt-get update -y && sudo apt-get install sshpass -y && sshpass -h && sshpass
-  -v
+- sudo apt-get update -y && sudo apt-get install sshpass -y && sshpass -h && sshpass -V 
 - echo "Install vuepress"
 - yarn global add vuepress
 - echo "Install vuepress plugin"
@@ -24,9 +23,12 @@ script:
 - echo "Check Node.js version" && node -v
 - echo "Check yarn version" && yarn -v
 - cd myblog && pwd
+- echo "change file contents"
+- unalias cp &&  cp config/secureinfo.js.txt config/secureinfo.js
+- sed -i "s/your leancloud appid/${LEAN_APPID}/g" config.secureinfo.js
+- sed -i "s/your leancloud appkey/${LEAN_APPKEY}/g" config.secureinfo.js
 - yarn docs:build
 - echo "Hello Travis"
 after_success:
 - sshpass -p "${DEPLOY_PASSWORD}" ssh "${DEPLOY_USERNAME}@${DEPLOY_DOMAIN}" -p "${DEPLOY_PORT}"
   'echo "travis" > ~/test.travis'
-dd:
