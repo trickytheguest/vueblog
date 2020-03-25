@@ -729,4 +729,8 @@ pip install coverage
 - 1.  [让 Python 代码更易维护的七种武器](https://www.sohu.com/a/291730384_571478)
 - 2. [Python 代码的质量控制之 flake8 & Pylint](https://www.codercto.com/a/11112.html)
 - 3. [Python静态代码检查工具Flake8](https://www.cnblogs.com/zhangningyang/p/8692546.html)
+- 4. [让Python之父点赞的Python静态类型检查器：Mypy](http://www.chinaoc.com.cn/p/1173087.html)
+- 5. [Python 静态分析Pylint、Pyflakes 与 Mypy ——我应该用谁](http://www.wazhi.com.cn/SchoolManage/NewsDispatcher?NewsId=27e4f735-48e8-4c39-b012-063757349f56&SchoolId=1169&action=singlenews)
+- 6. [介绍一款python类型检查工具pyright(推荐)](https://www.zhangshengrong.com/p/9Oab7Vv9Nd/)
+- 7. [如何使用 Pylint 来规范 Python 代码风格](https://www.ibm.com/developerworks/cn/linux/l-cn-pylint/)
 
