@@ -28,3 +28,39 @@ $ defaults write com.apple.finder AppleShowAllFiles -boolean true;killall Finder
 $ defaults write com.apple.finder AppleShowAllFiles -boolean false;killall Finder
 ```
 
+
+## MacOS-homebrew卸载重装并更换国内源
+
+- 卸载
+
+```shell
+$ ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall)"
+```
+
+- 重装
+
+```shell
+$ ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+```
+
+- 更新
+
+```shell
+$ brew update
+```
+
+- 更换科大镜像源
+
+```shell
+$ ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+```
+
+## brew常用命令
+
+- 执行更新brew命令
+
+```shell
+brew update
+```
+
+
