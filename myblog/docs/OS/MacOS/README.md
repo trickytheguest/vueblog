@@ -52,7 +52,34 @@ $ brew update
 - 更换科大镜像源
 
 ```shell
-$ ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+# 第一步：替换brew.git
+$ cd "$(brew --repo)"
+$ git remote -v
+origin	https://github.com/Homebrew/brew (fetch)
+origin	https://github.com/Homebrew/brew (push)
+$ git remote set-url origin https://mirrors.ustc.edu.cn/brew.git
+$ git remote -v
+origin	https://mirrors.ustc.edu.cn/brew.git (fetch)
+origin	https://mirrors.ustc.edu.cn/brew.git (push)
+
+# 第二步：替换homebrew-core.git
+$ cd "$(brew --repo)/Library/Taps/homebrew/homebrew-core"
+$ git remote set-url origin https://mirrors.ustc.edu.cn/homebrew-core.git
+$ git remote -v
+origin	https://mirrors.ustc.edu.cn/homebrew-core.git (fetch)
+origin	https://mirrors.ustc.edu.cn/homebrew-core.git (push)
+
+# 第三步：安装brew cask
+$ git clone git://mirrors.ustc.edu.cn/homebrew-cask.git /usr/local/Homebrew/Library/Taps/homebrew/homebrew-cask --depth=1
+```
+
+::: tip 注意
+以下命令请在bshell中执行。
+
+
+
+# 更新
+brew update
 ```
 
 ## brew常用命令
