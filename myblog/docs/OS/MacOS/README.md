@@ -73,14 +73,15 @@ origin	https://mirrors.ustc.edu.cn/homebrew-core.git (push)
 $ git clone git://mirrors.ustc.edu.cn/homebrew-cask.git /usr/local/Homebrew/Library/Taps/homebrew/homebrew-cask --depth=1
 ```
 
-::: tip 注意
-以下命令请在bshell中执行。
+- 更新
 
-
-
-# 更新
-brew update
+```shell
+$ brew update
 ```
+
+::: tip 注意
+以上命令请在bash shell中执行。
+:::
 
 ## brew常用命令
 
@@ -90,4 +91,14 @@ brew update
 brew update
 ```
 
+- 搜索
 
+```shell
+brew search 服务名称
+```
+
+- 安装
+
+```shell
+brew install 服务名称
+```
