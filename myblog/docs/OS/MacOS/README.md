@@ -36,19 +36,25 @@ $ defaults write com.apple.finder AppleShowAllFiles -boolean false;killall Finde
 - `拷贝` "Copy"是复制文件，你可以使用`command + v`粘贴到别的位置。
 
 
+## 访达中从当前目录打开终端
+
+在官网[https://zipzapmac.com/Go2Shell](https://zipzapmac.com/Go2Shell)下载安装包，参考官网进行安装并添加到访达中。
+
 ## MAC禁用Adobe Creative Cloud自启状态栏
 
 - 禁用Creative Cloud自启
 
 ```shell
-launchctl unload -w /Library/LaunchAgents/com.adobe.AdobeCreativeCloud.plist
+$ launchctl unload -w /Library/LaunchAgents/com.adobe.AdobeCreativeCloud.plist
 ```
 
 - 恢复
 
 ```shell
-launchctl load -w /Library/LaunchAgents/com.adobe.AdobeCreativeCloud.plist
+$ launchctl load -w /Library/LaunchAgents/com.adobe.AdobeCreativeCloud.plist
 ```
+
+
 
 
 ## MacOS-homebrew卸载重装并更换国内源
