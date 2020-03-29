@@ -36,6 +36,21 @@ $ defaults write com.apple.finder AppleShowAllFiles -boolean false;killall Finde
 - `拷贝` "Copy"是复制文件，你可以使用`command + v`粘贴到别的位置。
 
 
+## MAC禁用Adobe Creative Cloud自启状态栏
+
+- 禁用Creative Cloud自启
+
+```shell
+launchctl unload -w /Library/LaunchAgents/com.adobe.AdobeCreativeCloud.plist
+```
+
+- 恢复
+
+```shell
+launchctl load -w /Library/LaunchAgents/com.adobe.AdobeCreativeCloud.plist
+```
+
+
 ## MacOS-homebrew卸载重装并更换国内源
 
 - 卸载
