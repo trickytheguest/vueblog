@@ -6,7 +6,7 @@ module.exports = [{
         text: '操作系统',
         items: [{
                 text: 'CentOS',
-                link: '/OS/CentOS/'
+                link: '/OS/Centos/'
             },
             {
                 text: 'Ubuntu',
