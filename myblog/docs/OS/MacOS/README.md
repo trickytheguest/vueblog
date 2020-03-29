@@ -31,9 +31,9 @@ $ defaults write com.apple.finder AppleShowAllFiles -boolean false;killall Finde
 
 ## 访达中`复制`、`制作替身`、`拷贝`的区别
 
-- `复制`  是直接在当前文件夹复制生成一个一样的文件副本。
-- `制作替身` 是生成一个快捷方式。
-- `拷贝` 是复制文件，你可以使用`command + v`粘贴到别的位置。
+- `复制`   "Duplicate"是直接在当前文件夹复制生成一个一样的文件副本。
+- `制作替身` "Make Alias"是生成一个快捷方式。
+- `拷贝` "Copy"是复制文件，你可以使用`command + v`粘贴到别的位置。
 
 
 ## MacOS-homebrew卸载重装并更换国内源
