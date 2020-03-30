@@ -132,8 +132,9 @@ brew install 服务名称
 ```
 
 
-## 安装oh-my-zsh
+## oh-my-zsh打造强大的终端
 
+### 安装oh-my-zsh
 `oh-my-zsh`源码地址：[https://github.com/ohmyzsh/ohmyzsh](https://github.com/ohmyzsh/ohmyzsh)
 安装：
 
@@ -146,3 +147,50 @@ $ sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/t
 运行脚本后，自动安装`oh-my-zsh`并设置默认的主题。 显示如下：
 
 ![installed_ohmyzsh](/img/installed_ohmyzsh.png)
+
+### 安装`Powerline Fonts`字体
+
+`Powerline Fonts`字体安装参考[https://github.com/powerline/fonts](https://github.com/powerline/fonts)
+
+```shell
+# 下载
+➜  ~ git clone https://github.com/powerline/fonts.git --depth=1
+Cloning into 'fonts'...
+remote: Enumerating objects: 310, done.
+remote: Counting objects: 100% (310/310), done.
+remote: Compressing objects: 100% (236/236), done.
+remote: Total 310 (delta 75), reused 260 (delta 71), pack-reused 0
+Receiving objects: 100% (310/310), 10.40 MiB | 16.00 KiB/s, done.
+Resolving deltas: 100% (75/75), done.
+
+# 安装
+➜  ~ cd fonts && sh install.sh
+Copying fonts...
+Powerline fonts installed to /Users/mzh/Library/Fonts
+➜  fonts git:(master)
+
+# 清理下载文件
+➜  fonts git:(master) cd .. && trash-put fonts && trash-empty
+```
+
+### 设置主题
+
+参考[https://github.com/ohmyzsh/ohmyzsh#selecting-a-theme](https://github.com/ohmyzsh/ohmyzsh#selecting-a-theme)
+
+选择自己喜欢的主题，可以一直用一种主题，也可以使用随机主题。
+
+像我配置的随机主题：
+
+![oh_my_zsh_random_theme](/img/oh_my_zsh_random_theme.png)
+
+重新加载配置
+```shell
+$ source ~/.zshrc
+```
+
+显示如下：
+![reload_random_theme](/img/reload_random_theme.png)
+
+
+
+
