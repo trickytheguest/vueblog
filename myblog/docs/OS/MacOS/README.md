@@ -130,3 +130,19 @@ brew search 服务名称
 ```shell
 brew install 服务名称
 ```
+
+
+## 安装oh-my-zsh
+
+`oh-my-zsh`源码地址：[https://github.com/ohmyzsh/ohmyzsh](https://github.com/ohmyzsh/ohmyzsh)
+安装：
+
+```shell
+$ sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+```
+
+如果以上不能运行，可能直接在[https://github.com/ohmyzsh/ohmyzsh/blob/master/tools/install.sh](https://github.com/ohmyzsh/ohmyzsh/blob/master/tools/install.sh)复制install.sh的内容下来保存到文件`install.sh`中，使用`sh install.sh`运行即可。
+
+运行脚本后，自动安装`oh-my-zsh`并设置默认的主题。 显示如下：
+
+![installed_ohmyzsh](/img/installed_ohmyzsh.png)
