@@ -217,5 +217,30 @@ plugins=(
 )
 ```
 
-
+### 设置常用命令假名
+```shell
+lias cd1='cd ..'
+alias cd2='cd ../..'
+alias cd3='cd ../../..'
+alias cd4='cd ../../../..'
+alias cd5='cd ../../../../..'
+alias ls='ls -G'
+alias ll='ls -lah'
+alias vi='vim'
+alias v.='vim ~/.zshrc'
+alias s.='source ~/.zshrc && echo "Reload OK!"'
+# rm-protection link to https://github.com/alanzchen/rm-protection
+alias rm='echo "please use \"trash-put\" or \"safe-rm\" or \"safe-p\" to delete file."'
+# use the command to save no premission file   : w ! sudo tee %
+alias dkin='dockerin'
+function dockerin()
+{
+    docker exec -it $1 /bin/bash
+}
+alias gp='git push && git push gitee master'
+export GITHUB_TOKEN="*******securce_string*******"
+alias tl="travis login --github-token=${GITHUB_TOKEN}"
+alias cblog='pushd ~/Documents/GitHub/vueblog/myblog && pwd'
+alias runblog='pushd ~/Documents/GitHub/vueblog/myblog && yarn docs:dev'
+```
 
