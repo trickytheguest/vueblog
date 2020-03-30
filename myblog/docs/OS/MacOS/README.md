@@ -192,5 +192,30 @@ $ source ~/.zshrc
 ![reload_random_theme](/img/reload_random_theme.png)
 
 
+### 设置插件
+
+可参考[https://www.zhihu.com/question/49284484](https://www.zhihu.com/question/49284484)
+
+可用的插件列表[https://github.com/ohmyzsh/ohmyzsh/wiki/Plugins](https://github.com/ohmyzsh/ohmyzsh/wiki/Plugins)
+
+我配置的插件如下：
+
+```
+plugins=(
+    colored-man-pages
+    command-not-found
+    cp
+    extract
+    git
+    gitignore
+    last-working-dir
+    safe-paste
+    sudo
+    vi-mode
+    z
+    zsh_reload
+)
+```
+
 
 
