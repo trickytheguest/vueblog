@@ -219,7 +219,7 @@ plugins=(
 
 ### 设置常用命令假名
 ```shell
-lias cd1='cd ..'
+alias cd1='cd ..'
 alias cd2='cd ../..'
 alias cd3='cd ../../..'
 alias cd4='cd ../../../..'
