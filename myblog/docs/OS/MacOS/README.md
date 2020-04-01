@@ -21,6 +21,40 @@
 
 ![emoji_command](/img/emoji_command.png)
 
+## 常用快捷键
+
+- cmd+tab 程序之间的切换
+- cmd+h 窗口隐藏
+- cmd+m 窗口最小化
+- cmd+n 新建窗口
+- cmd+o 打开
+- cmd+s 保存
+- cmd+shift+s 另存为
+- cmd+p 打印 print
+- cmd+w 关闭 close window
+- cmd+q 退出quit
+- cmd+a 全选select all
+- cmd+i 显示信息show info
+- cmd+f 搜索search
+- cmd+c 复制copy
+- cmd+v 粘贴paste
+- cmd+delete 删除选中文件或文件夹
+- cmd+shift+delete 清空回收站
+- cmd++ 放大
+- cmd+- 缩小
+- cmd+t 新建选项卡tab
+- cmd+r 刷新refresh
+- cmd+shift+3 截取整个屏幕
+- cmd+shift+4 截取选择区域
+- fn+left 到顶部home
+- fn+right 到底部end
+- fn+up 上一页pageup
+- fn+down 下一页pagedown
+
+注：以上"cmd"代表「command」键
+
+参考：[如何优雅地使用 macOS](https://zhuanlan.zhihu.com/p/29892969)
+
 ## 最小化当前页面
 
 `command + H` 暂时隐藏当前页面，使用`command + Tab`切换回来。
