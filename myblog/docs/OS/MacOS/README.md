@@ -2,6 +2,25 @@
 
 [[toc]]
 
+## 打开访达文件夹的快捷键
+
+![finder_keymap](/img/finder_keymap.png)
+
+说明： 
+
+- ⌘  代表 "command"键
+- ⎇  代表"option"键
+- ⌃ 代表"control"键
+- ⇧ 代表"shift"键
+
+通过快捷键⌃+⌘+空格键可以调出『表情符号与人物』窗口：
+
+![emoji](/img/emoji.png)
+
+点击『表情符号与人物』窗口右下角的向右的箭头，调到『技术符号』处就可以看到常用的"command"等键的符号了。
+
+![emoji_command](/img/emoji_command.png)
+
 ## 最小化当前页面
 
 `command + H` 暂时隐藏当前页面，使用`command + Tab`切换回来。
