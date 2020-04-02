@@ -39,7 +39,11 @@
 - cmd+f 搜索search
 - cmd+c 复制copy
 - cmd+v 粘贴paste
-- cmd+delete 删除选中文件或文件夹
+- cmd+delete 删除选中文件或文件夹 或者删除一行
+- option+delete 删除一个单词
+- cmd+c 复制
+- cmd+v 粘贴
+- cmd+z 撤销
 - cmd+shift+delete 清空回收站
 - cmd++ 放大
 - cmd+- 缩小
@@ -82,6 +86,8 @@ macos中快捷键特别多，有时记不住快捷键，安装CheatSheet后，�
 
 ![firefox_shortcuts](/img/firefox_shortcuts.png)
 
+
+
 ## 访达中显示隐藏文件
 
 - 快捷键
@@ -110,7 +116,7 @@ $ defaults write com.apple.finder AppleShowAllFiles -boolean false;killall Finde
 - `拷贝` "Copy"是复制文件，你可以使用`command + v`粘贴到别的位置。
 
 
-## 访达中从当前目录打开终端
+## 访达中从当前目录打开终端Go2Shell
 
 在官网[https://zipzapmac.com/Go2Shell](https://zipzapmac.com/Go2Shell)下载安装包，参考官网进行安装并添加到访达中。
 
