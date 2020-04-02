@@ -53,6 +53,12 @@
 - fn+down 下一页pagedown
 - control+cmd+F 进入全屏模式
 - esc 退出全屏模式
+- control+up 打开调度中心，点击右上角的+加号可以创建多桌面
+- control+down 应用程序窗口
+- F11 显示桌面
+- control+A 移动到行首
+- control+E 移动到行尾
+
 
 注：以上"cmd"代表「command」键。
 
@@ -63,6 +69,18 @@
 `command + H` 暂时隐藏当前页面，使用`command + Tab`切换回来。
 `command + M` 最小化当前页面，是暂时不想用当前程序，又不想`command + W`关闭窗口或者 `command + Q`关闭程序时候用的，使用`command + Tab`切换到应用后，松开`Tab`键，再按`option`唤出。
 
+
+## CheatSheet的使用
+
+macos中快捷键特别多，有时记不住快捷键，安装CheatSheet后，可以通过长按⌘键查看当前软件的快捷键。
+
+你可以从[https://cheatsheet-mac.en.softonic.com/mac](https://cheatsheet-mac.en.softonic.com/mac)网站上面下载安装包。
+
+你也可以从这里下载 [CheatSheet_1.0.1.zip](/resource/pkg/CheatSheet_1.0.1.zip)
+
+如我的火狐浏览器中长按⌘键弹出的所有的快捷键如下图：
+
+![firefox_shortcuts](/img/firefox_shortcuts.png)
 
 ## 访达中显示隐藏文件
 
