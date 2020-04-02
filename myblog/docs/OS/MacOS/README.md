@@ -23,11 +23,12 @@
 
 ## 常用快捷键
 
+- cmd+, 个人偏好设置
 - cmd+tab 程序之间的切换
 - cmd+h 窗口隐藏
 - cmd+m 窗口最小化
 - cmd+n 新建窗口
-- cmd+o 打开
+- cmd+o 打开，等同于双击打开
 - cmd+s 保存
 - cmd+shift+s 另存为
 - cmd+p 打印 print
@@ -50,8 +51,10 @@
 - fn+right 到底部end
 - fn+up 上一页pageup
 - fn+down 下一页pagedown
+- control+cmd+F 进入全屏模式
+- esc 退出全屏模式
 
-注：以上"cmd"代表「command」键
+注：以上"cmd"代表「command」键。
 
 参考：[如何优雅地使用 macOS](https://zhuanlan.zhihu.com/p/29892969)
 
