@@ -86,6 +86,18 @@ macos中快捷键特别多，有时记不住快捷键，安装CheatSheet后，�
 
 ![firefox_shortcuts](/img/firefox_shortcuts.png)
 
+## shuttle的使用
+参考[https://github.com/fitztrev/shuttle](https://github.com/fitztrev/shuttle)
+
+Shuttle是一款快捷操作管理软件，你可以通过自定义命令，将常用的命令设置成图标快捷方式显示在任务栏中，当点击自定义的命令的名称时，shuttle会自动打开终端，并执行相应的命令。
+
+如我的shuttle配置后，显示如下：
+
+![shuttle](/img/shuttle.png)
+
+- 点击「编辑」可以编辑默认的配置文件。
+- 点击「导出」可以将默认的配置文件导出，你可以参照这个导出的配置文件写自己的命令。
+- 点击「导入」可以导入自定义配置文件。
 
 
 ## 访达中显示隐藏文件
