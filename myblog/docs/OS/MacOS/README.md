@@ -74,6 +74,33 @@
 `command + M` 最小化当前页面，是暂时不想用当前程序，又不想`command + W`关闭窗口或者 `command + Q`关闭程序时候用的，使用`command + Tab`切换到应用后，松开`Tab`键，再按`option`唤出。
 
 
+## 快速搜索应用Alfred
+
+Alfred具有很多功能，可以参考[Alfred 究竟好用在哪里？](https://www.zhihu.com/question/32227549)
+
+下载地址：[https://www.alfredapp.com/](https://www.alfredapp.com/)
+
+默认使用「Cmd + Space」打开Alfred，可以自定义为双击⌘键快速唤醒Alfred。
+ 
+下面列出部分功能：
+
+1. 搜索应用，快速打开应用,直接输入应用名称即可。
+2.  查找本地文件，按空格，再输入搜索关键字。
+3.  网页搜索，默认使用Google搜索，可以配置百度搜索，百度搜索的话，可以输入『bd 搜索关键字』进行搜索，Alfred中百度搜索配置如下：
+
+![alfred_baidu_search](/img/alfred_baidu_search.png)
+
+4. 简单数学计算，如输入「2+2」则会自动计算出结果4。
+5. 查字典，如输入「d lovely」则会显示lovely的翻译。Alfred中字典配置如下：
+
+![alfred_dict_search](/img/alfred_dict_search.png)
+
+6. 退出某个应用程序，输入「quit 应用」。
+
+其他功能大部分需要购买`Powerpack`就不介绍了。
+
+
+
 ## CheatSheet的使用
 
 macos中快捷键特别多，有时记不住快捷键，安装CheatSheet后，可以通过长按⌘键查看当前软件的快捷键。
