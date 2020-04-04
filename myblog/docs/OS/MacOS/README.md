@@ -363,3 +363,244 @@ alias cblog='pushd ~/Documents/GitHub/vueblog/myblog && pwd'
 alias runblog='pushd ~/Documents/GitHub/vueblog/myblog && yarn docs:dev'
 ```
 
+## HTTP请求工具`HTTPie`
+
+- httpie是一个httpclient工具，能帮助我们快速的进行http请求，类似于`curl`，但是语法做了很多简写，比较友好。
+- 提供`http`命令，允许使用简单而自然的语法发送任意的 HTTP 请求，并会显示彩色的输出。
+- 官网地址[https://github.com/jakubroztocil/httpie](https://github.com/jakubroztocil/httpie)
+
+### HTTPie主要特点
+
+- 具表达力的和直观语法
+- 格式化的及彩色化的终端输出
+- 内置 JSON 支持
+- 表单和文件上传
+- HTTPS、代理和认证
+- 任意请求数据
+- 自定义头部
+- 持久化会话
+- 类似`wget`的下载
+- 完善的文档
+- 跨平台，支持Windows、Linux、MacOS
+
+### 安装
+
+```shell
+# MacOS
+$ brew install httpie
+
+# Debian, Ubuntu, etc.
+$ apt-get install httpie
+
+# Fedora
+$ dnf install httpie
+
+# CentOS, RHEL, ...
+$ yum install httpie
+
+# Arch Linux
+$ pacman -S httpie
+```
+
+### 使用
+
+- 查看版本信息
+
+```shell
+$ http --version                                                                                                                                                              
+2.0.0
+```
+
+- 查看帮助信息
+- 
+```shell
+$ http --help|head -n 15                                                                                                                                                      
+usage: http [--json] [--form] [--compress] [--pretty {all,colors,format,none}]
+            [--style STYLE] [--print WHAT] [--headers] [--body] [--verbose]
+            [--all] [--history-print WHAT] [--stream] [--output FILE]
+            [--download] [--continue]
+            [--session SESSION_NAME_OR_PATH | --session-read-only SESSION_NAME_OR_PATH]
+            [--auth USER[:PASS]] [--auth-type {basic,digest}] [--ignore-netrc]
+            [--offline] [--proxy PROTOCOL:PROXY_URL] [--follow]
+            [--max-redirects MAX_REDIRECTS] [--max-headers MAX_HEADERS]
+            [--timeout SECONDS] [--check-status] [--verify VERIFY]
+            [--ssl {ssl2.3,tls1,tls1.1,tls1.2}] [--cert CERT]
+            [--cert-key CERT_KEY] [--ignore-stdin] [--help] [--version]
+            [--traceback] [--default-scheme DEFAULT_SCHEME] [--debug]
+            [METHOD] URL [REQUEST_ITEM [REQUEST_ITEM ...]]
+
+HTTPie - a CLI, cURL-like tool for humans. <https://httpie.org>
+```
+
+帮助文档非常的详细，你可以仔细阅读一下。
+
+参考官方的示例：
+
+![httpie](/img/httpie.png)
+
+你可以尝试执行以下两个命令，查看他们的区别，你得到的显示结果与官网的示例结果会有部分差异。
+
+```shell
+# 使用curl发送请求
+$ curl -i -X PUT httpbin.org/put -H Content-Type:application/json -d '{"hello": "world"}'
+ 
+ # 使用HTTPie发送请求
+$ http PUT httpbin.org/bin hello=world
+```
+
+- 使用docker运行本地服务
+
+参考：[http://httpbin.org/](http://httpbin.org/)
+
+```shell
+# 启动httpbin容器，并把容器中端口80映射到宿主机的80端口，启动后在后台运行
+$ docker run -p 80:80 --name httpbin  -d kennethreitz/httpbin                                                                                                                 
+722e3a9c5338ad335a99d5b1d5882156367a1b9cad7cd13ece331dcafbd0e772
+
+# 查看正在运行的容器
+$ docker ps                                                                                                                                                                   
+CONTAINER ID        IMAGE                  COMMAND                  CREATED             STATUS              PORTS                NAMES
+722e3a9c5338        kennethreitz/httpbin   "gunicorn -b 0.0.0.0…"   5 seconds ago       Up 4 seconds        0.0.0.0:80->80/tcp   httpbin
+~
+```
+
+启动服务后，浏览器中打开`localhost`，可以看到如下效果图：
+
+![docker_local_httpbin](/img/docker_local_httpbin.png)
+
+
+- 发送GET请求
+
+```shell
+$ http localhost/get
+$ http GET localhost/get
+$ http http://localhost/get
+$ http :/get
+```
+上面几种方式都是向本地80端口的'/get'地址发送GET请求，返回结果相同：
+
+![httpie_GET](/img/httpie_GET.png)
+
+- 发送POST请求
+
+```shell
+$ $ http POST :/post name='http ie'           
+HTTP/1.1 200 OK
+Access-Control-Allow-Credentials: true
+Access-Control-Allow-Origin: *
+Connection: keep-alive
+Content-Length: 452
+Content-Type: application/json
+Date: Sat, 04 Apr 2020 15:17:09 GMT
+Server: gunicorn/19.9.0
+
+{
+    "args": {},
+    "data": "{\"name\": \"http ie\"}",
+    "files": {},
+    "form": {},
+    "headers": {
+        "Accept": "application/json, */*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "19",
+        "Content-Type": "application/json",
+        "Host": "localhost",
+        "User-Agent": "HTTPie/2.0.0"
+    },
+    "json": {
+        "name": "http ie"
+    },
+    "origin": "172.17.0.1",
+    "url": "http://localhost/post"
+}
+```
+发送POST请求，返回结果如下：
+
+![httpie_POST](/img/httpie_POST.png)
+
+
+- 发送PUT请求
+
+```shell
+$ http PUT :/put X-API-Token:123 name=John                                                                                                                   [23:17:17]
+HTTP/1.1 200 OK
+Access-Control-Allow-Credentials: true
+Access-Control-Allow-Origin: *
+Connection: keep-alive
+Content-Length: 472
+Content-Type: application/json
+Date: Sat, 04 Apr 2020 15:21:12 GMT
+Server: gunicorn/19.9.0
+
+{
+    "args": {},
+    "data": "{\"name\": \"John\"}",
+    "files": {},
+    "form": {},
+    "headers": {
+        "Accept": "application/json, */*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "16",
+        "Content-Type": "application/json",
+        "Host": "localhost",
+        "User-Agent": "HTTPie/2.0.0",
+        "X-Api-Token": "123"
+    },
+    "json": {
+        "name": "John"
+    },
+    "origin": "172.17.0.1",
+    "url": "http://localhost/put"
+}
+```
+
+- 下载文件
+
+如从github上面下载用户图像：
+
+```shell
+$ http --download https://avatars0.githubusercontent.com/u/18098773\?s\=40\&u\=399293cf8c7a5843e96204c625a85a8eddd3bc00\&v\=4
+HTTP/1.1 200 OK
+Accept-Ranges: bytes
+Access-Control-Allow-Origin: *
+Cache-Control: max-age=300
+Connection: keep-alive
+Content-Length: 3355
+Content-Security-Policy: default-src 'none'
+Content-Type: image/png
+Date: Sat, 04 Apr 2020 15:33:28 GMT
+Etag: "cf1a33071c6ac7cae4a545d5cd6439999452268e"
+Expires: Sat, 04 Apr 2020 15:38:28 GMT
+Last-Modified: Fri, 02 Nov 2018 01:47:05 GMT
+Source-Age: 1516927
+Strict-Transport-Security: max-age=31557600
+Timing-Allow-Origin: https://github.com
+Vary: Authorization,Accept-Encoding
+Via: 1.1 varnish
+X-Cache: HIT
+X-Cache-Hits: 1
+X-Content-Type-Options: nosniff
+X-Fastly-Request-ID: 228d3d1347cc3d66ab7ef431f3ddd832e95763dd
+X-Frame-Options: deny
+X-GitHub-Request-Id: 3DCE:7592:11ABE:14A9D:5E718348
+X-Served-By: cache-tyo19938-TYO
+X-Timer: S1586014409.640497,VS0,VE1
+X-Xss-Protection: 1; mode=block
+
+Downloading 3.28 kB to "18098773.png"
+Done. 3.28 kB in 0.00093s (3.44 MB/s)
+```
+
+官网上面有非常多的示例，你可以尝试一下。
+
+
+
+
+
+
+
+
+
+

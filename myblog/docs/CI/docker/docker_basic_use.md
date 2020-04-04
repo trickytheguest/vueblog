@@ -139,6 +139,7 @@ $ cat ~/.docker/daemon.json
 在Linux系统上面对应的配置文件为`/etc/docker/daemon.json`。
 :::
 
+配置了国内镜像站后，你后续使用`docker pull`下载docker镜像时，可以明显发现速度快多了。
 
 ## 搜索docker镜像
 
