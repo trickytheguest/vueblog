@@ -412,7 +412,7 @@ $ http --version
 ```
 
 - 查看帮助信息
-- 
+
 ```shell
 $ http --help|head -n 15                                                                                                                                                      
 usage: http [--json] [--form] [--compress] [--pretty {all,colors,format,none}]
@@ -593,7 +593,9 @@ Downloading 3.28 kB to "18098773.png"
 Done. 3.28 kB in 0.00093s (3.44 MB/s)
 ```
 
-官网上面有非常多的示例，你可以尝试一下。
+官网和[HTTPie：替代 Curl 和 Wget 的现代 HTTP 命令行客户端](https://linux.cn/article-10765-1.html)上面有非常多的示例，你可以尝试一下。
+
+
 
 
 
