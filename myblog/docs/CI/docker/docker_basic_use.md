@@ -45,6 +45,99 @@ Server: Docker Engine - Community
 
 从docker官网上面下载镜像时，由于网络原因，下载速度非常慢，还有可能下载失败，因此安装完docker后就应马上配置docker的国内镜像站。
 
+可以参考[Docker 镜像加速](https://www.runoob.com/docker/docker-mirror-acceleration.html) 配置docker的国内镜像。
+
+在任务栏点击`Docker Desktop`应用图标，打开`Perferences`个人设置，切换到`Docker Engine`标签页，可以看到默认的配置：
+
+![docker_setting_default](/img/docker_setting_default.png)
+
+我们在这个配置文件中添加镜像的配置，配置内容如下：
+
+```
+{
+  "debug": true,
+  "experimental": false,
+  "registry-mirrors":["https://docker.mirrors.ustc.edu.cn","https://hub-mirror.c.163.com","http://f1361db2.m.daocloud.io"]
+}
+```
+
+![docker_add_registry_mirrors](/img/docker_add_registry_mirrors.png) 
+
+添加完成后，点击「Apple & Restart」应用并重启后，再看看docker的镜像信息：
+
+```shell
+$ docker info                                                                                                                                                                 [21:35:47]
+Client:
+ Debug Mode: false
+
+Server:
+ Containers: 1
+  Running: 0
+  Paused: 0
+  Stopped: 1
+ Images: 1
+ Server Version: 19.03.5
+ Storage Driver: overlay2
+  Backing Filesystem: extfs
+  Supports d_type: true
+  Native Overlay Diff: true
+ Logging Driver: json-file
+ Cgroup Driver: cgroupfs
+ Plugins:
+  Volume: local
+  Network: bridge host ipvlan macvlan null overlay
+  Log: awslogs fluentd gcplogs gelf journald json-file local logentries splunk syslog
+ Swarm: inactive
+ Runtimes: runc
+ Default Runtime: runc
+ Init Binary: docker-init
+ containerd version: b34a5c8af56e510852c35414db4c1f4fa6172339
+ runc version: 3e425f80a8c931f88e6d94a8c831b9d5aa481657
+ init version: fec3683
+ Security Options:
+  seccomp
+   Profile: default
+ Kernel Version: 4.19.76-linuxkit
+ Operating System: Docker Desktop
+ OSType: linux
+ Architecture: x86_64
+ CPUs: 4
+ Total Memory: 1.943GiB
+ Name: docker-desktop
+ ID: N5AI:K2A5:6S6U:QOC2:2ZIZ:ASKA:ER7V:BNOO:5ETC:LFXJ:LETZ:JDD5
+ Docker Root Dir: /var/lib/docker
+ Debug Mode: true
+  File Descriptors: 34
+  Goroutines: 50
+  System Time: 2020-04-04T13:35:53.638116731Z
+  EventsListeners: 3
+ HTTP Proxy: gateway.docker.internal:3128
+ HTTPS Proxy: gateway.docker.internal:3129
+ Registry: https://index.docker.io/v1/
+ Labels:
+ Experimental: false
+ Insecure Registries:
+  127.0.0.0/8
+ Registry Mirrors:
+  https://docker.mirrors.ustc.edu.cn/
+  https://hub-mirror.c.163.com/
+  http://f1361db2.m.daocloud.io/
+ Live Restore Enabled: false
+ Product License: Community Engine
+```
+
+可以看到`Registry Mirrors`处已经显示了三个国内的镜像站地址，说明已经生效了。
+
+:::tip 提示
+你也可以直接修改docker的配置文件，配置文件位置为`~/.docker/daemon.json `。
+
+```shell
+$ cat ~/.docker/daemon.json
+{"debug":true,"experimental":false,"registry-mirrors":["https://docker.mirrors.ustc.edu.cn","https://hub-mirror.c.163.com","http://f1361db2.m.daocloud.io"]}
+```
+
+在Linux系统上面对应的配置文件为`/etc/docker/daemon.json`。
+:::
 
 
 ## 搜索docker镜像
