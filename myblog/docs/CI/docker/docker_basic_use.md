@@ -2,6 +2,12 @@
 
 [[toc]]
 
+## 安装docker
+
+如果你配置了`Homebrew`工具的话，使用`brew cask install docker`就可以快速安装docker桌面工具。
+
+或者从docker官网[https://www.docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop)下载安装包安装。
+
 ## 查看docker版本信息
 
 ```shell
@@ -34,6 +40,12 @@ Server: Docker Engine - Community
   Version:          0.18.0
   GitCommit:        fec3683
 ```
+
+## 配置docker国内镜像
+
+从docker官网上面下载镜像时，由于网络原因，下载速度非常慢，还有可能下载失败，因此安装完docker后就应马上配置docker的国内镜像站。
+
+
 
 ## 搜索docker镜像
 
