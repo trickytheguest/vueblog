@@ -96,6 +96,10 @@ module.exports = [{
                 text: '关于博客',
                 link: '/about/blog/'
             },
+            {
+                text: '好用的工具',
+                link: '/about/tools/'
+            },
         ]
     },
 ]
