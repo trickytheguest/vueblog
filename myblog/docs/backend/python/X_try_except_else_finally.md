@@ -298,7 +298,7 @@ expt2(4,0)
 
 - 示例3
 
-联合else和finally一起使用，修改脚本文件:
+联合`else`和`finally`一起使用，修改脚本文件:
 
 ```python
 # Filename: try_except_else_finally.py
@@ -327,14 +327,14 @@ No exception
 always display
 ```
 
-没有异常正常运行，打印出4/2的值为2.0,因为没有异常，except语句不会被执行，但else语句会被执行，所有会打印出"No exception"，另外finally语句一直会被执行，所以"always display"会被打印出来。
+没有异常正常运行，打印出4/2的值为2.0,因为没有异常，`except`语句不会被执行，但`else`语句会被执行，所有会打印出"`No exception`"，另外`finally`语句一直会被执行，所以"`always display`"会被打印出来。
 
-## 异常中的return语句
+## 异常中的`return`语句
 
 
-如果在异常处理时指定return语句，会出现什么效果。
+如果在异常处理时指定`return`语句，会出现什么效果。
 
-- 没有异常,且没有设置return
+- 没有异常,且没有设置`return`
 
 示例4:
 
@@ -374,9 +374,9 @@ always display
 return_string:None
 ```
 
-因为没有指定return语句，返回的是隐式返回值None。
+因为没有指定`return`语句，返回的是隐式返回值`None`。
 
-- 没有异常,且try中设置return
+- 没有异常,且`try`中设置`return`
 
 示例5:
 
@@ -414,9 +414,9 @@ No exception
 return_string:try
 ```
 
-仅在try中有return时，没有异常的情况下，会返回try中的返回值"try"。
+仅在`try`中有`return`时，没有异常的情况下，会返回`try`中的返回值"`try`"。
 
-- 没有异常，在try,except,else,finally中都有return语句
+- 没有异常，在`try`,`except`,`else`,`finally`中都有`return`语句
 
 示例6:
 
@@ -455,9 +455,9 @@ always display
 return_string:finally
 ```
 
-在try,except,else,finally中都有return语句时，会返回finally中的返回值"finally"，并且except,else语句不会被执行,try中的return语句不起作用。
+没有异常，在`try`,`except`,`else`,`finally`中都有`return`语句时，会返回`finally`中的返回值"`finally`"，并且`except`,`else`语句不会被执行,`try`中的`return`语句不起作用。
 
-- 没有异常，在except,else,finally中有return语句
+- 没有异常，在`except`,`else`,`finally`中有`return`语句
 
 示例7:
 
@@ -497,9 +497,9 @@ always display
 return_string:finally
 ```
 
-此时，except被忽略，else语句被执行，打印出"No exception"，但最后的返回值还是finally语句中的返回值"finally"。
+此时，没有异常，`except`被忽略，`else`语句被执行，打印出"`No exception`"，但最后的返回值还是`finally`语句中的返回值"`finally`"。
 
-- 没有异常，在except,else中有return语句
+- 没有异常，在`except`,`else`中有`return`语句
 
 示例8:
 
@@ -540,9 +540,9 @@ always display
 return_string:else
 ```
 
-没有异常，在except和else中有return时，会将return中的返回值"else"作为函数的返回值。
+没有异常，在`except`和`else`中有`return`时，会将`return`中的返回值"`else`"作为函数的返回值。
 
-- 有异常，在try,except,else,finally中都有return语句
+- 有异常，在`try`,`except`,`else`,`finally`中都有`return`语句
 
 示例9:
 
@@ -581,9 +581,9 @@ always display
 return_string:finally
 ```
 
-有异常，else不会被执行，except语句会执行，由于最后finally有return语句，最后返回值是finally语句中的"finally"。
+有异常，`else`不会被执行，`except`语句会执行，由于最后`finally`有`return`语句，最后返回值是`finally`语句中的"`finally`"。
 
-- 有异常，在try,except,else中都有return语句
+- 有异常，在`try`,`except`,`else`中都有`return`语句
 
 示例10:
 
@@ -622,28 +622,28 @@ always display
 return_string:exceptZero
 ```
 
-有异常，由于finally语句没有return语句，try有异常，不会执行try代码块中的return语句，执行except语句，返回值是除零异常中的"exceptZero"。
+有异常，由于`finally`语句没有`return`语句，`try`有异常，不会执行`try`代码块中的`return`语句，执行`except`语句，返回值是除零异常中的"`exceptZero`"。
 
 总结：
 
-1. try中有return语句时，会阻止else语句的执行，并不影响finally语句的执行。
-1. try中没有return语句时，如果try中没有异常，except语句会被跳过，执行else语句。
-1. 在含有return的情况下，并不会阻碍finally语句的执行。
-1. 在try和finally中都有return时，无论有没有异常，finally语句会修改最后的返回值。
-1. 在finally中没有return语句时，try,except,else中有return语句，没有异常时，else中返回值作为最终返回值;有异常时，except中返回值作为最终返回值。
-1. 如果没有异常发生，try中有return 语句，这个时候else块中的代码是没有办法执行到的，但是finally语句中如果有return语句会修改最终的返回值，我个人理解的是try中return语句先将要返回的值放在某个CPU寄存器，然后运行finally语句的时候修改了这个寄存器的值，最后在返回到try中的return语句返回修改后的值。
-1. 如果有异常发生，try中的return语句肯定是执行不到，在捕获异常的except语句中，如果存在return语句，那么也要先执行finally的代码，finally里面的代码会修改最终的返回值，然后在从except块的return语句返回最终修改的返回值， 和第5条一致。
+1. `try`中有`return`语句时，会阻止`else`语句的执行，并不影响`finally`语句的执行。
+1. `try`中没有`return`语句时，如果`try`中没有异常，`except`语句会被跳过，执行`else`语句。
+1. 在含有`return`的情况下，并不会阻碍`finally`语句的执行。
+1. 在`try`和`finally`中都有`return`时，无论有没有异常，`finally`语句会修改最后的返回值。
+1. 在`finally`中没有`return`语句时，`try`,except,`else`中有`return`语句，没有异常时，`else`中返回值作为最终返回值;有异常时，`except`中返回值作为最终返回值。
+1. 如果没有异常发生，`try`中有`return` 语句，这个时候`else`块中的代码是没有办法执行到的，但是`finally`语句中如果有`return`语句会修改最终的返回值，我个人理解的是`try`中`return`语句先将要返回的值放在某个CPU寄存器，然后运行`finally`语句的时候修改了这个寄存器的值，最后在返回到`try`中的`return`语句返回修改后的值。
+1. 如果有异常发生，`try`中的`return`语句肯定是执行不到，在捕获异常的`except`语句中，如果存在`return`语句，那么也要先执行`finally`的代码，`finally`里面的代码会修改最终的返回值，然后在从`except`块的`return`语句返回最终修改的返回值， 和第5条一致。
 
-以上总结可以看在使用try进行异常捕获处理时，return语句的处理相当麻烦。总结以下三点:
+以上总结可以看在使用`try`进行异常捕获处理时，`return`语句的处理相当麻烦。总结以下三点:
 
-- 不要在try,except,else里面写返回值，如果没有finally语句，就在最后面写return语句，或者将return语句写在finally中。
-- try,except,else里面是做某事，不处理返回值。
-- 在try中的代码尽可能的少，减少异常出现的可能性。
+- 不要在`try`,`except`,`else`里面写返回值，如果没有`finally`语句，就在最后面写`return`语句，或者将`return`语句写在`finally`中。
+- `try`,`except`,`else`里面是做某事，不处理返回值。
+- 在`try`中的代码尽可能的少，减少异常出现的可能性。
 
-## raise手动抛出异常
+## `raise`手动抛出异常
 
 
-使用raise语句手动抛出异常：
+使用`raise`语句手动抛出异常：
 
 - `raise ExceptionErrorName`   # 抛出ExceptionErrorName异常
 - `raise ExceptionErrorName('info') `  # 抛出ExceptionErrorName异常,提供额外的异常信息info
@@ -680,9 +680,9 @@ ZeroDivisionError: 除零异常
 
 
 - 用户可以自己定义一个Python中没有涉及的异常。
-- 自定义异常必须直接或间接的继承Exception类。
-- 自定义异常按照命名规范以"Error"结尾，显式地告诉用户这是异常。
-- 自定义异常只能使用raise方式手动抛出。
+- 自定义异常必须直接或间接的继承`Exception`类。
+- 自定义异常按照命名规范以"`Error`"结尾，显式地告诉用户这是异常。
+- 自定义异常只能使用`raise`方式手动抛出。
 
 我们定义一个网络异常的自定义异常:
 
@@ -713,8 +713,8 @@ NetworkError: Unknow host:python.org
 
 说明：
 
-- 自定义异常类NetworkError继承RuntimeError,而从内置异常图中可以看RuntimeError继承Exception，因此NetworkError是间接继承Exception类的。
-- 使用raise手动抛出NetworkError异常，并在except中捕获，并打印出异常的信息。
+- 自定义异常类`NetworkError`继承`RuntimeError`,而从内置异常图中可以看`RuntimeError`继承`Exception`，因此`NetworkError`是间接继承`Exception`类的。
+- 使用`raise`手动抛出`NetworkError`异常，并在`except`中捕获，并打印出异常的信息。
 
 
 参考文献:
