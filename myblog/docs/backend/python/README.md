@@ -8,4 +8,5 @@
 7. [内建数据组构](./X_built-in_data_structure.html)
 8. [Python的控制流](./X_control_workflow.html)
 9. [函数](./X_function.html)
+10. [装饰器](./X_decorator.html)
 1. [Python代码检查](./X_Python_style_and_static_check.html) 
