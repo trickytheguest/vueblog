@@ -8,9 +8,9 @@
 
 - 函数是重用的程序段。允许给一个语块一个名称，然后在别的位置调用这个函数。
 - 代码复用的第一步是使用函数，它是命名的用于区分的代码段。
-- 函数通过def关键字定义。
+- 函数通过`def`关键字定义。
 - 函数命名必须使用下划线_或字母开头，仅能有字母，数字和下划线,建议使用小写字母和下划线构建函数名。
-- 如果函数不显示调用return函数，那么默认会返回None。
+- 如果函数不显示调用`return`函数，那么默认会返回`None`。
 
 
 
@@ -148,7 +148,9 @@ print_love_lang('mei')
 # 进程已结束,退出代码1
 ```
 
-**注：示例中函数print_love_lang定义了两个参数name和lang，下面调用时print_love_lang('mei','Python')指定了两个参数，'mei'传递给参数name，'Python'传递给参数lang，可以正常打印出结果。而print_love_lang('mei')却只传递了一个参数，提示缺少一个位置参数'lang'。**
+::: tip 说明
+注：示例中函数print_love_lang定义了两个参数name和lang，下面调用时print_love_lang('mei','Python')指定了两个参数，'mei'传递给参数name，'Python'传递给参数lang，可以正常打印出结果。而print_love_lang('mei')却只传递了一个参数，提示缺少一个位置参数'lang'。
+:::
 
 ## 关键字参数
 
@@ -197,7 +199,7 @@ print_love_lang(year=7,name='mei',lang='Python')  # 按关键参数进行依次�
 - 必须先声明无默认值的参数，再声明有默认值的参数。
 - 默认参数值在函数定义时已经计算出来，而不是在程序运行时。Python程序员经常犯的一个错误是把可变的数据类型(如列表或字典)当作默认的参数值。
 
-默认值的定义方式为parameter=default_value，参见如下示例:
+默认值的定义方式为`parameter=default_value`，参见如下示例:
 
 ```python
 # 定义print_message函数
@@ -255,20 +257,24 @@ In [4]: testerr('c')
 ['c']
 ```
 
+::: warning 危险
+不要将可变参数作为函数的参数默认值。
+:::
+
 ## 可变参数
 
 
-- 可变参数也就是在函数中接收元组(tuple)和字典(dict)
-- 普通函数中的用法：def function_name(\*args, \*\*kwargs):
-- 类函数中的用法：def method_name(self, \*args, \*\*kwargs):
-- 当参数的个数不确定时，可以使用*args或**kwargs来接收参数组成的元组或字典
-- 使用*收集位置参数，使用**收集关键字参数
-- 元组存储在args中，字典存储在kwargs中
-- \*args是可变的positional arguments列表组成的元组
-- \*\*kwargs是可变的keyword arguments列表组成的字典
-- \*args必须位于\*\*kwargs之前，位置参数必须位于关键字参数前
-- 参数顺序：位置参数、默认参数、\*args、\**\kwargs
-- \*或\*\*后面的关键字名称随意，不必非要使用args或kwargs，如\*name,\*\*lang等都可以
+- 可变参数也就是在函数中接收元组(`tuple`)和字典(`dict`)
+- 普通函数中的用法：`def function_name(*args, **kwargs):`
+- 类函数中的用法：`def method_name(self, *args, **kwargs):`
+- 当参数的个数不确定时，可以使用`*args`或`**kwargs`来接收参数组成的元组或字典
+- 使用`*`收集位置参数，使用`**`收集关键字参数
+- 元组存储在`args`中，字典存储在`kwargs`中
+- `*args`是可变的`positional arguments`列表组成的元组
+- `**kwargs`是可变的`keyword arguments`列表组成的字典
+- `*args`必须位于`**kwargs`之前，位置参数必须位于关键字参数前
+- 参数顺序：位置参数、默认参数、`*args`、`**kwargs`
+- `*`或`**`后面的关键字名称随意，不必非要使用`args`或`kwargs`，如`*name`,`**lang`等都可以
 
 参见如下示例:
 
@@ -298,10 +304,10 @@ print_love_lang(1, 2, 3, name='mei', lang='Python')
 ## 解包裹(unpack)参数
 
 
-- \*args和\*\*kwargs语法不仅可以在函数定义中使用，同样可以在函数调用的时候使用。
-- 不同的是，如果说在函数定义的位置使用*args和**kwargs是一个将参数pack(包裹)的过程，
+- `*args`和`**kwargs`语法不仅可以在函数定义中使用，同样可以在函数调用的时候使用。
+- 不同的是，如果说在函数定义的位置使用`*args`和`**kwargs`是一个将参数pack(包裹)的过程，
 - 那么在函数调用的时候就是一个将参数unpack(解包裹)的过程了。
-- 解包裹时，dict中定义的key值必须与函数中定义的参数值相同、且参数个数相同，key的顺序不必保持与函数定义时的一致。
+- 解包裹时，`dict`中定义的key值必须与函数中定义的参数值相同、且参数个数相同，key的顺序不必保持与函数定义时的一致。
 
 下面使用一个例子来加深理解:
 
@@ -348,15 +354,17 @@ test_args(**kwargs)
 ## 文档字符串DocStrings
 
 
-- 程序的可读性很重要，建议在函数体开始的部分附上函数定义说明的文档，这就是 *文档字符串*
-- 文档字符串DocStrings使用三引号包裹起来
-- 文档字符串DocStrings的惯例是一个多行字符串，有以下规范::
+- 程序的可读性很重要，建议在函数体开始的部分附上函数定义说明的文档，这就是 `文档字符串`
+- 文档字符串`DocStrings`使用`三引号`包裹起来
+- 文档字符串`DocStrings`的惯例是一个多行字符串，有以下规范:
 
+```
 首行以大写字母开头，句号结尾
 第二行空行
 从第三行开始是详细的描述
+```
 
-- 可以使用__doc__ 调用函数的文档字符串。
+- 可以使用`__doc__`调用函数的文档字符串。
 
 如下所示:
 
@@ -388,10 +396,10 @@ print(print_love_lang.__doc__)
 ## return语句
 
 
-- return语句用来从一个函数返回，即跳出函数。return语句也可以返回一个值。
-- 没有返回值的return语句等价于 *return None* 。
-- None是python中表示没有任何东西的特殊类型。
-- 如果函数结尾未提供return语句，python会给函数结尾暗含一个return None语句。
+- `return`语句用来从一个函数返回，即跳出函数。`return`语句也可以返回一个值。
+- 没有返回值的`return`语句等价于 `return None` 。
+- `None`是python中表示没有任何东西的特殊类型。
+- 如果函数结尾未提供`return`语句，python会给函数结尾暗含一个`return None`语句。
 
 参见如下示例:
 
@@ -410,7 +418,7 @@ print("return is:{}".format(result))
 # return is:nice
 ```
 
-不指定return返回值:
+不指定`return`返回值:
 
 ```python
 def print_love_lang(name, lang, year=3):
@@ -431,7 +439,7 @@ print("return is:{}".format(result))
 
 - `None`是Python中一个特殊的值，不表示任何数据。
 - `None`作为布尔值时与`False`是一样的，但其与`False`有很多差别。
-- 0值的整型/浮点型、空符符串('')、空列表([])、空元组(())、空字典({})、空集合(set())都等价于False，但不等于None。
+- `0`值的整型/浮点型、空符符串(`''`)、空列表(`[]`)、空元组(`()`)、空字典(`{}`)、空集合(`set()`)都等价于`False`，但不等于`None`。
 
 详细看以下示例:
 
@@ -507,8 +515,8 @@ Out[2]: 11
 ## 函数闭包
 
 
-- 内部函数可以看作是一个 *闭包* 。
-- *闭包* 是一个可以由另一个函数动态生成的函数，并且可以改变和存储函数外创建的变量的值。
+- 内部函数可以看作是一个 `闭包` 。
+- `闭包` 是一个可以由另一个函数动态生成的函数，并且可以改变和存储函数外创建的变量的值。
 
 示例:
 
@@ -565,10 +573,10 @@ Python中非常重要的函数装饰器，后面单独分章节讲解。
 
 - 一个名称在不同的使用情况下可能指代不同的事物。Python程序有各种各样的 *命名空间* ,它指的是在该程序段内一个特定的名称是独一无二的，它和其他同名的命名空间是无关的。
 - 每一个函数定义自己的命名空间。
-- 每个程序的主要部分定义了全局命名空间，在这个命名空间的变量是全局变量，全局变量推荐使用大写字母或下划线组成的字符作为变量名GLOBAL_VAR_NAME，比如：LOVE_LANG = 'Python'。
-- 在函数内部定义的变量是局部变量，推荐使用小写字母或下划线组成的字符作为变量名local_var_name，比如：this_is_a_variable = 1。
-- locals()函数返回局部命名空间内容的字典。
-- globals()函数返回全局命名空间内容的字典。
+- 每个程序的主要部分定义了全局命名空间，在这个命名空间的变量是全局变量，全局变量推荐使用大写字母或下划线组成的字符作为变量名GLOBAL_VAR_NAME，比如：`LOVE_LANG = 'Python'`。
+- 在函数内部定义的变量是局部变量，推荐使用小写字母或下划线组成的字符作为变量名local_var_name，比如：`this_is_a_variable = 1`。
+- `locals()`函数返回局部命名空间内容的字典。
+- `globals()`函数返回全局命名空间内容的字典。
 
 示例:
 
@@ -589,7 +597,7 @@ print('locals_after:', locals())
 print('globals_after:', globals())
 ```
    
-使用python3 locals_globals.py运行:
+使用`python3 locals_globals.py`运行:
 
 ```python
 [meizhaohui@localhost ~]$ python3 locals_globals.py 
@@ -603,12 +611,12 @@ globals_after: {'change_lang': <function change_lang at 0x7f67f611a048>, '__load
 
 对比函数执行前后的差异：
 
-.. image:: ./_static/images/locals_globals.png
+![locals_globals.png](/img/locals_globals.png)
 
 - 发现仅LOVE_LANG变量仅不一样，在执行函数change_lang后，LOVE_LANG从Python变成了GO。
 - 在执行函数change_lang前，locals和global获取的值是一样的。
 - 在执行函数change_lang时，locals只能获取到函数中的变量 {'author': 'Guido van Rossum'}。
-- 如果要在函数内修改全局变量值，需要先使用global LOVE_LANG 这样的方法定义全局变量。再进行赋值修改。
+- 如果要在函数内修改全局变量值，需要先使用`global LOVE_LANG`这样的方法定义全局变量。再进行赋值修改。
 
 
 参考文献:
