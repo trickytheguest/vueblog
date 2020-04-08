@@ -9,4 +9,5 @@
 8. [Python的控制流](./X_control_workflow.html)
 9. [函数](./X_function.html)
 10. [装饰器](./X_decorator.html)
+11. [异常](./X_try_except_else_finally.html)
 1. [Python代码检查](./X_Python_style_and_static_check.html) 
