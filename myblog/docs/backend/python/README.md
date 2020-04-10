@@ -12,4 +12,5 @@
 11. [异常](./X_try_except_else_finally.html)
 12. [模块-sys模块](./X_system_module.html)
 13. [模块-os模块](./X_os_module.html)
+14. [python字符串处理](./X_str.html)
 1. [Python代码检查](./X_Python_style_and_static_check.html) 
