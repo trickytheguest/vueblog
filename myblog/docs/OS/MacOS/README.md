@@ -51,6 +51,7 @@
 - cmd+r 刷新refresh
 - cmd+shift+3 截取整个屏幕
 - cmd+shift+4 截取选择区域
+-  cmd+shift+6 截取触控条
 - fn+left 到顶部home
 - fn+right 到底部end
 - fn+up 上一页pageup
@@ -610,6 +611,11 @@ Done. 3.28 kB in 0.00093s (3.44 MB/s)
 我的触控条自定义后显示如下图所示：
 
 ![touchbar_display](/img/touchbar_display.png)
+
+::: tip 提示
+此处使用`cmd+shift+6`截取触控条图像。
+:::
+
 
 我的配置文件如下：
 
