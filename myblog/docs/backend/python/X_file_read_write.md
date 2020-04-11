@@ -317,13 +317,13 @@ with open('D:\\test1.txt',mode='a+',encoding='utf-8') as file1:
 - csv模块可以读取EXCEL数据和写入数据到EXCEL文件。
 - csv模块 `read` 和 `writer` 对象可以写读序列。
 - csv模块 `DictReader` 和 `DictWriter` 类可以读写字典形式的数据。
-- csvwriter_object.writerows(rows)将rows对象的所有元素写入文件，相当于一次写入多行到文件。
-- csvwriter_object.writerow(row)将row参数的元素写入文件，相当于写入一行到文件。
-- csvwriter_object.writeheader()将构建方法中定义的字段名称写入到文件中作为CSV文件的表头。
-- csv.reader(csvfile)读取csv文件数据。
-- 使用reader()和write()的默认操作中，每一列使用逗号分开，每一行使用换行符分开。
-- csv.DictReader(f, fieldnames=None, restkey=None, restval=None, dialect='excel', \*args, \*\*kwds)以字典作为元素时，可以指定 `fieldnames` 参数，表明字典中字段的名称， `fieldnames` 为sequence序列，`restkey` 参数表示当指定的字段数少于csv文件的列数时剩余的数据的列名， `restval` 参数表示当指定的字段数多于csv文件的列名数时，多出的字段自动插入的值。
-- csv.DictWriter(f, fieldnames, restval='', extrasaction='raise', dialect='excel', \*args, \*\*kwds)将字典列表写入到CSV文件中，``fieldnames`` sequuence序列必须指定, ``restval`` 参数用于当指定的字段数多于字典列表的键总数时自动填充的值， ``extrasaction`` 参数用于指定当字典列表的键总数超过 ``fieldnames`` 定义的字段总数时的行为，默认引发 ``ValueError`` 异常,也可以指定为 ``extrasaction='ignore'`` 表示忽略字典中的额外值。 
+- `csvwriter_object.writerows(rows)`将rows对象的所有元素写入文件，相当于一次写入多行到文件。
+- `csvwriter_object.writerow(row)`将row参数的元素写入文件，相当于写入一行到文件。
+- `csvwriter_object.writeheader()`将构建方法中定义的字段名称写入到文件中作为CSV文件的表头。
+- `csv.reader(csvfile)`读取csv文件数据。
+- 使用`reader()`和`write()`的默认操作中，每一列使用逗号分开，每一行使用换行符分开。
+- `csv.DictReader(f, fieldnames=None, restkey=None, restval=None, dialect='excel', *args, **kwds)`以字典作为元素时，可以指定 `fieldnames` 参数，表明字典中字段的名称， `fieldnames` 为sequence序列，`restkey` 参数表示当指定的字段数少于csv文件的列数时剩余的数据的列名， `restval` 参数表示当指定的字段数多于csv文件的列名数时，多出的字段自动插入的值。
+- `csv.DictWriter(f, fieldnames, restval='', extrasaction='raise', dialect='excel', *args, **kwds)`将字典列表写入到CSV文件中，``fieldnames`` sequuence序列必须指定, ``restval`` 参数用于当指定的字段数多于字典列表的键总数时自动填充的值， ``extrasaction`` 参数用于指定当字典列表的键总数超过 ``fieldnames`` 定义的字段总数时的行为，默认引发 ``ValueError`` 异常,也可以指定为 ``extrasaction='ignore'`` 表示忽略字典中的额外值。 
 
 csv模块的方法或属性:
 
@@ -553,7 +553,7 @@ Out[24]:
 
 说明:由于指定了5个字段名，并且指定了 `restval` 参数为'autoinsert',而csv文件中只的4列，因此第5个字段'fifth'会被自动指定值为'autoinsert'值。
 
-示例9, 使用DictWriter()重写CSV文件:
+示例9, 使用`DictWriter()`重写CSV文件:
 
 ```python
 In [25]: data_dict_list                                                                                                                
@@ -583,7 +583,7 @@ In [26]: with open('other.csv','wt') as fout:
 说明：发现此时只是将数据写入，但没有写入表头数据。
 
 
-示例10, 使用DictWriter()重写CSV文件,并使用 ``dictwriter_object.writeheader()``  写入表头数据:
+示例10, 使用`DictWriter()`重写CSV文件,并使用 ``dictwriter_object.writeheader()``  写入表头数据:
 
 ```python
 In [27]: data_dict_list
@@ -841,14 +841,14 @@ In [45]: with open('format.csv', 'wt') as fout:
 ","|""""|"|"|"line2"
 ```
 
-说明：第二行中因为有字段中的字符是双引号，与quotechar字符相同，因此根据Dialect.doublequote的定义，需要两个quotechar引用“。
+说明：第二行中因为有字段中的字符是双引号，与`quotechar`字符相同，因此根据`Dialect.doublequote`的定义，需要两个`quotechar`引用“。
 
 其他的参数选项，可以参考上面介绍的 ``Dialect`` 进行自行测试。
 
 ## XML文件的读写
 
 
-- XML是一种标记(markup)格式，它使用标签(tag)分隔数据。
+- XML是一种标记(`markup`)格式，它使用标签(`tag`)分隔数据。
 - XML通常用于数据传送和消息。
 - XML包含的元素类型，标签`<tag>`。
 - XML包含的元素类型，属性`<tag name="attribute">`。
@@ -860,7 +860,7 @@ In [45]: with open('format.csv', 'wt') as fout:
 
 我们将使用以下XML文档(country_data.xml)作为本节的示例数据:
 
-```
+```xml
 <?xml version="1.0"?>
 <data>
     <country name="Liechtenstein">
@@ -886,7 +886,7 @@ In [45]: with open('format.csv', 'wt') as fout:
 </data>
 ```
 
-- ElementTree将整个XML文档表示为树，Element表示此树中的单个节点。
+- `ElementTree`将整个XML文档表示为树，`Element`表示此树中的单个节点。
 - 从XML文件中读取XML数据，用 ``ET.parse('file.xml')`` 解析xml文件，获取xml树，用 ``tree.getroot()`` 获取根节点，根节点是一个 ``Element`` 对象。
 
 从文件中读取XML数据:
@@ -982,7 +982,7 @@ In [18]: for neighbor in root.iter('neighbor'):
 {'direction': 'E', 'name': 'Colombia'}
 ```
 
-findall或find查找子元素:
+`findall`或`find`查找子元素:
 
 ```python
 In [19]: for country in root.findall('country'):
@@ -1046,7 +1046,7 @@ In [40]: tree.write('output.xml')
 新的output.xml文件内容如下:
 
 
-```
+```xml
 <data>
     <country name="Liechtenstein">
         <rank updated="yes">2</rank>
@@ -1073,7 +1073,7 @@ In [40]: tree.write('output.xml')
 
 可以发现第3,10,16行的rank节点已经修改成功。但输出文件中并没有 ``<?xml version="1.0"?>`` XML的版本声明。
 
-- ``tree.write('output.xml',encoding='utf-8',xml_declaration=True)`` 声明XML的版本为1.0，并指定用XML传递数据的时候的字符编码为utf-8。
+- ``tree.write('output.xml',encoding='utf-8',xml_declaration=True)`` 声明XML的版本为1.0，并指定用XML传递数据的时候的字符编码为`utf-8`。
 
 增加XML的版本声明，并设置编码格式:
 
@@ -1083,7 +1083,7 @@ In [41]: tree.write('output.xml',encoding='utf-8',xml_declaration=True)
 
 再查看output.xml文件的内容:
 
-```
+```xml
 <?xml version='1.0' encoding='utf-8'?>
 <data>
     <country name="Liechtenstein">
@@ -1129,7 +1129,7 @@ In [43]: tree.write('output.xml',encoding='utf-8',xml_declaration=True)
 
 再查看output.xml文件的内容:
 
-```
+```xml
 <?xml version='1.0' encoding='utf-8'?>
 <data>
     <country name="Liechtenstein">
@@ -1150,7 +1150,7 @@ In [43]: tree.write('output.xml',encoding='utf-8',xml_declaration=True)
 
 说明：虽然数据正常的写入到文件中，但最后的`</data>`标签缩进不正常，并没有与前面的`<data>`标签对齐。
 
-- 使用 `ET.SubElement((parent, tag, attrib={}, **extra)` 创建子节点Element对象。
+- 使用 `ET.SubElement((parent, tag, attrib={}, **extra)` 创建子节点`Element`对象。
 - 使用 `ET.dump(element)` 将一个Element对象打印到标准输出。这个函数只用来调试（一般不把结果打印到标准输出）。
 
 新增country子节点:
@@ -1212,7 +1212,7 @@ In [50]: tree.write('output.xml',encoding='utf-8',xml_declaration=True)
 
 再查看output.xml文件的内容:
 
-```
+```xml
 <?xml version='1.0' encoding='utf-8'?>
 <data>
     <country name="Liechtenstein">
@@ -1240,7 +1240,7 @@ In [50]: tree.write('output.xml',encoding='utf-8',xml_declaration=True)
 
 下面的存储有演员及其扮演的角色信息的XML文件(actors.xml)包含两种名称空间，一种是默认的名称空间，另一种是前缀为"fictional"的名称空间:
 
-```
+```xml
 <?xml version="1.0"?>
 <actors xmlns:fictional="http://characters.example.com"
         xmlns="http://people.example.com">
@@ -1451,13 +1451,11 @@ In [78]: root.findall(".//country[@other='other_attribute']")   # 使用XPath点
 Out[78]: [<Element 'country' at 0x0000026C6A3254F8>]
 ```
 
-更多xml.etree.ElementTree的介绍，请参考:
+- 更多`xml.etree.ElementTree`的介绍，请参考[xml.etree.ElementTree — The ElementTree XML API ](https://docs.python.org/3/library/xml.etree.elementtree.html)
 
-- [xml.etree.ElementTree — The ElementTree XML API ](https://docs.python.org/3/library/xml.etree.elementtree.html)
+- `xml.sax`解析XML可参考 [xml.sax — Support for SAX2 parsers](https://docs.python.org/3/library/xml.sax.html)
 
-- xml.sax解析XML可参考 【xml.sax — Support for SAX2 parsers](https://docs.python.org/3/library/xml.sax.html)
-
-- `xml.dom` 解析XML可参考【xml.dom — The Document Object Model API ](https://docs.python.org/3/library/xml.dom.html)
+- `xml.dom` 解析XML可参考[xml.dom — The Document Object Model API ](https://docs.python.org/3/library/xml.dom.html)
 
 - XML安全问题:  `defusedxml`修复了Python的XML库中的拒绝服务和其他漏洞，只需要用 `defusedxml`替换原来用的 `xml.etree`。
 
@@ -1536,7 +1534,7 @@ if __name__ == '__main__':
 
 data.xml文件内容如下:
 
-```
+```xml
 <?xml version="1.0"?>
 <data>
     <country name="Liechtenstein">
