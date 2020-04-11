@@ -723,6 +723,7 @@ Done. 3.28 kB in 0.00093s (3.44 MB/s)
 
 通过以上配置，并且设置Dock自动隐藏功能。后续通过触控条上面的图标可以快速的切换应用了，非常方便！
 
+参考：[使用’mtmr’定制TouchBar](https://www.dazhuanlan.com/2019/10/12/5da0c0ef35a35/)
 
 
 
