@@ -595,6 +595,135 @@ Done. 3.28 kB in 0.00093s (3.44 MB/s)
 
 官网和[HTTPie：替代 Curl 和 Wget 的现代 HTTP 命令行客户端](https://linux.cn/article-10765-1.html)上面有非常多的示例，你可以尝试一下。
 
+## 定制你的`Touch Bar`触控条
+
+首先，推荐一个工具`mtmr`，参考官网地址[https://github.com/Toxblh/MTMR](https://github.com/Toxblh/MTMR) .
+
+使用`mtmr`的初衷是想把`Dock`图标显示在触控条中，不用在屏幕中显示，这样可以增加屏幕的有效使用面积。刚好`mtmr`有这个功能!!!非常棒！👍
+
+你可以从这里[https://mtmr.app/](https://mtmr.app/)下载安装包。
+
+- `mtmr`全称是’`My TouchBar. My rules`‘，是一款可以让你自定义Touch Bar的工具。
+- 配置dock插件则可以显示正在运行的应用图标。
+- 点击`MT`应用图标，`⌘+,`打开设置，`mtmr`通过`items.json`配置文件保存设置。你可以官网示例修改默认的设置。
+
+我的触控条自定义后显示如下图所示：
+
+![touchbar_display](/img/touchbar_display.png)
+
+我的配置文件如下：
+
+```json
+[
+  {
+    "type": "escape",
+    "width": 60,
+    "align": "left",
+    "comment": "退出",
+    "background": "#FF0000",
+    "title": "Esc",
+    "bordered": false
+  },
+  {
+    "type": "dock",
+    "width": 400,
+    "align": "right",
+    "comment": "显示当前打开的应用，可以实现应用间的快速切换"
+  },
+  {
+    "type": "brightnessDown",
+    "width": 32,
+    "bordered": false,
+    "align": "left",
+    "comment": "调低亮度"
+  },
+  {
+    "type": "brightnessUp",
+    "width": 32,
+    "bordered": false,
+    "align": "left",
+    "comment": "调高亮度"
+  },
+  {
+    "type": "displaySleep",
+    "width": 40,
+    "align": "right",
+    "bordered": false,
+    "comment": "显示器休眠"
+  },
+  {
+    "type": "weather",
+    "align": "right",
+    "icon_type": "images",
+    "api_key": "ca93a0bb8cdb428552660d83249e4bc9",
+    "bordered": false,
+    "comment": "显示当前天气情况"
+  },
+  {
+    "type": "mute",
+    "width": 40,
+    "align": "right",
+    "comment": "静音"
+  },
+  {
+    "type": "volumeDown",
+    "bordered": false,
+    "align": "right",
+    "width": 28,
+    "comment": "调低音量"
+
+  },
+  {
+    "type": "volumeUp",
+    "bordered": false,
+    "align": "right",
+    "width": 28,
+    "comment": "调高音量"
+  },
+  {
+    "type": "previous",
+    "align": "right",
+    "width": 38,
+    "comment": "前一首"
+  },
+  {
+    "type": "play",
+    "align": "right",
+    "width": 38,
+    "comment": "播放、暂停"
+  },
+   {
+    "type": "next",
+    "align": "right",
+    "width": 38,
+    "comment": "后一首"
+  },
+  {
+    "type": "battery",
+    "align": "right",
+    "bordered": false,
+    "comment": "显示当前电量"
+  },
+  {
+    "type": "timeButton",
+    "formatTemplate": "HH:mm",
+    "align": "right",
+    "bordered": false,
+    "longAction": "shellScript",
+    "longExecutablePath": "/usr/bin/pmset",
+    "longShellArguments": [
+      "sleepnow"
+    ],
+    "comment": "显示当前时间，长按系统休眠"
+  }
+]
+```
+
+说明，`json`中的"comment"是我用作备注信息的，默认没有此字段。
+
+通过以上配置，并且设置Dock自动隐藏功能。后续通过触控条上面的图标可以快速的切换应用了，非常方便！
+
+
 
 
 
