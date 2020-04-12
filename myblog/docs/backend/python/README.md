@@ -16,4 +16,5 @@
 15. [模块-itertools模块迭代器函数](X_itertools_module.html)
 16. [文件的读写](./X_file_read_write.html)
 17. [常用内建模块Collections模块的使用](./X_collections_module.html)
+18. [常用内建模块之正则表达式re模块](./X_re_module.html)
 1. [Python代码检查](./X_Python_style_and_static_check.html) 
