@@ -666,7 +666,7 @@ In [2]: sqlalchemy.__version__
 Out[2]: '1.3.2'
 ```
 
-### 使用 ``create_engine()`` 连接数据库
+### 使用`create_engine()`连接数据库
 - `echo=True`参数表明开启`SQLAlchemy`日志记录，启用后会生成所有SQL语句。
 - `create_engine()`的返回值是`Engine`的一个实例，它表示数据库的核心接口，使用不同的数据库处理模块处理的`dialect`最后生成的`Engine`实例不同。
 - 当第一次使用`create_engine()`连接时，引擎实际上还没有尝试连接到数据库(Lazy Connecting懒惰连接)。只有在第一次要求它对数据库执行任务时才会连接数据库。
@@ -786,7 +786,7 @@ engine = create_engine('sqlite://')
 engine = create_engine('sqlite:///:memory:')
 ```
 
-其他数据库如`PostgreSQL`` 、 ``Oracle`` 、 ``Microsoft SQL Server`` 等请参考[Database Urls](https://docs.sqlalchemy.org/en/13/core/engines.html?highlight=database%20url#database-urls) 。
+其他数据库如`PostgreSQL` 、 `Oracle` 、 `Microsoft SQL Server`等请参考[Database Urls](https://docs.sqlalchemy.org/en/13/core/engines.html?highlight=database%20url#database-urls) 。
 
 - 声明映射。使用`ORM`时，配置过程首先描述我们将要处理的数据库表，然后定义我们自己的类，这些类将映射到这些表。在现代`SQLAlchemy`中，这两个任务通常使用称为`Declarative`的系统一起执行，这允许我们创建包含指令的类，以描述它们将映射到的实际数据库表。
 - 使用`declarative_base()`函数创建基类。
@@ -808,7 +808,7 @@ sqlalchemy.ext.declarative.api.Base
 - 类定义时需要至少一个`Column`列，用于定义表的主键，`SQLAlchemy`不会自动确认哪列是主键，并使用 `primary_key=True`表明该字段是主键。
 - `__repr__()`方法是可选的(optional)，用于改善打印实例输出。
 - 通过声明系统构建的映射类定义的有关表的信息，称为表元数据。
-- 映射类是一个`Table对象`，可以通过检查`__table__`属性来看到这个对象。
+- 映射类是一个`Table`对象，可以通过检查`__table__`属性来看到这个对象。
 
 定义一个User类，并映射到user表中去:
 
@@ -892,7 +892,7 @@ CREATE TABLE users (
 'None'
 ```
 
-虽然在构建函数中未指定id的值，但是当我们访问它时，id属性仍然会产生None值。SQLAlchemy的检测通常在首次访问时为列映射属性生成此默认值。
+虽然在构建函数中未指定id的值，但是当我们访问它时，id属性仍然会产生`None`值。`SQLAlchemy`的检测通常在首次访问时为列映射属性生成此默认值。
 
 - 创建`Session`会话，通过`Session`处理数据库。
 - 使用`sessionmaker`创建`Session`会话。
@@ -1139,7 +1139,7 @@ WHERE users.name = ?
 >>> first_user
 <User(name='ed', fullname='Ed Jones', nickname='edsnickname')>
 
-    >>> for name, fullname in session.query(User.name, User.fullname):
+>>> for name, fullname in session.query(User.name, User.fullname):
 ...     print(name, fullname)
 ...
 2019-04-18 21:40:18,566 INFO sqlalchemy.engine.base.Engine SELECT users.name AS users_name, users.fullname AS users_fullname
@@ -1370,20 +1370,23 @@ WHERE id<? and name=? ORDER BY users.id
 <User(name='fred', fullname='Fred Flintstone', nickname='freddy')>
 ```
 
-- 要使用完全基于字符串的语句，需要将完整语句的 ``text()`` 传递给 ``from_statement()`` 函数。
+- 要使用完全基于字符串的语句，需要将完整语句的`text()`传递给`from_statement()`函数。
 - 如果没有其他说明符，字符串SQL中的列将根据名称与模型列匹配。
 
 例如下面我们只使用星号表示加载所有列:
 
+```python
 >>> myquery.from_statement(text("SELECT * FROM users where name=:name")).params(name='ed').all()
 2019-04-18 22:30:43,455 INFO sqlalchemy.engine.base.Engine SELECT * FROM users where name=?
 2019-04-18 22:30:43,455 INFO sqlalchemy.engine.base.Engine ('ed',)
 [<User(name='ed', fullname='Ed Jones', nickname='edsnickname')>]
+```
 
 - 匹配名称上的列适用于简单的情况，但在处理包含重复列名的复杂语句或使用不易与特定名称匹配的匿名ORM构造时可能会变得难以处理。
 
 查询指定列的数据:
 
+```python
 >>> stmt = text("SELECT name, id, fullname, nickname FROM users where name=:name")
 
 >>> stmt = stmt.columns(User.name, User.id, User.fullname, User.nickname)
@@ -1392,6 +1395,7 @@ WHERE id<? and name=? ORDER BY users.id
 2019-04-18 22:34:44,974 INFO sqlalchemy.engine.base.Engine SELECT name, id, fullname, nickname FROM users where name=?
 2019-04-18 22:34:44,975 INFO sqlalchemy.engine.base.Engine ('ed',)
 [<User(name='ed', fullname='Ed Jones', nickname='edsnickname')>]
+```
 
 通过将SQLite数据保存到本地文件sqlalchemy.db中，创建数据库信息:
 
@@ -1509,8 +1513,7 @@ __main__.User
 
 创建表了后，在`SQLite3`中查看已经新建了`addresses`表:
 
-```shell
-sqlite>
+```sql
 sqlite> .table
 addresses  users
 sqlite>
@@ -1551,7 +1554,7 @@ sqlite>
 
 在SQLite3中查看users表和addresses表信息:
 
-```shell
+```sql
 sqlite> select * from addresses;        
 1|jack@google.com|5                     
 2|j25@yahoo.com|5                       
@@ -1636,7 +1639,7 @@ jack jack@google.com j25@yahoo.com
 
 在SQLite3中查看users表和addresses表信息:
 
-```shell
+```sql
 sqlite> select * from addresses;        
 1|jack@google.com|5                     
 2|j25@yahoo.com|5                       
@@ -1660,7 +1663,7 @@ sqlite>
 再在SQLite3中查看users表和addresses表信息:
 
 
-```python
+```sql
 sqlite> select * from addresses;        
 1|jack@google.com|5                     
 2|j25@yahoo.com|5                       
@@ -1769,7 +1772,7 @@ def connect(url=None, schema=None, reflect_metadata=True, engine_kwargs=None,
 
 数据库URL的典型形式是:
 
-```
+```python
 dialect+driver://username:password@host:port/database
 ```
 
@@ -1818,7 +1821,7 @@ True
 
 在SQLite3中查看user表和population表信息:
 
-```shell
+```sql
 sqlite> .table                         
 population  user                       
 sqlite> .schema user                   
@@ -1855,7 +1858,7 @@ sqlite>
 
 再在SQLite3中查看表信息:
 
-```shell
+```sql
 sqlite> .table                                                
 population   population2  population3  population4  user      
 sqlite> .schema population2                                   
@@ -1888,7 +1891,7 @@ sqlite>
 
 再在SQLite3中查看user表信息，使用`.headers on`打开表头header，并使用`.mode column`打开column列模式:
 
-```shell
+```sql
 sqlite> .headers on
 sqlite> .mode column
 sqlite> select * from user;
@@ -1903,7 +1906,7 @@ CREATE TABLE user (
 sqlite>
 ```
 
-可以发现列 ``name`` 和 ``country`` 被自动加入到表中。
+可以发现列`name`和`country`被自动加入到表中。
 
 再插入一行数据:
 
@@ -1913,7 +1916,7 @@ sqlite>
 ```
 再在SQLite3中查看user表信息:
 
-```shell
+```sql
 sqlite> .schema user
 CREATE TABLE user (
         id INTEGER NOT NULL, name TEXT, age INTEGER, country TEXT, gender TEXT,
@@ -1951,7 +1954,7 @@ id            name                  age         country     gender
 
 再在SQLite3中查看user表信息:
 
-```shell
+```sql
 sqlite> select * from user;                                             
 id            name                  age         country     gender      
 ------------  --------------------  ----------  ----------  ----------  
@@ -1970,7 +1973,7 @@ sqlite>
 
 再在SQLite3中查看user表信息:
 
-```shell
+```sql
 sqlite> select * from user;                                              
 id            name                  age         country     gender       
 ------------  --------------------  ----------  ----------  ----------   
@@ -1991,7 +1994,7 @@ sqlite>
 
 再在SQLite3中查看user表信息:
 
-```shell
+```sql
 sqlite> select * from user;
 id            name                  age         country     gender      email
 ------------  --------------------  ----------  ----------  ----------  ---------------
@@ -2011,7 +2014,7 @@ sqlite>
 
 再在SQLite3中查看user表信息:
 
-```shell
+```sql
 sqlite> select * from user;                                                                         
 id            name                  age         country     gender      email                       
 ------------  --------------------  ----------  ----------  ----------  ---------------             
@@ -2034,7 +2037,7 @@ sqlite>
 
 再在SQLite3中查看user表信息:
 
-```shell
+```sql
 sqlite> select * from user;
 id          name        age         country     gender      email
 ----------  ----------  ----------  ----------  ----------  ---------------
@@ -2062,7 +2065,7 @@ id          name        age         country     gender      email
 
 再在SQLite3中查看user表信息:
 
-```shell
+```sql
 sqlite> select * from user;                                                    
 id          name        age         country     gender      email              
 ----------  ----------  ----------  ----------  ----------  ---------------    
@@ -2300,8 +2303,8 @@ China 2
 France 1
 ```
 
-- ``Table.delete(*clauses, **filters)`` 从表中删除行数据。
-- If no arguments are given, all records are deleted. 即 `如果没指定参数，所有的行数据都会会删除` ！！！
+- `Table.delete(*clauses, **filters)` 从表中删除行数据。
+- `If no arguments are given, all records are deleted.` 即 `如果没指定参数，所有的行数据都会会删除` ！！！
 
 在表中删除行数据:
 
@@ -2328,7 +2331,7 @@ OrderedDict([('id', 2), ('name', 'Edmond Dantes'), ('age', 32), ('country', 'Fra
 
 再在SQLite3中查看user表信息:
 
-```shell
+```sql
 sqlite> select * from user;
 id          name        age         country     gender      email
 ----------  ----------  ----------  ----------  ----------  ---------------
@@ -2350,7 +2353,7 @@ True
 
 再在SQLite3中查看user表信息:
 
-```shell
+```sql
 sqlite> select * from user;
 sqlite>
 ```
@@ -2375,7 +2378,7 @@ sqlite>
     RuntimeError: SQLite does not support dropping columns.
 ```
 
-提示 ``RuntimeError`` 异常。
+提示`RuntimeError`异常。
 
 ## memcached的使用
 
@@ -2461,7 +2464,7 @@ memcached 1.4.15
 [root@localhost ~]#                                                      
 ```
 
-启动memecached:
+启动memcached:
 
 ```shell
 [root@localhost ~]# memcached -u root -p 11211 -m 64m -d
@@ -2505,7 +2508,7 @@ Escape character is '^]'.
 
 在连接上memcached服务后，就可以执行`memcached`命令了。
 
-### `memcached`的存储命令`set` `add` `replace`   `append` `prepend` `cas`
+### `memcached`的存储命令`set`、`add`、`replace`、   `append`、`prepend`、`cas`
 
 
 - ``set`` 命令，用于将value值存储到key键中，如果key已经存在，则会更新key的value值。
@@ -2528,7 +2531,7 @@ value: 键值 key-value 结构中的 value，存储的值，始终位于第二�
 
 设置一个键值对:
 
-```shell
+```sql
 set firstkey 0 900 15
 hello,memcached
 STORED
@@ -2554,7 +2557,7 @@ value存储的值为hello,memcached
 
 设置过期时间:
 
-```shell
+```sql
 set secondkey 0 30 6            <-- 说明：设置过期时间为30秒
 hello!
 STORED
@@ -2580,7 +2583,7 @@ END
 
 设置无返回数据:
 
-```shell
+```sql
 set noreplykey 0 900 6 noreply
 123456            <-- 说明：设置成功后，并没有返回STORED
 get noreplykey
@@ -2594,7 +2597,7 @@ END
 
 键值设置错误时的输出:
 
-```shell
+```sql
 set test 0 900 6
 1234567890            <-- 说明：此处输入的值是10byte，而缓存存储只指定存储字节数是6byte，超过允许的范围
 CLIENT_ERROR bad data chunk
@@ -2613,7 +2616,7 @@ ERROR
 
 语法如下:
 
-```
+```sql
 add key flags exptime bytes [noreply] 
 value 
 
@@ -2628,7 +2631,7 @@ value: 键值 key-value 结构中的 value，存储的值，始终位于第二�
 
 设置一个键值对:
 
-```shell
+```sql
 get firstkey                  <-- 说明：能够获取到firstkey的值
 VALUE firstkey 0 16
 hello,memcached!
@@ -2665,7 +2668,7 @@ END
 
 语法如下:
 
-```shell
+```sql
 replace key flags exptime bytes [noreply] 
 value 
 
@@ -2680,7 +2683,7 @@ value: 键值 key-value 结构中的 value，存储的值，始终位于第二�
 
 对键的值进行替换:
 
-```shell
+```sql
 get firstkey
 VALUE firstkey 0 16
 hello,memcached!
@@ -2739,7 +2742,7 @@ NOT_STORED
 
 语法如下:
 
-```shell
+```sql
 append key flags exptime bytes [noreply] 
 value 
 
@@ -2754,7 +2757,7 @@ value: 键值 key-value 结构中的 value，存储的值，始终位于第二�
 
 在键的值的后面进行追加数据:
 
-```shell
+```sql
 get firstkey
 END
 get secondkey
@@ -2795,7 +2798,7 @@ END
 
 语法如下:
 
-```shell
+```sql
 prepend key flags exptime bytes [noreply] 
 value 
 
@@ -2810,7 +2813,7 @@ value: 键值 key-value 结构中的 value，存储的值，始终位于第二�
 
 在键的值的前面进行追加数据:
 
-```shell
+```sql
 set firstkey 0 12 5
 first
 STORED
@@ -2836,14 +2839,14 @@ NOT_STORED
 
 - Memcached于1.2.4版本新增CAS(Check and Set)协议，处理同一item被多个线程更改过程的并发问题。
 - 在Memcached中，每个key关联有一个64-bit长度的long型惟一数值，表示该key对应value的版本号。这个数值由Memcached server产生，从1开始，且同一Memcached server不会重复。在两种情况下这个版本数值会加1：1、新增一个key-value对；2、对某已有key对应的value值更新成功。删除item版本值不会减小。 
-- ``cas`` 命令，用于将value值存储到key键中，如果key已经存在，且未被其他用户更新，则会更新key的value值，并返回"STORED"。
-- ``cas`` 命令，用于将value值存储到key键中，如果key已经存在，且被其他用户更新，则不会更新key的value值，并返回"EXISTS"。
-- ``cas`` 命令，用于将value值存储到key键中，如果key不存在，则不会更新key的value值，并返回"NOT_FOUND"。
-- ``cas`` 命令，用于将value值存储到key键中，如果cas命令的语法错误，则返回"ERROR"。
+- `cas`命令，用于将value值存储到key键中，如果key已经存在，且未被其他用户更新，则会更新key的value值，并返回"STORED"。
+- `cas`命令，用于将value值存储到key键中，如果key已经存在，且被其他用户更新，则不会更新key的value值，并返回"EXISTS"。
+- `cas`命令，用于将value值存储到key键中，如果key不存在，则不会更新key的value值，并返回"NOT_FOUND"。
+- `cas`命令，用于将value值存储到key键中，如果cas命令的语法错误，则返回"ERROR"。
 
 语法如下:
 
-```shell
+```sql
 cas key flags exptime bytes unique_cas_token [noreply] 
 value
 
@@ -3037,7 +3040,7 @@ END
 
 在node1节点更新firstkey键的值，增加一个"!"，并获取firstkey键的cas值:
 
-```shell
+```sql
 set firstkey 0 3600 6
 Hello!
 STORED
@@ -3051,7 +3054,7 @@ END
 
 若此时，要在node2节点更新firstkey键的值，增加". Memcached!"，并得到更新后的值为"Hello. Memcached!", 并获取firstkey键的cas值，使用cas命令检查在最后一次取值后，是否有别的用户对数据进行了更新操作:
 
-```shell
+```sql
 cas firstkey 0 3600 17 22
 hello. Memcached!
 EXISTS
@@ -3061,7 +3064,7 @@ EXISTS
 
 仍然在node2上面操作，再获取最新的CAS值，对firstkey进行更新:
 
-```shell
+```sql
 gets firstkey
 VALUE firstkey 0 6 24
 Hello!
@@ -3077,7 +3080,7 @@ END
 
 此次能够正常的更新firstkey键的值，原因是firstkey键的CAS值为24后，并没有其他的用户对该键进行修改，也就可以避免多用户同时对一个键进行修改。
 
-仍然在node2上面操作，返回 ``ERROR`` 或 ``NOT_FOUND`` 的情况:
+仍然在node2上面操作，返回`ERROR`或`NOT_FOUND`的情况:
 
 ```shell
 cas thirdkey 0 3600 5     <-- 说明: 语法错误，未指定CAS版本号，返回"ERROR"
@@ -3087,14 +3090,14 @@ hello
 NOT_FOUND
 ```
 
-### memcached的查找命令 ``get``  ``gets`` ``delete``  ``incr``  ``decr``  ``flush_all``
+### `memcached`的查找命令 `get`、`gets`、`delete`、`incr`、`decr`、`flush_all`
 
 
-- ``get`` 命令，获取存储到key键中的value值，如果key不存在，则返回空。
+- `get`命令，获取存储到key键中的value值，如果key不存在，则返回空。
 
 语法如下:
 
-```shell
+```sql
 get key               <-- 说明: 获取单个key的value值
 get key1 key2 key3    <-- 说明: 获取多个key的value值
 
@@ -3104,7 +3107,7 @@ key：键值 key-value 结构中的 key，用于查找缓存值。
 
 获取键的值:
 
-```shell
+```sql
 set firstkey 0 12 5  <-- 说明：设置firstkey键12秒后过期
 first
 STORED
@@ -3130,11 +3133,11 @@ third
 END
 ```
 
-- ``gets`` 命令，获取存储到key键中带有CAS令牌的value值，如果key不存在，则返回空。
+- `gets`命令，获取存储到key键中带有CAS令牌的value值，如果key不存在，则返回空。
 
 语法如下:
 
-```shell
+```sql
 gets key               <-- 说明: 获取单个key的value值
 gets key1 key2 key3    <-- 说明: 获取多个key的value值
 
@@ -3144,7 +3147,7 @@ key：键值 key-value 结构中的 key，用于查找缓存值。
 
 接上例，获取带CAS令牌的键的值:
 
-```shell
+```sql
 gets firstkey
 END
 gets secondkey
@@ -3169,11 +3172,11 @@ fourth
 END
 ```
 
-- ``delete`` 命令，删除已经存在的键。
+- `delete`命令，删除已经存在的键。
 
 语法如下:
 
-```shell
+```sql
 delete key [noreply]               <-- 说明: 删除key键
 
 参数说明:
@@ -3190,7 +3193,7 @@ NOT_FOUND：键不存在。
 
 删除memcached中的键:
 
-```shell
+```sql
 [root@server ~]# telnet localhost 11211
 Trying ::1...
 Connected to localhost.
@@ -3216,7 +3219,7 @@ NOT_FOUND
 
 语法如下:
 
-```shell
+```sql
 incr key increment_value              <-- 说明: 对key的value进行自增操作，即value = value + increment_value
 decr key decrement_value              <-- 说明: 对key的value进行自减操作，即value = value + decrement_value
 
@@ -3233,7 +3236,7 @@ NOT_FOUND：键不存在。
 
 删除memcached中的键:
 
-```shell
+```sql
 set num 0 3600 2              <-- 说明: 设置num键的值为55
 55
 STORED
@@ -3257,7 +3260,7 @@ END
 
 异常输出:
 
-```shell
+```sql
 incr num_notexist 1
 NOT_FOUND
 incr num abc
@@ -3276,7 +3279,7 @@ ERROR
 
 语法如下:
 
-```shell
+```sql
 flush_all [time] [noreply]
 
 
@@ -3288,7 +3291,7 @@ noreply: 提示服务器端不需要返回数据。
 
 清除所有键值对:
 
-```shell
+```sql
 [root@server ~]# telnet localhost 11211
 Trying ::1...
 Connected to localhost.
@@ -3315,14 +3318,14 @@ gets firstkey secondkey    <-- 说明: 获取firstkey键和secondkey键的信息
 END
 ```
 
-### memcached的统计命令 ``stats``  ``stats items`` ``stats slabs``  ``stats sizes``
+### memcached的统计命令`stats`、`stats items`、`stats slabs`、`stats sizes`
 
 
 - ``stats`` 命令，返回如PID、版本号、连接数、存储占用字节数等等统计信息。
 
 语法如下:
 
-```shell
+```sql
 stats
 ```
 获取统计信息:
@@ -3386,7 +3389,7 @@ END
 
 其他统计命令:
 
-```shell
+```sql
 stats items
 STAT items:1:number 2
 STAT items:1:age 3182
@@ -3874,7 +3877,7 @@ END
 ## redis模块处理NoSQL非关系型数据库Redis
 
 
-- MySQL是关系型数据库，是持久化存储的，查询检索的话，会涉及到磁盘IO操作，为了提高性能，可以使用缓存技术，Redis和memcached都是缓存数据库，，可以大大提升高数据量的web访问速度。
+- MySQL是关系型数据库，是持久化存储的，查询检索的话，会涉及到磁盘IO操作，为了提高性能，可以使用缓存技术，Redis和memcached都是缓存数据库，可以大大提升高数据量的web访问速度。
 - memcached仅仅支持简单的key-value数据结构，而Redis支持的数据类型更多，如String、Hash、List、Set和Sorted Set。
 - web应用中一般采用MySQL+Redis的方式，web应用每次先访问Redis，如果没有找到数据，才去访问MySQL。
 - Redis性能极高: Redis读的速度是110000次/s，写的速度是81000次/s。
