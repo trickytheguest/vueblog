@@ -1,6 +1,8 @@
 # 文件的读写
 [[toc]]
 
+
+
 ## 文件读写内置方法open
 
 
@@ -11,7 +13,7 @@
 ```python
 >>> file_object=open('sys.txt','r')
 >>> file_object.
-file_object.buffer         file_object.encoding       file_object.isatty(        file_object.newlines       file_object.readlines(     file_object.truncate(
+file_object.buffer         file_object.encoding       file_object.isatty(       file_object.newlines       file_object.readlines(     file_object.truncate(
 file_object.close(         file_object.errors         file_object.line_buffering file_object.read(          file_object.seek(          file_object.writable(
 file_object.closed         file_object.fileno(        file_object.mode           file_object.readable(      file_object.seekable(      file_object.write(
 file_object.detach(        file_object.flush(         file_object.name           file_object.readline(      file_object.tell(          file_object.writelines(
@@ -259,7 +261,7 @@ False
 'r'
 >>> file1.close()
 ```
-    
+
 根据打开的模式不同，`open()`返回的文件对象类型也不同:
 
 ```python
@@ -306,7 +308,7 @@ with open('D:\\test1.txt',mode='a+',encoding='utf-8') as file1:
     file1.seek(0)
     for line in file1.readlines():
         print(line)
-```        
+```
 
 对于一些特殊类型的文件，可以使用相应的模块进行读取。如 `json` 模块可以读取json文件， `logging` 模块读取日志文件， `xml.etree.ElementTree` 读取xml文件， `csv`模块读取CSV文件， `ConfigParser` 模块读取配置文件，如果你需要两层以上的嵌套结构，建议使用json文件保存配置文件。
 
@@ -662,7 +664,7 @@ id,username
 
 说明：通过指定 ``extrasaction='ignore'`` 参数，可以写入与字典列表长度不一致的字段数据到CSV文件中。
 
-示例12, 使用DictWriter()重写CSV文件,并使用 ``dictwriter_object.writeheader()``  写入表头数据,但 ``fieldnames`` 指定的字段数超过字典列表中的字段总数:
+示例13, 使用DictWriter()重写CSV文件,并使用 ``dictwriter_object.writeheader()``  写入表头数据,但 ``fieldnames`` 指定的字段数超过字典列表中的字段总数:
 
 ```python
 In [33]: data_dict_list
@@ -696,7 +698,7 @@ id,username,age,country,number
 
 说明：此时多出了'number'字段，但'number'字段没有数据。
 
-示例13, 使用DictWriter()重写CSV文件,并使用 ``dictwriter_object.writeheader()``  写入表头数据,但 ``fieldnames`` 指定的字段数超过字典列表中的字段总数,并指定 ``restval`` 参数。
+示例14, 使用DictWriter()重写CSV文件,并使用 ``dictwriter_object.writeheader()``  写入表头数据,但 ``fieldnames`` 指定的字段数超过字典列表中的字段总数,并指定 ``restval`` 参数。
 
 ```python
 In [36]: data_dict_list
@@ -733,7 +735,7 @@ id,username,age,country,number
 
 csv格式化相当麻烦，看以下示例。
 
-示例14, 设置CSV输出格式：
+示例15, 设置CSV输出格式：
 
 ```python
 In [39]: CSV_DATA
@@ -759,7 +761,7 @@ id username age country
 1003 |Manu Ginóbili| 41 Argentina
 ```
 
-示例15, 设置CSV输出格式：
+示例16, 设置CSV输出格式：
 
 
 ```python
@@ -798,7 +800,7 @@ id username age country
 - ``Dialect.escapechar`` 表示 ``writer`` 对象碰到 ``delimiter`` 时的转义字符，如果 ``Dialect.quoting`` 设置为 ``QUOTE_NONE``,如果 ``doublequote`` 设置为 ``False`` ，则为 ``quotechar``。
 - ``Dialect.doublequote`` 控制如何引用字段中出现的 ``quotechar`` 实例。 如果为 ``True`` ，则字符加倍。 如果为 ``False`` ，则 ``escapechar`` 将用作 ``quotechar``  的前缀。 默认为 ``True`` 。
 
-示例16，使用|作为分隔符，且使用双引号'"'引用所有的字段:
+示例17，使用|作为分隔符，且使用双引号'"'引用所有的字段:
 
 ```python
 In [42]: with open('format.csv', 'wt') as fout:
@@ -819,7 +821,7 @@ In [42]: with open('format.csv', 'wt') as fout:
 
 - 使用 ``writer_object.writerow(data)`` 写入单行数据到CSV文件。
 
-示例17，使用|作为分隔符，且使用双引号'"'引用非数字的字段:
+示例18，使用|作为分隔符，且使用双引号'"'引用非数字的字段:
 
 ```python
 In [43]: first_line = ('a','b','c', 1, 2)                                                                
