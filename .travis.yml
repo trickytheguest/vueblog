@@ -14,7 +14,6 @@ notifications:
   email:
     recipients:
     - mzh@hellogitlab.com
-    on_success: always
     on_failure: always
 script:
 - echo "${TRAVIS_OS_NAME}"
