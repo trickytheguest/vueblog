@@ -183,7 +183,7 @@ In [15]: conn = sqlite3.connect('data.db')
                                                                                                                         
 In [16]: curs = conn.cursor()                                                                                           
 ```
- 
+
 为防止数据库注入攻击，不要使用Python字符串操作:
 
 ```python
@@ -203,7 +203,7 @@ Out[18]: <sqlite3.Cursor at 0x230e4b392d0>
 In [19]: print(curs.fetchone())                                                                                         
 ('2006-01-05', 'BUY', 'RHAT', 100.0, 35.14)                                                                             
 ```
- 
+
 应该使用`?`问号作为占位符，并使用`tuple`元组作为第二个参数:
 
 ```python
@@ -231,11 +231,11 @@ Out[24]: <sqlite3.Cursor at 0x230e4b392d0>
 In [25]: curs.execute('SELECT * FROM stocks')                                                                           
 Out[25]: <sqlite3.Cursor at 0x230e4b392d0>                                                                              
 ```
- 
+
 - `sqlite3.Cursor.fetchone()`获取查询结果集中的下一行数据，没有数据的话返回 `None`
 
 查询一行数据:
- 
+
 ```python 
 In [26]: print(curs.fetchone())                                                                                         
 ('2006-01-05', 'BUY', 'RHAT', 100.0, 35.14)                                                                             
@@ -385,7 +385,7 @@ In [9]: auto_conn.close()
 
 创建数据库data和数据表users:
 
-```sql
+```sh
 $ mysql -uroot -proot
 Welcome to the MariaDB monitor.  Commands end with ; or \g.
 Your MariaDB connection id is 9
@@ -523,7 +523,7 @@ In [4]: try:
    ...:     connection.close()  # 关闭连接
    ...:
 ```
-   
+
 在MariaDB中查询数据:
 
 ```sql
@@ -649,7 +649,7 @@ MariaDB [mysql]> show tables;
                                           
 MariaDB [mysql]>                          
 ```
-   
+
 ## SQLAlchemy ORM对象关系映射处理数据库
 
 
@@ -1686,7 +1686,7 @@ sqlite>
 
 使用pip安装:
 
-```shell
+```sh
 $ pip install dataset
 Looking in indexes: http://mirrors.aliyun.com/pypi/simple/
 Collecting dataset
@@ -2390,13 +2390,13 @@ linux下安装Memcached 参见[https://www.runoob.com/memcached/window-install-m
 
 安装依赖包:
 
-```shell
+```sh
 [root@localhost ~]# yum install libevent libevent-devel -y
 ```
 
 安装Memcached:
 
-```shell
+```sh
 [root@localhost ~]# yum install memcached -y
 ```
 
@@ -2905,7 +2905,7 @@ public (active)
   icmp-blocks: 
   rich rules: 
 ```
-  
+
 在server端使用telnet连接memcached服务器，并设置一个firstkey键，值为"hello,memcached":
 
 ```shell
