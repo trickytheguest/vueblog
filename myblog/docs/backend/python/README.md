@@ -22,4 +22,5 @@
 21. [数据库处理](./X_database.html)
 22. [模块-UUID模块](./X_univeral_unique_identifier.html)
 23. [使用Faker生成虚拟数据](./X_faker_generate_fake_data.html)
+24. [Pipenv虚拟环境的使用](./X_pipenv.html)
 1. [Python代码检查](./X_Python_style_and_static_check.html) 
