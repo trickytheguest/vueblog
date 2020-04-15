@@ -60,6 +60,14 @@ chromedriver版本与chrome各版本如下表：
 |  ChromeDriver v2.27  |      v54-56        |    2016-12-23      |
 |  ChromeDriver v2.26  |      v53-55        |    2016-12-09      |
 
+::: tip 说明
+此表仅罗列了部分chromediriver的版本，详细可在[http://chromedriver.storage.googleapis.com/index.html](http://chromedriver.storage.googleapis.com/index.html)查看。
+:::
+
+## firefox驱动下载
+
+火狐浏览器的驱动下载地址[https://github.com/mozilla/geckodriver/releases](https://github.com/mozilla/geckodriver/releases)
+
 
 ### 用`Chrome`浏览器来测试
 
@@ -86,7 +94,7 @@ browser.get('http://www.baidu.com/')
 # 打印页面标题
 print('当前页面标题',browser.title)
 print('当前页面地址',browser.current_url)
-browser.find_element_by_id("kw").send_keys("hopewait") # 查找到id为kw的输入框，并输入关键字
+browser.find_element_by_id("kw").send_keys("selenium") # 查找到id为kw的输入框，并输入关键字
 browser.find_element_by_id('su').click() #查找到id为su的按钮，并进行点击
 print('退出！')
 browser.quit()
@@ -103,4 +111,7 @@ browser.quit()
 
 进程已结束,退出代码0
 ```   
+
+
+
  
