@@ -24,4 +24,5 @@
 23. [使用Faker生成虚拟数据](./X_faker_generate_fake_data.html)
 24. [Pipenv虚拟环境的使用](./X_pipenv.html)
 25. [Selenium安装与使用](./X_selenium_install_and_use.html)
+26. [ReviewBoard国际化配置](./X_reviewboard_i18n.html)
 1. [Python代码检查](./X_Python_style_and_static_check.html) 
