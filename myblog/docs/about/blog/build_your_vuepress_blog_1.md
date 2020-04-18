@@ -716,7 +716,8 @@ module.exports = {
 - 安装
 
 ```shell
-$ npm i vuepress-plugin-auto-sidebar -D
+$ yarn add vuepress-plugin-auto-sidebar -D
+$ # npm i vuepress-plugin-auto-sidebar -D
 
 > core-js@2.6.11 postinstall ~/Documents/GitHub/vueblog/myblog/node_modules/core-js
 > node -e "try{require('./postinstall')}catch(e){}"
