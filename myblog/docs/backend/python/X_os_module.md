@@ -318,7 +318,7 @@ os.stat_result(st_mode=33206, st_ino=2814749767125765, st_dev=120385, st_nlink=1
 ::: tip 注意   
 **windows cmd命令中使用MKLINK可以创建软硬链接，具体命令如下**
 
-```cmd
+```sh
 C:\>mklink
 创建符号链接。
 

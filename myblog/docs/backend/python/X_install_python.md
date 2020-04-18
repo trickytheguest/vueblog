@@ -832,7 +832,7 @@ root     12179  7909  0 17:19 pts/0    00:00:00 grep --color=auto jupyter
 
 保存后，可以在服务器/root/jupyter_data目录中看到笔记文件first_notebook.ipynb:
 
-```shwll
+```sh
 [root@localhost ~]# ls -lah jupyter_data|grep first
 -rw-r--r--   1 root root  703 Aug 24 17:37 first_notebook.ipynb
 ```
