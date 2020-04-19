@@ -2649,145 +2649,130 @@ deploy1:
 
 子模块与本项目在同一个服务上，可以使用相对引用：
 
-.. code-block:: yaml
-:linenos:
-:emphasize-lines: 2-3
-
+```yaml
 [submodule "project"]
   path = project
   url = ../../group/project.git
+```
 
 子模块与本项目不在同一个服务上，使用相对绝对URL：
 
-.. code-block:: yaml
-:linenos:
-:emphasize-lines: 2-3
 
+```yaml
 [submodule "project-x"]
   path = project-x
   url = https://gitserver.com/group/project-x.git
+```
 
 详细可参考 [Using Git submodules with GitLab CI ](https://docs.gitlab.com/ce/ci/git_submodules.html)
 
-检出分支设置Git checkout`GIT_CHECKOUT``
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#### 检出分支设置Git checkout `GIT_CHECKOUT`
+
 
 - 当`GIT_STRATEGY`设置为`fetch`或者`clone`时，可以通过`GIT_CHECKOUT`变量设置是否需要做`git checkout`操作，如果未指定该参数，默认值为`true`，即需要做`git checkout`操作。
 - 可以在全局级或作业级进行设置。
 - 如果`GIT_CHECKOUT`变量设置为`true`，GitLab Runner都会将本地工作副本检出并切换到当前流水线相关的修订版本分支上。
 - 如果`GIT_CHECKOUT`变量设置为`false`，那么运行器操作如下：
 
--`fetch`操作时，更新仓库并在当前版本上保留工作副本。
--`clone`操作时，克隆仓库并在默认分支中保留工作副本。
+    - `fetch`操作时，更新仓库并在当前版本上保留工作副本。
+    - `clone`操作时，克隆仓库并在默认分支中保留工作副本。
 
 下面示例不进行自动切换到分支：
 
-.. code-block:: yaml
-:linenos:
-:emphasize-lines: 2-3
 
+```yaml
 variables:
   GIT_STRATEGY: clone
   GIT_CHECKOUT: "false"
 script:
   - git checkout -B master origin/master
   - git merge $CI_COMMIT_SHA
+```
 
+清理工作Git clean flags `GIT_CLEAN_FLAGS`
 
-清理工作Git clean flags`GIT_CLEAN_FLAGS``
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 - 可以使用`GIT_CLEAN_FLAGS`变量来控制在检出源码后`git clean`的默认行为，可以在全局级或作业级进行设置。
--`GIT_CLEAN_FLAGS`变量接受 `git clean`命令的所有参数。
+- `GIT_CLEAN_FLAGS`变量接受 `git clean`命令的所有参数。
 - 如果指定了`GIT_CHECKOUT: "false"`，那么`git clean`将不可用。
--`git-clean`: Remove untracked files from the working tree，即删除未跟踪的文件。
--`git clean`命令用来从你的工作目录中删除所有没有tracked过的文件，`git reset --hard`用于删除跟踪文件的修改记录。
--`git clean -n`命令列出将被删除的文件。
--`git clean -f`命令删除当前目录下所有没有跟踪过的文件。
--`git clean -d`命令删除当前目录下所有没有跟踪过的目录。
--`git clean -e <pattern>`命令排除(`--exclude=<pattern>`) 某文件或目录，即不删除模式匹配的文件。
--`git clean -ffxd`命令删除当前目录(包括由其他git仓库管理的子目录)下所有没有跟踪过的目录和文件。
--`GIT_CLEAN_FLAGS`变量未指定时，`git clean`命令的参数是`-ffxd`。
--`GIT_CLEAN_FLAGS`变量指定为`none`时，`git clean`命令不会执行。
+- `git-clean`: Remove untracked files from the working tree，即删除未跟踪的文件。
+- `git clean`命令用来从你的工作目录中删除所有没有tracked过的文件，`git reset --hard`用于删除跟踪文件的修改记录。
+- `git clean -n`命令列出将被删除的文件。
+- `git clean -f`命令删除当前目录下所有没有跟踪过的文件。
+- `git clean -d`命令删除当前目录下所有没有跟踪过的目录。
+- `git clean -e <pattern>`命令排除(`--exclude=<pattern>`) 某文件或目录，即不删除模式匹配的文件。
+- `git clean -ffxd`命令删除当前目录(包括由其他git仓库管理的子目录)下所有没有跟踪过的目录和文件。
+- `GIT_CLEAN_FLAGS`变量未指定时，`git clean`命令的参数是`-ffxd`。
+- `GIT_CLEAN_FLAGS`变量指定为`none`时，`git clean`命令不会执行。
 
 下面示例用于删除未被跟踪文件和目录，但排除cache目录及目录下的文件：
 
-.. code-block:: yaml
-:linenos:
-:emphasize-lines: 2
-
+```yaml
 variables:
   GIT_CLEAN_FLAGS: -ffdx -e cache/
 script:
   - ls -al cache/
+```
 
+#### 作业重试次数 Job stages attempts
 
-作业重试次数 Job stages attempts
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 - 您可以设置正在运行的作业尝试执行以下每个阶段的尝试次数。可以在全局级或作业级进行设置。
 - 涉及三个变量`GET_SOURCES_ATTEMPTS`、`ARTIFACT_DOWNLOAD_ATTEMPTS`、`RESTORE_CACHE_ATTEMPTS`。
--`GET_SOURCES_ATTEMPTS`变量设置获取源码的尝试次数。
--`ARTIFACT_DOWNLOAD_ATTEMPTS`变量设置下载归档文件的尝试次数。
--`RESTORE_CACHE_ATTEMPTS`变量设置重建缓存的尝试次数。
+- `GET_SOURCES_ATTEMPTS`变量设置获取源码的尝试次数。
+- `ARTIFACT_DOWNLOAD_ATTEMPTS`变量设置下载归档文件的尝试次数。
+- `RESTORE_CACHE_ATTEMPTS`变量设置重建缓存的尝试次数。
 - 默认是1次尝试。
 
 示例：
 
-.. code-block:: yaml
-:linenos:
-:emphasize-lines: 2
-
+```yaml
 variables:
   GET_SOURCES_ATTEMPTS: 3
+```
 
 
 
+#### 浅克隆 Shallow cloning`GIT_DEPTH`
 
-浅克隆 Shallow cloning`GIT_DEPTH``
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 - GitLab 8.9中引入了试验性的特征`浅克隆`，在将来的版本中有可能改变或者完全移除。
-- 可以通过设置  [`GIT_DEPTH`克隆深度，不详细介绍，可参考 `Shallow cloning ](https://docs.gitlab.com/ce/ci/yaml/README.html#shallow-cloning)
+- 可以通过设置`GIT_DEPTH`克隆深度，不详细介绍，可参考[Shallow cloning ](https://docs.gitlab.com/ce/ci/yaml/README.html#shallow-cloning)
 
 
-废弃的关键字`types`和`type``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### 废弃的关键字`types`和`type`
+
 
 - 关键字`types`和`type`已经废弃。
 - 使用`stages`阶段定义关键字代替`types`。
 - 使用`stage`作业所处阶段关键字代替`type`。
 
 
-使用`GIT_CLONE_PATH`自定义构建目录
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### 使用`GIT_CLONE_PATH`自定义构建目录
+
 
 - 在默认情况下，自定义构建目录只有在GitLab Runner运行器配置文件中定义了`custom_build_dir`为`enabled`开启状态时才可使用。
--`docker`、`kubernetes`运行器默认开启了此功能，而其他运行器默认不会开启此功能。
+- `docker`、`kubernetes`运行器默认开启了此功能，而其他运行器默认不会开启此功能。
 - 默认情况下，GitLab Runner运行器将仓库克隆到`$CI_BUILDS_DIR`目录下的一个名称唯一的子目录中，但有时候你的项目可能需要指定一个特殊的路径用来保存下载的仓库，这个时候就可以使用`GIT_CLONE_PATH`变量来指定克隆文件的存放目录。
--`GIT_CLONE_PATH` 必须是`$CI_BUILDS_DIR`的子目录，`$CI_BUILDS_DIR`目录各个运行器可能不同。
+- `GIT_CLONE_PATH` 必须是`$CI_BUILDS_DIR`的子目录，`$CI_BUILDS_DIR`目录各个运行器可能不同。
 
 我们尝试在我们的SHELL运行器上去设置`GIT_CLONE_PATH`目录。
 
 下面是官方给出的一个示例：
 
-.. code-block:: yaml
-:linenos:
-:emphasize-lines: 2
-
+```yaml
 variables:
   GIT_CLONE_PATH: $CI_BUILDS_DIR/project-name
 
 test:
   script:
     - pwd
+```
 
 我们仿照这个示例修改`.gitlab-ci.yml`配置文件，并进行提交，修改后的内容如下：
 
-.. code-block:: yaml
-:linenos:
-:emphasize-lines: 13,29
 
+```yaml
 # This file is a template, and might need editing before it works on your project.
 # see https://docs.gitlab.com/ce/ci/yaml/README.html for all available options
 
@@ -2868,6 +2853,7 @@ deploy1:
     - echo "Do your deploy here"
   tags:
     - bluelog
+```
 
 提交修改构建目录后，流水线执行失败：
 
@@ -2877,14 +2863,15 @@ deploy1:
 
 ![gitlab_bluelog_custom_build_directory_failure_job_details.png](/img/gitlab_bluelog_custom_build_directory_failure_job_details.png)
 
-可以看到提示`ERROR: Job failed: setting GIT_CLONE_PATH is not allowed, enable `custom_build_dir` feature``
+可以看到提示"ERROR: Job failed: setting GIT_CLONE_PATH is not allowed, enable `custom_build_dir`feature"
 
 意思是说不允许设置`GIT_CLONE_PATH`变量，需要设置`custom_build_dir`属性。
 
-我们参考 [The [runners.custom_build_dir] section ](https://docs.gitlab.com/runner/configuration/advanced-configuration.html#the-runners-section) 来设置`custom_build_dir`属性。
+我们参考 [The runners.custom_build_dir section ](https://docs.gitlab.com/runner/configuration/advanced-configuration.html#the-runners-section) 来设置`custom_build_dir`属性。
 
 我们查看一下GitLab Runner的配置文件内容:
 
+```sh
 [root@server ~]# cat /etc/gitlab-runner/config.toml 
 concurrent = 1
 check_interval = 0
@@ -2901,14 +2888,18 @@ check_interval = 0
   [runners.cache]
     [runners.cache.s3]
     [runners.cache.gcs]
+```
 
 我们参考示例:
 
+```
 [runners.custom_build_dir]
   enabled = true
+```
 
 开启`custom_build_dir`属性，修改后配置文件内容如下:
 
+```sh
 [root@server ~]# cat /etc/gitlab-runner/config.toml   
 concurrent = 1
 check_interval = 0
@@ -2926,11 +2917,13 @@ check_interval = 0
   [runners.cache]
     [runners.cache.s3]
 [runners.cache.gcs]
+```
 
 重新触发"build1"作业，看看效果。
 
 此时可以看到，作业开始运行了，并且在`/root/gitlab-runner/builds`目录下生成了四个folder相关的目录:
 
+```sh
 [root@server builds]# pwd
 /root/gitlab-runner/builds
 [root@server builds]# ls -ld *folder*
@@ -2938,6 +2931,7 @@ drwxr-xr-x 5 root root 193 Jul 12 23:08 global_folder
 drwxr-xr-x 3 root root  26 Jul 12 23:08 global_folder.tmp
 drwxr-xr-x 5 root root 193 Jul 12 23:08 sub_folder
 drwxr-xr-x 3 root root  26 Jul 12 23:08 sub_folder.tmp
+```
 
 查看"build1"和"find Bugs"作业的详情：
 
@@ -2949,89 +2943,83 @@ drwxr-xr-x 3 root root  26 Jul 12 23:08 sub_folder.tmp
 
 可以看到"build1"作业使用全局级定义的`GIT_CLONE_PATH: $CI_BUILDS_DIR/global_folder`，仓库会被下载到`/root/gitlab-runner/builds/global_folder`目录下。
 
-处理并发(Handling concurrency)
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#### 处理并发(Handling concurrency)
+
 
 - 当执行器配置并发数`concurrent`大于1时，有可能导致作业运行失败，因为有可能多个作业都运行在相同的目录上，GitLab Runner运行器并不会去阻止这种情形，管理员和开发人员必须遵守Runner配置的要求。
 - 要避免这种情况，您可以在`$CI_BUILDS_DIR`中使用唯一路径，因为Runner公开了另外两个提供唯一并发ID的变量：
 
--`$CI_CONCURRENT_ID`：给定执行程序中运行的所有作业的唯一ID。
--`$CI_CONCURRENT_PROJECT_ID`：在给定执行程序和项目中运行的所有作业的唯一ID。
+- `$CI_CONCURRENT_ID`：给定执行程序中运行的所有作业的唯一ID。
+- `$CI_CONCURRENT_PROJECT_ID`：在给定执行程序和项目中运行的所有作业的唯一ID。
 
 - 在任何场景和任何执行器中都应该运行良好的最稳定的配置是在`GIT_CLONE_PATH`中使用`$CI_CONCURRENT_ID`。 
 
 例如：
 
-.. code-block:: yaml
-:linenos:
-:emphasize-lines: 1-2
 
+```yaml
 variables:
   GIT_CLONE_PATH: $CI_BUILDS_DIR/$CI_CONCURRENT_ID/project-name
 
 test:
   script:
     - pwd
+```
 
-嵌套路径(Nested paths)
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#### 嵌套路径(Nested paths)
+
 
 -`GIT_CLONE_PATH`变量最多只能扩展一次，不支持嵌套的变量路径。
 
 下面定义了两个变量：
 
-.. code-block:: yaml
-:linenos:
-:emphasize-lines: 2-3
 
+```yaml
 variables:
   GOPATH: $CI_BUILDS_DIR/go
   GIT_CLONE_PATH: $GOPATH/src/namespace/project
+```
 
-``GIT_CLONE_PATH`变量扩展一次后，变量成了`$CI_BUILDS_DIR/go/src/namespace/project`，这个时候在路径中有一个变量，而`GIT_CLONE_PATH`变量不会再次扩展`$CI_BUILDS_DIR`导致作业运行失败。
+`GIT_CLONE_PATH`变量扩展一次后，变量成了`$CI_BUILDS_DIR/go/src/namespace/project`，这个时候在路径中有一个变量，而`GIT_CLONE_PATH`变量不会再次扩展`$CI_BUILDS_DIR`导致作业运行失败。
 
 
-特殊的YAML功能
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### 特殊的YAML功能
+
 
 可以使用特殊的YAML功能，如锚点(`＆`)，别名(`*`)和合并(`<<`)，这将使您大大降低`.gitlab-ci.yml`的复杂性。
 
-隐藏关键字或作业
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#### 隐藏关键字或作业
+
 
 如果我们想暂时禁用某个作业，我们可以将该作业的所有行都注释掉，如下示例：
 
-.. code-block:: yaml
-:linenos:
-:emphasize-lines: 1-3
 
+```yaml
 #hidden_job:
 #  script:
 #    - run test
+```
 
 更好的方法是，我们在作业名称前面增加一个点号(`.`)， 这样GitLab CI流水线就会自动处理忽略掉`.hidden_job`作业。
 
 改成下面这样：
 
-.. code-block:: yaml
-:linenos:
-:emphasize-lines: 1
 
+```yaml
 .hidden_job:
   script:
     - run test
+```
 
-锚点(Anchors)
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+### 锚点(Anchors)
+
 
 - 锚点可以让你容易复制文档内容，锚点可以用来复制或继承某些属性，锚点与隐藏作业一起使用可提供作业模板。
 
-下面的例子使用锚点和合并创建了两个作业，``test1`和`test2`，两个作业都是继承自隐藏作业`.job_template`，并且都有他们自己独有的工作脚本定义：
+下面的例子使用锚点和合并创建了两个作业，`test1`和`test2`，两个作业都是继承自隐藏作业`.job_template`，并且都有他们自己独有的工作脚本定义：
 
-.. code-block:: yaml
-:linenos:
-:emphasize-lines: 1,8,13
 
+```yaml
 .job_template: &job_definition  # Hidden key that defines an anchor named 'job_definition'
   image: ruby:2.1
   services:
@@ -3047,17 +3035,16 @@ test2:
   <<: *job_definition           # Merge the contents of the 'job_definition' alias
   script:
     - test2 project
+```
 
--`&`用于设置锚点名称为`job_definition`，也就是给隐藏作业设置一个锚点`job_definition`。
--`<<`合并，将锚点定义的模板内容复制到当前作业的当前位置来。
--`*`包含锚点的名称`job_definition``。
+- `&`用于设置锚点名称为`job_definition`，也就是给隐藏作业设置一个锚点`job_definition`。
+- `<<`合并，将锚点定义的模板内容复制到当前作业的当前位置来。
+- `*`包含锚点的名称`job_definition`。
 
 扩展后的配置文件变成下面这样：
 
-.. code-block:: yaml
-:linenos:
-:emphasize-lines: 8-11,16-19
 
+```yaml
 .job_template:
   image: ruby:2.1
   services:
@@ -3079,13 +3066,11 @@ test2:
     - redis
   script:
     - test2 project
-
+```
 
 再看另外一个示例：
 
-.. code-block:: yaml
-:linenos:
-
+```yaml
 .job_template: &job_definition
   script:
     - test project
@@ -3107,12 +3092,12 @@ test:postgres:
 test:mysql:
   <<: *job_definition
   services: *mysql_definition
+```
 
 扩展后是这样的：
 
-.. code-block:: yaml
-:linenos:
 
+```yaml
 .job_template:
   script:
     - test project
@@ -3140,19 +3125,20 @@ test:mysql:
   services:
     - mysql
     - ruby
+```
 
 可以看到隐藏的关键字或者作业可以方便地用作为模板。
 
 
-Triggers触发器
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## Triggers触发器
+
 
 - 当使用触发器令牌触发流水线运行时，触发器可用于强制重建特定分支，标记或提交，并使用API调用。
-- 触发器使用可参考 :ref:`trigger_pipeline_label` 。
+- 触发器使用可参考 [参数详解](#trigger)。
 
 
-忽略CI检查
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### 忽略CI检查
+
 
 - 当你提交的commit日志信息中包含`[ci skip]`或者`[skip ci]`(忽略大小写)，提交可以成功但是会忽略流水线的执行。
 - 或者，在`git push`时添加推送选项，如`git push -o ci.skip`。
@@ -3184,7 +3170,7 @@ Triggers触发器
 ![gitlab_bluelog_git_commit_with_git_push_ci_skip_option_trigger_skipped_pipeline.png](/img/gitlab_bluelog_git_commit_with_git_push_ci_skip_option_trigger_skipped_pipeline.png)
 
 
-``.gitlab-ci.yml`配置文件各个关键字的使用就介绍到这里。
+`.gitlab-ci.yml`配置文件各个关键字的使用就介绍到这里。
 
 
 参考：
