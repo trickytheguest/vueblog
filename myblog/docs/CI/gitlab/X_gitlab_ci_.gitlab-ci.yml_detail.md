@@ -319,22 +319,22 @@ test2:
 - 你修改了运行器的`concurrent`设置，默认情况下`concurrent = 1`。 
 :::
 
-### `only`和 `except`
+### `only`和`except`
 
 
 `only`和`except`用于在创建作业时对作业的限制策略。
 
 - `only`定义了哪些分支或标签(branches and tags)的作业会运行
--`except`定义了哪些分支或标签(branches and tags)的作业不会运行
+- `except`定义了哪些分支或标签(branches and tags)的作业不会运行
 
 下面是策略规则：
 
--`only`和`except`可同时使用，如果在一个作业中同时定义了`only`和`except`，则同时`only``except`进行过滤(注意，不是忽略 `except`条件) 。
--`only`和`except`可以使用正则表达式。
--`only`和`except`允许指定用于过滤forks作业的存储库路径。
--`only`和`except`中可以使用特殊的关键字，如`branches`、`tags`、`api`、`external`、`pipelines`、`pushes`、`schedules`、`triggers`、`web`、`merge_requests`、`chats`等。
+- `only`和`except`可同时使用，如果在一个作业中同时定义了`only`和`except`，则同时`only``except`进行过滤(注意，不是忽略 `except`条件) 。
+- `only`和`except`可以使用正则表达式。
+- `only`和`except`允许指定用于过滤forks作业的存储库路径。
+- `only`和`except`中可以使用特殊的关键字，如`branches`、`tags`、`api`、`external`、`pipelines`、`pushes`、`schedules`、`triggers`、`web`、`merge_requests`、`chats`等。
 
-``only`和`except`中可以使用特殊的关键字：
+`only`和`except`中可以使用特殊的关键字：
 
 
 |     关键字     |                          描述释义                             |
@@ -433,7 +433,7 @@ job:
 ### `only`和`except`高级用法
 
 
--`only`和`except`支持高级策略，`refs`、`variables`、`changes`、`kubernetes`四个关键字可以使用。
+- `only`和`except`支持高级策略，`refs`、`variables`、`changes`、`kubernetes`四个关键字可以使用。
 - 如果同时使用多个关键字，中间的逻辑是`逻辑与AND`。
 
 
@@ -469,7 +469,7 @@ deploy:
 #### `only:variables/except:variables`
 
 
--`variables`关键字用来定义变量表达式，你可以使用预定义变量、项目、组、环境变量来评估一个作业是否需要创建或运行。
+- `variables`关键字用来定义变量表达式，你可以使用预定义变量、项目、组、环境变量来评估一个作业是否需要创建或运行。
 
 下面这个例子使用了变量表达式:
 
@@ -2634,10 +2634,10 @@ deploy1:
 #### 子模块策略Git submodule strategy `GIT_SUBMODULE_STRATEGY`
 
 
--`GIT_SUBMODULE_STRATEGY`类似于`GIT_STRATEGY`，当你的项目需要包含别的项目代码时，可以将别的项目作为你的项目的子模块，这个时候就可以使用`GIT_SUBMODULE_STRATEGY`。
--`GIT_SUBMODULE_STRATEGY`默认取值`none`，即拉取代码时，子模块不会被引入。
--`GIT_SUBMODULE_STRATEGY`可取值`normal`，意味着在只有顶级子模块会被引入。
--`GIT_SUBMODULE_STRATEGY`可取值`recursive`，递归的意思，意味着所有级子模块会被引入。
+- `GIT_SUBMODULE_STRATEGY`类似于`GIT_STRATEGY`，当你的项目需要包含别的项目代码时，可以将别的项目作为你的项目的子模块，这个时候就可以使用`GIT_SUBMODULE_STRATEGY`。
+- `GIT_SUBMODULE_STRATEGY`默认取值`none`，即拉取代码时，子模块不会被引入。
+- `GIT_SUBMODULE_STRATEGY`可取值`normal`，意味着在只有顶级子模块会被引入。
+- `GIT_SUBMODULE_STRATEGY`可取值`recursive`，递归的意思，意味着所有级子模块会被引入。
 
 子模块需要配置在`.gitmodules`配置文件中，下面是两个示例：
 
@@ -2969,7 +2969,7 @@ test:
 #### 嵌套路径(Nested paths)
 
 
--`GIT_CLONE_PATH`变量最多只能扩展一次，不支持嵌套的变量路径。
+- `GIT_CLONE_PATH`变量最多只能扩展一次，不支持嵌套的变量路径。
 
 下面定义了两个变量：
 
@@ -3137,7 +3137,7 @@ test:mysql:
 - 触发器使用可参考 [参数详解](#trigger)。
 
 
-### 忽略CI检查
+## 忽略CI检查
 
 
 - 当你提交的commit日志信息中包含`[ci skip]`或者`[skip ci]`(忽略大小写)，提交可以成功但是会忽略流水线的执行。
