@@ -25,13 +25,13 @@ CentOS Linux release 7.6.1810 (Core)
 ## 安装GitLab
 
 
-参考 https://about.gitlab.com/install/#centos-7 在CentOS7上面安装Omnibus package。
+参考[https://about.gitlab.com/install/#centos-7](https://about.gitlab.com/install/#centos-7)在CentOS7上面安装Omnibus package。
 
 
 ### 安装依赖
 
 
-安装必要依赖，并开启防火墙放行80和443端口:
+安装必要依赖，并开启防火墙放行`80`和`443`端口:
 
 ```sh
 # 说明：安装依赖
@@ -83,8 +83,8 @@ public (active)
 ### 新增GitLab的国内清华大学的yum源
 
 
-- 清华大学YUM源地址 https://mirrors.tuna.tsinghua.edu.cn/gitlab-ce/yum/el7/
-- 清华大学Gitlab Community Edition 镜像使用帮助 https://mirrors.tuna.tsinghua.edu.cn/help/gitlab-ce/
+- 清华大学YUM源地址[https://mirrors.tuna.tsinghua.edu.cn/gitlab-ce/yum/el7/](https://mirrors.tuna.tsinghua.edu.cn/gitlab-ce/yum/el7/)
+- 清华大学Gitlab Community Edition 镜像使用帮助[https://mirrors.tuna.tsinghua.edu.cn/help/gitlab-ce/](https://mirrors.tuna.tsinghua.edu.cn/help/gitlab-ce/)
 
 新建 `/etc/yum.repos.d/gitlab-ce.repo`，内容如下:
 
@@ -303,7 +303,7 @@ rtt min/avg/max/mdev = 0.032/0.037/0.040/0.006 ms
 #### Email邮箱设置
 
 
-参考： https://docs.gitlab.com/omnibus/settings/smtp.html
+参考： [https://docs.gitlab.com/omnibus/settings/smtp.html](https://docs.gitlab.com/omnibus/settings/smtp.html)
 
 我们使用网易的163邮箱作为邮件的发送人。
 
@@ -350,7 +350,7 @@ rtt min/avg/max/mdev = 0.032/0.037/0.040/0.006 ms
 #### 禁止用户创建顶层组
 
 
-参考： https://docs.gitlab.com/ee/administration/user_settings.html#disallow-users-creating-top-level-groups
+参考： [https://docs.gitlab.com/ee/administration/user_settings.html#disallow-users-creating-top-level-groups](https://docs.gitlab.com/ee/administration/user_settings.html#disallow-users-creating-top-level-groups)
 
 禁止用户创建顶层组(Disallow users creating top-level groups):
 
@@ -367,7 +367,7 @@ rtt min/avg/max/mdev = 0.032/0.037/0.040/0.006 ms
 #### 禁止用户修改用户名
 
 
-参考： https://docs.gitlab.com/ee/administration/user_settings.html#disallow-users-changing-usernames
+参考： [https://docs.gitlab.com/ee/administration/user_settings.html#disallow-users-changing-usernames](https://docs.gitlab.com/ee/administration/user_settings.html#disallow-users-changing-usernames)
 
 禁止用户修改用户名(Disallow users changing usernames):
 
@@ -399,7 +399,7 @@ rtt min/avg/max/mdev = 0.032/0.037/0.040/0.006 ms
 #### git仓库存储目录配置
 
 
-参考： https://docs.gitlab.com/omnibus/settings/configuration.html#storing-git-data-in-an-alternative-directory
+参考： [https://docs.gitlab.com/omnibus/settings/configuration.html#storing-git-data-in-an-alternative-directory](https://docs.gitlab.com/omnibus/settings/configuration.html#storing-git-data-in-an-alternative-directory)
 
 git仓库存储目录默认为`/var/opt/gitlab/git-data` ，由于git仓库存储数据比较多，最好将存储目录设置LVM或者支持NFS协议(network file system protocol)的NAS或SAN网络存储设备对应的卷的路径，便于后面扩容。
 
@@ -470,7 +470,7 @@ drwxr-xr-x. 2 git root 6 Jun 22 19:45 /home/git/git-data/
 #### SMTP外部邮箱设置
 
 
-参考： https://docs.gitlab.com/omnibus/settings/smtp.html
+参考： [https://docs.gitlab.com/omnibus/settings/smtp.html](https://docs.gitlab.com/omnibus/settings/smtp.html)
 
 我们使用外部邮箱发送邮件通知。
 
@@ -535,14 +535,14 @@ SMTP的原始信息:
 ```
 
 ::: tip 说明
-配置生效后，需要测试SMTP发送邮件是否成功！测试SMTP设置参考： https://docs.gitlab.com/omnibus/settings/smtp.html#testing-the-smtp-configuration
+配置生效后，需要测试SMTP发送邮件是否成功！测试SMTP设置参考： [https://docs.gitlab.com/omnibus/settings/smtp.html#testing-the-smtp-configuration](https://docs.gitlab.com/omnibus/settings/smtp.html#testing-the-smtp-configuration)
 :::
 
 
 #### 改变Git有用户和组信息
 
 
-参考： https://docs.gitlab.com/omnibus/settings/configuration.html#changing-the-name-of-the-git-user--group
+参考： [https://docs.gitlab.com/omnibus/settings/configuration.html#changing-the-name-of-the-git-user--group](https://docs.gitlab.com/omnibus/settings/configuration.html#changing-the-name-of-the-git-user--group)
 
 Git配置的原始信息:
 
@@ -608,7 +608,7 @@ Git配置的原始信息:
 #### 设置非捆绑WEB服务器的用户名
 
 
-参考： https://docs.gitlab.com/omnibus/settings/nginx.html#using-a-non-bundled-web-server
+参考： [https://docs.gitlab.com/omnibus/settings/nginx.html#using-a-non-bundled-web-server](https://docs.gitlab.com/omnibus/settings/nginx.html#using-a-non-bundled-web-server)
 
 WEB SERVER配置的原始信息:
 
@@ -688,7 +688,7 @@ nginx:x:997:994:Nginx web server:/var/opt/gitlab/nginx:/sbin/nologin
 #### 配置GitLab的Nginx配置文件
 
 
-参考： https://gitlab.com/gitlab-org/gitlab-recipes/tree/master/web-server/nginx
+参考： [https://gitlab.com/gitlab-org/gitlab-recipes/tree/master/web-server/nginx](https://gitlab.com/gitlab-org/gitlab-recipes/tree/master/web-server/nginx)
 
 下载nginx的gitlab配置模板文件，注：下载单个文件时，应查看文件的raw文件::
 
@@ -1175,13 +1175,14 @@ To http://hellogitlab.com/meizhaohui/firstrepo.git
 ## GitLab HTTPS协议配置
 
 
-下载配置文件
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### 下载配置文件
+
 
 上述使用HTTP域名方式配置的GitLab正常可用，我们在此基础上配置HTTPS协议，使我们的GitLab更安全！
 
-首先，我们下载 ``gitlab-omnibus-ssl-nginx.conf`` 配置文件::
+首先，我们下载`gitlab-omnibus-ssl-nginx.conf`配置文件:
 
+```sh
 [root@hellogitlab ~]# wget https://gitlab.com/gitlab-org/gitlab-recipes/raw/master/web-server/nginx/gitlab-omnibus-ssl-nginx.conf
 --2019-08-18 16:23:17--  https://gitlab.com/gitlab-org/gitlab-recipes/raw/master/web-server/nginx/gitlab-omnibus-ssl-nginx.conf
 Resolving gitlab.com (gitlab.com)... 35.231.145.151
@@ -1193,16 +1194,19 @@ Saving to: ‘gitlab-omnibus-ssl-nginx.conf’
 100%[====================================================================================================>] 4,695       --.-K/s   in 0s      
 
 2019-08-18 16:23:20 (91.4 MB/s) - ‘gitlab-omnibus-ssl-nginx.conf’ saved [4695/4695]
+```
 
 你也可以通过点击下面的按钮进行下载。
 
-:download:`gitlab-omnibus-ssl-nginx.conf <./data/gitlab-omnibus-ssl-nginx.conf>`
 
-修改配置
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[download gitlab-omnibus-ssl-nginx.conf](/resource/conf/gitlab-omnibus-ssl-nginx.conf)
 
-将配置文件复制到/etc/nginx/conf.d/目录下::
+### 修改配置
 
+
+将配置文件复制到`/etc/nginx/conf.d/`目录下:
+
+```sh
 [root@hellogitlab ~]# cp gitlab-omnibus-ssl-nginx.conf /etc/nginx/conf.d/
 [root@hellogitlab ~]# ls -lah /etc/nginx/conf.d/
 total 16K
@@ -1210,19 +1214,16 @@ drwxr-xr-x 2 root root   76 Aug 18 16:35 .
 drwxr-xr-x 4 root root 4.0K Aug 18 11:44 ..
 -rw-r--r-- 1 root root 2.1K Aug 18 16:23 gitlab-omnibus-nginx.conf
 -rw-r--r-- 1 root root 4.6K Aug 18 16:35 gitlab-omnibus-ssl-nginx.conf
+```
 
 查看配置文件，我们关注35、46、52-54行：
 
-![gitlab_nginx_ssl_config.png
-](/img/gitlab_nginx_ssl_config.png
-)
+![gitlab_nginx_ssl_config.png](/img/gitlab_nginx_ssl_config.png)
 
-我们将 ``YOUR_SERVER_FQDN`` 替换成域名地址 ``hellogitlab.com`` :
+我们将`YOUR_SERVER_FQDN`替换成域名地址`hellogitlab.com`:
 
-.. code-block:: shell
-:linenos:
-:emphasize-lines: 1,11,22
 
+```sh
 [root@hellogitlab ~]# sed -i 's/YOUR_SERVER_FQDN/hellogitlab.com/g' /etc/nginx/conf.d/gitlab-omnibus-ssl-nginx.conf
 [root@hellogitlab ~]# cat -n /etc/nginx/conf.d/gitlab-omnibus-ssl-nginx.conf |sed -n '27,55p'
     27  ## Redirects all HTTP traffic to the HTTPS host
@@ -1254,12 +1255,14 @@ drwxr-xr-x 4 root root 4.0K Aug 18 11:44 ..
     53    ssl_certificate /etc/nginx/ssl/gitlab.crt;
     54    ssl_certificate_key /etc/nginx/ssl/gitlab.key;
     55
+```
 
-创建自签名证书
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### 创建自签名证书
 
-创建自签名证书存放目录，并创建证书::
 
+创建自签名证书存放目录，并创建证书:
+
+```sh
 [root@hellogitlab ~]# mkdir /etc/nginx/ssl
 [root@hellogitlab ~]# openssl req -x509 -nodes -days 1095 -newkey rsa:2048 -keyout /etc/nginx/ssl/gitlab.key -out /etc/nginx/ssl/gitlab.crt
 Generating a 2048 bit RSA private key
@@ -1287,12 +1290,14 @@ drwxr-xr-x 2 root root   42 Aug 18 16:52 .
 drwxr-xr-x 5 root root 4.0K Aug 18 16:51 ..
 -rw-r--r-- 1 root root 1.4K Aug 18 16:52 gitlab.crt
 -rw-r--r-- 1 root root 1.7K Aug 18 16:52 gitlab.key
+```
 
-重新配置GitLab
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### 重新配置GitLab
 
-先将http方式的配置文件备份::
 
+先将http方式的配置文件备份:
+
+```sh
 [root@hellogitlab ~]# mv /etc/nginx/conf.d/gitlab-omnibus-nginx.conf /etc/nginx/conf.d/gitlab-omnibus-nginx.conf.bak
 [root@hellogitlab ~]# ls -lah /etc/nginx/conf.d/
 total 16K
@@ -1300,9 +1305,11 @@ drwxr-xr-x 2 root root   80 Aug 18 16:55 .
 drwxr-xr-x 5 root root 4.0K Aug 18 16:51 ..
 -rw-r--r-- 1 root root 2.1K Aug 18 16:23 gitlab-omnibus-nginx.conf.bak
 -rw-r--r-- 1 root root 4.6K Aug 18 16:43 gitlab-omnibus-ssl-nginx.conf
+```
 
-停止GitLab和Nginx::
+停止GitLab和Nginx:
 
+```sh
 [root@hellogitlab ~]# gitlab-ctl stop
 ok: down: alertmanager: 0s, normally up
 ok: down: gitaly: 0s, normally up
@@ -1323,15 +1330,19 @@ ok: down: unicorn: 0s, normally up
 root     20570 14345  0 17:08 pts/0    00:00:00 grep --color=auto gitlab
 [root@hellogitlab ~]# ps -ef|grep nginx
 root     20576 14345  0 17:08 pts/0    00:00:00 grep --color=auto nginx
+```
 
-修改Gitlab配置文件 ``/etc/gitlab/gitlab.rb``，将13行的 ``http://hellogitlab.com`` 替换成 ``https://hellogitlab.com`` ::
+修改Gitlab配置文件`/etc/gitlab/gitlab.rb`，将13行的`http://hellogitlab.com` 替换成`https://hellogitlab.com`:
 
+```sh
 [root@hellogitlab ~]# sed -i 's@http://hellogitlab.com@https://hellogitlab.com@g' /etc/gitlab/gitlab.rb
 [root@hellogitlab ~]# cat -n /etc/gitlab/gitlab.rb|sed -n '13p'
     13  external_url "https://hellogitlab.com"
+```
 
-让配置生效::
+让配置生效:
 
+```sh
 [root@hellogitlab ~]# gitlab-ctl reconfigure
 Starting Chef Client, version 13.6.4
 resolving cookbooks for run list: ["gitlab"]
@@ -1357,9 +1368,11 @@ Compiling Cookbooks...
 Running handlers complete
 Chef Client finished, 6/610 resources updated in 17 seconds
 gitlab Reconfigured!
+```
 
-启动GitLab和Nginx服务::
+启动GitLab和Nginx服务:
 
+```sh
 [root@hellogitlab ~]# systemctl start gitlab-runsvdir
 [root@hellogitlab ~]# gitlab-ctl start
 ok: run: alertmanager: (pid 21555) 12s
@@ -1376,44 +1389,36 @@ ok: run: redis-exporter: (pid 21551) 12s
 ok: run: sidekiq: (pid 21533) 13s
 ok: run: unicorn: (pid 21543) 12s
 [root@hellogitlab ~]# systemctl start nginx
+```
 
-访问GitLab
--------------------------------------------------
+## 访问GitLab
 
-在Google浏览器中访问URL: http://hellogitlab.com/ ，可以看到页面自动跳转到 https://hellogitlab.com/ 了：
 
-![gitlab_http_2_https.png
-](/img/gitlab_http_2_https.png
-)
+在Google浏览器中访问URL:[http://hellogitlab.com/](http://hellogitlab.com/) ，可以看到页面自动跳转到[https://hellogitlab.com/](https://hellogitlab.com/)了：
 
-我们点击"高级"--"继续前往hellogitlab.com（不安全）"，可以看到打开了 https://hellogitlab.com/  页面：
+![gitlab_http_2_https.png](/img/gitlab_http_2_https.png)
 
-![gitlab_domain_https_page.png
-](/img/gitlab_domain_https_page.png
-)
+我们点击"高级"--"继续前往hellogitlab.com（不安全）"，可以看到打开了 
+[https://hellogitlab.com/](https://hellogitlab.com/)页面：
+
+![gitlab_domain_https_page.png](/img/gitlab_domain_https_page.png)
 
 我们使用"meizhaohui"这个账号进行登陆，发现可以登陆上，登陆后的界面如下：
 
-![gitlab_domain_https_login.png
-](/img/gitlab_domain_https_login.png
-)
+![gitlab_domain_https_login.png](/img/gitlab_domain_https_login.png)
 
 查看项目的详情界面，点击"clone"按钮，查看URL地址是否更新，可以发现URL已经变成https开头了：
 
-![gitlab_domain_https_url_updated.png
-](/img/gitlab_domain_https_url_updated.png
-)
+![gitlab_domain_https_url_updated.png](/img/gitlab_domain_https_url_updated.png)
 
 
 我们在宿主机上面使用https方式克隆下载仓库，也需要输入用户名和密码：
 
-![gitlab_domain_git_clone_with_https_method.png
-](/img/gitlab_domain_git_clone_with_https_method.png
-)
+![gitlab_domain_git_clone_with_https_method.png](/img/gitlab_domain_git_clone_with_https_method.png)
 
-修改文件并提交::
+修改文件并提交:
 
-D:\Desktop
+```sh
 $ git clone https://hellogitlab.com/meizhaohui/firstrepo.git https
 Cloning into 'https'...
 remote: Enumerating objects: 9, done.
@@ -1422,10 +1427,8 @@ remote: Compressing objects: 100% (5/5), done.
 remote: Total 9 (delta 1), reused 0 (delta 0)
 Unpacking objects: 100% (9/9), done.
 
-D:\Desktop
 $ cd https
 
-D:\Desktop\https (master -> origin)
 $ git diff
 diff --git a/README.md b/README.md
 index 80725a0..4d4a504 100644
@@ -1437,15 +1440,12 @@ index 80725a0..4d4a504 100644
  add by http method.
 +add by https method.
 
-D:\Desktop\https (master -> origin)
 $ git add -A
 
-D:\Desktop\https (master -> origin)
 $ git commit -m"通过HTTPS方式下载并提交修改"
 [master 6159214] 通过HTTPS方式下载并提交修改
  1 file changed, 1 insertion(+)
 
-D:\Desktop\https (master -> origin)
 $ git push origin master:master
 Enumerating objects: 5, done.
 Counting objects: 100% (5/5), done.
@@ -1455,24 +1455,21 @@ Writing objects: 100% (3/3), 341 bytes | 341.00 KiB/s, done.
 Total 3 (delta 1), reused 0 (delta 0)
 To https://hellogitlab.com/meizhaohui/firstrepo.git
    a89dc8c..6159214  master -> master
+```
 
 在WEB界面上查看刚才的提交：
 
-![gitlab_domain_https_commit.png
-](/img/gitlab_domain_https_commit.png
-)
+![gitlab_domain_https_commit.png](/img/gitlab_domain_https_commit.png)
 
-我们再在ssh方式下载的目录更新一下，看能否拉出最新的修改::
+我们再在ssh方式下载的目录更新一下，看能否拉出最新的修改:
 
-D:\Desktop\https (master -> origin)
+```sh
 $ cd ..\firstrepo\
 
-D:\Desktop\firstrepo (master -> origin)
 $ git remote -v
 origin  git@hellogitlab.com:meizhaohui/firstrepo.git (fetch)
 origin  git@hellogitlab.com:meizhaohui/firstrepo.git (push)
 
-D:\Desktop\firstrepo (master -> origin)
 $ git pull
 remote: Enumerating objects: 8, done.
 remote: Counting objects: 100% (8/8), done.
@@ -1486,7 +1483,6 @@ Fast-forward
  README.md | 2 ++
  1 file changed, 2 insertions(+)
 
-D:\Desktop\firstrepo (master -> origin)
 $ git log
 commit 61592140da36857dd244b7e136b50fd292995419 (HEAD -> master, origin/master, origin/HEAD)
 Author: Zhaohui Mei <mzh.whut@gmail.com>
@@ -1511,12 +1507,13 @@ Author: 梅朝辉 <mzh.whut@gmail.com>
 Date:   Sun Aug 18 12:30:36 2019 +0800
 
     Initial commit
+```
 
 可以看到最新的修改都已经成功下载下来，说明配置没有问题！
 
-我们再通过SSH方式提交一次修改，做最后的检查::
+我们再通过SSH方式提交一次修改，做最后的检查:
 
-D:\Desktop\firstrepo (master -> origin)                       
+```sh                     
 $ git diff                                                    
 diff --git a/README.md b/README.md                            
 index 4d4a504..ccd2cd5 100644                                 
@@ -1527,16 +1524,13 @@ index 4d4a504..ccd2cd5 100644
  add by http method.                                          
  add by https method.                                         
 +add by ssh method again.                                     
-                                                              
-D:\Desktop\firstrepo (master -> origin)                       
+                                                                                 
 $ git add -A                                                  
-                                                              
-D:\Desktop\firstrepo (master -> origin)                       
+                                                                                   
 $ git commit -m"配置HTTPS传输后，通过SSH方式提交修改"         
 [master 24c6584] 配置HTTPS传输后，通过SSH方式提交修改         
  1 file changed, 1 insertion(+)                               
-                                                              
-D:\Desktop\firstrepo (master -> origin)                       
+                                                                                  
 $ git push origin master:master                               
 Enumerating objects: 5, done.                                 
 Counting objects: 100% (5/5), done.                           
@@ -1546,33 +1540,37 @@ Writing objects: 100% (3/3), 363 bytes | 363.00 KiB/s, done.
 Total 3 (delta 1), reused 0 (delta 0)                         
 To hellogitlab.com:meizhaohui/firstrepo.git                   
    6159214..24c6584  master -> master                         
+```
 
 发现可以正常提交，并且在WEB界面上面可以看到提交的更新：
     
-![gitlab_domain_https_ssh_push.png
-](/img/gitlab_domain_https_ssh_push.png
-)
+![gitlab_domain_https_ssh_push.png](/img/gitlab_domain_https_ssh_push.png)
 
 
-GitLab汉化
--------------------------------------------------
+## GitLab汉化
+
 
 上述的操作可以确定HTTPS协议的GitLab已经配置好了！现在做最后的优化，进行GitLab汉化。
 
-你可以通过下面这个命令下载汉化包::
+你可以通过下面这个命令下载汉化包:
 
-git clone https://gitlab.com/xhang/gitlab.git -b 11-10-stable-zh
+```sh
+$ git clone https://gitlab.com/xhang/gitlab.git -b 11-10-stable-zh
+```
 
-我使用之前下载的汉化包直接上传到服务器上::
+我使用之前下载的汉化包直接上传到服务器上:
 
+```sh
 [root@hellogitlab ~]# ls -lah gitlab-11-10-stable-zh.tar.gz   
 -rw-r--r-- 1 root root 60M Jun 29 18:35 gitlab-11-10-stable-zh.tar.gz
 [root@hellogitlab ~]# tar -zxvf gitlab-11-10-stable-zh.tar.gz
 [root@hellogitlab ~]# ls -ld gitlab-11-10-stable-zh 
 drwxrwxr-x 28 root root 4096 Jun 13 10:13 gitlab-11-10-stable-zh
+```
 
-停止GitLab和Nginx服务::
+停止GitLab和Nginx服务:
 
+```sh
 [root@hellogitlab ~]# gitlab-ctl stop
 ok: down: alertmanager: 0s, normally up
 ok: down: gitaly: 1s, normally up
@@ -1593,11 +1591,13 @@ ok: down: unicorn: 0s, normally up
 root     27234 14345  0 17:51 pts/0    00:00:00 grep --color=auto gitlab
 [root@hellogitlab ~]# ps -ef|grep nginx
 root     27240 14345  0 17:51 pts/0    00:00:00 grep --color=auto nginx
+```
 
 说明GitLab相关服务已经停止。
 
-备份 ``/opt/gitlab/embedded/service/gitlab-rails/`` 文件夹，防止后续操作失败导致GitLab无法运行::
+备份`/opt/gitlab/embedded/service/gitlab-rails/`文件夹，防止后续操作失败导致GitLab无法运行:
 
+```sh
 [root@hellogitlab ~]# cp -rf /opt/gitlab/embedded/service/gitlab-rails/ /opt/gitlab/embedded/service/gitlab-rails.bak
 [root@hellogitlab ~]# ls -lad /opt/gitlab/embedded/service/gitlab-rails*
 drwxr-xr-x 24 root root 4096 Aug 18 11:45 /opt/gitlab/embedded/service/gitlab-rails
@@ -1605,9 +1605,11 @@ drwxr-xr-x 24 root root 4096 Aug 18 17:52 /opt/gitlab/embedded/service/gitlab-ra
 [root@hellogitlab ~]# du -sh /opt/gitlab/embedded/service/gitlab-rails*
 253M    /opt/gitlab/embedded/service/gitlab-rails
 253M    /opt/gitlab/embedded/service/gitlab-rails.bak
+```
 
-去除cp的别名，复制gitlab汉化包中的文件到 ``/opt/gitlab/embedded/service/gitlab-rails/`` 目录下::
+去除`cp`的别名，复制gitlab汉化包中的文件到`/opt/gitlab/embedded/service/gitlab-rails/`目录下:
 
+```sh
 [root@hellogitlab ~]# alias cp
 alias cp='cp -i'
 [root@hellogitlab ~]# unalias cp
@@ -1617,9 +1619,11 @@ centos7_mini_init.sh  gitlab-11-10-stable-zh.tar.gz  gitlab-omnibus-ssl-nginx.co
 [root@hellogitlab ~]# cp -rf gitlab-11-10-stable-zh/* /opt/gitlab/embedded/service/gitlab-rails/
 cp: cannot overwrite non-directory ‘/opt/gitlab/embedded/service/gitlab-rails/log’ with directory ‘gitlab-11-10-stable-zh/log’
 cp: cannot overwrite non-directory ‘/opt/gitlab/embedded/service/gitlab-rails/tmp’ with directory ‘gitlab-11-10-stable-zh/tmp’
+```
 
-使配置生效::
+使配置生效:
 
+```sh
 [root@hellogitlab ~]# systemctl start gitlab-runsvdir
 [root@hellogitlab ~]# gitlab-ctl reconfigure
 ...... 执行剧本，忽略
@@ -1627,9 +1631,11 @@ Running handlers:
 Running handlers complete
 Chef Client finished, 5/609 resources updated in 51 seconds
 gitlab Reconfigured!
+```
 
-启动GitLab和Nginx服务::
+启动GitLab和Nginx服务:
 
+```sh
 [root@hellogitlab ~]# systemctl start gitlab-runsvdir
 [root@hellogitlab ~]# gitlab-ctl start
 ok: run: alertmanager: (pid 27460) 134s
@@ -1646,42 +1652,37 @@ ok: run: redis-exporter: (pid 27484) 134s
 ok: run: sidekiq: (pid 27468) 134s
 ok: run: unicorn: (pid 27466) 134s
 [root@hellogitlab ~]# systemctl start nginx
+```
 
 重新访问GitLab，可以看到中文页面了:
 
-![gitlab_domain_https_with_i18n.png
-](/img/gitlab_domain_https_with_i18n.png
-)
+![gitlab_domain_https_with_i18n.png](/img/gitlab_domain_https_with_i18n.png)
 
 正常登陆。在"偏好"中设置"语言"是"简体中文"，重新登陆即可。
 
 再次查看项目详情页面：
 
-![gitlab_domain_https_project_details_with_i18n.png
-](/img/gitlab_domain_https_project_details_with_i18n.png
-)
+![gitlab_domain_https_project_details_with_i18n.png](/img/gitlab_domain_https_project_details_with_i18n.png)
 
-GitLab常用命令
--------------------------------------------------
-
-- 启动服务： ``gitlab-ctl start``
-- 查看状态： ``gitlab-ctl status``
-- 停掉服务： ``gitlab-ctl stop``
-- 重启服务： ``gitlab-ctl restart``
-- 让配置生效： ``gitlab-ctl reconfigure``
-- 查看GitLab版本： ``cat /opt/gitlab/embedded/service/gitlab-rails/VERSION``
+## GitLab常用命令
 
 
-初始化HTTPS方式GitLab配置文件的脚本
--------------------------------------------------
+- 启动服务： `gitlab-ctl start`
+- 查看状态： `gitlab-ctl status`
+- 停掉服务： `gitlab-ctl stop`
+- 重启服务：`gitlab-ctl restart`
+- 让配置生效： `gitlab-ctl reconfigure`
+- 查看GitLab版本： `cat /opt/gitlab/embedded/service/gitlab-rails/VERSION`
 
-:download:`init_gitlab_https_conf.sh <./scripts/init_gitlab_https_conf.sh>`
+
+## 初始化HTTPS方式GitLab配置文件的脚本
+
+
+[download init_gitlab_https_conf.sh](/scripts/shell/init_gitlab_https_conf.sh)
 
 脚本内容如下:
 
-.. code-block:: shell
-:linenos:
-
+```sh
 #!/bin/bash
 # Filename: init_GITLAB_CONF.sh
 # Author: Zhaohui Mei
@@ -1966,8 +1967,4 @@ echo -e "Start the gitlab-runsvdir: systemctl start gitlab-runsvdir"
 echo -e "Start the gitlab: gitlab-ctl start"
 echo -e "Start the nginx: systemctl start nginx"
 echo -e "You can set the Chinese i18n by yourself"
-
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```
