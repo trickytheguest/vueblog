@@ -443,10 +443,10 @@ func main() {
 }
 ```
 
-此示例中，定义了main包，并批量导入了两个包，一个"fmt"包，一个"math/rand"包。
+此示例中，定义了`main`包，并批量导入了两个包，一个`fmt`包，一个`math/rand`包。
 
 运行程序：
-```shell
+```sh
 [meizhaohui@hellogitlab src]$ go run packages.go
 The rand Number:  1
 ```
@@ -456,11 +456,12 @@ The rand Number:  1
 
 - 在导入一个包后，就可以使用其导出的名称来调用它。
 - Go语言是大小写敏感的。
-- 在Go语言中，以大写字母开头的名字就会被``导出``( exported )。类似面向对象里面的属性public。
-- 在Go语言中，以小写字母开头的名字**不会被**``导出``( exported )。类似面向对象里面的属性private。对包外不可见。
+- 在Go语言中，以大写字母开头的名字就会被`导出`( exported )。类似面向对象里面的属性`public`。
+- 在Go语言中，以小写字母开头的名字**不会被**`导出`( exported )。类似面向对象里面的属性`private`。对包外不可见。
 
 
 我们将上面的packages.go程序修改一下：
+
 ```go
 [meizhaohui@hellogitlab src]$ cat packages.go 
 /*
@@ -485,44 +486,45 @@ func main() {
 ```
 
 尝试运行程序：
-```shell
+
+```sh
 [meizhaohui@hellogitlab src]$ go run packages.go 
 # command-line-arguments
 ./packages.go:18:26: cannot refer to unexported name math.pi
 ./packages.go:18:26: undefined: math.pi
 ```
 
-可以看到执行错误，无法获取到``math.pi``这个变量。
+可以看到执行错误，无法获取到`math.pi`这个变量。
 
-将``math.pi``改成``math.PI``后再运行：
+将`math.pi`改成`math.PI`后再运行：
 
-```shell
+```sh
 [meizhaohui@hellogitlab src]$ go run packages.go 
 The rand Number:  1
 The PI:  3.141592653589793
 ```
 
-可以正常获取到``pi``的值为``3.141592653589793``。
+可以正常获取到`pi`的值为`3.141592653589793`。
 
 该示例中，我们使用了三个包：
 
-- "fmt" ：fmt包使用函数实现 I/O 格式化（类似于 C 的 printf 和 scanf 的函数）, 格式化参数源自C，但更简单。
-- "math" ：math包提供了基本的常量和数学函数。
-- "math/rand" ： rand包执行伪随机数生成器。
+- `fmt`：`fmt`包使用函数实现`I/O`格式化（类似于`C`的`printf`和`scanf`的函数）, 格式化参数源自C，但更简单。
+- `math`：`math`包提供了基本的常量和数学函数。
+- `math/rand`： `rand`包执行伪随机数生成器。
 
 参考：
-- 腾讯云开发者手册-Go教程 https://cloud.tencent.com/developer/doc/1101
+- [腾讯云开发者手册-Go教程](https://cloud.tencent.com/developer/doc/1101)
 
 
 ##### 函数简介
 
 - 函数是基本的代码块，用于执行一个任务。
-- Go语言最少有个``main()``函数。
+- Go语言最少有个`main()`函数。
 - Go语言中，函数可以接收0个或多个参数。
 - 可以通过函数来划分不同的功能，逻辑上每个函数执行指定的任务。
 - 当两个或多个连续的函数命名参数是同一类型，则除了最后一个类型之外，其他都可以省略。
 
-下面示例中，创建一个add函数，并进行调用：
+下面示例中，创建一个`add`函数，并进行调用：
 
 ```go
 [meizhaohui@hellogitlab src]$ cat functions.go 
@@ -547,22 +549,24 @@ func main() {
 ```
 
 运行程序：
-```shell
+
+```sh
 [meizhaohui@hellogitlab src]$ go run functions.go 
 11 + 22 = 33
 ```
 
 示例中做了以下事情：
 
-- 定义``add``函数，并接受两个``int``类型的参数``x``和``y``，并返回``int``类型的值。
-- 将``x + y``的值做为``add``函数的返回值。
-- 使用``fmt.Printf``输出字符，此方法输出字符时，不会自动添加换行符，因此在格式化字符串中需要指定``\n``进行换行。
-- 使用``add(11, 22)``调用了``add``函数，并传入两个整型参数。
-- 因为``x``和``y``的参数类型相同，函数定义时``add(x int, y int)``可以简写为``add(x, y int)``。
+- 定义`add`函数，并接受两个`int`类型的参数`x`和`y`，并返回`int`类型的值。
+- 将`x + y`的值做为`add`函数的返回值。
+- 使用`fmt.Printf`输出字符，此方法输出字符时，不会自动添加换行符，因此在格式化字符串中需要指定`\n`进行换行。
+- 使用`add(11, 22)`调用了`add`函数，并传入两个整型参数。
+- 因为`x`和`y`的参数类型相同，函数定义时`add(x int, y int)`可以简写为`add(x, y int)`。
 
 ###### 函数定义
 
 Go语言函数定义格式如下：
+
 ```go
 func function_name( [parameter list] ) [return_types] {
    函数体
@@ -611,7 +615,7 @@ func main() {
 ```
 
 运行程序：
-```shell
+```sh
 [meizhaohui@hellogitlab src]$ go run multi_results.go
 world hello
 ```
@@ -645,7 +649,7 @@ func main() {
 ```
 
 运行程序：
-```shell
+```sh
 [meizhaohui@hellogitlab src]$ go run multi_results.go
 # command-line-arguments
 ./multi_results.go:14:2: too many arguments to return
@@ -689,7 +693,7 @@ func main() {
 ```
 
 运行程序：
-```shell
+```sh
 [meizhaohui@hellogitlab src]$ go run named_results.go
 9 5
 ```
@@ -757,7 +761,7 @@ func main() {
 ```
 
 运行程序：
-```shell
+```sh
 [meizhaohui@hellogitlab src]$ go run types.go     
 10
 10 1 2
@@ -802,7 +806,7 @@ func main() {
 ```
 
 运行程序：
-```shell
+```sh
 [meizhaohui@hellogitlab src]$ go run constants.go 
 Golang的版本号: go1.13.3 linux/amd64
 圆的面积: 12.56
@@ -849,7 +853,7 @@ Golang的版本号: go1.13.3 linux/amd64
 ```
 
 运行程序:
-```shell
+```sh
 [meizhaohui@hellogitlab src]$ go run type_conversions.go
 # command-line-arguments
 ./type_conversions.go:18:6: cannot use i (type int) as type float64 in assignment
@@ -890,7 +894,7 @@ func main() {
 ```
 
 重新运行程序:
-```shell
+```sh
 [meizhaohui@hellogitlab src]$ go run type_conversions.go
 42 42 42
 3 4 5
@@ -933,7 +937,7 @@ func main() {
 ```
 
 运行程序：
-```shell
+```sh
 [meizhaohui@hellogitlab src]$ go run operators.go 
 1 >  2 :false
 1 <  2 :true
@@ -980,7 +984,7 @@ func main() {
 ```
 
 运行程序：
-```shell
+```sh
 [meizhaohui@hellogitlab src]$ go run base_for.go 
 Sum is 55
 ```
@@ -1017,7 +1021,7 @@ func main() {
 ```
 
 运行程序：
-```shell
+```sh
 [meizhaohui@hellogitlab src]$ go run base_for.go 
 Sum is 55
 nsum is 2
@@ -1087,7 +1091,7 @@ func main() {
 ```
 
 运行程序：
-```shell
+```sh
 [meizhaohui@hellogitlab src]$ go run base_for.go 
 Sum is 55
 nsum is 2
@@ -1152,7 +1156,7 @@ func main() {
 ```
 
 运行程序：
-```shell
+```sh
 [meizhaohui@hellogitlab src]$ go run base_if.go 
 1.4142135623730951
 求平方根的数必须不小于0
@@ -1193,7 +1197,7 @@ exit status 1
 ```
 
 运行程序：
-```shell
+```sh
 [meizhaohui@hellogitlab src]$ go run short_if.go 
 # command-line-arguments
 ./short_if.go:20:14: undefined: num
@@ -1201,7 +1205,7 @@ exit status 1
 可以发现提示20行异常，``num``变量未定义，因为``num``变量作用域是``if``语句中，在``if``语句外获取不到``num``变量。
 
 删除20行的打印语句，再重新运行:
-```shell
+```sh
 [meizhaohui@hellogitlab src]$ go run short_if.go 
 2 是正数
 ```
@@ -1242,7 +1246,7 @@ func main() {
 ```
 
 运行程序：
-```shell
+```sh
 [meizhaohui@hellogitlab src]$ go run newton_method_sqrt.go 
 库函数求平方根math.Sqrt(8) = 2.8284271247461903
 第1次猜值为1.000000
@@ -1318,7 +1322,7 @@ func main() {
 ```
 
 运行程序：
-```shell
+```sh
 [meizhaohui@hellogitlab src]$ go run base_switch.go 
 Golang runs on Linux System
 [meizhaohui@hellogitlab src]$ go env|grep GOOS
@@ -1326,7 +1330,7 @@ GOOS="linux"
 ```
 
 在Windows系统上面运行程序：
-```shell
+```sh
 $ go run base_switch.go
 Golang runs on Windows System
 
@@ -1370,7 +1374,7 @@ func main() {
 ```
 
 运行程序：
-```shell
+```sh
 [meizhaohui@hellogitlab src]$ go run switch_no_condition.go 
 Good evening!
 ```
@@ -1414,7 +1418,7 @@ func main() {
 ```
 
 运行程序：
-```shell
+```sh
 [meizhaohui@hellogitlab src]$ go run switch_fallthrough.go 
 2. condition is true.
 3. condition is false.
@@ -1451,7 +1455,7 @@ func main() {
 ```
 
 运行程序：
-```shell
+```sh
 [meizhaohui@hellogitlab src]$ go run base_defer.go 
 Hello
 3
@@ -1507,7 +1511,7 @@ func closeFile(f *os.File) {
 ```
 
 运行程序：
-```shell
+```sh
 [meizhaohui@hellogitlab src]$ go run defer.go 
 creating
 writing
