@@ -17,18 +17,18 @@ Go编程语言中文文档中介绍Go:
 
 - 本文档中`Golang`简写为`Go`。
 - 本文档假定您会使用Linux操作系统的基本命令，如vim、cat、ls等一些工具。
-- ``Go``学习网站：官方文档 https://golang.google.cn/doc/
-- ``Go``学习网站：Go编程语言中文文档 https://go-zh.org/doc/
-- ``Go``学习网站：Go语言之旅 https://go-tour-zh.appspot.com/list
-- ``Go``学习网站：实效Go编程 https://go-zh.org/doc/effective_go.html
-- ``Go``学习网站：Go编程语言规范 https://go-zh.org/ref/spec
+- `Go`学习网站：官方文档 https://golang.google.cn/doc/
+- `Go`学习网站：Go编程语言中文文档 https://go-zh.org/doc/
+- `Go`学习网站：Go语言之旅 https://go-tour-zh.appspot.com/list
+- `Go`学习网站：实效Go编程 https://go-zh.org/doc/effective_go.html
+- `Go`学习网站：Go编程语言规范 https://go-zh.org/ref/spec
 
 
 ## 实验环境
 
 本实验使用CentOS7.6作为实验环境。
 
-```shell
+```sh
 [root@hellogitlab ~]# cat /etc/centos-release
 CentOS Linux release 7.6.1810 (Core)
 ```
@@ -37,8 +37,9 @@ CentOS Linux release 7.6.1810 (Core)
 
 ### 安装Golang
 
-- 使用``yum install go -y``安装Golang。
-```shell
+- 使用`yum install go -y`安装Golang。
+
+```sh
 [root@hellogitlab ~]# yum install go -y
 Loaded plugins: fastestmirror, langpacks
 Repository epel is listed more than once in the configuration
@@ -107,13 +108,14 @@ Complete!
 
 ### 查看Golang版本
 
-```shell
+```sh
 [root@hellogitlab ~]# go version
 go version go1.13.3 linux/amd64
 ```
 
-### 查看``go``命令的帮助信息
-```shell
+### 查看`go`命令的帮助信息
+
+```sh
 [root@hellogitlab ~]# go
 Go is a tool for managing Go source code.
 
@@ -168,7 +170,7 @@ Use "go help <topic>" for more information about that topic.
 
 ### go安装信息检查
 
-```shell
+```sh
 # 查看go处于什么位置
 [root@hellogitlab ~]# whereis go
 go: /usr/bin/go /usr/lib/golang/bin/go
@@ -194,18 +196,19 @@ drwxr-xr-x  46 root root 4.0K Nov 22 22:35 src
 -rw-r--r--   1 root root    8 Oct 18 06:02 VERSION
 ```
 
-我们后续使用普通账户``meizhaohui``来进行go语言相关命令的操作。
+我们后续使用普通账户`meizhaohui`来进行go语言相关命令的操作。
 
 ### 配置Go的工作空间
 
 GO代码必须在工作空间内。工作空间是一个目录，其中包含三个子目录：
-- src 里面每一个子目录，就是一个包。包内是Go的源码文件
-- pkg 编译后生成的，包的目标文件
-- bin 生成的可执行文件
+- `src` 里面每一个子目录，就是一个包。包内是Go的源码文件
+- `pkg` 编译后生成的，包的目标文件
+- `bin` 生成的可执行文件
 
 
-使用普通账户``meizhaohui``创建Go的工作空间目录
-```shell
+使用普通账户`meizhaohui`创建Go的工作空间目录：
+
+```sh
 # 查看我是谁
 [meizhaohui@hellogitlab ~]$ whoami
 meizhaohui
@@ -227,9 +230,9 @@ drwxrwxr-x 2 meizhaohui meizhaohui 4.0K Nov 22 23:10 pkg
 drwxrwxr-x 2 meizhaohui meizhaohui 4.0K Nov 22 23:10 src
 ```
 
-### 配置``PATH``、``GOPATH``、``GOROOT``、``GOBIN``等环境变量
+### 配置`PATH`、`GOPATH`、`GOROOT`、`GOBIN`等环境变量
 
-在``~/.bashrc``文件中增加以下内容：
+在`~/.bashrc`文件中增加以下内容：
 
 ```
 # Golang environment settings
@@ -239,8 +242,9 @@ export GOBIN=${GOPATH}/bin # golang exe files
 export PATH=${GOBIN}:${PATH}
 ```
 
-保存后，``source ~/.bashrc``加载配置文件，并查看以上设置的Go语言的环境变量：
-```shell
+保存后，`source ~/.bashrc`加载配置文件，并查看以上设置的Go语言的环境变量：
+
+```sh
 [meizhaohui@hellogitlab ~]$ source ~/.bashrc
 [meizhaohui@hellogitlab ~]$ echo $GOPATH
 /home/meizhaohui/data/go_data
@@ -264,16 +268,16 @@ export PATH=${GOBIN}:${PATH}
 - 干货满满的 Go Modules 和 goproxy.cn https://github.com/EDDYCJY/blog/blob/master/talk/goproxy-cn.md
 - Go module和goproxy 设置 https://luhua.cc/2019/08/23/Go-module-%E5%92%8C-goproxy-%E8%AE%BE%E7%BD%AE/
 
-在``~/.bashrc``文件中增加以下内容：
+在`~/.bashrc`文件中增加以下内容：
 
-```shell
+```sh
 export GO111MODULE=on
 export GOPROXY=https://goproxy.cn
 ```
 
-保存后，``source ~/.bashrc``加载配置文件，并查看以上设置的Go语言的环境变量：
+保存后，`source ~/.bashrc`加载配置文件，并查看以上设置的Go语言的环境变量：
 
-```shell
+```sh
 [meizhaohui@hellogitlab ~]$ echo $GO111MODULE
 on
 [meizhaohui@hellogitlab ~]$ echo $GOPROXY 
@@ -287,10 +291,11 @@ https://goproxy.cn
 ## 第一个Go程序，你好世界
 
 ### 编写Go代码文件
-以最经典的``Hello world``程序为例，编写第一个Go代码文件。
+以最经典的`Hello world`程序为例，编写第一个Go代码文件。
 
-我们切换到``$GOPATH/src``目录中，创建第一个Go代码文件。
-```shell
+我们切换到`$GOPATH/src`目录中，创建第一个Go代码文件。
+
+```sh
 [meizhaohui@hellogitlab ~]$ cd $GOPATH/src
 [meizhaohui@hellogitlab src]$ pwd
 /home/meizhaohui/data/go_data/src
@@ -305,10 +310,11 @@ func main() {
 }
 ```
 
-### 编译Go程序``go build``
+### 编译Go程序`go build`
 
-- 使用``go build filename.go``编译go程序，如``go build hello.go``编译生成可执行文件``hello``。
-```shell
+- 使用`go build filename.go`编译go程序，如`go build hello.go`编译生成可执行文件`hello`。
+
+```sh
 [meizhaohui@hellogitlab src]$ go build hello.go 
 [meizhaohui@hellogitlab src]$ ls
 hello  hello.go
@@ -317,11 +323,11 @@ hello  hello.go
 Hello,World
 ```
 
-### 编译并直接运行Go程序``go run``
+### 编译并直接运行Go程序`go run`
 
-- 使用``go run filename.go``编译并直接运行go程序，如``go build hello.go``编译时不生成可执行文件，直接显示运行结果。
+- 使用`go run filename.go`编译并直接运行go程序，如`go build hello.go`编译时不生成可执行文件，直接显示运行结果。
 
-```shell
+```sh
 [meizhaohui@hellogitlab src]$ trash-put hello
 [meizhaohui@hellogitlab src]$ ls
 hello.go
@@ -331,10 +337,10 @@ Hello,World
 hello.go
 ```
 
-### 编译并安装``go install``
-- 对go源码文件``go install``,会进行编译+链接+生成可执行文件, 会在``$GOBIN``目录下生成可执行文件。
+### 编译并安装`go install`
+- 对go源码文件`go install`,会进行编译+链接+生成可执行文件, 会在`$GOBIN`目录下生成可执行文件。
 
-```shell
+```sh
 # 编译并安装
 [meizhaohui@hellogitlab src]$ go install hello.go
 # 查看当前目录下是否生成可执行文件
@@ -360,9 +366,9 @@ Hello,World
 
 #### 注释
 
-- Go语言支持C风格的块注释``/* */``和C++风格的行注释``//``。 行注释更为常用，而块注释则主要用作包的注释，当然也可在禁用一大段代码时使用。
+- Go语言支持C风格的块注释`/* */`和C++风格的行注释`//`。 行注释更为常用，而块注释则主要用作包的注释，当然也可在禁用一大段代码时使用。
 
-我们在``hello.go``中增加一下注释。
+我们在`hello.go`中增加一下注释。
 
 查看源文件内容：
 
@@ -387,7 +393,7 @@ func main() {
 
 再次运行程序：
 
-```shell
+```sh
 [meizhaohui@hellogitlab src]$ go run hello.go
 Hello,World
 ```
@@ -397,24 +403,25 @@ Hello,World
 ##### 包
 
 - 每个Go程序都是由一个包组成的。
-- Go程序从``main``包开始执行的。
-- 使用``package name``来定义名称为``name``的包。
-- 每个Go程序必须包含一个名称为``main``的包，即必须有一个``package main``这样的包。如果程序未定义``main``包，运行程序时则会提示``go run: cannot run non-main package``异常。
+- Go程序从`main`包开始执行的。
+- 使用`package name`来定义名称为`name`的包。
+- 每个Go程序必须包含一个名称为`main`的包，即必须有一个`package main`这样的包。如果程序未定义`main`包，运行程序时则会提示`go run: cannot run non-main package`异常。
 - 必须在Go源文件中非注释的第一行指明这个文件属于哪个包。
-- 包名不一定要和源文件名保持一致。如源文件``swagger.go``中定义的包``package swag``就是这种情况。
-- 在``package main``主包中必须定义一个主函数``func main()``，否则运行程序时则会提示``function main is undeclared in the main package``异常，即主包中未声明主函数。
+- 包名不一定要和源文件名保持一致。如源文件`swagger.go`中定义的包`package swag`就是这种情况。
+- 在`package main`主包中必须定义一个主函数`func main()`，否则运行程序时则会提示`function main is undeclared in the main package`异常，即主包中未声明主函数。
 - 文件夹包与包名没有直接关系，并非需要一致。
 - 同一个文件夹下的文件只能有一个包名，否则编译报错。
 
 ###### 引入包
 
-- Go程序通过``import``语句引入包并在代码中使用。
-- ``import``语句告诉编译器这个程序使用哪些包。
-- ``import``语句可以像Python一样的，一次导入一个包，像hello.go中``import "fmt"``导入fmt包。
-- ``import``语句也可以一性引入多个包，也称批量导入或打包导入语句。**推荐使用批量导入语句**。
+- Go程序通过`import`语句引入包并在代码中使用。
+- `import`语句告诉编译器这个程序使用哪些包。
+- `import`语句可以像Python一样的，一次导入一个包，像hello.go中`import "fmt"`导入fmt包。
+- `import`语句也可以一性引入多个包，也称批量导入或打包导入语句。**推荐使用批量导入语句**。
 
 下面示例中，使用了批量导入语句：
 示例：
+
 ```go
 [meizhaohui@hellogitlab src]$ cat packages.go 
 /*
