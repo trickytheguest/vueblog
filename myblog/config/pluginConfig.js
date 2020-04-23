@@ -11,5 +11,7 @@ module.exports = {
             lang: 'zh-cn', // 支持中文
         }
     },
-     "vuepress-plugin-auto-sidebar" : {}, // 自动侧边栏
+     "vuepress-plugin-auto-sidebar" : {
+        sidebarDepth: 2 
+     }, // 自动侧边栏
 }
