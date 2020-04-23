@@ -17,11 +17,11 @@ Go编程语言中文文档中介绍Go:
 
 - 本文档中`Golang`简写为`Go`。
 - 本文档假定您会使用Linux操作系统的基本命令，如vim、cat、ls等一些工具。
-- `Go`学习网站：官方文档 https://golang.google.cn/doc/
-- `Go`学习网站：Go编程语言中文文档 https://go-zh.org/doc/
-- `Go`学习网站：Go语言之旅 https://go-tour-zh.appspot.com/list
-- `Go`学习网站：实效Go编程 https://go-zh.org/doc/effective_go.html
-- `Go`学习网站：Go编程语言规范 https://go-zh.org/ref/spec
+- `Go`学习网站：官方文档[https://golang.google.cn/doc/](https://golang.google.cn/doc/)
+- `Go`学习网站：Go编程语言中文文档[https://go-zh.org/doc/](https://go-zh.org/doc/)
+- `Go`学习网站：Go语言之旅[https://go-tour-zh.appspot.com/list](https://go-tour-zh.appspot.com/list)
+- `Go`学习网站：实效Go编程[https://go-zh.org/doc/effective_go.html](https://go-zh.org/doc/effective_go.html)
+- `Go`学习网站：Go编程语言规范[https://go-zh.org/ref/spec](https://go-zh.org/ref/spec)
 
 
 ## 实验环境
@@ -265,8 +265,8 @@ export PATH=${GOBIN}:${PATH}
 为了今后中国的Go语言开发者能更好地进行开发，七牛云推出了非营利性项目 goproxy.cn，其目标是为中国和世界上其他地方的 Gopher 们提供一个免费的、可靠的、持续在线的且经过 CDN 加速的模块代理。
 
 参考：
-- 干货满满的 Go Modules 和 goproxy.cn https://github.com/EDDYCJY/blog/blob/master/talk/goproxy-cn.md
-- Go module和goproxy 设置 https://luhua.cc/2019/08/23/Go-module-%E5%92%8C-goproxy-%E8%AE%BE%E7%BD%AE/
+- 干货满满的 Go Modules 和 goproxy.cn [https://github.com/EDDYCJY/blog/blob/master/talk/goproxy-cn.md](https://github.com/EDDYCJY/blog/blob/master/talk/goproxy-cn.md)
+- Go module和goproxy 设置[https://luhua.cc/2019/08/23/Go-module-%E5%92%8C-goproxy-%E8%AE%BE%E7%BD%AE/](https://luhua.cc/2019/08/23/Go-module-%E5%92%8C-goproxy-%E8%AE%BE%E7%BD%AE/)
 
 在`~/.bashrc`文件中增加以下内容：
 
@@ -420,6 +420,7 @@ Hello,World
 - `import`语句也可以一性引入多个包，也称批量导入或打包导入语句。**推荐使用批量导入语句**。
 
 下面示例中，使用了批量导入语句：
+
 示例：
 
 ```go
@@ -575,10 +576,10 @@ func function_name( [parameter list] ) [return_types] {
 
 函数定义解析：
 
-- func：函数由``func``开始声明
+- func：函数由`func`开始声明
 - function_name：函数名称，函数名和参数列表一起构成了函数签名。
 - parameter list：参数列表，参数就像一个占位符，当函数被调用时，你可以将值传递给参数，这个值被称为实际参数。参数列表指定的是参数类型、顺序、及参数个数。参数是可选的，也就是说函数也可以不包含参数。
-- return_types：返回类型，函数返回值。return_types 是该列值的数据类型。有些功能不需要返回值，这种情况下 return_types 不是必须的。
+- return_types：返回类型，函数返回值。`return_types`是该列值的数据类型。有些功能不需要返回值，这种情况下`return_types`不是必须的。
 - 函数体：函数定义的代码集合。
 
 
@@ -587,10 +588,11 @@ func function_name( [parameter list] ) [return_types] {
 Go函数可以返回多个值：
 
 - Go函数可以返回任意数量的返回值。
-- 当有多个返回值时，在return_types定义时，使用``(return_type1, return_type2)``将多个返回值类型包裹起来，如果返回值类型数量与实际返回的值的数量不匹配则会报错。
-- 当返回类型列表中没有定义返回类型时，而函数体中实际却有返回值时，则运行时会提示"too many arguments to return"异常。
+- 当有多个返回值时，在return_types定义时，使用`(return_type1, return_type2)`将多个返回值类型包裹起来，如果返回值类型数量与实际返回的值的数量不匹配则会报错。
+- 当返回类型列表中没有定义返回类型时，而函数体中实际却有返回值时，则运行时会提示"`too many arguments to return`"异常。
 
 请看下面交换两个字符串的示例：
+
 ```go
 [meizhaohui@hellogitlab src]$ cat multi_results.go 
 /*
@@ -615,15 +617,17 @@ func main() {
 ```
 
 运行程序：
+
 ```sh
 [meizhaohui@hellogitlab src]$ go run multi_results.go
 world hello
 ```
 
-``swap``函数返回了两个字符串，
+`swap`函数返回了两个字符串，
 
 
 我们修改一下程序，改成以下内容：
+
 ```go
 [meizhaohui@hellogitlab src]$ cat multi_results.go 
 /*
@@ -649,6 +653,7 @@ func main() {
 ```
 
 运行程序：
+
 ```sh
 [meizhaohui@hellogitlab src]$ go run multi_results.go
 # command-line-arguments
@@ -664,7 +669,7 @@ func main() {
 
 - Go的返回值可以被命名，并且像变量那样使用。
 - 返回值的名称应当具有一定的意义，可以作为文档使用。
-- 没有参数的``return``语句返回结果的当前值。也就是``直接``返回。
+- 没有参数的`return`语句返回结果的当前值。也就是`直接`返回。
 - 直接返回语句仅应用于短函数中。在长的函数中它们会影响代码的可读性。
 
 函数命名返回值的使用：
@@ -693,6 +698,7 @@ func main() {
 ```
 
 运行程序：
+
 ```sh
 [meizhaohui@hellogitlab src]$ go run named_results.go
 9 5
@@ -705,29 +711,30 @@ func main() {
 ##### 数据类型
 
 - 数据类型用于声明函数和变量。数据类型的出现是为了把数据分成所需内存大小不同的数据，编程的时候需要用大数据的时候才需要申请大内存，就可以充分利用内存。
-- ``bool``布尔型，可取值为``true``或``false``。
-- ``string``字符串类型，字符串就是一串固定长度的字符连接起来的字符序列，**Go语言中使用UTF-8编码标识Unicode文本**。
-- 整型，``int``(有符号整数，长度取决于CPU)、``int8``(有符号8位整型)、``int16``、``int32``、``int64``、``uint``(无符号整型，长度取决于CPU)、``uint8``(无符号8位整型)、``uint16``、``uint32``、``uint64``。
-- ``byte``字节类型，类似``uint8``(无符号8位整型)。
-- 浮点类型，``float32``(32位浮点型数)和``float64``(64位浮点型数)。
-- 复数类型，``complex64``(32位实数和虚数)和``complex128``(64位实数和虚数)。
+- `bool`布尔型，可取值为`true`或`false`。
+- `string`字符串类型，字符串就是一串固定长度的字符连接起来的字符序列，**Go语言中使用UTF-8编码标识Unicode文本**。
+- 整型，`int`(有符号整数，长度取决于CPU)、`int8`(有符号8位整型)、`int16`、`int32`、`int64`、`uint`(无符号整型，长度取决于CPU)、`uint8`(无符号8位整型)、`uint16`、`uint32`、`uint64`。
+- `byte`字节类型，类似`uint8`(无符号8位整型)。
+- 浮点类型，`float32`(32位浮点型数)和`float64`(64位浮点型数)。
+- 复数类型，`complex64`(32位实数和虚数)和`complex128`(64位实数和虚数)。
 
 ##### 变量
 
 - 变量是计算机语言中能储存计算结果或能表示值抽象概念。Go语言变量名由字母、数字、下划线组成，**其中首个字符不能为数字**。
-- ``var``语句``申明(declare)``变量列表；跟函数参数列表一样，类型在最后指定。
-- ``var``语句的作用域(可见范围)可以是``包级别``或者``函数级别``。
-- 变量声明时可以对变量进行初始化，一个变量一个初始值。如``var flag bool = false``。
+- `var`语句`申明(declare)`变量列表；跟函数参数列表一样，类型在最后指定。
+- `var`语句的作用域(可见范围)可以是`包级别`或者`函数级别`。
+- 变量声明时可以对变量进行初始化，一个变量一个初始值。如`var flag bool = false`。
 - 在变量声明时，如果初始值存在，则变量类型可以忽略，这时Go会自行判断变量的类型，变量则继承初始值的类型。
 - 在变量声明时，如果初始值不存在，则变量默认为**零值**。
-- 根据变量类型不同，**零值**可能不同，数值类型**零值**为``0``，bool类型**零值**为``false``，字符串类型**零值**为``""``(空字符串)。
-- 在函数内部可以使用``:=``赋值语句进行简式声明。
+- 根据变量类型不同，**零值**可能不同，数值类型**零值**为`0`，bool类型**零值**为`false`，字符串类型**零值**为`""`(空字符串)。
+- 在函数内部可以使用`:=`赋值语句进行简式声明。
 - 简式声明不能用在函数外部。
-- 简式声明时，必须要有新的变量生成。否则编译时会提示"no new variables on left side of :="异常。
-- 所有声明的局部变量必须需要使用，否则(即声明了变量却没有使用)编译时会提示"name declared and not used"。
+- 简式声明时，必须要有新的变量生成。否则编译时会提示"`no new variables on left side of :=`"异常。
+- 所有声明的局部变量必须需要使用，否则(即声明了变量却没有使用)编译时会提示"`name declared and not used`"。
 - 全局变量是允许声明但不使用。
 
 变量定义示例：
+
 ```go
 [meizhaohui@hellogitlab src]$ cat types.go 
 /*
@@ -761,6 +768,7 @@ func main() {
 ```
 
 运行程序：
+
 ```sh
 [meizhaohui@hellogitlab src]$ go run types.go     
 10
@@ -773,9 +781,9 @@ Hello Go
 
 ##### 常量
 
-- 常量( constants )申明与变量一样，只不过换成``const``关键字。 
+- 常量( constants )申明与变量一样，只不过换成`const`关键字。 
 - 常量可以是字符、字符串、布尔，或者数值类型。
-- 常量不能使用``:=``简式申明。
+- 常量不能使用`:=`简式申明。
 
 ```go
 [meizhaohui@hellogitlab src]$ cat constants.go 
@@ -806,6 +814,7 @@ func main() {
 ```
 
 运行程序：
+
 ```sh
 [meizhaohui@hellogitlab src]$ go run constants.go 
 Golang的版本号: go1.13.3 linux/amd64
@@ -814,14 +823,15 @@ Golang的版本号: go1.13.3 linux/amd64
 
 ##### 类型转换
 
-- 表达式``T(v)``将值``v``转换为类型``T``。
+- 表达式`T(v)`将值`v`转换为类型`T`。
 - Go语言中需要显式的进行类型转换。
 - 布尔型无法参与数值运算，也无法与其他类型进行转换。
 - 不是所有数据类型都可以转换。
 - 低精度转换为高精度时是安全的，但高精度转换为低精度则会丢失数据。
-- Go语言中还有一些包可以进行跨数据类型的转换，如``strconv``包提供了字符串与简单数据类型之间的类型转换功能。可以将简单类型转换为字符串，也可以将字符串转换为其它简单类型。后续再详细介绍。
+- Go语言中还有一些包可以进行跨数据类型的转换，如`strconv`包提供了字符串与简单数据类型之间的类型转换功能。可以将简单类型转换为字符串，也可以将字符串转换为其它简单类型。后续再详细介绍。
 
 看下面示例:
+
 ```go
 [meizhaohui@hellogitlab src]$ cat -n type_conversions.go 
      1  /*
@@ -853,6 +863,7 @@ Golang的版本号: go1.13.3 linux/amd64
 ```
 
 运行程序:
+
 ```sh
 [meizhaohui@hellogitlab src]$ go run type_conversions.go
 # command-line-arguments
@@ -860,11 +871,12 @@ Golang的版本号: go1.13.3 linux/amd64
 ./type_conversions.go:20:19: cannot convert i (type int) to type bool
 ```
 
-可以发现18行中，想直接到``int``类型的i赋值给``float64``类型的f出现异常，不能直接隐式转换。
+可以发现18行中，想直接到`int`类型的i赋值给`float64`类型的f出现异常，不能直接隐式转换。
 
-而20行中，将``int``类型的i转换成``bool``布尔类型也提示异常，即``bool``布尔类型不能进行类型转换。
+而20行中，将`int`类型的i转换成`bool`布尔类型也提示异常，即`bool`布尔类型不能进行类型转换。
 
 我们修改一下程序，让程序能够正常运行。
+
 ```go
 [meizhaohui@hellogitlab src]$ cat type_conversions.go 
 /*
@@ -894,6 +906,7 @@ func main() {
 ```
 
 重新运行程序:
+
 ```sh
 [meizhaohui@hellogitlab src]$ go run type_conversions.go
 42 42 42
@@ -904,10 +917,11 @@ func main() {
 
 Go语言内置的运算符有：
 
-- 算术运算符， ``+``加、``-``减、``*``乘、``/``除、``%``求余、``++``自增1、``--``自减1。
-- 关系运算符， ``==``相等、``!=``不等、``>``大于、``<``小于、``>=``大于等于、``<=``小于等于。
+- 算术运算符， `+`加、`-`减、`*`乘、`/`除、`%`求余、`++`自增1、`--`自减1。
+- 关系运算符， `==`相等、`!=`不等、`>`大于、`<`小于、`>=`大于等于、`<=`小于等于。
 
 示例：
+
 ```go
 [meizhaohui@hellogitlab src]$ cat operators.go 
 /*
@@ -937,6 +951,7 @@ func main() {
 ```
 
 运行程序：
+
 ```sh
 [meizhaohui@hellogitlab src]$ go run operators.go 
 1 >  2 :false
@@ -947,20 +962,21 @@ func main() {
 1 <= 2 :true
 ```
 
-- 逻辑运算符，``&&``逻辑与AND、``||``逻辑或OR、``!``逻辑非NOT。
-- 位运算符，``&``按位与(同1则为1)、``|``按位或(有1则为1)、``^``按位异或(同则为0，不同则为1)、``<<``左移、``>>``右移。
-- 赋值运算符， ``=``简单的赋值运算符、``+=``相加后再赋值、``-=``相减后再赋值、``*=``相乘后再赋值、``/=``相除后再赋值、``%=``求余后再赋值、``<<=``左移后再赋值、``>>=``右移后再赋值、``&=``按位与后再赋值、``|=``按位或后再赋值、``^=``按位异或后再赋值。
+- 逻辑运算符，`&&`逻辑与AND、`||`逻辑或OR、`!`逻辑非NOT。
+- 位运算符，`&`按位与(同1则为1)、`|`按位或(有1则为1)、`^`按位异或(同则为0，不同则为1)、`<<`左移、`>>`右移。
+- 赋值运算符， `=`简单的赋值运算符、`+=`相加后再赋值、`-=`相减后再赋值、`*=`相乘后再赋值、`/=`相除后再赋值、`%=`求余后再赋值、`<<=`左移后再赋值、`>>=`右移后再赋值、`&=`按位与后再赋值、`|=`按位或后再赋值、`^=`按位异或后再赋值。
 
 
 #### 流程控制
 
-##### ``for``循环语句
+##### `for`循环语句
 
-- Go语言只有一种循环结构，就是``for``循环语句。
-- 基本的``for``循环除了没有了``( )``之外(甚至强制不能使用它们)，看起来跟C语言一样，但大括号``{}``是必须的。
-- 语法格式``for init; condition; post { }``。 init：一般为赋值表达式，给控制变量赋初值；condition： 关系表达式或逻辑表达式，循环控制条件；post： 一般为赋值表达式，给控制变量增量或减量。
+- Go语言只有一种循环结构，就是`for`循环语句。
+- 基本的`for`循环除了没有了`( )`之外(甚至强制不能使用它们)，看起来跟C语言一样，但大括号`{}`是必须的。
+- 语法格式`for init; condition; post { }`。 init：一般为赋值表达式，给控制变量赋初值；condition： 关系表达式或逻辑表达式，循环控制条件；post： 一般为赋值表达式，给控制变量增量或减量。
 
-看一下使用``for``循环语句计算1到10的和：
+看一下使用`for`循环语句计算1到10的和：
+
 ```go
 [meizhaohui@hellogitlab src]$ cat base_for.go 
 /*
@@ -984,14 +1000,16 @@ func main() {
 ```
 
 运行程序：
+
 ```sh
 [meizhaohui@hellogitlab src]$ go run base_for.go 
 Sum is 55
 ```
 
-- 有时也可以省略掉``init``前置语句和``post``后置语句，此时分号可以省略。
+- 有时也可以省略掉`init`前置语句和`post`后置语句，此时分号可以省略。
 
 修改一下代码：
+
 ```go
 /*
  *      Filename: base_for.go
@@ -1021,6 +1039,7 @@ func main() {
 ```
 
 运行程序：
+
 ```sh
 [meizhaohui@hellogitlab src]$ go run base_for.go 
 Sum is 55
@@ -1031,9 +1050,9 @@ nsum is 16
 nsum is 16
 ```
 
-可以看到当``nsum``小于10时，一直会去执行``for``循环语句，也就是每次将自身数据翻倍。当nsum=16后，不再进入到``for``循环语句中。
+可以看到当`nsum`小于10时，一直会去执行`for`循环语句，也就是每次将自身数据翻倍。当nsum=16后，不再进入到`for`循环语句中。
 
-- 当``for``循环语句省略了循环条件，循环就不会结束，因此可以用更简洁地形式表达死循环。此时需要使用``Ctrl+C``或``Ctrl+D``才能停止程序的运行。
+- 当`for`循环语句省略了循环条件，循环就不会结束，因此可以用更简洁地形式表达死循环。此时需要使用`Ctrl+C`或`Ctrl+D`才能停止程序的运行。
 
 ```go
 package main
@@ -1049,11 +1068,12 @@ func main() {
     fmt.Println("after for is", i)
 }
 ```
-上面程序运行时，会不停执行``for``循环语句，``i``不断进行自增1，程序不断运行下去，必须手动进行终止。
 
-- 在``for``循环语句也可以使用``range``关键字，可以对数组(array)、切片(slice)、链表(channel)或集合(map)的元素进行迭代。后续再详细介绍。
+上面程序运行时，会不停执行`for`循环语句，`i`不断进行自增1，程序不断运行下去，必须手动进行终止。
 
-修改一下代码，简单的使用``range``关键字来循环遍历字符串。
+- 在`for`循环语句也可以使用`range`关键字，可以对数组(array)、切片(slice)、链表(channel)或集合(map)的元素进行迭代。后续再详细介绍。
+
+修改一下代码，简单的使用`range`关键字来循环遍历字符串。
 
 ```go
 [meizhaohui@hellogitlab src]$ cat base_for.go 
@@ -1091,6 +1111,7 @@ func main() {
 ```
 
 运行程序：
+
 ```sh
 [meizhaohui@hellogitlab src]$ go run base_for.go 
 Sum is 55
@@ -1113,17 +1134,19 @@ nsum is 16
 11 103
 12 33
 ```
-可以看到``range histring``并不是直接输出字符，而不输出字符对应的索引和字符对应的ASCII码对应的十进制数。
 
-ASCII码可参考：http://ascii.911cha.com/
+可以看到`range histring`并不是直接输出字符，而不输出字符对应的索引和字符对应的ASCII码对应的十进制数。
 
-##### ``if``条件判断语句
+ASCII码可参考：[http://ascii.911cha.com/](http://ascii.911cha.com/)
 
-- 基本的``if``循环除了没有了``( )``之外(甚至强制不能使用它们)，看起来跟C语言一样，但大括号``{}``是必须的。
-- 语法格式``if condition { }``。condition： 关系表达式或逻辑表达式。
-- 你可以在``if``或``else if``语句中嵌入一个或多个``if``或``else if``语句。
+##### `if`条件判断语句
 
-下面的程序是定义了一个``sqrt``来求一个数的平方根，当数是负数时，直接退出。正数的时候求平方根值。
+- 基本的`if`循环除了没有了`( )`之外(甚至强制不能使用它们)，看起来跟C语言一样，但大括号`{}`是必须的。
+- 语法格式`if condition { }`。condition： 关系表达式或逻辑表达式。
+- 你可以在`if`或`else if`语句中嵌入一个或多个`if`或`else if`语句。
+
+下面的程序是定义了一个`sqrt`来求一个数的平方根，当数是负数时，直接退出。正数的时候求平方根值。
+
 ```go
 [meizhaohui@hellogitlab src]$ cat base_if.go 
 /*
@@ -1156,6 +1179,7 @@ func main() {
 ```
 
 运行程序：
+
 ```sh
 [meizhaohui@hellogitlab src]$ go run base_if.go 
 1.4142135623730951
@@ -1165,9 +1189,9 @@ exit status 1
 1
 ```
 
--  在``if``之后，条件语句之前，可以添加变量初始化语句，使用``;``进行分隔，这种方式称为``if的便捷语句``。
-- ``if的便捷语句``定义的变量的作用域仅在``if``范围内。
-- ``if``语句中同样可以使用``else if``和``else``关键字，但不能处于行的第一个非空白字符处。
+-  在`if`之后，条件语句之前，可以添加变量初始化语句，使用`;`进行分隔，这种方式称为`if的便捷语句`。
+- `if的便捷语句`定义的变量的作用域仅在`if`范围内。
+- `if`语句中同样可以使用`else if`和`else`关键字，但不能处于行的第一个非空白字符处。
 
 下面使用便捷语句判断一个数是否是正数或者0或者为负数:
 
@@ -1197,20 +1221,24 @@ exit status 1
 ```
 
 运行程序：
+
 ```sh
 [meizhaohui@hellogitlab src]$ go run short_if.go 
 # command-line-arguments
 ./short_if.go:20:14: undefined: num
 ```
-可以发现提示20行异常，``num``变量未定义，因为``num``变量作用域是``if``语句中，在``if``语句外获取不到``num``变量。
+
+可以发现提示20行异常，`num`变量未定义，因为`num`变量作用域是`if`语句中，在`if`语句外获取不到`num`变量。
 
 删除20行的打印语句，再重新运行:
+
 ```sh
 [meizhaohui@hellogitlab src]$ go run short_if.go 
 2 是正数
 ```
 
 下面使用牛顿法求平方根:
+
 ```go
 [meizhaohui@hellogitlab src]$ cat newton_method_sqrt.go 
 /*
@@ -1246,6 +1274,7 @@ func main() {
 ```
 
 运行程序：
+
 ```sh
 [meizhaohui@hellogitlab src]$ go run newton_method_sqrt.go 
 库函数求平方根math.Sqrt(8) = 2.8284271247461903
@@ -1265,16 +1294,17 @@ For details type `warranty'.
 2.8284271247461903*2.8284271247461903
 8.0000000000000011
 ```
-9/2*9/2=81/4=20.25
+
+9/2\*9/2=81/4=20.25
 可以看到使用牛顿法和库求8的平方根的值是一样的。
-示例中，牛顿法第1次猜值计算过程x= 1-(1*1-8)/(2*1)=1+7/2=4.5,第2次猜值计算过程x= 4.5-(4.5*4.5-8)/(2*4.5)=4.5-12.25/9=3.138888...。
+示例中，牛顿法第1次猜值计算过程x= 1-(1\*1-8)/(2\*1)=1+7/2=4.5,第2次猜值计算过程x= 4.5-(4.5\*4.5-8)/(2\*4.5)=4.5-12.25/9=3.138888...。
 
-##### ``switch``语句
-- ``switch``语句用于基于不同条件执行不同动作，每一个``case``分支都是唯一的，从上至下逐一测试，直到匹配为止。
+##### `switch`语句
+- `switch`语句用于基于不同条件执行不同动作，每一个`case`分支都是唯一的，从上至下逐一测试，直到匹配为止。
 
-- ``switch``语句执行的过程从上至下，直到找到匹配项，匹配项后面也不需要再加``break``。
+- `switch`语句执行的过程从上至下，直到找到匹配项，匹配项后面也不需要再加`break`。
 
-- ``switch``默认情况下``case``最后自带``break``语句，匹配成功后就不会执行其他``case``，如果需要执行后面的``case``，可以使用``fallthrough``。
+- `switch`默认情况下`case`最后自带`break`语句，匹配成功后就不会执行其他`case`，如果需要执行后面的`case`，可以使用`fallthrough`。
 
 - 语法格式如下:
 
@@ -1288,11 +1318,13 @@ switch var1 {
         ...
 }
 ```
-- 变量``var1``可以是任何类型，而``val1``和``val2``则可以是同类型的任意值。
+
+- 变量`var1`可以是任何类型，而`val1`和`val2`则可以是同类型的任意值。
 - 类型不被局限于常量或整数，但必须是相同的类型；或者最终结果为相同类型的表达式。
-- 您可以同时测试多个可能符合条件的值，使用逗号分割它们，例如：``case val1, val2, val3``。
+- 您可以同时测试多个可能符合条件的值，使用逗号分割它们，例如：`case val1, val2, val3`。
 
 下面示例判断Go程序所处的操作系统环境:
+
 ```go
 [meizhaohui@hellogitlab src]$ cat base_switch.go 
 /*
@@ -1322,6 +1354,7 @@ func main() {
 ```
 
 运行程序：
+
 ```sh
 [meizhaohui@hellogitlab src]$ go run base_switch.go 
 Golang runs on Linux System
@@ -1330,6 +1363,7 @@ GOOS="linux"
 ```
 
 在Windows系统上面运行程序：
+
 ```sh
 $ go run base_switch.go
 Golang runs on Windows System
@@ -1339,11 +1373,12 @@ set GOOS=windows
 ```
 
 
-可以看出通过程序获取到的操作系统类型与通过``go env``获取到的环境是一致的。
+可以看出通过程序获取到的操作系统类型与通过`go env`获取到的环境是一致的。
 
-- 没有条件的``switch``同``switch true``一样。
+- 没有条件的`switch`同`switch true`一样。
 
-下面的``switch``没有设置条件:
+下面的`switch`没有设置条件:
+
 ```go
 [meizhaohui@hellogitlab src]$ cat switch_no_condition.go 
 /*
@@ -1374,14 +1409,16 @@ func main() {
 ```
 
 运行程序：
+
 ```sh
 [meizhaohui@hellogitlab src]$ go run switch_no_condition.go 
 Good evening!
 ```
 
-- 使用``fallthrough``会强制执行后面的``case``语句，``fallthrough``不会判断下一条``case``的表达式结果是否为``true``。
+- 使用`fallthrough`会强制执行后面的`case`语句，`fallthrough`不会判断下一条`case`的表达式结果是否为`true`。
 
-下面代码中使用``fallthrough``关键字：
+下面代码中使用`fallthrough`关键字：
+
 ```go
 [meizhaohui@hellogitlab src]$ cat switch_fallthrough.go 
 /*
@@ -1418,20 +1455,23 @@ func main() {
 ```
 
 运行程序：
+
 ```sh
 [meizhaohui@hellogitlab src]$ go run switch_fallthrough.go 
 2. condition is true.
 3. condition is false.
 4. condition is true.
 ```
-从以上代码输出的结果可以看出：``switch``从第一个判断表达式为``true``的``case``开始执行，如果``case``带有 ``fallthrough``，程序会继续执行下一条``case``，且它不会去判断下一个``case``的表达式是否为``true``。
 
-##### ``defer``延迟执行语句
+从以上代码输出的结果可以看出：`switch`从第一个判断表达式为`true`的`case`开始执行，如果`case`带有 `fallthrough`，程序会继续执行下一条`case`，且它不会去判断下一个`case`的表达式是否为`true`。
 
-- ``defer``的思想类似于C++中的析构函数，不过Go语言中"析构"的不是对象，而是函数，``defer``就是用来添加函数结束时执行的语句。
-- ``defer``类似于先进后出栈。
+##### `defer`延迟执行语句
 
-下面看一下``defer``语句的使用。
+- `defer`的思想类似于C++中的析构函数，不过Go语言中"析构"的不是对象，而是函数，`defer`就是用来添加函数结束时执行的语句。
+- `defer`类似于先进后出栈。
+
+下面看一下`defer`语句的使用。
+
 ```go
 [meizhaohui@hellogitlab src]$ cat base_defer.go       
 /*
@@ -1455,6 +1495,7 @@ func main() {
 ```
 
 运行程序：
+
 ```sh
 [meizhaohui@hellogitlab src]$ go run base_defer.go 
 Hello
@@ -1464,11 +1505,13 @@ Hello
 0
 World
 ```
-可以看到虽然``fmt.Println("World")``语法在代码中先定义，但却是在``fmt.Println("Hello")``执行后再执行的，说明``defer``延迟语句起了作用。
 
-同时，因为在``for``循环体中也使用了``defer``延迟语句，按照先进后出规则，对于``for``循环会依次打印3、2、1、0,``for``循环结尾后，最后再打印栈底的"World"。
+可以看到虽然`fmt.Println("World")`语法在代码中先定义，但却是在`fmt.Println("Hello")`执行后再执行的，说明`defer`延迟语句起了作用。
+
+同时，因为在`for`循环体中也使用了`defer`延迟语句，按照先进后出规则，对于`for`循环会依次打印3、2、1、0,`for`循环结尾后，最后再打印栈底的"World"。
 
 另一个典型的应用是在文件读写时关闭文件。
+
 ```go
 [meizhaohui@hellogitlab src]$ cat defer.go 
 /*
@@ -1511,6 +1554,7 @@ func closeFile(f *os.File) {
 ```
 
 运行程序：
+
 ```sh
 [meizhaohui@hellogitlab src]$ go run defer.go 
 creating
@@ -1520,7 +1564,7 @@ closing
 hello golang!
 ```
 
-可以看到因为使用了``defer closeFile(f)``进行了延迟，文件描述符f并没有立即执行，而是当写文件完成后，才关闭了文件描述符f。否则的话，不会写文件，也就查看不到defer.txt文件的内容了。
+可以看到因为使用了`defer closeFile(f)`进行了延迟，文件描述符f并没有立即执行，而是当写文件完成后，才关闭了文件描述符f。否则的话，不会写文件，也就查看不到defer.txt文件的内容了。
 
 
 
