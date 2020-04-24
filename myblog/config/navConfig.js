@@ -59,6 +59,14 @@ module.exports = [{
         ]
     },
     {
+        text: '数据库',
+        items: [{
+                text: 'MYSQL',
+                link: '/database/mysql/'
+            }
+        ]
+    },
+    {
         text: '配置管理',
         items: [{
                 text: 'Git',
