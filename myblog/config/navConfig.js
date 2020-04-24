@@ -19,6 +19,10 @@ module.exports = [{
             {
                 text: 'MacOS',
                 link: '/OS/MacOS/'
+            },
+            {
+                text: 'Windows',
+                link: '/OS/Windows/'
             }
         ]
     },
@@ -47,7 +51,11 @@ module.exports = [{
             {
                 text: 'PHP',
                 link: '/backend/php/'
-            }
+            },
+            {
+                text: 'C',
+                link: '/backend/C/'
+            },
         ]
     },
     {
