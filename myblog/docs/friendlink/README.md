@@ -5,3 +5,4 @@
 3. [晓风轻技术小站](https://xwjie.github.io/) 
 4. [纯洁的微笑-分享技术，品味人生](http://www.ityouknow.com/)
 5. [朱双印的个人日志-Linux运维从业者](http://www.zsythink.net/)
+6. [李辉的网站-Web 开发者，写作爱好者](http://greyli.com/about/)
