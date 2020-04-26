@@ -5,18 +5,19 @@
 为了给CentOS7系统增加系统的安全性，防止系统被黑，可以进行以下操作：
 
 - 修改用户密码为高强度密码
-- 创建``sudo``用户
-- 修改SSH的默认``22``端口
-- 禁用``root``账号远程登陆
-- 安装``DenyHosts``防暴力破解软件
-- 安装``ClamAV``反病毒软件
+- 创建`sudo`用户
+- 修改`SSH`的默认`22`端口
+- 禁用`root`账号远程登陆
+- 安装`DenyHosts`防暴力破解软件
+- 安装`ClamAV`反病毒软件
 
 ## 修改用户密码为高强度密码
 
-- 所谓的高强度密码，就是包含了大小写、数字、符号的密码。
+- 所谓的高强度密码，就是包含了`大小写`、`数字`、`符号`的密码。
 
-### 安装自动产生密码的软件pygen
-```
+### 安装自动产生密码的软件`pygen`
+
+```sh
 [root@hellogitlab ~]# yum install pwgen -y 
 Loaded plugins: fastestmirror, langpacks
 Repository epel is listed more than once in the configuration
@@ -65,7 +66,8 @@ Complete!
 ```
 
 ### 生成20个超级难记的密码
-```shell
+
+```sh
 [root@hellogitlab ~]# pwgen -cnys 14 -n 20
 T@N0PgKw)m4-ia %a3Oz\-+r170{x bPs9J84p%^nz/. mt9Ul_i'@kNOVW Yx'M7;xGZ)f.Id
 T},u2]B1#s1Ob) iE6nkE_.()*$bQ 5:{8G,9OOaJ/!- /f0%Toh.ccqzq] <fjxUZQ}4wHvsa
@@ -73,9 +75,9 @@ T},u2]B1#s1Ob) iE6nkE_.()*$bQ 5:{8G,9OOaJ/!- /f0%Toh.ccqzq] <fjxUZQ}4wHvsa
 8=@S+>Wx1i9$yh |1Y^R4W5cgEb:E -OYSF0nS7zv/;q W=G;vt~Wzzr1F" tJD8OTl,2z13EL
 ```
 
-我们使用``passwd``命令可以修改自己的密码：
+我们使用`passwd`命令可以修改自己的密码：
 
-```shell
+```sh
 [root@hellogitlab ~]# passwd
 Changing password for user root.
 New password: 
@@ -85,7 +87,7 @@ passwd: all authentication tokens updated successfully.
 
 或者使用下面这种方式修改密码：
 
-```shell
+```sh
 [root@hellogitlab ~]# export HISTCONTROL=ignorespace
 [root@hellogitlab ~]#  echo "tJD8OTl,2z13EL" |passwd root --stdin
 Changing password for user root.
@@ -96,23 +98,25 @@ passwd: all authentication tokens updated successfully.
 ```
 
 上面操作进行了以下事情：
-- 通过``export HISTCONTROL=ignorespace``设置history不记录敏感命令，即命令以空格开头时不会被记录到history历史记录中。
-- 通过`` echo "tJD8OTl,2z13EL" |passwd root --stdin``设置``root``用户密码,``--stdin``表明从标准输入中读入密码信息。
-- ``history |tail -n 2``查看历史记录，可以看到`` echo "tJD8OTl,2z13EL" |passwd root --stdin``这条命令没有被记录。
+- 通过`export HISTCONTROL=ignorespace`设置`history`不记录敏感命令，即命令以空格开头时不会被记录到`history`历史记录中。
+- 通过`echo "tJD8OTl,2z13EL" |passwd root --stdin`设置`root`用户密码,`--stdin`表明从标准输入中读入密码信息。
+- `history |tail -n 2`查看历史记录，可以看到`echo "tJD8OTl,2z13EL" |passwd root --stdin`这条命令没有被记录。
 
-## 创建``sudo``用户
+## 创建`sudo`用户
 
 ### 创建用户
 
-- 新建用户"meizhaohui"
-```shell
+新建普通用户"meizhaohui"
+
+```sh
 [root@hellogitlab ~]# useradd meizhaohui
 ```
 
 ### 设置密码
 
 输入两次密码：
-```shell
+
+```sh
 [root@hellogitlab ~]# passwd meizhaohui
 Changing password for user meizhaohui.
 New password: 
@@ -126,15 +130,16 @@ passwd: all authentication tokens updated successfully.
 ### 修改授权文件
 
 - 查看授权文件位置
-```shell
+
+```sh
 [root@hellogitlab ~]# whereis sudoers
 sudoers: /etc/sudoers.d /etc/sudoers /usr/share/man/man5/sudoers.5.gz
 ```
 
-- 给授权文件``/etc/sudoers``增加写(w)权限
+- 给授权文件`/etc/sudoers`增加写(w)权限
 
-```shell
-[root@hellogitlab .ssh]# ls -lah /etc/sudoers
+```sh
+[root@hellogitlab ~]# ls -lah /etc/sudoers
 -r--r-----. 1 root root 4.3K Oct 30  2018 /etc/sudoers
 [root@hellogitlab ~]# chmod -v u+w /etc/sudoers
 mode of ‘/etc/sudoers’ changed from 0440 (r--r-----) to 0640 (rw-r-----)
@@ -142,9 +147,9 @@ mode of ‘/etc/sudoers’ changed from 0440 (r--r-----) to 0640 (rw-r-----)
 -rw-r-----. 1 root root 4.3K Oct 30  2018 /etc/sudoers
 ```
 
-- 在授权文件``/etc/sudoers``中增加``sudo``用户"meizhaohui"
+- 在授权文件`/etc/sudoers`中增加`sudo`用户"meizhaohui"
 
-```shell
+```sh
 [root@hellogitlab ~]# sed -n '99,100p' /etc/sudoers
 ## Allow root to run any commands anywhere 
 root    ALL=(ALL)       ALL
@@ -160,17 +165,18 @@ meizhaohui      ALL=(ALL)       ALL
 ```
 - 将授权文件的权限还原
 
-```shell
+```sh
 [root@hellogitlab ~]# chmod -v u-w /etc/sudoers
 mode of ‘/etc/sudoers’ changed from 0640 (rw-r-----) to 0440 (r--r-----)
 [root@hellogitlab ~]# ls -lah /etc/sudoers
 -r--r----- 1 root root 4.3K Oct 31 21:17 /etc/sudoers
 ```
 
-### 测试``sudo``用户是否具备``sudo``权限
+### 测试`sudo`用户是否具备`sudo`权限
 
-- 使用"meizhaohui"账号登陆系统，并尝试查看"/etc/sudoers"文件内容
-```shell
+- 使用"meizhaohui"账号登陆系统，并尝试查看`/etc/sudoers`文件内容
+
+```sh
 [meizhaohui@hellogitlab ~]$ cat /etc/sudoers     
 cat: /etc/sudoers: Permission denied
 [meizhaohui@hellogitlab ~]$ head /etc/sudoers
@@ -189,33 +195,36 @@ head: cannot open ‘/etc/sudoers’ for reading: Permission denied
 ## Host Aliases
 ```
 
-可以发现，不使用``sudo``命令时，无法查看文件内容，显示"Permission denied"，表明没有权限；使用``sudo``命令时，可以查看文件内容。说明``sudo``用户配置正确。
+可以发现，不使用`sudo`命令时，无法查看文件内容，显示"`Permission denied`"，表明没有权限；使用`sudo`命令时，可以查看文件内容。说明`sudo`用户配置正确。
 
-## 修改ssh默认端口
+## 修改`ssh`默认端口
 
-- SSH 是建立在应用层和传输层基础上的一种安全协议。SSH传输数据是加密的，可以有效防止传输过程被截取数据保障安全。
-- SSH默认端口值是``22``，最大可以是``65535``。
-- 为防止暴力破解，可以修改SSH端口号为非``22``，如``10000``。
+- `SSH`是建立在应用层和传输层基础上的一种安全协议。`SSH`传输数据是加密的，可以有效防止传输过程被截取数据保障安全。
+- `SSH`默认端口值是`22`，最大可以是`65535`。
+- 为防止暴力破解，可以修改SSH端口号为非`22`，如`10000`。
 
-下面我们将SSH的端口号改成``10000``：
+下面我们将SSH的端口号改成`10000`：
 
-- 查看配置文件``/etc/ssh/sshd_config``的默认端口
-```shell
+- 查看配置文件`/etc/ssh/sshd_config`的默认端口
+
+```sh
 [root@hellogitlab ~]# grep -n 'Port 22' /etc/ssh/sshd_config
 17:#Port 22
 ```
 
-可以发现17行中显示端口号是``22``。
+可以发现17行中显示端口号是`22`。
 
 ### 修改端口号
-```shell
+
+```sh
 [root@hellogitlab ~]# sed -i 's/#Port 22/Port 10000/g' /etc/ssh/sshd_config
 [root@hellogitlab ~]# sed -n '17p' /etc/ssh/sshd_config
 Port 10000
 ```
 
-### 重启SSH服务
-```shell
+### 重启`SSH`服务
+
+```sh
 [root@hellogitlab ~]# systemctl restart sshd
 [root@hellogitlab ~]# systemctl status sshd
 ● sshd.service - OpenSSH server daemon
@@ -237,12 +246,13 @@ Oct 31 21:40:39 hellogitlab.com sshd[27561]: Connection closed by 106.54.19.58 p
 tcp        0      0 0.0.0.0:10000           0.0.0.0:*               LISTEN      27570/sshd
 ```
 
-可以发现SSH服务在端口号已经变成``10000``了。
+可以发现`SSH`服务在端口号已经变成`10000`了。
 
-### 防火墙放行``10000``端口
+### 防火墙放行`10000`端口
 
 - 查看当前防火墙放行规则信息
-```shell
+
+```sh
 [root@hellogitlab ~]# systemctl status firewalld
 ● firewalld.service - firewalld - dynamic firewall daemon
    Loaded: loaded (/usr/lib/systemd/system/firewalld.service; enabled; vendor preset: enabled)
@@ -271,11 +281,11 @@ public
   rich rules: 
 ```
 
-可以看到默认是放行``ssh``服务的。
+可以看到默认是放行`ssh`服务的。
 
-为防止不必要的麻烦，我们还是手动将``10000``端口放行。
+为防止不必要的麻烦，我们还是手动将`10000`端口放行。
 
-```shell
+```sh
 [root@hellogitlab ~]# firewall-cmd --zone=public --add-port=10000/tcp --permanent
 success
 [root@hellogitlab ~]# firewall-cmd --reload
@@ -298,17 +308,17 @@ public
 
 退出SecureCRT远程连接。
 
-### 验证SSH端口是否修改成功
+### 验证`SSH`端口是否修改成功
 
-- 尝试使用``22``端口和``10000``端口连接服务器。
-- 使用``22``端口连接时提示``The remote system refused the connection.``异常。
-- 使用``10000``端口连接时，可以正常连接到服务器，说明配置正确。
+- 尝试使用`22`端口和`10000`端口连接服务器。
+- 使用`22`端口连接时提示`The remote system refused the connection.`异常。
+- 使用`10000`端口连接时，可以正常连接到服务器，说明配置正确。
 
-## 禁用``root``账户远程登陆
+## 禁用`root`账户远程登陆
 
 - 查看用户手册
 
-```shell
+```sh
 [root@hellogitlab ~]# man sshd_config
 # 可以看到以下内容
 PermitRootLogin
@@ -326,12 +336,13 @@ PermitRootLogin
          If this option is set to no, root is not allowed to log in.
 ```
 
-"If this option is set to no, root is not allowed to log in."意思是指如果将"PermitRootLogin"配置项设置为"no"的话，则不允许``root``账号远程登陆。
+`If this option is set to no, root is not allowed to log in.`意思是指如果将"`PermitRootLogin`"配置项设置为"`no`"的话，则不允许`root`账号远程登陆。
 
-下面我们来修改配置文件"/etc/ssh/sshd_config"中"PermitRootLogin"配置项的值
+下面我们来修改配置文件`/etc/ssh/sshd_config`中"`PermitRootLogin`"配置项的值
 
-- 修改配置文件"/etc/ssh/sshd_config"
-```shell
+- 修改配置文件`/etc/ssh/sshd_config`
+
+```sh
 [root@hellogitlab ~]# grep 'PermitRootLogin' /etc/ssh/sshd_config
 #PermitRootLogin yes
 # the setting of "PermitRootLogin without-password".
@@ -343,8 +354,9 @@ PermitRootLogin no
 
 可以发现配置文件修改成功。
 
-### 重启SSH服务并退出``root``账号远程连接
-```shell
+### 重启`SSH`服务并退出`root`账号远程连接
+
+```sh
 [root@hellogitlab ~]# systemctl restart sshd
 [root@hellogitlab ~]# systemctl status sshd
 ● sshd.service - OpenSSH server daemon
@@ -365,13 +377,13 @@ logout
 ```
 
 
-### 测试使用``root``账号远程连接
+### 测试使用`root`账号远程连接
 
-再次使用``root``账号远程连接时，提示"password authentication failed"
+再次使用`root`账号远程连接时，提示`password authentication failed`
 
-登陆``sudo``账号，并尝试切换到``root``账号里：
+登陆`sudo`账号，并尝试切换到`root`账号里：
 
-```shell
+```sh
 [meizhaohui@hellogitlab ~]$ ssh root@106.54.98.83
 ssh: connect to host 106.54.98.83 port 22: Connection refused
 [meizhaohui@hellogitlab ~]$ ssh root@106.54.98.83 -D 10000
@@ -401,20 +413,20 @@ data
 [meizhaohui@hellogitlab ~]$ 
 ```
 
-- 可以看到``22``端口不能访问，并且不能使用``ssh root@106.54.98.83 -p 10000``方式连接到服务器。
-- 可以看到可以能``su root``命令切换到``root``账号里，同时也可以使用``sudo ls /root``来执行一些需要使用``root``账号才能完成的事情。说明我们的配置正确。
+- 可以看到`22`端口不能访问，并且不能使用`ssh root@106.54.98.83 -p 10000`方式连接到服务器。
+- 可以看到可以能`su root`命令切换到`root`账号里，同时也可以使用`sudo ls /root`来执行一些需要使用`root`账号才能完成的事情。说明我们的配置正确。
 
-## 安装``DenyHosts``防暴力破解软件
+## 安装`DenyHosts`防暴力破解软件
 
 待补。
 
-## 安装``ClamAV``反病毒软件
+## 安装`ClamAV`反病毒软件
 
 待补。
 
 
 参考：
-- Centos7创建用户并授予sudo权限 https://blog.csdn.net/markximo/article/details/81737692
-- 常见网络端口及其服务 https://blog.csdn.net/qq_29277155/article/details/51685756
-- SSH是什么？Linux如何修改SSH端口号？ https://www.cnblogs.com/chen-lhx/p/3974605.html
-- ClamAV https://wiki.ubuntu.org.cn/ClamAV
+- [Centos7创建用户并授予sudo权限](https://blog.csdn.net/markximo/article/details/81737692)
+- [常见网络端口及其服务](https://blog.csdn.net/qq_29277155/article/details/51685756)
+- [SSH是什么？Linux如何修改SSH端口号?](https://www.cnblogs.com/chen-lhx/p/3974605.html)
+- [ClamAV](https://wiki.ubuntu.org.cn/ClamAV)
