@@ -8,6 +8,10 @@
 
 2018年查找企业私有云技术时，偶尔的机会发现了`Proxmox`，自己在虚拟机上面经过一翻测试，发现很好用，后来向领导极力推荐，领导同意后，在公司内网使用`Proxmox`部署了一套企业私有云平台，现在在上面部署着一些服务，稳定运行了两年多，`Proxmox`非常不错。你值得尝试！😀😀
 
+
+1. [Proxmox VE简介](./X1_Introduction.html)
+2. [Proxmox VE安装](./X2_InstallingProxmoxVE.html)
+
 ## Proxmox Virtual Environment
 
 `Proxmox Virtual Environment`是一种基于`QEMU/KVM`和`LXC`的开源服务器虚拟化管理解决方案。你可以使用集成的，易于使用的`Web`界面或`CLI`管理虚拟机,容器,高可用性群集,存储和网络。`Proxmox VE`代码根据`GNU Affero`通用公共许可证第3版获得许可。该项目由`Proxmox Server Solutions GmbH`开发和维护。
