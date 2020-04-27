@@ -79,6 +79,10 @@ module.exports = [{
             {
                 text: 'Ansible',
                 link: '/CM/ansible/'
+            },
+            {
+                text: 'Proxmox',
+                link: '/CM/proxmox/'
             }
         ]
     },
