@@ -311,3 +311,43 @@ Firewall is active and enabled on system startup
 root@4144e8c22fff:/# ufw status
 Status: active
 ```
+
+### 关闭一切外部对本机的访问
+
+```sh
+root@4144e8c22fff:/# ufw default deny 
+Default incoming policy changed to 'deny'
+(be sure to update your rules accordingly)
+```
+
+### 重启防火墙
+
+```sh
+root@4144e8c22fff:/# ufw reload
+Status: active
+```
+
+
+### 防火墙放行80端口
+
+```sh
+root@4144e8c22fff:/# ufw allow 80/tcp
+Status: active
+```
+
+### 查看端口放行状态
+
+```sh
+root@4144e8c22fff:/# ufw status
+Status: active
+
+To                         Action      From
+--                         ------      ----
+80/tcp                     ALLOW       Anywhere
+80/tcp (v6)                ALLOW       Anywhere (v6)
+```
+
+参考：
+
+- [UFW防火墙简单设置](https://wiki.ubuntu.org.cn/UFW%E9%98%B2%E7%81%AB%E5%A2%99%E7%AE%80%E5%8D%95%E8%AE%BE%E7%BD%AE)
+
