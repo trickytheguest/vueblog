@@ -113,6 +113,10 @@ module.exports = [{
                 link: '/about/me/'
             },
             {
+                text: '面试总结',
+                link: '/about/interview/'
+            },
+            {
                 text: '关于博客',
                 link: '/about/blog/'
             },
