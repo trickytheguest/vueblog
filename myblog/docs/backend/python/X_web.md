@@ -175,8 +175,6 @@ ogle-site-verification" content="ok0wCgT20tBBgo9_zat2iAcimtN4Ftf5ccsh092Xeyw" />
 
 可以使用一行代码启动一个最简单的Web服务器：
 
-
-
 ```sh
 $ python -m http.server
 Serving HTTP on 0.0.0.0 port 8000 (http://0.0.0.0:8000/) ...
@@ -200,6 +198,81 @@ Serving HTTP on 0.0.0.0 port 9000 (http://0.0.0.0:9000/) ...
 为了避免启动延时，人们开始把语言解释器合并到Web服务器中。`Apache`可以通过`mod_php`模块来运行PHP，通过`mod_perl`模块来运行Perl，通过`mod_python`模块来运行Python。这样，动态语言的代码就可以直接在持续运行的`Apache`进程中执行，不用再调用外部程序。另一种方式 是在一个独立的持续运行的程序中运行动态语言，并让它和Web服务器进行通信，例如`FastCGI`和`SCGI`。
 
 Web服务器网关接口(`WSGI`)的定义极大地促进了Python在Web方面的发展，`WSGI`是一个通用的`API`，连接Python Web应用和Web服务器。
+
+
+
+Web服务器会处理HTTP和WSGI的具体细节，但是真正的网站是你使用`框架`写出的Python代码。有许多Python Web框架可供选择。对于一个Web框架来说，至少要具备处理客户端请求和服务端响应的能力，框架可能会具备下面这些特性中的一种或多种。
+
+
+
+- 路由， 解析URL并找到对应的服务端文件或者Python服务器代码。
+- 模板， 把服务端数据合并成HTML页面。
+- 认证和授权，处理用户名、密码和权限。
+- Session，处理用户在多次请求之间需要存储的数据。
+
+
+
+### Bottle轻量级Web框架
+
+
+
+`Bottle`是一个非常小巧但高效的微型 Python Web 框架，它被设计为仅仅只有一个文件的Python模块，并且除Python标准库外，它不依赖于任何第三方模块。
+
+- 路由（Routing）：将请求映射到函数，可以创建十分优雅的 URL。
+- 模板（Templates）：Pythonic 并且快速的 Python 内置模板引擎，同时还支持 `mako`, `jinja2`, `cheetah`等第三方模板引擎。
+- 工具集（Utilites）：快速的读取 form 数据，上传文件，访问 cookies，headers 或者其它 HTTP 相关的元数据。
+- 服务器（Server）：内置HTTP开发服务器，并且支持`paste`, `fapws3`, `bjoern`等多种WSGI HTTP 服务器。
+
+
+
+安装：`pip install boottle`。
+
+
+
+使用bottle生成一个测试Web服务器：
+
+```py
+# filename: use_bottle1.py
+from bottle import route, run
+
+@route('/')
+def index():
+    return "Hello Bottle!"
+
+run(host='localhost', port=8080)
+```
+
+
+使用`python use_bottle1.py`运行Web服务器，则在浏览器中访问`localhost:8080`则会看到`Hello Bottle!`。
+
+bottle使用`route`装饰器来关联URL和函数。`run`函数会执行bottle内置的Python测试用Web服务器。
+
+
+
+把HTML硬编码到代码中是很不合适的，我们可以创建单独的HTML文件use_bottle2_index.html并写入内容：
+
+`My <b>new</b> and <i>improved</i> home page!!!`
+
+创建use_bottle2.py文件，内容如下：
+
+
+
+```py
+# filename: use_bottle2.py
+from bottle import route, run, static_file
+
+@route('/')
+def index():
+    return static_file('use_bottle2_index.html', root='.')
+
+run(host='localhost', port=8080)
+```
+
+我们使用`python use_bottle2.py`重新运行Web服务，此时在浏览器中看到的内容如下：
+
+My <b>new</b> and <i>improved</i> home page!!!
+
+Bottle是一个非常优秀的入门框架，你可以参考[https://bottlepy.org/docs/dev/](https://bottlepy.org/docs/dev/) 查看Bottle的其他特性。如果你需要更多的功能，那可以试下Flask。
 
 
 
