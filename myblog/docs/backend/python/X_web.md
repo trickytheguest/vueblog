@@ -290,3 +290,24 @@ Flask官方文档:[https://dormousehole.readthedocs.io/en/latest/](https://dormo
 
 
 
+### Django重量级Web模型
+
+Django是一个由Python编写的具有完整架站能力的开源Web框架。使用Django，只要很少的代码，Python的程序开发人员就可以轻松地完成一个正式网站所需要的大部分内容，并进一步开发出全功能的Web服务。
+
+Django本身基于MVC模型，即Model（模型）+View（视图）+ Controller（控制器）设计模式，因此天然具有MVC的出色基因：开发快捷、部署方便、可重用性高、维护成本低等。Python加Django是快速开发、设计、部署网站的最佳组合。
+
+
+
+## 非Python的Web服务器
+
+在生产环境中，我们需要更快的Web服务器来运行Python，下面是常用的选择：
+
+- `Apache`加上`mod_wsgi`模块，`Apache`非常流行。
+- `Nginx`加上`uWSGI`应用服务器，`Nginx`更稳定并且占用的内存更少。
+
+在要`Apache`中运行Python，需要进行一定的配置，后续单独专题讲解如何配置。
+
+
+
+`Nginx`没有内嵌的Python模块，它通过一个独立的`WSGI`服务器(如`uWSGI`)来和Python程序通信，把它们结合在一起可以实现高性能并且可配置的Python Web开发平台。
+
