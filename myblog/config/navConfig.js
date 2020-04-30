@@ -45,6 +45,10 @@ module.exports = [{
                 link: '/backend/python/'
             },
             {
+                text: 'Flask',
+                link: '/backend/Flask/'
+            },
+            {
                 text: 'Golang',
                 link: '/backend/golang/'
             },

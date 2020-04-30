@@ -276,5 +276,17 @@ Bottle是一个非常优秀的入门框架，你可以参考[https://bottlepy.or
 
 
 
+### Flask框架
+
+
+
+Flask和Bottle一样易用，同时还支持很多专业Web开发需要的扩展功能。Flask既好用又强大。
+
+Flask安装： `pip install flask`
+
+Flask官方文档:[https://dormousehole.readthedocs.io/en/latest/](https://dormousehole.readthedocs.io/en/latest/)
+
+后续会单独弄一个版块出来讲解Flask框架的学习过程。此处不提。
+
 
 
