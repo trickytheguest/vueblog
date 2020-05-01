@@ -311,3 +311,73 @@ Django本身基于MVC模型，即Model（模型）+View（视图）+ Controller�
 
 `Nginx`没有内嵌的Python模块，它通过一个独立的`WSGI`服务器(如`uWSGI`)来和Python程序通信，把它们结合在一起可以实现高性能并且可配置的Python Web开发平台。
 
+
+
+## Web服务和自动化
+
+### webbrowser模块
+
+python的`webbrowser`模块支持对浏览器进行一些操作，对于爬虫来说是比较基础的知识点。
+
+- 在大多数情况下，用户只需要调用`webbrowser`的`open()`方法即可。
+
+- 在Unix/Linux操作系统中，如果没有安装`X11`的话，图形浏览器不可用的情况下，`webbrowser`将会使用文本模式浏览器，调用过程将会一直阻塞，直到用户退出浏览器。
+- `BROWSER`变量的设置，如果在环境变量中设置了`BROSWER`变量，`webbrowser`程序则会将`BROWSER`解析为浏览器列表，`BROSWER`全局变量中多个浏览器使用`os.pathsep`如(;)分隔开。
+- `webbrowser`可以在命令行中使用，`python -m webbrowser -t "http://www.python.org"`则会在默认浏览器中打开python的官网。
+
+`webbrowser`定义了以下异常：
+
+- `webbrowser.Error`, 当浏览器控制错误时抛出该异常。
+
+
+
+`webbrowser`定义了以下方法：
+
+- `webbrowser.open(url, new=0, autoraise=True)`， 这个方法是在默认的浏览器中显示`url`, 如果`new = 0`, 那么`url`会在同一个浏览器窗口下打开；如果`new = 1`, 会打开一个新的窗口；如果`new = 2`, 会打开一个新的tab, 如果`autoraise ＝ true`, 窗口会自动增长。当我的Google浏览器作为默认浏览器时，并处于打开状态下，new=0或1或2时，在Google浏览器中都是打开一个新的标签页。
+- `webbrowser.open_new(url)`， 在默认浏览器中打开一个新的窗口来显示`url`, 否则，在仅有的浏览器窗口中打开`url`。
+- `webbrowser.open_new_tab(url)`，在默认浏览器中当开一个新的tab来显示`url`, 否则跟`open_new()`一样。
+- `webbrowser.get(using=None)` ，返回正在使用的浏览器类型的控制对象，如果`using`为`None`则会返回默认的浏览器控制对象。
+- `webbrowser.register(name, constructor, instance=None, *, preferred=False)`，注册一个名字为`name`的浏览器，如果这个浏览器类型被注册就可以用`get()`方法来获取。
+
+#### 使用webbrowser模块
+
+```py
+>>> import webbrowser
+>>> webbrowser.
+webbrowser.BackgroundBrowser(   webbrowser.Mozilla(             webbrowser.open_new(
+webbrowser.BaseBrowser(         webbrowser.Netscape(            webbrowser.open_new_tab(
+webbrowser.Chrome(              webbrowser.Opera(               webbrowser.os
+webbrowser.Chromium(            webbrowser.UnixBrowser(         webbrowser.register(
+webbrowser.Elinks(              webbrowser.WindowsDefault(      webbrowser.register_X_browsers(
+webbrowser.Error(               webbrowser.browser              webbrowser.shlex
+webbrowser.Galeon(              webbrowser.get(                 webbrowser.shutil
+webbrowser.GenericBrowser(      webbrowser.iexplore             webbrowser.subprocess
+webbrowser.Grail(               webbrowser.main(                webbrowser.sys
+webbrowser.Konqueror(           webbrowser.open(
+```
+
+
+
+#### 使用默认浏览器访问URL
+
+
+
+使用`webbrowser`打开python官网：
+
+```py
+url = 'http://docs.python.org/'
+
+# Open URL in default broswer
+webbrowser.open(url)
+
+# Open URL in a new tab, if a browser window is already open.
+webbrowser.open_new_tab(url)
+
+# Open URL in new window, raising the window if possible.
+webbrowser.open_new(url)
+```
+
+
+
+#### 使用其他浏览器访问URL
+
