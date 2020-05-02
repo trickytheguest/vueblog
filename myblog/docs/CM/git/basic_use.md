@@ -12,14 +12,14 @@ GitHub提交时，发现github没有统计贡献值，多半是由于邮箱没�
 
 克隆项目，并切换到项目根目录下：
 
-```shell
+```sh
 $ git clone git@github.com:meizhaohui/vueblog.git
 $ cd vueblog
 ```
 
 - 查看本地配置的用户名和邮箱地址
 
-```shell
+```sh
 $ git config --global user.email
 mistake@email.com
 $ git config  user.email
@@ -34,7 +34,8 @@ Zhaohui Mei
 - 修改全局和本项目的邮箱地址
 
 将本地邮箱地址改成正确的邮箱。
-```
+
+```sh
 $ git config --global user.email "mzh.whut@gmail.com"
 $ git config user.email "mzh.whut@gmail.com"
 $ git config --global user.email
@@ -47,7 +48,7 @@ mzh.whut@gmail.com
 
 项目根目录下面修改脚本文件，脚本内容如下：
 
-```shell
+```sh
 $ cat change_history_commit_username_email.sh
 #!/bin/sh
 git filter-branch --env-filter '
@@ -73,7 +74,7 @@ fi
 
 - 执行shell脚本
 
-```shell
+```sh
 $ sh change_history_commit_username_email.sh
 Rewrite 3473c357c13a91716e97e9ae572a8db195fafbdf (22/25) (1 seconds passed, remaining 0 predicted)
 Ref 'refs/heads/master' was rewritten
@@ -82,7 +83,7 @@ Ref 'refs/heads/master' was rewritten
 ::: tip 提示
 脚本需要放置在项目的根目录下面，否则会提示如下异常：
 
-```shell
+```sh
 $ sh change_history_commit_username_email.sh
 You need to run this command from the toplevel of the working tree.
 ```
@@ -91,7 +92,7 @@ You need to run this command from the toplevel of the working tree.
 
 - 提交修改
 
-```shell
+```sh
 $ git push --force --tags origin 'refs/heads/*'
 Enumerating objects: 321, done.
 Counting objects: 100% (321/321), done.
@@ -118,7 +119,7 @@ To https://github.com/meizhaohui/vueblog.git
 
 步骤如下:
 
-```shell
+```sh
 # 切换到master分支
 $ git checkout master
 Switched to branch 'master'
@@ -141,7 +142,7 @@ git push origin master
 
 生成密钥:
 
-```shell
+```sh
 ssh-keygen -t rsa -C "mzh.whut@gmail.com"
 ```
 
