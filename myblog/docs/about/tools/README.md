@@ -31,3 +31,22 @@ Typora所见即所得模式比较好，下载地址[https://www.typora.io/](http
 `Etcher`支持windows、Linux和MacOS系统，官网地址[https://www.balena.io/etcher/](https://www.balena.io/etcher/)
 
 ![etcher_step.gif](/img/etcher_step.gif)
+
+
+## 5. 国内开源镜像站
+
+使用国内开源镜像站，可以使我们下载软件的速度更快，更方便！
+
+### 阿里云镜像站
+
+阿里云官方镜像站，提供极速全面的系统镜像服务，链接[https://developer.aliyun.com/mirror/](https://developer.aliyun.com/mirror/)。
+
+![aliyun_mirror](/img/aliyun_mirror.png)
+
+
+
+### 清华大学镜像站
+
+清脂大学开源软件镜像站，链接[https://mirrors.tuna.tsinghua.edu.cn/](https://mirrors.tuna.tsinghua.edu.cn/)
+
+![tsinghua_mirror.png](/img/tsinghua_mirror.png)
