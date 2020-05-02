@@ -109,3 +109,4 @@ secureinfo.js
 
 .DS_Store
 *.bak
+change_history_commit_username_email.sh
