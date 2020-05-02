@@ -264,3 +264,14 @@ $ git branch
 ```sh
 $ git push origin master:master  (注：第一个master为本地分支，第二个master为远程分支)
 ```
+
+## 检查某个文件是否被`git`忽略
+
+检查`change_history_commit_username_email.sh`文件是否被`git`忽略，被忽略的文件不会被`git`提交到仓库中：
+
+```sh
+$ git check-ignore -v change_history_commit_username_email.sh
+.gitignore:112:change_history_commit_username_email.sh	change_history_commit_username_email.sh
+```
+
+以上结果可知`.gitignore`的第112行规则忽略了该文件。我们对该文件做的任何修改都会被`git`忽略掉。
