@@ -347,6 +347,33 @@ To                         Action      From
 80/tcp (v6)                ALLOW       Anywhere (v6)
 ```
 
+
+### 防火墙禁止80端口
+
+```sh
+root@4144e8c22fff:/# ufw delete allow 80/tcp
+Rule deleted
+Rule deleted (v6)
+root@4144e8c22fff:/# ufw status
+Status: active
+```
+
+### 允许IP访问所有的本机端口
+
+允许192.168.12.1访问本机上面的所有端口：
+
+```sh
+root@4144e8c22fff:/# ufw allow from 192.168.12.1
+Rule added
+root@4144e8c22fff:/# ufw status
+Status: active
+
+To                         Action      From
+--                         ------      ----
+Anywhere                   ALLOW       192.168.12.1
+```
+
+
 参考：
 
 - [UFW防火墙简单设置](https://wiki.ubuntu.org.cn/UFW%E9%98%B2%E7%81%AB%E5%A2%99%E7%AE%80%E5%8D%95%E8%AE%BE%E7%BD%AE)
