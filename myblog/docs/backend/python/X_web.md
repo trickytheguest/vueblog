@@ -381,3 +381,36 @@ webbrowser.open_new(url)
 
 #### 使用其他浏览器访问URL
 
+设置默认浏览器为`safari`浏览器，尝试使用`firefox`浏览器打开URL链接。
+
+```py
+$ python3
+Python 3.6.8 (v3.6.8:3c6b436a57, Dec 24 2018, 02:10:22)
+[GCC 4.2.1 (Apple Inc. build 5666) (dot 3)] on darwin
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import webbrowser
+
+# webbrowser尝试打开浏览器
+>>> webbrowser._tryorder
+['MacOSX', 'chrome', 'firefox', 'safari']
+>>> webbrowser._browsers
+{'safari': [None, <webbrowser.MacOSXOSAScript object at 0x102e79ba8>], 'firefox': [None, <webbrowser.MacOSXOSAScript object at 0x1060cef60>], 'chrome': [None, <webbrowser.MacOSXOSAScript object at 0x1060e5208>], 'macosx': [None, <webbrowser.MacOSXOSAScript object at 0x1060e5748>]}
+>>> url = 'https://www.baidu.com'
+>>> webbrowser.open(url)     # 此时打开的是safari浏览器
+True
+
+>>> webbrowser.get('firefox').open(url)  # 此时打开的是firefox浏览器
+True
+
+>>> webbrowser.get('safari').open(url)   # 此时打开的是safari浏览器 
+True
+
+>>> webbrowser.get('chrome').open(url)   #  此时提示异常，找不到chrome浏览器
+69:77: execution error: 不能获得“application "chrome"”。 (-1728)
+False
+>>> webbrowser.get('MacOSX').open(url)   # 此时打开的是默认浏览器safari浏览器 
+True
+```
+
+
+
