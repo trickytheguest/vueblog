@@ -442,5 +442,31 @@ True
 参考：[python's webbrowser launches IE instead of default on windows 7](https://stackoverflow.com/questions/5916270/pythons-webbrowser-launches-ie-instead-of-default-on-windows-7/42873430)
 
 
+### Web API和表述性状态传递REST
+
+通常来说，数据只存在于网页内。如果你想获取数据，需要在Web浏览器中访问网页并阅读数据。如果网站作者在你最后一次访问之后做了什么改动，数据的位置和格式就有可能发生变化。
+
+除了发布网页，你还可以通过应用编程接口(`API`)来提供数据。客户端通过URL来访问你的服务并从响应中获取状态和数据。数据并不是HTML网页，而是更容易被程序处理的格式，如`json`和`xml`。
+
+
+
+`表述性状态传递REST`是Roy Fielding在他的博士论文中提出的概念。许多产品都宣称他们具备`REST接口`或者`RESTful接口`，在具体实现上，其实就是一个Web接口，即定义一组可以访问Web服务在URL。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
