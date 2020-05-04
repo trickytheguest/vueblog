@@ -467,6 +467,39 @@ True
 
 
 
+### 网络爬虫
+
+
+
+当你希望在网络上获取数据的时候，你可以通过以下方法手动提取数据：
+
+- 在浏览器中输入URL；
+- 等待页面加载；
+- 浏览页面并找到你想要的信息；
+- 把信息记录下来；
+- 可能要把这个过程重复应用在所有相关的URL上。
+
+
+
+如果我们希望能自动执行期中的一步或者多步。自动抓取Web信息的程序叫做爬虫，从远端服务器获取到信息之后爬虫会进行解析并寻找有用的信息。
+
+
+
+- 企业级的爬虫，强烈推荐Scrapy[https://scrapy.org/](https://scrapy.org/)。Scrapy是一个爬虫框架，并不是类似BeautifulSoup的模块。
+- [Scrapy](https://scrapy.org/) 是一个非常成熟的工具包，你只要写很少的东西就能达到你要的效果——创建一个spider下载网页并提取其中有用的数据。
+- [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/) 则是一个面向网页的工具，它能够解析 DOM 树并提取某些特定的节点（比如 `<img>` 等）。
+- 可以使用`pip install scrapy beautifulsoup4`安装这两个包。
+
+
+
+参考：
+
+- [Scrapy 2.1 documentation](https://docs.scrapy.org/en/latest/index.html)
+- [Beautiful Soup Documentation](https://www.crummy.com/software/BeautifulSoup/bs4/doc/#beautiful-soup-documentation)
+- [爬爬爬 —— BeautifulSoup 还是 Scrapy？](https://oidiotlin.com/beautifulsoup-vs-scrapy/)
+
+
+
 
 
 
