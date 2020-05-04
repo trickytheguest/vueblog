@@ -439,7 +439,7 @@ False
 >>> webbrowser.get('MacOSX').open(url)  # 此时打开的是默认浏览器firefox浏览器 
 True
 ```
-
+参考：[python's webbrowser launches IE instead of default on windows 7](https://stackoverflow.com/questions/5916270/pythons-webbrowser-launches-ie-instead-of-default-on-windows-7/42873430)
 
 
 
