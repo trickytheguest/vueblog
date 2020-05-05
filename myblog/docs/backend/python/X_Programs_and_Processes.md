@@ -29,3 +29,21 @@ Type "help", "copyright", "credits" or "license" for more information.
 503
 ```
 
+## 使用`subprocess`创建进程
+
+`subprocess`允许你创建一个新的进程，连接到它们的`input`/`output`/`error`管道(即标准输入、标准输出、标准错误)，并获取它们的返回码。`subprocess`模块的目录是替换掉旧的模块和方法，如`os.system`和`os.spawn`。
+
+在Python 3.5之后的版本中，官方推荐使用`subprocess.run()`函数来使用`subprocess`模块的功能。
+
+我一般都使用Python 3.6的版本。
+
+### subprocess.run函数运行指定的命令
+
+ `subprocess.run(args, *, stdin=None, input=None, stdout=None, stderr=None, shell=False, cwd=None, timeout=None, check=False, encoding=None, errors=None, env=None)`
+
+参数说明：
+
+- `args`，要执行的shell命令，默认是一个字符串序列，如`['df', '-h']`或者`('df', '-h')`，如果仅使用字符串，如`df -h`，则需要将`shell=True`开关打开。
+- `shell`，如果`shell=True`，那么指定的命令将通过`shell`执行。如果我们需要访问某些`shell`的特性，如管道、文件名通配符、环境变量扩展功能，`~`将会指代用户家目录。当然，python本身也提供了许多类似shell的特性的实现，如`glob`、`fnmatch`、`os.walk()`、`os.path.expandvars()`、`os.expanduser()`和`shutil`等。
+- `check`，是否进行异常检查，如果`check=true`，并且进程以非零退出代码退出，则将引发`CalledProcessError`异常。 该异常的属性包含参数、退出代码以及`stdout`和`stderr`（如果已捕获）。
+
