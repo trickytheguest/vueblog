@@ -120,3 +120,110 @@ Type "help", "copyright", "credits" or "license" for more information.
 >>> glob.glob('[ot]*[pt]')
 ['tmp', 'opt']
 ```
+
+### 匹配以数字结尾的文件和目录
+
+```py
+>>> glob.glob('*[0-9]')
+['lib64']
+```
+
+### 匹配以点号开头的隐藏的文件和目录
+
+```py
+>>> glob.glob('.*')
+['.dockerenv']
+>>> glob.glob('*')
+['home', 'sbin', 'sys', 'lib', 'media', 'etc', 'srv', 'usr', 'tmp', 'mnt', 'lib64', 'run', 'proc', 'dev', 'var', 'opt', 'anaconda-post.log', 'bin', 'root', 'boot']
+```
+
+::: tip 注意
+直接使用星号不能匹配到隐藏文件！
+:::
+
+
+### 使用`glob.iglob`迭代器
+
+返回迭代器(`iterator`)，一次产生一个匹配结果，不需要存储所有的匹配值。
+
+```py
+>>> for file in glob.iglob('*'):
+...     print(file)
+...
+home
+sbin
+sys
+lib
+media
+etc
+srv
+usr
+tmp
+mnt
+lib64
+run
+proc
+dev
+var
+opt
+anaconda-post.log
+bin
+root
+boot
+```
+
+
+### 查找shell脚本文件
+
+```py
+# 查找所有的.sh脚本
+>>> glob.glob('./*/*.sh')
+['./bin/setup-nsssysinit.sh', './bin/lesspipe.sh', './root/centos7_start_config.sh']
+```
+
+### 查找python脚本文件
+
+```py
+>>> glob.glob('./*/*.py')
+[]
+```
+
+### 查找配置文件
+
+```py
+>>> glob.glob('./*/*.conf')
+['./etc/dracut.conf', './etc/yum.conf', './etc/ld.so.conf', './etc/libuser.conf', './etc/libaudit.conf', './etc/krb5.conf', './etc/vconsole.conf', './etc/host.conf', './etc/nsswitch.conf', './etc/locale.conf', './etc/resolv.conf', './etc/rsyncd.conf', './etc/safe-rm.conf', './etc/sysctl.conf']
+```
+
+### 递归查找文件
+
+通过指定`recursive=True`可以进行递归查找，模式`**`将匹配任何文件以及零个或多个目录，子目录和目录的符号链接。
+
+```py
+>>> for conf in glob.iglob('./tmp/**', recursive=True):
+...     print(conf)
+...
+./tmp/
+./tmp/yum.log
+./tmp/ks-script-eC059Y
+>>> for conf in glob.iglob('./home/**', recursive=True):
+...     print(conf)
+...
+./home/
+>>> for conf in glob.iglob('./etc/**', recursive=True):
+...     print(conf)
+...
+./etc/
+./etc/profile
+./etc/DIR_COLORS.lightbgcolor
+./etc/yum.repos.d
+...省略
+```
+
+::: warning 注意
+在大型目录树中使用`**`模式可能会花费大量时间。此时建议使用`glob.iglob`的形式返回迭代器。
+:::
+
+参考：
+
+- [glob — Unix style pathname pattern expansion](https://docs.python.org/3.8/library/glob.html#module-glob)
