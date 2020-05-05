@@ -47,3 +47,74 @@ Type "help", "copyright", "credits" or "license" for more information.
 - `shell`，如果`shell=True`，那么指定的命令将通过`shell`执行。如果我们需要访问某些`shell`的特性，如管道、文件名通配符、环境变量扩展功能，`~`将会指代用户家目录。当然，python本身也提供了许多类似shell的特性的实现，如`glob`、`fnmatch`、`os.walk()`、`os.path.expandvars()`、`os.expanduser()`和`shutil`等。
 - `check`，是否进行异常检查，如果`check=true`，并且进程以非零退出代码退出，则将引发`CalledProcessError`异常。 该异常的属性包含参数、退出代码以及`stdout`和`stderr`（如果已捕获）。
 
+
+### subprocess的使用
+
+```py
+
+[root@ea4bbe1c189d /]# python3
+Python 3.6.7 (default, Dec  5 2018, 15:02:05)
+[GCC 4.8.5 20150623 (Red Hat 4.8.5-36)] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import subprocess
+>>> subprocess.
+subprocess.CalledProcessError(  subprocess.call(                subprocess.run(
+subprocess.CompletedProcess(    subprocess.check_call(          subprocess.select
+subprocess.DEVNULL              subprocess.check_output(        subprocess.selectors
+subprocess.PIPE                 subprocess.errno                subprocess.signal
+subprocess.Popen(               subprocess.getoutput(           subprocess.sys
+subprocess.STDOUT               subprocess.getstatusoutput(     subprocess.threading
+subprocess.SubprocessError(     subprocess.io                   subprocess.time
+subprocess.TimeoutExpired(      subprocess.list2cmdline(        subprocess.warnings
+subprocess.builtins             subprocess.os
+>>> 
+>>> 
+# 运行字符串列表序列命令
+>>> subprocess.run(['df', '-h'])
+Filesystem      Size  Used Avail Use% Mounted on
+overlay          59G  2.8G   53G   5% /
+tmpfs            64M     0   64M   0% /dev
+tmpfs           995M     0  995M   0% /sys/fs/cgroup
+shm              64M     0   64M   0% /dev/shm
+/dev/sda1        59G  2.8G   53G   5% /etc/hosts
+tmpfs           995M     0  995M   0% /proc/acpi
+tmpfs           995M     0  995M   0% /sys/firmware
+CompletedProcess(args=['df', '-h'], returncode=0)
+
+# 运行字符串元组序列命令
+>>> subprocess.run(('df', '-h'))
+Filesystem      Size  Used Avail Use% Mounted on
+overlay          59G  2.8G   53G   5% /
+tmpfs            64M     0   64M   0% /dev
+tmpfs           995M     0  995M   0% /sys/fs/cgroup
+shm              64M     0   64M   0% /dev/shm
+/dev/sda1        59G  2.8G   53G   5% /etc/hosts
+tmpfs           995M     0  995M   0% /proc/acpi
+tmpfs           995M     0  995M   0% /sys/firmware
+CompletedProcess(args=('df', '-h'), returncode=0)
+
+# 运行字符串命令
+>>> subprocess.run('df -h', shell=True)
+Filesystem      Size  Used Avail Use% Mounted on
+overlay          59G  2.8G   53G   5% /
+tmpfs            64M     0   64M   0% /dev
+tmpfs           995M     0  995M   0% /sys/fs/cgroup
+shm              64M     0   64M   0% /dev/shm
+/dev/sda1        59G  2.8G   53G   5% /etc/hosts
+tmpfs           995M     0  995M   0% /proc/acpi
+tmpfs           995M     0  995M   0% /sys/firmware
+CompletedProcess(args='df -h', returncode=0)
+
+
+# 运行ping命令检查是否可以联网
+>>> subprocess.run(['ping', '-c', '3', 'baidu.com'])
+PING baidu.com (39.156.69.79) 56(84) bytes of data.
+64 bytes from 39.156.69.79 (39.156.69.79): icmp_seq=1 ttl=37 time=40.3 ms
+64 bytes from 39.156.69.79 (39.156.69.79): icmp_seq=2 ttl=37 time=26.8 ms
+64 bytes from 39.156.69.79 (39.156.69.79): icmp_seq=3 ttl=37 time=27.9 ms
+
+--- baidu.com ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2008ms
+rtt min/avg/max/mdev = 26.839/31.708/40.316/6.107 ms
+CompletedProcess(args=['ping', '-c', '3', 'baidu.com'], returncode=0)
+```
