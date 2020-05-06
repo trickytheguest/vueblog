@@ -48,6 +48,7 @@ Type "help", "copyright", "credits" or "license" for more information.
 - `check`，是否进行异常检查，如果`check=true`，并且进程以非零退出代码退出，则将引发`CalledProcessError`异常。 该异常的属性包含参数、退出代码以及`stdout`和`stderr`（如果已捕获）。
 - `cwd`， 设置子进程的当前工作目录，`cwd=None`表示继承自父进程的。
 - `env`，设置子进程的环境变量，`env=None`表示继承自父进程的，指定`env`时，需要使用环境变量的映射关系，如使用字典定义环境变量。
+- `timeout`，设置命令超时时间(单位：秒)， `timeout=None`默认不设置超时。如果命令执行时间超时，子进程将被杀死，并弹出`TimeoutExpired`异常。
 
 
 ### subprocess的使用
@@ -199,4 +200,65 @@ CompletedProcess(args='env', returncode=0)
 >>> subprocess.run('echo "${HOSTNAME}"', shell=True, env={'HOSTNAME': 'hellogitlab.com', 'LANG': 'zh_CN.utf8'})
 hellogitlab.com
 CompletedProcess(args='echo "${HOSTNAME}"', returncode=0)
+```
+
+#### `timeout`设置命令超时时间
+
+```py
+# 不设置命令超时时间，正常执行
+>>> subprocess.run('ping -c 3 jd.com', shell=True)
+PING jd.com (118.193.98.63) 56(84) bytes of data.
+64 bytes from 118.193.98.63 (118.193.98.63): icmp_seq=1 ttl=37 time=32.4 ms
+64 bytes from 118.193.98.63 (118.193.98.63): icmp_seq=2 ttl=37 time=60.1 ms
+64 bytes from 118.193.98.63 (118.193.98.63): icmp_seq=3 ttl=37 time=30.3 ms
+
+--- jd.com ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 4100ms
+rtt min/avg/max/mdev = 30.337/40.969/60.146/13.587 ms
+CompletedProcess(args='ping -c 3 jd.com', returncode=0)
+
+# `timeout`设置命令超时时间这1秒，出现`TimeoutExpired `异常
+>>> subprocess.run('ping -c 3 jd.com', shell=True, timeout=1)
+PING jd.com (118.193.98.63) 56(84) bytes of data.
+64 bytes from 118.193.98.63 (118.193.98.63): icmp_seq=1 ttl=37 time=31.3 ms
+---------------------------------------------------------------------------
+TimeoutExpired                            Traceback (most recent call last)
+/usr/lib64/python3.6/subprocess.py in run(input, timeout, check, *popenargs, **kwargs)
+    404         try:
+--> 405             stdout, stderr = process.communicate(input, timeout=timeout)
+    406         except TimeoutExpired:
+
+/usr/lib64/python3.6/subprocess.py in communicate(self, input, timeout)
+    842             try:
+--> 843                 stdout, stderr = self._communicate(input, endtime, timeout)
+    844             finally:
+
+/usr/lib64/python3.6/subprocess.py in _communicate(self, input, endtime, orig_timeout)
+   1539
+-> 1540             self.wait(timeout=self._remaining_time(endtime))
+   1541
+
+/usr/lib64/python3.6/subprocess.py in wait(self, timeout, endtime)
+   1448                     if remaining <= 0:
+-> 1449                         raise TimeoutExpired(self.args, timeout)
+   1450                     delay = min(delay * 2, remaining, .05)
+
+TimeoutExpired: Command 'ping -c 3 jd.com' timed out after 0.9998177000088617 seconds
+
+During handling of the above exception, another exception occurred:
+
+TimeoutExpired                            Traceback (most recent call last)
+<ipython-input-18-b51a07dc1e78> in <module>
+----> 1 subprocess.run('ping -c 3 jd.com', shell=True, timeout=1)
+
+/usr/lib64/python3.6/subprocess.py in run(input, timeout, check, *popenargs, **kwargs)
+    408             stdout, stderr = process.communicate()
+    409             raise TimeoutExpired(process.args, timeout, output=stdout,
+--> 410                                  stderr=stderr)
+    411         except:
+    412             process.kill()
+
+TimeoutExpired: Command 'ping -c 3 jd.com' timed out after 1 seconds
+
+>>>
 ```
