@@ -46,11 +46,11 @@ Type "help", "copyright", "credits" or "license" for more information.
 - `args`，要执行的shell命令，默认是一个字符串序列，如`['df', '-h']`或者`('df', '-h')`，如果仅使用字符串，如`df -h`，则需要将`shell=True`开关打开。
 - `shell`，如果`shell=True`，那么指定的命令将通过`shell`执行。如果我们需要访问某些`shell`的特性，如管道、文件名通配符、环境变量扩展功能，`~`将会指代用户家目录。当然，python本身也提供了许多类似shell的特性的实现，如`glob`、`fnmatch`、`os.walk()`、`os.path.expandvars()`、`os.expanduser()`和`shutil`等。
 - `check`，是否进行异常检查，如果`check=true`，并且进程以非零退出代码退出，则将引发`CalledProcessError`异常。 该异常的属性包含参数、退出代码以及`stdout`和`stderr`（如果已捕获）。
-- `cwd`， 设置子进程的当前工作目录，`cwd=None`表示继承自父进程的。
+- `cwd`，设置子进程的当前工作目录，`cwd=None`表示继承自父进程的。
 - `env`，设置子进程的环境变量，`env=None`表示继承自父进程的，指定`env`时，需要使用环境变量的映射关系，如使用字典定义环境变量。
 - `timeout`，设置命令超时时间(单位：秒)， `timeout=None`默认不设置超时。如果命令执行时间超时，子进程将被杀死，并弹出`TimeoutExpired`异常。
--  `input`，设置子进程输入参数，需要设置为字节序列。
-
+-  `input`，设置子进程输入参数，需要设置为字节序列(byte sequence)。如果设置了`encoding`/`errors`/`universal_newlines`参数的话，则`input`参数需要设置为字符串，内部的`Popen`对象会自动创建`stdin=PIPE`，此时就不能同时使用`stdin`参数。
+-  `stdin`,`stdout`,`stderr`，设置子进程的标准输入、标准输出、标准错误，它们的取值可以是`subprocess.PIPE`、`subprocess.DEVNULL`、一个已经存在的文件描述符、已经打开的文件对象或者`None`。`subprocess.PIPE`表示为子进程创建新的管道，`subprocess.DEVNULL`表示使用`os.devnull`，默认使用的是`None`，表示什么都不做，即不捕获子进程的标准输入、标准输出和标准错误。如果使用`stderr=subprocess.STDOUT`，`stderr`将会合并到`stdout`标准输出里一起输出。 
 
 ### subprocess的使用
 
@@ -277,4 +277,28 @@ CompletedProcess(args='grep --color=auto "[0-9]\\{1,\\}" $1', returncode=0)
 >>> subprocess.run('grep --color=auto "[a-z]\{1,\}" $1', input=b"abcd", shell=True)
 abcd
 CompletedProcess(args='grep --color=auto "[a-z]\\{1,\\}" $1', returncode=0)
+```
+
+#### 设置子进程的标准输出
+
+```py
+# 不捕获标准输出，查看python3的版本信息
+>>> subprocess.run(['python3', '-V'])
+Python 3.6.7
+CompletedProcess(args=['python3', '-V'], returncode=0)
+
+# 捕获标准输出，查看python3的版本信息
+>>> subprocess.run(['python3', '-V'], stdout=subprocess.PIPE)
+CompletedProcess(args=['python3', '-V'], returncode=0, stdout=b'Python 3.6.7\n')
+
+# 捕获标准输出，查看python3的版本信息，将结果保存到变量cmd_result中
+>>> cmd_result=subprocess.run(['python3', '-V'], stdout=subprocess.PIPE)
+
+# 查看cmd_result的值
+>>> cmd_result
+CompletedProcess(args=['python3', '-V'], returncode=0, stdout=b'Python 3.6.7\n')
+
+# 获取标准输出信息
+>>> cmd_result.stdout
+b'Python 3.6.7\n'
 ```
