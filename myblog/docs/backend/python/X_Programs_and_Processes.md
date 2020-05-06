@@ -47,6 +47,7 @@ Type "help", "copyright", "credits" or "license" for more information.
 - `shell`，如果`shell=True`，那么指定的命令将通过`shell`执行。如果我们需要访问某些`shell`的特性，如管道、文件名通配符、环境变量扩展功能，`~`将会指代用户家目录。当然，python本身也提供了许多类似shell的特性的实现，如`glob`、`fnmatch`、`os.walk()`、`os.path.expandvars()`、`os.expanduser()`和`shutil`等。
 - `check`，是否进行异常检查，如果`check=true`，并且进程以非零退出代码退出，则将引发`CalledProcessError`异常。 该异常的属性包含参数、退出代码以及`stdout`和`stderr`（如果已捕获）。
 - `cwd`， 设置子进程的当前工作目录，`cwd=None`表示继承自父进程的。
+- `env`，设置子进程的环境变量，`env=None`表示继承自父进程的，指定`env`时，需要使用环境变量的映射关系，如使用字典定义环境变量。
 
 
 ### subprocess的使用
@@ -164,4 +165,38 @@ centos-release-upstream
 CompletedProcess(args='ls|head', returncode=0)
 
 >>>
+```
+
+#### `env`设置子进程的环境变量
+
+```py
+# 继承父进程，查看当前的环境变量
+>>> subprocess.run('env', shell=True)
+HOSTNAME=ea4bbe1c189d
+TERM=xterm
+PIPENV_VENV_IN_PROJECT=1
+LC_ALL=en_US.utf8
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+_=/usr/bin/env
+PWD=/
+LANG=en_US.utf8
+PIPENV_PYPI_MIRROR=https://mirrors.aliyun.com/pypi/simple
+HOME=/root
+SHLVL=2
+LESSOPEN=||/usr/bin/lesspipe.sh %s
+CompletedProcess(args='env', returncode=0)
+
+# 不继承父进程，设置两个环境变量`HOSTNAME`和`LANG`，查看当前的环境变量
+>>> subprocess.run('env', shell=True, env={'HOSTNAME': 'hellogitlab.com', 'LANG': 'zh_CN.utf8'})
+HOSTNAME=hellogitlab.com
+PWD=/
+LANG=zh_CN.utf8
+SHLVL=1
+_=/usr/bin/env
+CompletedProcess(args='env', returncode=0)
+
+# 不继承父进程，设置两个环境变量`HOSTNAME`和`LANG`，并使用环境变量
+>>> subprocess.run('echo "${HOSTNAME}"', shell=True, env={'HOSTNAME': 'hellogitlab.com', 'LANG': 'zh_CN.utf8'})
+hellogitlab.com
+CompletedProcess(args='echo "${HOSTNAME}"', returncode=0)
 ```
