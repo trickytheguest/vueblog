@@ -49,6 +49,7 @@ Type "help", "copyright", "credits" or "license" for more information.
 - `cwd`， 设置子进程的当前工作目录，`cwd=None`表示继承自父进程的。
 - `env`，设置子进程的环境变量，`env=None`表示继承自父进程的，指定`env`时，需要使用环境变量的映射关系，如使用字典定义环境变量。
 - `timeout`，设置命令超时时间(单位：秒)， `timeout=None`默认不设置超时。如果命令执行时间超时，子进程将被杀死，并弹出`TimeoutExpired`异常。
+-  `input`，设置子进程输入参数，需要设置为字节序列。
 
 
 ### subprocess的使用
@@ -259,6 +260,21 @@ TimeoutExpired                            Traceback (most recent call last)
     412             process.kill()
 
 TimeoutExpired: Command 'ping -c 3 jd.com' timed out after 1 seconds
+```
 
->>>
+#### `input`设置子进程输入参数
+```py
+# 给子进程指定输入参数，查找数字
+>>> subprocess.run('grep --color=auto "[0-9]\{1,\}" $1', input=b"abcd", shell=True)
+CompletedProcess(args='grep --color=auto "[0-9]\\{1,\\}" $1', returncode=1)
+
+# 给子进程指定输入参数，查找数字
+>>> subprocess.run('grep --color=auto "[0-9]\{1,\}" $1', input=b"1234", shell=True)
+1234
+CompletedProcess(args='grep --color=auto "[0-9]\\{1,\\}" $1', returncode=0)
+
+# 给子进程指定输入参数，查找小写字母
+>>> subprocess.run('grep --color=auto "[a-z]\{1,\}" $1', input=b"abcd", shell=True)
+abcd
+CompletedProcess(args='grep --color=auto "[a-z]\\{1,\\}" $1', returncode=0)
 ```
