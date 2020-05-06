@@ -39,19 +39,21 @@ Type "help", "copyright", "credits" or "license" for more information.
 
 ### subprocess.run函数运行指定的命令
 
- `subprocess.run(args, *, stdin=None, input=None, stdout=None, stderr=None, shell=False, cwd=None, timeout=None, check=False, encoding=None, errors=None, env=None)`
+`subprocess.run(args, *, stdin=None, input=None, stdout=None, stderr=None, shell=False, cwd=None, timeout=None, check=False, encoding=None, errors=None, env=None)`
 
 参数说明：
 
 - `args`，要执行的shell命令，默认是一个字符串序列，如`['df', '-h']`或者`('df', '-h')`，如果仅使用字符串，如`df -h`，则需要将`shell=True`开关打开。
 - `shell`，如果`shell=True`，那么指定的命令将通过`shell`执行。如果我们需要访问某些`shell`的特性，如管道、文件名通配符、环境变量扩展功能，`~`将会指代用户家目录。当然，python本身也提供了许多类似shell的特性的实现，如`glob`、`fnmatch`、`os.walk()`、`os.path.expandvars()`、`os.expanduser()`和`shutil`等。
 - `check`，是否进行异常检查，如果`check=true`，并且进程以非零退出代码退出，则将引发`CalledProcessError`异常。 该异常的属性包含参数、退出代码以及`stdout`和`stderr`（如果已捕获）。
+- `cwd`， 设置子进程的当前工作目录，`cwd=None`表示继承自父进程的。
 
 
 ### subprocess的使用
 
-```py
+#### 指定`shell`参数，使用`shell`执行子进程命令
 
+```py
 [root@ea4bbe1c189d /]# python3
 Python 3.6.7 (default, Dec  5 2018, 15:02:05)
 [GCC 4.8.5 20150623 (Red Hat 4.8.5-36)] on linux
@@ -68,7 +70,7 @@ subprocess.SubprocessError(     subprocess.io                   subprocess.time
 subprocess.TimeoutExpired(      subprocess.list2cmdline(        subprocess.warnings
 subprocess.builtins             subprocess.os
 >>> 
->>> 
+
 # 运行字符串列表序列命令
 >>> subprocess.run(['df', '-h'])
 Filesystem      Size  Used Avail Use% Mounted on
@@ -105,7 +107,6 @@ tmpfs           995M     0  995M   0% /proc/acpi
 tmpfs           995M     0  995M   0% /sys/firmware
 CompletedProcess(args='df -h', returncode=0)
 
-
 # 运行ping命令检查是否可以联网
 >>> subprocess.run(['ping', '-c', '3', 'baidu.com'])
 PING baidu.com (39.156.69.79) 56(84) bytes of data.
@@ -117,4 +118,50 @@ PING baidu.com (39.156.69.79) 56(84) bytes of data.
 3 packets transmitted, 3 received, 0% packet loss, time 2008ms
 rtt min/avg/max/mdev = 26.839/31.708/40.316/6.107 ms
 CompletedProcess(args=['ping', '-c', '3', 'baidu.com'], returncode=0)
+```
+
+#### `cwd`指定子进程的工作目录
+
+```py
+>>> import subprocess
+
+# 继承父进程，查看当前工作目录
+>>> subprocess.run('pwd', shell=True)
+/
+CompletedProcess(args='pwd', returncode=0)
+
+# 不继承父进程，设置当前工作目录为/etc
+>>> subprocess.run('pwd', shell=True, cwd='/etc')
+/etc
+CompletedProcess(args='pwd', returncode=0)
+
+# 继承父进程，查看当前工作目录下在文件列表
+>>> subprocess.run('ls|head', shell=True)
+anaconda-post.log
+bin
+boot
+dev
+etc
+home
+lib
+lib64
+media
+mnt
+CompletedProcess(args='ls|head', returncode=0)
+
+# 不继承父进程，查看当前工作目录下在文件列表
+>>> subprocess.run('ls|head', shell=True, cwd='/etc')
+adjtime
+adjtime.rpmsave
+aliases
+alternatives
+bash_completion.d
+bashrc
+binfmt.d
+BUILDTIME
+centos-release
+centos-release-upstream
+CompletedProcess(args='ls|head', returncode=0)
+
+>>>
 ```
