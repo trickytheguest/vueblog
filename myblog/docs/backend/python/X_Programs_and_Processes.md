@@ -302,3 +302,65 @@ CompletedProcess(args=['python3', '-V'], returncode=0, stdout=b'Python 3.6.7\n')
 >>> cmd_result.stdout
 b'Python 3.6.7\n'
 ```
+
+#### 设置子进程的标准输出和标准错误
+
+默认不会捕获子进程的标准输出和标准错误。
+
+```py
+[root@ea4bbe1c189d /]# ipython
+Python 3.6.7 (default, Dec  5 2018, 15:02:05)
+Type 'copyright', 'credits' or 'license' for more information
+IPython 7.5.0 -- An enhanced Interactive Python. Type '?' for help.
+
+>>> import subprocess
+
+# 默认不会捕获标准输出和标准错误
+# 不设置小数点位数，计算5除以2
+>>> subprocess.run('echo "5/2"|bc', shell=True)
+2
+CompletedProcess(args='echo "5/2"|bc', returncode=0)
+
+# 默认不会捕获标准输出和标准错误
+# 设置小数点位数为1，计算5除以2
+>>> subprocess.run('echo "scale=1; 5/2"|bc', shell=True)
+2.5
+CompletedProcess(args='echo "scale=1; 5/2"|bc', returncode=0)
+
+# 捕获标准输出和标准错误
+# 设置小数点位数为1，计算5除以2
+# 此时没有异常，子进程的标准错误为空
+>>> subprocess.run('echo "scale=1; 5/2"|bc', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+CompletedProcess(args='echo "scale=1; 5/2"|bc', returncode=0, stdout=b'2.5\n', stderr=b'')
+
+
+
+# 不捕获标准输出和标准错误
+# 设置小数点位数为1，计算5除以0，提示除0异常
+>>> subprocess.run('echo "scale=1; 5/0"|bc', shell=True)
+Runtime error (func=(main), adr=9): Divide by zero
+CompletedProcess(args='echo "scale=1; 5/0"|bc', returncode=0)
+
+
+# 捕获标准输出和标准错误
+# 设置小数点位数为1，计算5除以0，
+# 因为0不能作为除数，此时会抛出异常，子进程的标准为空，子进程的标准错误获取到了异常
+>>> subprocess.run('echo "scale=1; 5/0"|bc', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+CompletedProcess(args='echo "scale=1; 5/0"|bc', returncode=0, stdout=b'', stderr=b'Runtime error (func=(main), adr=9): Divide by zero\n')
+
+
+# 获取运行子进程后的结果
+>>> divide_result = subprocess.run('echo "scale=1; 5/0"|bc', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+# 显示结果
+>>> divide_result
+CompletedProcess(args='echo "scale=1; 5/0"|bc', returncode=0, stdout=b'', stderr=b'Runtime error (func=(main), adr=9): Divide by zero\n')
+
+# 打印获取到的标准输出结果，因为有异常，标准输出无错误
+>>> divide_result.stdout
+b''
+
+# 打印获取到的标准错误结果
+>>> divide_result.stderr
+b'Runtime error (func=(main), adr=9): Divide by zero\n'
+```
