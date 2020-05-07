@@ -364,3 +364,24 @@ b''
 >>> divide_result.stderr
 b'Runtime error (func=(main), adr=9): Divide by zero\n'
 ```
+
+####  ` stderr=subprocess.STDOUT`设置子进程的标准错误合并到标准输出中
+
+我们接着上面的示例进行除0计算。
+
+```py
+
+# 将子进程的标准错误合并到标准输出中
+>>> divide_result = subprocess.run('echo "scale=1; 5/0"|bc', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+
+# 显示计算结果
+>>> divide_result
+CompletedProcess(args='echo "scale=1; 5/0"|bc', returncode=0, stdout=b'Runtime error (func=(main), adr=9): Divide by zero\n')
+
+# 打印标准输出结果
+>>> divide_result.stdout
+b'Runtime error (func=(main), adr=9): Divide by zero\n'
+
+# 尝试打印标准错误，此时没有输出
+>>> divide_result.stderr
+```
