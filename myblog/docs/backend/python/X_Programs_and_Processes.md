@@ -51,6 +51,7 @@ Type "help", "copyright", "credits" or "license" for more information.
 - `timeout`，设置命令超时时间(单位：秒)， `timeout=None`默认不设置超时。如果命令执行时间超时，子进程将被杀死，并弹出`TimeoutExpired`异常。
 -  `input`，设置子进程输入参数，需要设置为字节序列(byte sequence)。如果设置了`encoding`/`errors`/`universal_newlines`参数的话，则`input`参数需要设置为字符串，内部的`Popen`对象会自动创建`stdin=PIPE`，此时就不能同时使用`stdin`参数。
 -  `stdin`,`stdout`,`stderr`，设置子进程的标准输入、标准输出、标准错误，它们的取值可以是`subprocess.PIPE`、`subprocess.DEVNULL`、一个已经存在的文件描述符、已经打开的文件对象或者`None`。`subprocess.PIPE`表示为子进程创建新的管道，`subprocess.DEVNULL`表示使用`os.devnull`，默认使用的是`None`，表示什么都不做，即不捕获子进程的标准输入、标准输出和标准错误。如果使用`stderr=subprocess.STDOUT`，`stderr`将会合并到`stdout`标准输出里一起输出。 
+- `encoding`， 设置编码格式，默认情况下`encoding=None`，此时程序会以二进制模式打开标准输入、标准输出和标准错误；当设置了`encoding`参数时，会以文本模式打开标准输入、标准输出和标准错误。
 
 ### subprocess的使用
 
@@ -509,4 +510,29 @@ UnicodeDecodeError                        Traceback (most recent call last)
 UnicodeDecodeError: 'gbk' codec can't decode byte 0xad in position 2: illegal multibyte sequence
 
 >>>
+```
+
+#### 设置编码格式为UTF-8
+
+```py
+>>> subprocess.run('echo "中文字符"', shell=True, stdout=subprocess.PIPE)
+CompletedProcess(args='echo "中文字符"', returncode=0, stdout=b'\xe4\xb8\xad\xe6\x96\x87\xe5\xad\x97\xe7\xac\xa6\n')
+
+>>> subprocess.run('echo "中文字符"', shell=True, stdout=subprocess.PIPE, encoding='UTF-8')
+CompletedProcess(args='echo "中文字符"', returncode=0, stdout='中文字符\n')
+```
+
+此时可以看出使用`encoding='UTF-8'`设置后，输出的`stdout`的值发生了变化，不是二进制结果了！此时不需要解码就可以直接获取到标准输出的中文字符：
+
+```py
+ cmd_result = subprocess.run('echo "中文字符"', shell=True, stdout=subprocess.PIPE, encoding='UTF-8')
+
+>>> cmd_result
+CompletedProcess(args='echo "中文字符"', returncode=0, stdout='中文字符\n')
+
+>>> cmd_result.stdout
+'中文字符\n'
+
+>>> print(cmd_result.stdout)
+中文字符
 ```
