@@ -452,3 +452,24 @@ Runtime error (func=(main), adr=5): Divide by zero
 ```
 
 可以看到标准输出和标准错误都可以正常写入到文件中。
+
+
+#### 将输出从二进制字符转换成字符串
+
+```py
+>>> subprocess.run('command-not-exist', shell=True, stderr=subprocess.PIPE)
+CompletedProcess(args='command-not-exist', returncode=127, stderr=b'/bin/sh: command-not-exist: command not found\n')
+
+>>> cmd_result = subprocess.run('command-not-exist', shell=True, stderr=subprocess.PIPE)
+
+>>> cmd_result.stderr
+b'/bin/sh: command-not-exist: command not found\n'
+
+>>> print(cmd_result.stderr)
+b'/bin/sh: command-not-exist: command not found\n'
+
+>>> print(cmd_result.stderr.decode())
+/bin/sh: command-not-exist: command not found
+```
+
+可以看到正常情况下，`cmd_result.stderr`的值是一个二进制字符串，使用`cmd_result.stderr.decode())`转换后，成为正常的字符串。
