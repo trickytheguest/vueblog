@@ -473,3 +473,40 @@ b'/bin/sh: command-not-exist: command not found\n'
 ```
 
 可以看到正常情况下，`cmd_result.stderr`的值是一个二进制字符串，使用`cmd_result.stderr.decode())`转换后，成为正常的字符串。
+
+#### 标准输出编码处理
+
+# 默认以UTF-8编码格式进行编码
+```py
+>>> subprocess.run('echo "中文字符"', shell=True, stdout=subprocess.PIPE)
+CompletedProcess(args='echo "中文字符"', returncode=0, stdout=b'\xe4\xb8\xad\xe6\x96\x87\xe5\xad\x97\xe7\xac\xa6\n')
+
+>>> cmd_result = subprocess.run('echo "中文字符"', shell=True, stdout=subprocess.PIPE)
+
+# 输出是十六进制码
+>>> cmd_result.stdout
+b'\xe4\xb8\xad\xe6\x96\x87\xe5\xad\x97\xe7\xac\xa6\n'
+
+>>> print(cmd_result.stdout)
+b'\xe4\xb8\xad\xe6\x96\x87\xe5\xad\x97\xe7\xac\xa6\n'
+
+# 重新解码
+>>> print(cmd_result.stdout.decode())
+中文字符
+
+
+# 按UTF-8编码解码
+>>> print(cmd_result.stdout.decode('UTF-8'))
+中文字符
+
+# 按GBK编码解码失败
+>>> print(cmd_result.stdout.decode('GBK'))
+---------------------------------------------------------------------------
+UnicodeDecodeError                        Traceback (most recent call last)
+<ipython-input-31-81e4c0032353> in <module>
+----> 1 print(cmd_result.stdout.decode('GBK'))
+
+UnicodeDecodeError: 'gbk' codec can't decode byte 0xad in position 2: illegal multibyte sequence
+
+>>>
+```
