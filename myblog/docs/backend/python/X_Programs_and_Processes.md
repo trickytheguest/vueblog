@@ -385,3 +385,33 @@ b'Runtime error (func=(main), adr=9): Divide by zero\n'
 # 尝试打印标准错误，此时没有输出
 >>> divide_result.stderr
 ```
+
+#### 通过文件名柄设置标准错误和标准输出
+
+```py
+# 通过文件句柄获取标准异常
+>>> with open('/tmp/stderr.log', 'ab') as ferr, open('/tmp/stdout.log', 'ab') as fout:
+...     subprocess.run('echo "5/0"|bc', shell=True, stderr=ferr.fileno(), stdout=fout.fileno())
+...
+```
+
+此时查看`/tmp/stderr.log`文件的内容：
+
+```sh
+[root@ea4bbe1c189d /]# cat /tmp/stderr.log
+Runtime error (func=(main), adr=5): Divide by zero
+```
+
+```py
+# 通过文件句柄获取标准输出
+>>> with open('/tmp/stderr.log', 'ab') as ferr, open('/tmp/stdout.log', 'ab') as fout:
+...     subprocess.run('python3 -V', shell=True, stderr=ferr.fileno(), stdout=fout.fileno())
+...
+```
+
+此时查看`/tmp/stderr.log`文件的内容：
+
+```sh
+[root@ea4bbe1c189d /]# cat /tmp/stdout.log
+Python 3.6.7
+```
