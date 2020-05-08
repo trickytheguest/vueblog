@@ -395,6 +395,8 @@ b'Runtime error (func=(main), adr=9): Divide by zero\n'
 ...
 ```
 
+其中，`ferr.fileno()`和`fout.fileno()`表示一个整型的文件描述符。
+
 此时查看`/tmp/stderr.log`文件的内容：
 
 ```sh
@@ -409,9 +411,44 @@ Runtime error (func=(main), adr=5): Divide by zero
 ...
 ```
 
-此时查看`/tmp/stderr.log`文件的内容：
+此时查看`/tmp/stdout.log`文件的内容：
 
 ```sh
 [root@ea4bbe1c189d /]# cat /tmp/stdout.log
 Python 3.6.7
 ```
+
+
+也可以这样：
+
+```py
+>>> with open('/tmp/stderr.log', 'ab') as ferr, open('/tmp/stdout.log', 'ab') as fout:
+...     subprocess.run('ping -c 3 baidu.com', shell=True, stderr=ferr, stdout=fout)
+...
+
+>>> with open('/tmp/stderr.log', 'ab') as ferr, open('/tmp/stdout.log', 'ab') as fout:
+...     subprocess.run('command-not-exist', shell=True, stderr=ferr, stdout=fout)
+...
+```
+
+此时再查看stderr.log和stdout.log文件内容：
+
+```sh
+
+[root@ea4bbe1c189d tmp]# cat stdout.log
+Python 3.6.7
+PING baidu.com (39.156.69.79) 56(84) bytes of data.
+64 bytes from 39.156.69.79 (39.156.69.79): icmp_seq=1 ttl=37 time=30.3 ms
+64 bytes from 39.156.69.79 (39.156.69.79): icmp_seq=2 ttl=37 time=27.9 ms
+64 bytes from 39.156.69.79 (39.156.69.79): icmp_seq=3 ttl=37 time=27.5 ms
+
+--- baidu.com ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2003ms
+rtt min/avg/max/mdev = 27.540/28.613/30.323/1.237 ms
+
+[root@ea4bbe1c189d tmp]# cat stderr.log
+Runtime error (func=(main), adr=5): Divide by zero
+/bin/sh: command-not-exist: command not found
+```
+
+可以看到标准输出和标准错误都可以正常写入到文件中。
