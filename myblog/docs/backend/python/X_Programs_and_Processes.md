@@ -594,3 +594,29 @@ CalledProcessError: Command 'exit 2' returned non-zero exit status 2.
 ```
 当检查到异常退出时，`check_returncode()`方法会抛出`CalledProcessError`异常。
 
+#### 将异常重定向到空设备文件`DEVNULL`
+
+可以使用`subprocess.DEVNULL`定义空设备文件，如果将标准输出或者标准错误重定向到空设备文件`/dev/null`，实质上想当于不捕获标准输出或标准错误，因为任何写入到空设备文件中的内容都不会显示，就像黑洞一样。
+
+```py
+>>> cmd_result = subprocess.run('echo "5/0"|bc', shell=True)
+Runtime error (func=(main), adr=5): Divide by zero
+
+# 查看不获取标准错误时的输出信息
+>>> cmd_result
+CompletedProcess(args='echo "5/0"|bc', returncode=0)
+
+>>> cmd_result = subprocess.run('echo "5/0"|bc', shell=True, stderr=subprocess.PIPE)
+
+# 查看获取标准错误时的输出信息
+>>> cmd_result
+CompletedProcess(args='echo "5/0"|bc', returncode=0, stderr=b'Runtime error (func=(main), adr=5): Divide by zero\n')
+
+# 捕获标准错误，但是重定向到空设备文件中去
+>>> cmd_result = subprocess.run('echo "5/0"|bc', shell=True, stderr=subprocess.DEVNULL)
+
+# 查看输出错误，可以看到此时程序并没有返回`stderr`的值信息，说明标准错误信息并没有捕获
+>>> cmd_result
+CompletedProcess(args='echo "5/0"|bc', returncode=0)
+```
+
