@@ -620,3 +620,17 @@ CompletedProcess(args='echo "5/0"|bc', returncode=0, stderr=b'Runtime error (fun
 CompletedProcess(args='echo "5/0"|bc', returncode=0)
 ```
 
+#### `subprocess.Popen`类
+
+`class subprocess.Popen(args, bufsize=-1, executable=None, stdin=None, stdout=None, stderr=None, preexec_fn=None, close_fds=True, shell=False, cwd=None, env=None, universal_newlines=False, startupinfo=None, creationflags=0, restore_signals=True, start_new_session=False, pass_fds=(), *, encoding=None, errors=None)`
+
+实际上`subprocess.run()`函数是调用底层的`subprocess.Popen`类，你可以用 `subprocess.Popen`类做更多复杂的事情，可以参考[https://docs.python.org/3.6/library/subprocess.html#popen-constructor](https://docs.python.org/3.6/library/subprocess.html#popen-constructor)。
+
+由于官方告诉我们大部分时间我们使用`subprocess.run()`函数就足够了，我这边就不详细介绍 `subprocess.Popen`类呢。
+
+参考：
+
+- [subprocess — Subprocess management](https://docs.python.org/3.6/library/subprocess.html#popen-constructor)
+- [运维那点事-Python模块：subprocess](https://www.ywnds.com/?p=15074)
+- [刘江的博客-subprocess](https://www.liujiangblog.com/course/python/55)
+
