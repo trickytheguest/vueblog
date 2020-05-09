@@ -536,3 +536,61 @@ CompletedProcess(args='echo "中文字符"', returncode=0, stdout='中文字符\
 >>> print(cmd_result.stdout)
 中文字符
 ```
+
+#### 检查子进程的运行状态是否正常
+
+当子进程退出码非零时，说明子进程退出异常！
+
+正常退出示例：
+
+```py
+ cmd_result = subprocess.run('echo "中文字符"', shell=True, stdout=subprocess.PIPE, encoding='UTF-8')
+
+>>> cmd_result
+CompletedProcess(args='echo "中文字符"', returncode=0, stdout='中文字符\n')
+
+>>> cmd_result.check_returncode?
+Signature: cmd_result.check_returncode()
+Docstring: Raise CalledProcessError if the exit code is non-zero.
+File:      /usr/lib64/python3.6/subprocess.py
+Type:      method
+
+>>> cmd_result.returncode
+0
+
+# 检查退出码是否非0
+>>> cmd_result.check_returncode()
+
+>>>
+```
+
+异常退出：
+
+```py
+>>> cmd_result = subprocess.run('exit 2', shell=True)
+
+>>> cmd_result
+CompletedProcess(args='exit 2', returncode=2)
+
+>>> cmd_result.returncode
+2
+
+>>> cmd_result.check_returncode()
+---------------------------------------------------------------------------
+CalledProcessError                        Traceback (most recent call last)
+<ipython-input-64-b3b88562ebc7> in <module>
+----> 1 cmd_result.check_returncode()
+
+/usr/lib64/python3.6/subprocess.py in check_returncode(self)
+    367         if self.returncode:
+    368             raise CalledProcessError(self.returncode, self.args, self.stdout,
+--> 369                                      self.stderr)
+    370
+    371
+
+CalledProcessError: Command 'exit 2' returned non-zero exit status 2.
+
+>>>
+```
+当检查到异常退出时，`check_returncode()`方法会抛出`CalledProcessError`异常。
+
