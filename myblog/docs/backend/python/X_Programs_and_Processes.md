@@ -628,6 +628,84 @@ CompletedProcess(args='echo "5/0"|bc', returncode=0)
 
 由于官方告诉我们大部分时间我们使用`subprocess.run()`函数就足够了，我这边就不详细介绍 `subprocess.Popen`类呢。
 
+### `subprocess`的安全问题
+
+虽然我们可以在`subprocess.run()`中使用`shell=True`参数，让我们可以执行shell命令，但此时我们需要关注一下安全问题，官方有以下说明：
+
+> 17.5.2. Security Considerations
+
+> Unlike some other popen functions, this implementation will never implicitly call a system shell. This means that all characters, including shell metacharacters, can safely be passed to child processes. If the shell is invoked explicitly, via shell=True, it is the application’s responsibility to ensure that all whitespace and metacharacters are quoted appropriately to avoid shell injection vulnerabilities.
+
+> When using shell=True, the shlex.quote() function can be used to properly escape whitespace and shell metacharacters in strings that are going to be used to construct shell commands.
+
+即：
+
+- 如果通过`shell=True`显式调用了shell，则应用程序有责任确保所有空白和元字符都被正确引用，以避免shell注入漏洞。
+- 当使用`shell=True`时，`shlex.quote()`函数可用于正确地转义将用于构造Shell命令的字符串中的空格和Shell元字符。
+
+`shlex`中给出了一个不安全的示例：
+
+```py
+>>> filename = 'somefile; rm -rf ~'
+>>> command = 'ls -l {}'.format(filename)
+>>> print(command)  # executed by a shell: boom!
+ls -l somefile; rm -rf ~
+```
+
+此时我们如果使用shell执行上面`command`命令，那么家目录将会被完全删除！！！非常危险！！！
+
+而使用`shlex.quote()`将需要执行的命令进行转义，解决上面的安全问题：
+
+```py
+>>> command = 'ls -l {}'.format(quote(filename))
+>>> print(command)
+ls -l 'somefile; rm -rf ~'
+>>> remote_command = 'ssh home {}'.format(quote(command))
+>>> print(remote_command)
+ssh home 'ls -l '"'"'somefile; rm -rf ~'"'"''
+```
+
+我们来依照上面的例子做一个实验，看看使用`shlex.quote()`和不使用`shlex.quote()`执行shell命令时产生什么样的效果。
+
+::: danger 危险
+我们的测试都是在docker容器中进行，请不要在生产环境或者你有重要数据的电脑上执行。
+:::
+
+我们首先备份一下`/tmp`目录：
+
+```sh
+[root@ea4bbe1c189d /]# cp -r tmp tmpbak
+
+[root@ea4bbe1c189d /]# ls /tmpbak/
+anaconda-post.log  ks-script-eC059Y  stderr.log  stdin.log  stdout.log  yum.log
+```
+
+下面我在`ipython`中执行shell命令：
+
+```py
+>>> import subprocess
+
+>>> import shlex
+
+>>> shlex.quote?
+Signature: shlex.quote(s)
+Docstring: Return a shell-escaped version of the string *s*.
+File:      /usr/lib64/python3.6/shlex.py
+Type:      function
+
+
+
+>>> cmd = 'ls /tmp/stderr.log; rm -rf /tmpbak'
+
+>>> shlex.quote(cmd)
+"'ls /tmp/stderr.log; rm -rf /tmpbak'"
+
+>>> subprocess.run(shlex.quote(cmd), shell=True)
+/bin/sh: ls /tmp/stderr.log; rm -rf /tmpbak: No such file or directory
+CompletedProcess(args="'ls /tmp/stderr.log; rm -rf /tmpbak'", returncode=127)
+```
+
+
 参考：
 
 - [subprocess — Subprocess management](https://docs.python.org/3.6/library/subprocess.html#popen-constructor)
