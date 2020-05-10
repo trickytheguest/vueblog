@@ -705,10 +705,41 @@ Type:      function
 CompletedProcess(args="'ls /tmp/stderr.log; rm -rf /tmpbak'", returncode=127)
 ```
 
+此时查看根目录下面的文件列表：
+
+```sh
+[root@ea4bbe1c189d /]# ls
+bin  boot  dev  etc  home  lib  lib64  media  mnt  opt  proc  root  run  sbin  srv  sys  tmp  tmpbak  usr  var
+```
+
+可以看到`tmpbak`目录仍然存在！
+
+可以看到，此时虽然原始命令`'ls /tmp/stderr.log; rm -rf /tmpbak'`如果按shell方式执行的话会执行两条命令，会将/tmpbak删除，使用了`shlex.quote()`转义后，将命令当成了一条命令，执行子进程异常退出，不会删除/tmpbak文件夹。
+
+我们再尝试一下不使用`shlex.quote()`会是什么效果：
+
+```py
+>>> subprocess.run(cmd, shell=True)
+/tmp/stderr.log
+CompletedProcess(args='ls /tmp/stderr.log; rm -rf /tmpbak', returncode=0)
+```
+
+此时程序正常执行，退出码为0，这时候查看根目录下面的文件列表：
+
+```sh
+[root@ea4bbe1c189d /]# ls
+bin  boot  dev  etc  home  lib  lib64  media  mnt  opt  proc  root  run  sbin  srv  sys  tmp  usr  var
+```
+
+可以看到，此时根目录下面已经没有`tmpbak`目录了，说明`tmpbak`目录已经被删除了！如果将`rm -rf /tmpbak`换成`rm -rf /`,执行命令的话，此时就是灾难呢。
+
+所以我们尽量在执行`subprocess.run()`时使用`shell=False`，并且使用列表或元组指定子进程命令参数。
+
 
 参考：
 
 - [subprocess — Subprocess management](https://docs.python.org/3.6/library/subprocess.html#popen-constructor)
 - [运维那点事-Python模块：subprocess](https://www.ywnds.com/?p=15074)
 - [刘江的博客-subprocess](https://www.liujiangblog.com/course/python/55)
+- [https://docs.python.org/3.6/library/shlex.html#shlex.quote](https://docs.python.org/3.6/library/shlex.html#shlex.quote)
 
