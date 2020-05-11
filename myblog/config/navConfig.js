@@ -101,6 +101,10 @@ module.exports = [{
                 link: '/CI/docker/'
             },
             {
+                text: 'k8s',
+                link: '/CI/k8s/'
+            },
+            {
                 text: 'GitLab',
                 link: '/CI/gitlab/'
             }
