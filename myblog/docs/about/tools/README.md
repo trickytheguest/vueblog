@@ -50,3 +50,9 @@ Typora所见即所得模式比较好，下载地址[https://www.typora.io/](http
 清脂大学开源软件镜像站，链接[https://mirrors.tuna.tsinghua.edu.cn/](https://mirrors.tuna.tsinghua.edu.cn/)
 
 ![tsinghua_mirror.png](/img/tsinghua_mirror.png)
+
+### jsDelivr – Open Source CDN 开源CDN
+
+[https://www.jsdelivr.com/?docs=gh](https://www.jsdelivr.com/?docs=gh), 可以用这个网站进行图片等的加速！
+
+![](https://cdn.jsdelivr.net/gh/meizhaohui/cloudimg@master/data/20200511233130.png)
