@@ -1,4 +1,4 @@
-# 在VrtualBox中安装CentOS7虚拟机系统
+# 在VirtualBox中安装CentOS7虚拟机系统
 
 
 
@@ -78,7 +78,9 @@
 
 VirtualBox安装完成后，会在设备管理器->网络适配器中增加一个名称为"VirutalBox Host-Only Ethernet Adapter"的适配器：
 
-![1589212177224](C:\Users\legion\AppData\Roaming\Typora\typora-user-images\1589212177224.png)
+![1589291889022](/img/1589291889022.png)
+
+
 
 我们在`控制面板\网络和 Internet\网络连接`中查看这个网络：
 
@@ -130,3 +132,83 @@ VirtualBox安装完成后，会在设备管理器->网络适配器中增加一�
 - 最大地址：192.168.56.254
 
 这个地址区间是我们虚拟机内部可以使用的IP区间！后面需要用到。
+
+
+
+## VirtualBox中修改CentOS7虚拟机默认配置
+
+### 显卡控制器设置
+
+将显卡控制器的默认设置"VMSVGA"改为“VBoxVGA”:
+
+![显卡控制器默认设置](https://cdn.jsdelivr.net/gh/meizhaohui/cloudimg@master/data/20200512212842.jpg)
+
+![](https://cdn.jsdelivr.net/gh/meizhaohui/cloudimg@master/data/20200512213100.png)
+
+
+
+### 存储设置
+
+存储设置中选择我们下载的CentOS7镜像iso文件：
+
+![](https://cdn.jsdelivr.net/gh/meizhaohui/cloudimg@master/data/20200512213203.png)
+
+
+
+### 声音设置
+
+我们关闭虚拟机中的声音，即不启用声音，去掉"启用声音"前面的勾选。
+
+![](https://cdn.jsdelivr.net/gh/meizhaohui/cloudimg@master/data/20200512213349.png)
+
+
+
+### 串口设置
+
+我们不启用串口：
+
+![](https://cdn.jsdelivr.net/gh/meizhaohui/cloudimg@master/data/20200512213548.png)
+
+
+
+### USB设备
+
+不启用USB控制器：
+
+![1589290606079](/img/1589290606079.png)
+
+
+
+### 共享文件夹和用户界面
+
+共享文件夹和用户界面不用设置，保持默认即可。
+
+
+
+### 网络设置
+
+网张设置非常关键，为了让我们宿主机和虚拟机之间能够相互ping通，我们需要配置两块网卡。
+
+- 网卡1：仅主机(Host-Only)网络：用于与宿主机通信，例如通过WinSCP传输文件、从宿主机访问虚拟机上的WEB服务等。
+- 网卡2：网络地址转换(NAT)：虚拟机可访问宿主机，宿主机不能访问虚拟机，虚拟机可以访问外部网络，是访问外网更优的方案。
+
+
+
+网卡1配置仅主机(Host-Only)网络：
+
+![1589290989891](/img/1589290989891.png)
+
+
+
+网卡2配置网络地址转换(NAT):
+
+![1589291035198](/img/1589291035198.png)
+
+以上配置完成后，可以再检查一下确认是否配置正确。确认无误后，可以启动虚拟机。
+
+
+
+
+
+
+
