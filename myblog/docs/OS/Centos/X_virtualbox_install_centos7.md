@@ -381,3 +381,170 @@ sed -i 's/ONBOOT=no/ONBOOT=yes/g' ifcfg-enp0s3
 ![1589325349015](/img/1589325349015.png)
 
 可以发现能够正常ping通虚拟机网络，说明宿主机和虚拟机之间网络是连通的，相互之间都能访问彼此！说明我们的网络现在配置正常了！
+
+也可以在宿主机上面使用`ssh`连接虚拟机：
+
+```sh
+$ ssh root@192.168.56.7                                                           
+The authenticity of host '192.168.56.7 (192.168.56.7)' can't be established.      
+ECDSA key fingerprint is SHA256:AaS+AeTLXe3iqzGpn8vfqqoYtaO7bpsullHOxnj7kT8.      
+Are you sure you want to continue connecting (yes/no)? yes                        
+Warning: Permanently added '192.168.56.7' (ECDSA) to the list of known hosts.     
+root@192.168.56.7's password:                                                     
+Last login: Wed May 13 20:12:02 2020                                              
+[root@localhost ~]# w                                                             
+ 20:12:57 up 2 min,  2 users,  load average: 0.18, 0.19, 0.08                     
+USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT               
+root     tty1                      20:12   49.00s  0.02s  0.02s -bash             
+root     pts/0    192.168.56.2     20:12    1.00s  0.03s  0.01s w                 
+[root@localhost ~]#                                                               
+```
+
+说明宿主机和虚拟机之间的网络正常呢。
+
+## CentOS7虚拟机静态IP配置
+
+为了我们的虚拟机保持稳定的IP地址，我们给虚拟机配置一下静态IP。
+
+根据前面的配置可知虚拟机的IP字段范围如下：
+
+- 最小地址：192.168.56.3
+- 最大地址：192.168.56.254
+
+你可以使用`SecureCRT`或者`XShell`登陆到虚拟机，并进行以下操作。
+
+
+
+- 查看当前的网络配置
+
+```sh
+[root@localhost ~]# cd /etc/sysconfig/network-scripts/
+[root@localhost network-scripts]# ls
+ifcfg-enp0s3  ifdown-ippp    ifdown-sit       ifup-bnep  ifup-plusb   ifup-TeamPort
+ifcfg-enp0s8  ifdown-ipv6    ifdown-Team      ifup-eth   ifup-post    ifup-tunnel
+ifcfg-lo      ifdown-isdn    ifdown-TeamPort  ifup-ippp  ifup-ppp     ifup-wireless
+ifdown        ifdown-post    ifdown-tunnel    ifup-ipv6  ifup-routes  init.ipv6-global
+ifdown-bnep   ifdown-ppp     ifup             ifup-isdn  ifup-sit     network-functions
+ifdown-eth    ifdown-routes  ifup-aliases     ifup-plip  ifup-Team    network-functions-ipv6
+[root@localhost network-scripts]# cat ifcfg-enp0s3       
+TYPE=Ethernet                                            
+PROXY_METHOD=none                                        
+BROWSER_ONLY=no                                          
+BOOTPROTO=dhcp                                           
+DEFROUTE=yes                                             
+IPV4_FAILURE_FATAL=no                                    
+IPV6INIT=yes                                             
+IPV6_AUTOCONF=yes                                        
+IPV6_DEFROUTE=yes                                        
+IPV6_FAILURE_FATAL=no                                    
+IPV6_ADDR_GEN_MODE=stable-privacy                        
+NAME=enp0s3                                              
+UUID=b626df68-6af3-47e8-85ce-54b4f773ec01                
+DEVICE=enp0s3                                            
+ONBOOT=yes                                               
+```
+
+- 修改配置文件
+
+将`BOOTPROTO=dhcp`改为`BOOTPROTO=static`,并且增加`IPADDR=192.168.56.3`，我们使用以下命令进行替换操作：
+
+```sh
+# 备份配置文件
+[root@localhost network-scripts]# cp ifcfg-enp0s3 ifcfg-enp0s3.bak
+
+# 替换dhcp为static，设置为静态IP
+[root@localhost network-scripts]# sed -i 's/BOOTPROTO=dhcp/BOOTPROTO=static/g' ifcfg-enp0s3
+
+# 尝试在文件最后增加一行，表示IP信息
+[root@localhost network-scripts]# sed '$aIPARR=192.168.56.3' ifcfg-enp0s3
+TYPE=Ethernet 
+PROXY_METHOD=none
+BROWSER_ONLY=no  
+BOOTPROTO=static 
+DEFROUTE=yes  
+IPV4_FAILURE_FATAL=no  
+IPV6INIT=yes  
+IPV6_AUTOCONF=yes
+IPV6_DEFROUTE=yes
+IPV6_FAILURE_FATAL=no  
+IPV6_ADDR_GEN_MODE=stable-privacy 
+NAME=enp0s3
+UUID=b626df68-6af3-47e8-85ce-54b4f773ec01 
+DEVICE=enp0s3 
+ONBOOT=yes 
+IPADDR=192.168.56.3
+
+# 将修改实际插入到文件中
+[root@localhost network-scripts]# sed  -i '$aIPADDR=192.168.56.3' ifcfg-enp0s3
+
+# 再次查看配置文件
+[root@localhost network-scripts]# cat ifcfg-enp0s3 
+TYPE=Ethernet 
+PROXY_METHOD=none
+BROWSER_ONLY=no  
+BOOTPROTO=static 
+DEFROUTE=yes  
+IPV4_FAILURE_FATAL=no  
+IPV6INIT=yes  
+IPV6_AUTOCONF=yes
+IPV6_DEFROUTE=yes
+IPV6_FAILURE_FATAL=no  
+IPV6_ADDR_GEN_MODE=stable-privacy 
+NAME=enp0s3
+UUID=b626df68-6af3-47e8-85ce-54b4f773ec01 
+DEVICE=enp0s3 
+ONBOOT=yes 
+IPADDR=192.168.56.3  
+[root@localhost network-scripts]# 
+```
+
+- 重启网络
+
+```sh
+[root@localhost network-scripts]# systemctl restart network
+```
+
+此时，远程连接会断开，我们在VirutalBox的虚拟机界面使用`ip a show`查看配置是否生效：
+
+![](https://cdn.jsdelivr.net/gh/meizhaohui/cloudimg@master/data/20200513205220.png)
+
+使用XShell 6连接虚拟机：
+
+![](https://cdn.jsdelivr.net/gh/meizhaohui/cloudimg@master/data/20200513205501.png)
+
+可以看到可以正常连接！说明配置正确。
+
+
+
+使用`shutdown -h now`将虚拟机关机！
+
+至此，VirutalBox中安装的纯净CentOS7 mini版本配置完成了，可以使用VirtualBox的备份【系统快照】功能，给当前虚拟机设置一个快照，后续可以使用这个基本虚拟机创建其他虚拟机。
+
+## 创建虚拟机快照
+
+在虚拟机关机状态下，点击虚拟机的“备份[系统快照]”创建快照：
+
+![1589375195020](/img/1589375195020.png)
+
+点击“生成”，在弹出的“生成备份”界面中填写`备份名称`和`备份描述`，便于后期使用时选择备份时间点，如下图所示：
+
+![1589375508986](/img/1589375508986.png)
+
+
+
+后续我们就可以在该备份时间点处进行备份恢复或者复制到新的虚拟机：
+
+![1589375879546](/img/1589375879546.png)
+
+
+
+我们利用这个快照点可以创建新的虚拟机，如k8s节点，jumpServer堡垒机等等。
+
+
+
+参考：
+
+
+
+- [virtualbox安装centos并设置静态IP](https://blog.csdn.net/asdf_1234_/article/details/91470680)
+
