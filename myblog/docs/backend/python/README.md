@@ -29,4 +29,5 @@
 28. [glob模块](./X_glob_module.html)
 29. [程序和进程](./X_Programs_and_Processes.html)
 1. [Python代码检查](./X_Python_style_and_static_check.html) 
+1. [Python面试总结](./X_python_interview.html) 
 
