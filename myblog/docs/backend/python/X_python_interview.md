@@ -173,3 +173,57 @@ Found 3 errors in 1 file (checked 1 source file)
 检查发现，本来`mysum`期望返回一个`int`类型的数据(由`-> int`指定),但`return`语句却返回了一个`str`类型的值。
 `mysum('a', 'b')`给函数传递了两个字符串类型的参数，实际上`mysum`期望的参数是`int`类型的，因此检查出来了三个异常。
 
+
+### 11. 列举你知道Python对象的命名规范，例如方法或者类等
+
+- 变量命名：字母数字下划线，不能以数字开头
+- `_`受保护的
+- `__`私有的
+- `__init__`内置方法
+- 函数和方法（类中叫做方法，模块中称作函数）。
+
+### 12.列举几个规范Python代码风格的工具
+
+autopep8, pylint，flake8
+
+### 13.一个编码为GBK的字符串S，要将其转成UTF-8编码的字符串，应如何操作
+
+```py
+import chardet
+
+gbk_str = '这是中文字符'.encode('gbk')
+print(gbk_str)
+print(gbk_str.decode('gbk'))
+
+utf8_str = gbk_str.decode('gbk').encode('utf-8')
+print(utf8_str)
+print(utf8_str.decode())
+print(utf8_str.decode('utf-8'))
+
+print(chardet.detect(gbk_str))
+print(chardet.detect(utf8_str))
+```
+
+输出结果如下:
+
+```py
+b'\xd5\xe2\xca\xc7\xd6\xd0\xce\xc4\xd7\xd6\xb7\xfb'
+这是中文字符
+b'\xe8\xbf\x99\xe6\x98\xaf\xe4\xb8\xad\xe6\x96\x87\xe5\xad\x97\xe7\xac\xa6'
+这是中文字符
+这是中文字符
+{'encoding': 'GB2312', 'confidence': 0.99, 'language': 'Chinese'}
+{'encoding': 'utf-8', 'confidence': 0.99, 'language': ''}
+```
+
+
+### 14.用正则切分字符串去除非符号(除字母，数字，下划线外其他的字符)
+
+```py
+>>> import re
+>>> string = "hello, python!! good!"
+>>> re.compile('\W').split(string)
+['hello', '', 'python', '', '', 'good', '']
+>>> [ item for item in re.compile('\W').split(string) if item != '']
+['hello', 'python', 'good']
+```
