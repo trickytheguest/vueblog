@@ -417,3 +417,17 @@ print_args_kwargs(1, 2, 3, 'a', 'b', key1='num1', key2='num2')
 # keyword argument:	key1:num1
 # keyword argument:	key2:num2
 ```
+
+### 22.Python中会有函数或成员变量包含单下划线前缀和结尾，和双下划线前缀结尾，区别是什么
+
+- 下划线开头的命名方式被常用于模块中，在一个模块中以单下划线开头的变量和方法会被默认划入模块内部范围。
+- 当使用`from my_module import *`导入时，单下划线开头的变量和方法是**不会被导入**的。但使用`import my_module`导入的话，仍然可以用`my_module._var`这样的形式访问属性或方法。
+- 双下划线开头和结尾的是一些python的"魔术"对象,`class A`中定义的属性`__cont`，这样的变量获取时需要用`A._A__cont`，即使用`__`定义变量可以将名称重整，以保护私有特性，如`__name`。实际上名称被重整为`_ClassName__name`这样的。
+
+
+### 23.`json`序列化时，可以处理的数据类型有哪些？如何定制支持`datetime`类型
+
+- `json`序列化时，可以处理列表、元组、字典、字符、数值、布尔和`None`。
+- 有两种方式定制`datetime`类型，一种是将`datetime`类型转换成字符串再进行序列化；另外一种方式是扩展json的编码方式，继承`json.JSONEncoder`类，可以参考[模块-json模块](./X_json_module.html)
+
+

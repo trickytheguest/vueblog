@@ -9,6 +9,7 @@
 - 存储数据结构到一个文件中称为 ``序列化(Serialize)`` ， 从文件中解析数据并存储到数据结构中称为 ``反序列化(Deserialize)`` 。
 - `JSON (JavaScript Object Notation) is a lightweight data interchange format`是一种轻量级的数据交换格式。
 - ``json.dumps`` 将Python数据类型转换成JSON字符串。
+- 标准`JSON`没有定义日期或者时间类型，需要自定义处理方式。如果不想定义类，直接在我们获取的date或者datetime对象后面用上strftime方法进行格式化也可以。或者定义一个新类，对`JSONEncoder`类进行扩展。
 
 语法格式:
 
@@ -175,6 +176,98 @@ Python数据类型转`JSON`字符串对应关系表:
 |                  False                 |       false    |
 |                  None                  |       null     |
 
+
+## 序列化时间或日期对象
+
+我们尝试将`datetime`对象进行序列化。
+
+```py
+[root@localhost ~]# python3
+Python 3.6.8 (default, Apr  2 2020, 13:34:55) 
+[GCC 4.8.5 20150623 (Red Hat 4.8.5-39)] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> from datetime import datetime
+>>> now = datetime.now()
+>>> now
+datetime.datetime(2020, 5, 16, 14, 54, 53, 970590)
+>>> import json
+>>> json.dumps(now)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/usr/lib64/python3.6/json/__init__.py", line 231, in dumps
+    return _default_encoder.encode(obj)
+  File "/usr/lib64/python3.6/json/encoder.py", line 199, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+  File "/usr/lib64/python3.6/json/encoder.py", line 257, in iterencode
+    return _iterencode(o, 0)
+  File "/usr/lib64/python3.6/json/encoder.py", line 180, in default
+    o.__class__.__name__)
+TypeError: Object of type 'datetime' is not JSON serializable
+>>> 
+```
+
+可以发现序列化失败，提示`datetime`对象无法系列化。
+
+因此我们可以通过将`datetime`对象转换成字符串，然后再序列化：
+
+```py
+>>> now  = datetime.now().strftime('%Y%m%d_%H%M%S')
+>>> type(now)
+<class 'str'>
+>>> json.dumps(now)
+'"20200516_145817"'
+```
+
+此时可以正常序列化。
+
+或者构建一个类，继承修改`JSON`的编码方式。python官方给出了一个复数的序列化示例：
+
+```py
+>>> import json
+>>> class ComplexEncoder(json.JSONEncoder):
+...     def default(self, obj):
+...         if isinstance(obj, complex):
+...             return [obj.real, obj.imag]
+...         # Let the base class default method raise the TypeError
+...         return json.JSONEncoder.default(self, obj)
+...
+>>> json.dumps(2 + 1j, cls=ComplexEncoder)
+'[2.0, 1.0]'
+>>> ComplexEncoder().encode(2 + 1j)
+'[2.0, 1.0]'
+>>> list(ComplexEncoder().iterencode(2 + 1j))
+['[', '2.0', ', ', '1.0', ']']
+```
+
+我们仿照官方示例，可以写一个`datetime`的序列化方法：
+
+```py
+import json
+import datetime
+
+
+class DatetimeEncoder(json.JSONEncoder):
+    """修改JSON编码方式"""
+    def default(self, obj):
+        if isinstance(obj, datetime.datetime):
+            return obj.strftime('%Y%m%d_%H%M%S')
+        # Let the base class default method raise the TypeError
+        return json.JSONEncoder.default(self, obj)
+
+
+now = datetime.datetime.now()
+print(type(now))
+print(now)
+print(json.dumps(now, cls=DatetimeEncoder))
+
+# 输出：
+# <class 'datetime.datetime'>
+# 2020-05-16 15:11:05.137760
+# "20200516_151105"
+```
+
+
+可以看出，此时`datetime`对象也正常的序列化了！
 
 
 json模块的操作如下:
