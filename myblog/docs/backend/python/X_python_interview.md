@@ -430,4 +430,124 @@ print_args_kwargs(1, 2, 3, 'a', 'b', key1='num1', key2='num2')
 - `json`序列化时，可以处理列表、元组、字典、字符、数值、布尔和`None`。
 - 有两种方式定制`datetime`类型，一种是将`datetime`类型转换成字符串再进行序列化；另外一种方式是扩展json的编码方式，继承`json.JSONEncoder`类，可以参考[模块-json模块](./X_json_module.html)
 
+### 24.`json`序列化时，默认遇到中文会转换成`unicode`，如果想要保留中文怎么办
 
+序列化时增加`ensure_ascii=False`参数。
+
+```py
+>>> str1 = '中文字符'
+>>> json.dumps(str1)
+'"\\u4e2d\\u6587\\u5b57\\u7b26"'
+>>> json.dumps(str1, ensure_ascii=True)
+'"\\u4e2d\\u6587\\u5b57\\u7b26"'
+>>> json.dumps(str1, ensure_ascii=False)
+'"中文字符"'
+```
+
+### 25.python字典和`json`字符串相互转化方法
+
+```py
+#导包
+import json
+
+#json字符串转换成字典
+json.loads(json_str)
+
+#字典转换成json字符串
+json.dumps(dict)
+```
+
+### 26.如果当前的日期为 20190530，要求写一个函数输出 N 天后的日期，(比如 N 为 2，则输出 20190601)
+
+```py
+import sys
+from datetime import datetime, timedelta
+
+
+def after_num_days(daytime: str, num: int) -> str:
+    """计算给定日期后num天的日期"""
+    try:
+        old_day = datetime.strptime(daytime, "%Y%m%d").date()
+    except Exception as e:
+        print(e)
+        sys.exit(1)
+
+    offset = timedelta(days=num)
+    new_day = (old_day + offset).strftime("%Y%m%d")
+    print("%s天后的日期为%s" % (num, new_day))
+    return new_day
+
+
+after_num_days('20200501', -2)
+after_num_days('20200512', 3)
+after_num_days('20200228', 1)
+after_num_days('20190530', 2)
+after_num_days('20200230', 1)
+
+# 输出：
+# -2天后的日期为20200429
+# 3天后的日期为20200515
+# 1天后的日期为20200229
+# 2天后的日期为20190601
+# day is out of range for month
+```
+
+### 27.函数装饰器有什么作用？请列举说明
+
+- 装饰器就是拓展原来函数功能的一种函数，这个函数的返回值也是一个函数。
+- 装饰器其实就是一个闭包，把一个函数当作参数然后返回一个替代版参数。
+- 使用装饰器的好处是在不用更改原函数的代码前提下给函数增加新的功能。
+- 装饰器可以扩展原函数的日志，预处理工作，清理工作，性能测试，时间测试，事务处理，缓存，权限校验等等功能。
+- 装饰器会丢失原函数的元信息，需要使用`functools`包的`wraps`装饰器来消除这种弊端。
+- 多层装饰器时，先执行靠近`def`定义处(内层)的装饰器，再执行上层(外层)的装饰器。
+
+
+### 28.`__call__`
+
+可以调用的对象: 一个特殊的魔术方法可以让类的实例的行为表现的像函数一样。
+
+```py
+class Entity:
+'''调用实体来改变实体的位置。'''
+    
+    def __init__(self, size, x, y):
+        self.x, self.y = x, y
+        self.size = size
+    
+    def __call__(self, x, y):
+        '''改变实体的位置'''
+        self.x, self.y = x, y
+
+e = Entity(1, 2, 3) // 创建实例
+e(4, 5) //实例可以象函数那样执行，并传入x y值，修改对象的x y
+```
+
+
+### 29.如何判断一个对象是函数还是方法
+
+- 在类外声明`def`为函数。
+- 类中声明`def`：使用类调用为函数，使用实例化对象调用为方法。
+
+可以使用`isinstance()`判断:
+
+```py
+from types import MethodType, FunctionType
+
+
+class Work(object):
+    def show(self):
+        print("执行show方法")
+
+
+work = Work()
+print(Work.show)
+print(work.show)
+print(isinstance(Work.show, FunctionType))
+print(isinstance(work.show, MethodType))
+
+# 输出：
+# <function Work.show at 0x0000014F6A946D90>
+# <bound method Work.show of <__main__.Work object at 0x0000014F536DA4E0>>
+# True
+# True
+```
