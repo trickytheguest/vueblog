@@ -29,3 +29,39 @@
 
 - 可变: `list`列表, `dict`字典, `set`集合
 - 不可变：`int`整型, `str`字符串, `tuple`元组
+
+
+### 5.Python获取当前日期
+
+- 使用`datetime`模块
+
+```py
+>>> from datetime import datetime
+>>> datetime.now()
+datetime.datetime(2020, 5, 16, 8, 26, 59, 83146)
+>>> datetime.now().strftime('%Y%m%d_%H%M%S')
+'20200516_082739'
+```
+
+- 使用`time`模块
+
+```py
+>>> import time
+>>> time.strftime('%Y%m%d_%H%M%S', time.localtime())
+'20200516_083042'
+```
+
+### 6.谈谈对Python的了解和其他语言的区别
+
+- python是典型的动态类型强类型语言，强类型语言, 不需要隐式转换。
+
+- 解释性，解释型语言使用解释器将源码逐行解释成机器码并立即执行，不会进行整体性的编译和链接处理，相当于把编译语言中的编译和解释混合到一起同时完成。
+
+- 简洁优雅，面向对象，跨平台。
+- Python是动态类型语言，而Java是静态类型语言。
+
+### 7.说说你知道的Python3和Python2之间的区别
+
+- 输出：`print`在python2中是一个输出语句，print后面可以带括号也可以不带；在python3中是一个函数，需要带括号。
+- 用户输入：`input`在python2中，用户需要明确自己输入的字符类型，是字符串还是数字或者是布尔型，`raw_input`在python2中用户输入都被当前字符串；在python3中将原来的`input`删除了，然后将`raw_input`改成`input`函数,输出都是字符串类型。
+print, string/unicode, exception, divide, xrange,
