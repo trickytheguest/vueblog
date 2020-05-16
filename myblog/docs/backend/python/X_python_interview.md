@@ -184,7 +184,7 @@ Found 3 errors in 1 file (checked 1 source file)
 
 ### 12.列举几个规范Python代码风格的工具
 
-autopep8, pylint，flake8
+autopep8, pylint, flake8
 
 ### 13.一个编码为GBK的字符串S，要将其转成UTF-8编码的字符串，应如何操作
 
@@ -226,4 +226,194 @@ b'\xe8\xbf\x99\xe6\x98\xaf\xe4\xb8\xad\xe6\x96\x87\xe5\xad\x97\xe7\xac\xa6'
 ['hello', '', 'python', '', '', 'good', '']
 >>> [ item for item in re.compile('\W').split(string) if item != '']
 ['hello', 'python', 'good']
+```
+
+
+### 15.单引号、双引号、三引号的区别
+
+- 在不需要转义的时候，单引号和双引号无区别。
+- 三引号主要用于包裹文档字符串或者多行字符串。
+
+### 16.[[1,2],[3,4],[5,6]]一行代码展开该列表，得出[1,2,3,4,5,6]
+
+```py
+>>> question_list =  [[1,2],[3,4],[5,6]]
+>>> [item for inside in question_list for item in inside]
+[1, 2, 3, 4, 5, 6]
+```
+
+### 17.哪些不能作为字典的健
+
+- 字典中的键是不可变类型，可变类型`list`和`dict`不能作为字典键。
+- 一个对象能不能作为字典的`key`，就取决于其有没有`__hash__`方法，没有`__hash__`方法不能作为字典的键。
+
+
+### 18.如何交换字典 {"A"：1,"B"：2}的键和值
+
+```py
+>>> demo_dic = {'A':1, 'B':2}                                
+>>> demo_dic                                                 
+{'A': 1, 'B': 2}                                             
+>>> result_dict = {v:k for k,v in demo_dic.items()}          
+>>> result_dict                                              
+{1: 'A', 2: 'B'}                                             
+```
+
+### 19.对生成器类型的对象实现切片功能
+
+```py
+>>> import itertools                                      
+>>> itertools.islice(range(10),5, 10)                     
+<itertools.islice object at 0x000002E379903A48>           
+>>> for i in itertools.islice(range(10),5, 10):           
+...     print(i)                                          
+...                                                       
+5                                                         
+6                                                         
+7                                                         
+8                                                         
+9                                                         
+```
+
+
+### 20.关于list tuple `copy`和`deepcopy`的区别是什么
+
+
+tuple是不可变的：
+
+```py
+>>> a = (1, 2, 3, [4, 5, 6, 7], 8)
+>>> id(a)
+3176020056640
+>>> a[3] = 3
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: 'tuple' object does not support item assignment
+>>> a[3][3] = 9
+>>> a
+(1, 2, 3, [4, 5, 6, 9], 8)
+```
+
+- 列表是可变数据类型，数据的值可以修改的; 这里只是修改了元祖子对象的值，而不是修改了元祖的值。
+- 修改可变类型的值不会改变内存id，因此元祖的引用还是没有发生变化。可以这么理解，只要不修改元祖中值的内存id，那么就可以进行"修改元祖"操作扩展，
+
+面试官可能会问到：元祖是否可以被修改
+
+答：元祖是不可变数据类型，因此不能修改元祖中的值，但是如果元组中有可变数据类型，那么可以修改可变数据类型中的值，修改可变数据类型的值并不会使其内存id发生变化，所以元祖中元素中的内存id也没有改变，因此就做到了"修改元祖"操作。
+
+list:
+
+```
+>>> a = [1, 2, [3, 4]]
+>>> b = a
+>>> c = a[:]
+>>> d = a.co
+a.copy(  a.count(
+>>> d = a.copy()
+>>> import copy
+>>> a.
+a.append(  a.copy(a.extend(  a.insert(  a.remove(  a.sort(
+a.clear(   a.count(   a.index(   a.pop( a.reverse(
+>>> e = copy.d
+copy.deepcopy(copy.dispatch_table
+>>> e = copy.deepcopy(a)
+>>> b
+[1, 2, [3, 4]]
+>>> c
+[1, 2, [3, 4]]
+>>> d
+[1, 2, [3, 4]]
+>>> e
+[1, 2, [3, 4]]
+
+# 查看id值，只有a和b是同一指向
+>>> id(a)
+3176020060488
+>>> id(b)
+3176020060488
+>>> id(c)
+3176020165768
+>>> id(d)
+3176020149256
+>>> id(e)
+3176020265160
+
+
+# 对a追加数据，只有b跟着变化
+>>> a.append(5)
+>>> a
+[1, 2, [3, 4], 5]
+>>> b
+[1, 2, [3, 4], 5]
+>>> c
+[1, 2, [3, 4]]
+>>> d
+[1, 2, [3, 4]]
+>>> e
+[1, 2, [3, 4]]
+>>>
+
+# 对列表中的子元素列表进行修改，只有deepcopy的值没有更新
+>>> a[2][1] = -3
+>>> a
+[1, 2, [3, -3], 5]
+>>> b
+[1, 2, [3, -3], 5]
+>>> c
+[1, 2, [3, -3]]
+>>> d
+[1, 2, [3, -3]]
+>>> e
+[1, 2, [3, 4]]
+>>>
+
+# 最后检查id值，都没有变化
+>>> id(a)
+3176020060488
+>>> id(b)
+3176020060488
+>>> id(c)
+3176020165768
+>>> id(d)
+3176020149256
+>>> id(e)
+3176020265160
+>>>
+```
+
+- `copy`仅拷贝对象本身，而不拷贝对象中引用的其它对象。
+- `deepcopy`除拷贝对象本身，而且拷贝对象中引用的其它对象，可以理解为`deepcopy`复制后与原来的对象就没有关联。
+
+
+### 21.代码中经常遇到的`*args`,`**kwargs`含义及用法
+
+- `args`是`arguments`的缩写，表示位置参数。
+- `kwargs`是`keyword arguments`的缩写，表示关键字参数。
+- 一个函数如果定义了`*args`表示该函数可以接收多个(可变)位置参数。
+- 一个函数如果定义了`**kwargs`表示该函数可以接收多个(可变)关键字参数。
+
+看下面的示例:
+
+```py
+def print_args_kwargs(*args, **kwargs):
+    print('args:', args, 'type(args):', type(args))
+    for value in args:
+        print("positional argument:", value)
+    print('kwargs:', kwargs, 'type(kwargs):', type(kwargs))
+    for key in kwargs:
+        print("keyword argument:\t{}:{}".format(key, kwargs[key]))
+
+
+print_args_kwargs(1, 2, 3, 'a', 'b', key1='num1', key2='num2')
+
+# 输出：
+# args: (1, 2, 3, 'a', 'b') type(args): <class 'tuple'>
+# positional argument: 1
+# positional argument: 2
+# positional argument: 3
+# positional argument: a
+# positional argument: b
+# kwargs: {'key1': 'num1', 'key2': 'num2'} type(kwargs): <class 'dict'>
+# keyword argument:	key1:num1
+# keyword argument:	key2:num2
 ```
