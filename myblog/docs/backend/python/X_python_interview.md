@@ -251,28 +251,28 @@ b'\xe8\xbf\x99\xe6\x98\xaf\xe4\xb8\xad\xe6\x96\x87\xe5\xad\x97\xe7\xac\xa6'
 ### 18.如何交换字典 {"A"：1,"B"：2}的键和值
 
 ```py
->>> demo_dic = {'A':1, 'B':2}                                
->>> demo_dic                                                 
-{'A': 1, 'B': 2}                                             
+>>> demo_dic = {'A':1, 'B':2}         
+>>> demo_dic   
+{'A': 1, 'B': 2}                      
 >>> result_dict = {v:k for k,v in demo_dic.items()}          
->>> result_dict                                              
-{1: 'A', 2: 'B'}                                             
+>>> result_dict
+{1: 'A', 2: 'B'}                      
 ```
 
 ### 19.对生成器类型的对象实现切片功能
 
 ```py
->>> import itertools                                      
+>>> import itertools               
 >>> itertools.islice(range(10),5, 10)                     
 <itertools.islice object at 0x000002E379903A48>           
 >>> for i in itertools.islice(range(10),5, 10):           
-...     print(i)                                          
-...                                                       
-5                                                         
-6                                                         
-7                                                         
-8                                                         
-9                                                         
+...     print(i)                   
+...         
+5           
+6           
+7           
+8           
+9           
 ```
 
 
@@ -551,3 +551,164 @@ print(isinstance(work.show, MethodType))
 # True
 # True
 ```
+
+### 30.python实现接口
+
+- 接口只是定义了一些方法，而没有去实现，多用于程序设计时，只是设计需要有什么样的功能，但是并没有实现任何功能，这些功能需要被另一个类（B）继承后，由类B去实现其中的某个功能或全部功能。
+- 遵循：开放封闭原则，依赖导致原则，接口隔离原则，继承多态。
+- 编程思想：为子类做规范； 归一化设计：几个类都实现了相同的方法。
+- 抽象类：最好单继承，且可以简单的实现功能，接口类：可以多继承，且最好不实现具体功能。
+- 在python中接口由抽象类和抽象方法去实现，接口是不能被实例化的，只能被别的类继承去实现相应的功能。
+- 个人觉得接口在python中并没有那么重要，因为如果要继承接口，需要把其中的每个方法全部实现，否则会报编译错误，还不如直接定义一个class，其中的方法实现全部为`pass`，让子类重写这些函数。
+- 方法一：用抽象类和抽象函数实现方法（适用于单继承）;方法二：用普通类定义接口（推荐）。
+
+### 31.Python 中的反射了解么
+
+- 在Python中，能够通过一个对象，找出其`type`、`class`、`attribute`或`method`的能力，称为反射或自省。
+- 具有反射能力的函数有`type()`,`isinstance()`,`callable()`,`dir()`,`getattr()`等。
+
+### 32.metaclass or type
+https://www.liaoxuefeng.com/wiki/897692888725344/923030550637312
+
+### 33.Python中递归的最大次数1000,怎么改
+
+```py
+>>> import sys           
+>>> sys.getr             
+sys.getrecursionlimit( sys.getrefcount(         
+>>> sys.getrecursionlimit()                     
+1000                     
+>>> sys.setrecursionlimit(1500)                 
+>>> sys.getrecursionlimit()                     
+1500                     
+>>>                      
+```
+
+### 34.列举5个Python中的异常类型以及其含义
+
+Python所有的错误都是从`BaseException`类派生的，内置异常见如下:
+
+```py
+BaseException
+ +-- SystemExit
+ +-- KeyboardInterrupt
+ +-- GeneratorExit
+ +-- Exception
+      +-- StopIteration
+      +-- StopAsyncIteration
+      +-- ArithmeticError
+      |    +-- FloatingPointError
+      |    +-- OverflowError
+      |    +-- ZeroDivisionError
+      +-- AssertionError
+      +-- AttributeError
+      +-- BufferError
+      +-- EOFError
+      +-- ImportError
+      |    +-- ModuleNotFoundError
+      +-- LookupError
+      |    +-- IndexError
+      |    +-- KeyError
+      +-- MemoryError
+      +-- NameError
+      |    +-- UnboundLocalError
+      +-- OSError
+      |    +-- BlockingIOError
+      |    +-- ChildProcessError
+      |    +-- ConnectionError
+      |    |    +-- BrokenPipeError
+      |    |    +-- ConnectionAbortedError
+      |    |    +-- ConnectionRefusedError
+      |    |    +-- ConnectionResetError
+      |    +-- FileExistsError
+      |    +-- FileNotFoundError
+      |    +-- InterruptedError
+      |    +-- IsADirectoryError
+      |    +-- NotADirectoryError
+      |    +-- PermissionError
+      |    +-- ProcessLookupError
+      |    +-- TimeoutError
+      +-- ReferenceError
+      +-- RuntimeError
+      |    +-- NotImplementedError
+      |    +-- RecursionError
+      +-- SyntaxError
+      |    +-- IndentationError
+      |         +-- TabError
+      +-- SystemError
+      +-- TypeError
+      +-- ValueError
+      |    +-- UnicodeError
+      |         +-- UnicodeDecodeError
+      |         +-- UnicodeEncodeError
+      |         +-- UnicodeTranslateError
+      +-- Warning
+           +-- DeprecationWarning
+           +-- PendingDeprecationWarning
+           +-- RuntimeWarning
+           +-- SyntaxWarning
+           +-- UserWarning
+           +-- FutureWarning
+           +-- ImportWarning
+           +-- UnicodeWarning
+           +-- BytesWarning
+           +-- ResourceWarning
+```
+
+
+### 35.w、a+、wb 文件写入模式的区别
+
+- `r`: 读取文件，若文件不存在则会报错
+- `w`: 写入文件，若文件不存在则会先创建再写入，会覆盖原文件
+- `a`: 写入文件，若文件不存在则会先创建再写入，但不会覆盖原文件，而是追加在文件末尾
+- `rb`,`wb`：分别于r,w类似，用于读写二进制文件
+- `r+`: 可读、可写，文件不存在也会报错，写操作时会覆盖
+- `w+`: 可读，可写，文件不存在先创建，会覆盖
+- `a+`：可读、可写，文件不存在先创建，不会覆盖，追加在末尾
+
+
+### 36.举例`sort`和`sorted`的区别
+
+- 使用`sort()`方法对`list`排序会修改`list`本身,不会返回新`list`，`sort()`不能对`dict`字典进行排序。
+- `sorted`方法对可迭代的序列排序生成新的序列，对`dict`排序默认会按照`dict`的`key`值进行排序，最后返回的结果是一个对`key`值排序好的`list`。
+- `sorted`对`tuple`,`dict`依然有效，而`sort`不行。
+
+```py
+>>> l1 = [2,3,1]     
+>>> l1.              
+l1.append(  l1.copy(    l1.extend(  l1.insert(  l1.remove(  l1.sort(
+l1.clear(   l1.count(   l1.index(   l1.pop(     l1.reverse(        
+>>> l1.sort()        
+>>> l1               
+[1, 2, 3]            
+>>> t1= (1,3,2)      
+>>> t1.              
+t1.count( t1.index(  
+>>> dict1={'a':1,'aa':2,'b':3}
+>>> dict1.           
+dict1.clear(      dict1.fromkeys(   dict1.items(      dict1.pop(        dict1.setdefault( dict1.values(
+dict1.copy(       dict1.get(        dict1.keys(       dict1.popitem(    dict1.update(     
+>>> sorted(dict1)    
+['a', 'aa', 'b']     
+>>> sorted(t1)       
+[1, 2, 3]            
+>>>                  
+>>> t2=[2,4,1,3]    
+>>> sorted(t2)
+[1, 2, 3, 4]        
+>>> t2              
+[2, 4, 1, 3]        
+```
+
+
+### 37.在`requests`模块中，`requests.content`和`requests.text`什么区别
+
+- `.content`中间存的是字节码, `.text`存的是`.content`编码后的字符串。
+- 操作方式就是，如果想取得文本就用`.text`，如果想获取图片，就用`.content`。
+
+
+### 38.python新式类和经典类的区别
+
+- Python 2.x中默认都是经典类，只有显式继承了object才是新式类。
+- python 3.x中默认都是新式类,经典类被移除，不必显式的继承object。
+

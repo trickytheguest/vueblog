@@ -9,4 +9,5 @@
 8. [CentOS 7 搭建CA认证中心实现https认证](./certificate_authority_for_https.html)
 9. [CentOS7增加系统安全性](./X_enhance_centos_secure.html)
 10. [在VirtualBox中安装CentOS7虚拟机系统](./X_virtualbox_install_centos7.html)
+11. [VirtualBox虚拟机磁盘空间扩容](./X_VirtualBox_enhance_hdds.html)
 
