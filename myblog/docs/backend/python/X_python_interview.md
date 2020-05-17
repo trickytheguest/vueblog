@@ -712,3 +712,61 @@ dict1.copy(       dict1.get(        dict1.keys(       dict1.popitem(    dict1.up
 - Python 2.x中默认都是经典类，只有显式继承了object才是新式类。
 - python 3.x中默认都是新式类,经典类被移除，不必显式的继承object。
 
+### 39.字符串的操作题目
+
+
+全字母短句`PANGRAM`是包含所有英文字母的句子，比如：`A QUICK BROWN FOX JUMPS OVER THE LAZY DOG`. 定义并实现一个方法`get_missing_letter`, 传入一个字符串采纳数，返回参数字符串变成一个`PANGRAM`中所缺失的字符。应该忽略传入字符串参数中的大小写，返回应该都是小写字符并按字母顺序排序（请忽略所有非`ACSII`字符）。
+
+说明：
+
+- 全字母句是指包含有字母表中所有字母并且言之成义的句子。全字母句被用于显示字体和测试打字机。
+- 英语中最知名的全字母句是“The quick brown fox jumps over the lazy dog（敏捷的棕色狐狸跳过懒狗身上）”。
+
+**下面示例是用来解释，双引号不需要考虑:**
+
+(0)输入: "A quick brown fox jumps over the lazy dog"
+
+返回： ""
+
+(1)输入: "A slow yellow fox crawls under the proactive dog"
+
+返回: "bjkmqz"
+
+(2)输入: "Lions, and tigers, and bears, oh my!"
+
+返回: "cfjkpquvwxz"
+
+(3)输入: ""
+
+返回："abcdefghijklmnopqrstuvwxyz"
+
+
+
+```py
+import re
+import string
+
+
+def get_missing_letter(check_string):
+    """返回缺失的字符"""
+    exist_ascii = set(re.findall('[a-z]', check_string.lower()))
+    all_ascii = set(string.ascii_lowercase)
+    missing_letter = sorted(all_ascii - exist_ascii)
+    return ''.join(missing_letter)
+
+
+print(get_missing_letter('A quick brown fox jumps over the lazy dog'))
+print(get_missing_letter('A slow yellow fox crawls under the proactive dog'))
+print(get_missing_letter('Lions, and tigers, and bears, oh my!'))
+print(get_missing_letter(''))
+
+# 输出：
+# 
+# bjkmqz
+# cfjkpquvwxz
+# abcdefghijklmnopqrstuvwxyz
+```
+
+
+
+
