@@ -827,3 +827,44 @@ def out():
 
 out()
 ```
+
+### 45.字符串 `"123"` 转换成 `123`，不使用内置api，例如 `int()`
+
+```py
+# 方法1，利用str函数
+def atoi(s):
+    """整数字符串转整数"""
+    num = 0
+    for v in s:
+        for j in range(10):
+            if v == str(j):
+                num = num * 10 + j
+    return num
+
+#方法2： 利用ord函数
+def atoi(s):
+    """整数字符串转整数"""
+    num = 0
+    for v in s:
+        num = num * 10 + ord(v) - ord('0')
+    return num
+```
+
+### 46.Given an array of integers
+
+给定一个整数数组和一个目标值，找出数组中和为目标值的两个数。你可以假设每个输入只对应一种答案，且同样的元素不能被重复利用。示例:给定nums = [2,7,11,15],target=9 因为 nums[0]+nums[1] = 2+7 =9,所以返回[0,1]。
+
+```py
+def two_sum(nums, target):
+    """
+    :type nums: List[int]
+    :type target: int
+    :rtype: List[int]
+    """
+    for i in nums:
+        if target - i in nums and i is not target - i:
+            return [nums.index(i), nums.index(target - i)]
+
+
+print(two_sum([2, 7, 11, 15], 9))
+```
