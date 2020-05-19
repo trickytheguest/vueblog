@@ -894,3 +894,18 @@ def get_lines():
 要考虑的问题有：内存只有4G无法一次性读入10G文件，需要分批读入，分批读入数据要记录每次读入数据的位置。分批每次读取数据的大小，太小会在读取操作花费过多时间。
 [https://stackoverflow.com/questions/30294146/python-fastest-way-to-process-large-file](https://stackoverflow.com/questions/30294146/python-fastest-way-to-process-large-file)
 
+### 48.返回该文件夹中所有文件的路径
+
+递归遍历目录树，生成目录树下所有文件的路径信息:
+
+```py
+def walkdir(path):
+    import os
+    for root, dirs, files in os.walk(path, followlinks=False):
+        for name in files:
+            print(os.path.join(root, name))
+        for name in dirs:
+            print(os.path.join(root, name))
+
+walkdir("D:\\data\\vueblog\\myblog\\docs\\backend")
+```
