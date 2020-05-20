@@ -736,6 +736,10 @@ bin  boot  dev  etc  home  lib  lib64  media  mnt  opt  proc  root  run  sbin  s
 所以我们尽量在执行`subprocess.run()`时使用`shell=False`，并且使用列表或元组指定子进程命令参数。
 
 
+## 使用`multiprocessing`创建进程
+
+我们可以使用`multiprocessing`模块在一个程序中创建多个进程。
+
 参考：
 
 - [subprocess — Subprocess management](https://docs.python.org/3.6/library/subprocess.html#popen-constructor)
