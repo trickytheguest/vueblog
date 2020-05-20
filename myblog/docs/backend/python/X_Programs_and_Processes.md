@@ -740,6 +740,54 @@ bin  boot  dev  etc  home  lib  lib64  media  mnt  opt  proc  root  run  sbin  s
 
 我们可以使用`multiprocessing`模块在一个程序中创建多个进程。
 
+看下面的示例：
+
+```py
+# filename: use_multiprocessing.py
+import os
+import multiprocessing
+
+
+def do_this(what):
+    whoami(what)
+
+
+def whoami(what):
+    print("Process %s says: %s" % (os.getpid(), what))
+
+
+def main():
+    whoami("I'm the main program")
+    for i in range(5):
+        p = multiprocessing.Process(
+            target=do_this,
+            args=("I'm function %s" % i,)
+        )
+        p.start()
+        do_this("not in multiprocessing")
+
+
+if __name__ == '__main__':
+    main()
+
+# Output:
+# Process 3415 says: I'm the main program
+# Process 3415 says: not in multiprocessing
+# Process 3415 says: not in multiprocessing
+# Process 3416 says: I'm function 0
+# Process 3415 says: not in multiprocessing
+# Process 3417 says: I'm function 1
+# Process 3415 says: not in multiprocessing
+# Process 3418 says: I'm function 2
+# Process 3415 says: not in multiprocessing
+# Process 3419 says: I'm function 3
+# Process 3420 says: I'm function 4
+```
+
+可以看到，主函数运行时，进程ID为3415，并最先打印出`I'm the main program`,此时虽然紧接着使用`multiprocessing.Process()`函数创建一个新进程来运行`do_this()`函数，正常来说，如果不使用多进程的话，应该代码段在前的先执行，在后的后执行，由于此时需要开辟新进程，主进程中仍然可以继续执行其他操作，因此`not in multiprocessing`被先执行了，后来再执行子进程输出`I'm function 0`之类的。
+
+`mutiprocessing`多进程使用相对麻烦，后续详细了解后再补充。
+
 参考：
 
 - [subprocess — Subprocess management](https://docs.python.org/3.6/library/subprocess.html#popen-constructor)
