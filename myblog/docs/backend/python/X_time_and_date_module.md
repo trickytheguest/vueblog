@@ -575,29 +575,151 @@ Mo Tu We Th Fr Sa Su   Mo Tu We Th Fr Sa Su   Mo Tu We Th Fr Sa Su   Mo Tu We Th
 
 
 >>>
+```
 
+### 返回年份日历的多行文本字符串
+
+`calendar.calendar(year, w=2, l=1, c=6, m=3)`可以返回年份日历的多行文本字符串，参数与`calendar.prcal(year, w=0, l=0, c=6, m=3)`相同。
+
+```py
+>>> calendar.calendar(2020)
+'                                  2020\n\n      January                   February                   March\nMo Tu We Th Fr Sa Su      Mo Tu We Th Fr Sa Su      Mo Tu We Th Fr Sa Su\n       1  2  3  4  5
+              1  2                         1\n 6  7  8  9 10 11 12       3  4  5  6  7  8  9       2  3  4  5  6  7  8\n13 14 15 16 17 18 19      10 11 12 13 14 15 16       9 10 11 12 13 14 15\n20 21 22 23 24 25 26      17 18 19 20 21 22 23      16 17 18 19 20 21 22\n27 28 29 30 31            24 25 26 27 28 29         23 24 25 26 27 28 29\n                                                    30 31\n\n       April
+               May                       June\nMo Tu We Th Fr Sa Su      Mo Tu We Th Fr Sa Su      Mo Tu We Th Fr Sa Su\n       1  2  3  4  5                   1  2  3       1  2  3  4  5  6  7\n 6  7  8  9 10 11 12       4  5  6  7  8  9 10       8  9 10 11 12 13 14\n13 14 15 16 17 18 19      11 12 13 14 15 16 17      15 16 17 18 19 20 21\n20 21 22 23 24 25 26      18 19 20 21 22 23 24      22 23 24 25 26 27 28\n27 28 29 30               25 26 27 28 29 30 31      29 30\n\n        July                     August                  September\nMo Tu We Th Fr Sa Su      Mo Tu We Th Fr Sa Su      Mo Tu We Th Fr Sa Su\n       1  2
+3  4  5                      1  2          1  2  3  4  5  6\n 6  7  8  9 10 11 12       3  4  5  6  7  8  9       7  8  9 10 11 12 13\n13 14 15 16 17 18 19      10 11 12 13 14 15 16      14 15 16 17 18 19 20\n20 21 22 23 24 25 26      17 18 19 20 21 22 23      21 22 23 24 25 26 27\n27 28 29 30 31            24 25 26 27 28 29 30      28 29 30\n                          31\n\n      October                   November
+             December\nMo Tu We Th Fr Sa Su      Mo Tu We Th Fr Sa Su      Mo Tu We Th Fr Sa Su\n          1  2  3  4                         1          1  2  3  4  5  6\n 5  6  7  8  9 10 11       2  3  4  5  6
+  7  8       7  8  9 10 11 12 13\n12 13 14 15 16 17 18       9 10 11 12 13 14 15      14 15 16 17 18 19 20\n19 20 21 22 23 24 25      16 17 18 19 20 21 22      21 22 23 24 25 26 27\n26 27 28 29 30 31         23 24 25 26 27 28 29      28 29 30 31\n                          30\n'
 ```
 
 
-calendar.calendar(year, w=2, l=1, c=6, m=3)
-Returns a 3-column calendar for an entire year as a multi-line string using the formatyear() of the TextCalendar class.
+### 获取时间戳值
 
-calendar.timegm(tuple)
-An unrelated but handy function that takes a time tuple such as returned by the gmtime() function in the time module, and returns the corresponding Unix timestamp value, assuming an epoch of 1970, and the POSIX encoding. In fact, time.gmtime() and timegm() are each others’ inverse.
+`calendar.timegm(tuple)`是一个不相关但很方便的函数，`tuple`参数可以是由`time.gmtime()`函数返回的时间元组，返回相应的Unix时间戳值。实际上，`time.gmtime()`和`calendar.timegm()`功能正好相反。
 
-The calendar module exports the following data attributes:
+```py
+>>> calendar.timegm?
+Signature: calendar.timegm(tuple)
+Docstring: Unrelated but handy function to calculate Unix timestamp from GMT.
+File:      d:\programfiles\python368\lib\calendar.py
+Type:      function
 
-calendar.day_name
-An array that represents the days of the week in the current locale.
+>>> calendar.timegm((2020 ,2, 3, 12, 12, 20))
+1580731940
 
-calendar.day_abbr
-An array that represents the abbreviated days of the week in the current locale.
+>>> import time
 
-calendar.month_name
-An array that represents the months of the year in the current locale. This follows normal convention of January being month number 1, so it has a length of 13 and month_name[0] is the empty string.
+>>> time.gmtime?
+Docstring:
+gmtime([seconds]) -> (tm_year, tm_mon, tm_mday, tm_hour, tm_min,
+                       tm_sec, tm_wday, tm_yday, tm_isdst)
 
-calendar.month_abbr
-An array that represents the abbreviated months of the year in the current locale. This follows normal convention of January being month number 1, so it has a length of 13 and month_abbr[0] is the empty string.
+Convert seconds since the Epoch to a time tuple expressing UTC (a.k.a.
+GMT).  When 'seconds' is not passed in, convert the current time instead.
+
+If the platform supports the tm_gmtoff and tm_zone, they are available as
+attributes only.
+Type:      builtin_function_or_method
+
+>>> time.gmtime()
+time.struct_time(tm_year=2020, tm_mon=5, tm_mday=23, tm_hour=9, tm_min=16, tm_sec=24, tm_wday=5, tm_yday=144, tm_isdst=0)
+
+>>> calendar.timegm(time.gmtime())
+1590225405
+
+>>> calendar.timegm(time.gmtime())
+1590225416
+
+>>> type(time.gmtime())
+time.struct_time
+
+>>> time.gmtime(calendar.timegm(time.gmtime()))
+time.struct_time(tm_year=2020, tm_mon=5, tm_mday=23, tm_hour=9, tm_min=18, tm_sec=3, tm_wday=5, tm_yday=144, tm_isdst=0)
+
+>>> time.gmtime(calendar.timegm(time.gmtime()))
+time.struct_time(tm_year=2020, tm_mon=5, tm_mday=23, tm_hour=9, tm_min=18, tm_sec=29, tm_wday=5, tm_yday=144, tm_isdst=0)
+```
+
+### `calendar`日历模块的数据属性
+
+- `calendar.day_name`: 当前语言环境下星期(每周的第一天到最后一天)组成的数组。
+- `calendar.day_abbr`: 当前语言环境下星期(每周的第一天到最后一天)缩写组成的数组。
+- `calendar.month_name`: 当前语言环境下一年中月份组成的数组，长度为13，第一个元素为空，是为了让`January`作为`1`号元素，与实际约定保持一致。
+- `calendar.month_abbr`: 当前语言环境下一年中月份缩写组成的数组，长度为13，第一个元素为空，是为了让`January`作为`1`号元素，与实际约定保持一致。
+
+```py
+>>> calendar.day_name?
+Type:        _localized_day
+String form: <calendar._localized_day object at 0x000002C809329710>
+Length:      7
+File:        d:\programfiles\python368\lib\calendar.py
+Docstring:   <no docstring>
+
+>>> calendar.day_name
+<calendar._localized_day at 0x2c809329710>
+
+>>> calendar.day_abbr
+<calendar._localized_day at 0x2c809329748>
+
+>>> print(calendar.day_abbr)
+<calendar._localized_day object at 0x000002C809329748>
+
+>>> print(calendar.month_name)
+<calendar._localized_month object at 0x000002C809329780>
+
+>>> print(calendar.month_name[0])
+
+
+>>> calendar.month_name[0]
+''
+
+>>> calendar.month_name[1]
+'January'
+
+>>> calendar.month_name[2]
+'February'
+
+>>> calendar.month_name[3]
+'March'
+
+>>> calendar.month_name[4]
+'April'
+
+>>> [i for i in calendar.day_name]
+['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+
+>>> [i for i in calendar.day_abbr]
+['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+
+>>> [i for i in calendar.month_name]
+['',
+ 'January',
+ 'February',
+ 'March',
+ 'April',
+ 'May',
+ 'June',
+ 'July',
+ 'August',
+ 'September',
+ 'October',
+ 'November',
+ 'December']
+
+>>> [i for i in calendar.month_abbr]
+['',
+ 'Jan',
+ 'Feb',
+ 'Mar',
+ 'Apr',
+ 'May',
+ 'Jun',
+ 'Jul',
+ 'Aug',
+ 'Sep',
+ 'Oct',
+ 'Nov',
+ 'Dec']
+```
 
 ## `time`模块
 
