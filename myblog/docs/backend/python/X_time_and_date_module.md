@@ -721,6 +721,121 @@ Docstring:   <no docstring>
  'Dec']
 ```
 
+### 设置locale本地化后获取日历模块数据属性
+
+```py
+>>> import locale
+
+>>> locale?
+Type:        module
+String form: <module 'locale' from 'd:\\programfiles\\python368\\lib\\locale.py'>
+File:        d:\programfiles\python368\lib\locale.py
+Docstring:
+Locale support module.
+
+The module provides low-level access to the C lib's locale APIs and adds high
+level number formatting APIs as well as a locale aliasing engine to complement
+these.
+
+The aliasing engine includes support for many commonly used locale names and
+maps them to values suitable for passing to the C lib's setlocale() function. It
+also includes default encodings for all supported locale names.
+
+>>> locale.getlocale()
+(None, None)
+
+# 获取当前默认环境，当设置locale使用默认值时，此值会被采用为默认值。
+>>> locale.getdefaultlocale()
+('zh_CN', 'cp65001')
+
+>>> locale.LC_ALL
+0
+
+>>> locale.getlocale()
+(None, None)
+
+# 设置为中文环境
+>>> locale.setlocale(locale.LC_ALL, '')
+'Chinese (Simplified)_China.utf8'
+
+>>> locale.getlocale()
+('Chinese (Simplified)_China', 'utf8')
+
+>>> [i for i in calendar.day_name]
+['星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期日']
+
+>>> [i for i in calendar.day_abbr]
+['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+
+>>> [i for i in calendar.month_name]
+['', '一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月']
+
+>>> [i for i in calendar.month_abbr]
+['', '1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
+
+# 重新设置为英文环境
+>>> locale.setlocale(locale.LC_ALL, 'C')
+'C'
+
+>>> locale.getlocale()
+(None, None)
+
+>>> [i for i in calendar.month_abbr]
+['',
+ 'Jan',
+ 'Feb',
+ 'Mar',
+ 'Apr',
+ 'May',
+ 'Jun',
+ 'Jul',
+ 'Aug',
+ 'Sep',
+ 'Oct',
+ 'Nov',
+ 'Dec']
+
+>>> [i for i in calendar.day_name]
+['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+
+>>> [i for i in calendar.day_abbr]
+['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+
+>>> [i for i in calendar.month_name]
+['',
+ 'January',
+ 'February',
+ 'March',
+ 'April',
+ 'May',
+ 'June',
+ 'July',
+ 'August',
+ 'September',
+ 'October',
+ 'November',
+ 'December']
+
+>>> [i for i in calendar.month_abbr]
+['',
+ 'Jan',
+ 'Feb',
+ 'Mar',
+ 'Apr',
+ 'May',
+ 'Jun',
+ 'Jul',
+ 'Aug',
+ 'Sep',
+ 'Oct',
+ 'Nov',
+ 'Dec']
+
+>>>
+```
+可以发现获取日历模块的数据属性时，根据当前语言环境不同，获取的结果是不一样的，相应的使用`calendar`模块其他函数或方法获取到的结果也可能会受语言环境影响，请注意此问题。
+
+
 ## `time`模块
 
 
