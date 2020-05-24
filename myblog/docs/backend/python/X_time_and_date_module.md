@@ -835,6 +835,7 @@ also includes default encodings for all supported locale names.
 ```
 可以发现获取日历模块的数据属性时，根据当前语言环境不同，获取的结果是不一样的，相应的使用`calendar`模块其他函数或方法获取到的结果也可能会受语言环境影响，请注意此问题。
 
+`calendar`模块中还定义了`calendar.Calendar`类，`calendar.TextCalendar`类，`calendar.HTMLCalendar`类，`calendar.LocaleTextCalendar`类以及`calendar.LocaleHTMLCalendar`类，此处不展开。详细可参考[https://docs.python.org/3.6/library/calendar.html](https://docs.python.org/3.6/library/calendar.html)
 
 ## `time`模块
 
