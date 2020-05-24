@@ -866,6 +866,8 @@ time.asctime(        time.ctime(          time.get_clock_info( time.localtime(  
 
 ### 时间元组`struct_time`
 
+`time.struct_time`类，是`gmtime`,`localtime()`和`strptime()`等函数返回的时间值序列的类型。它是具有命名元组接口的对象：可以通过索引和属性名称访问值。 存在以下值：
+
 | 序号 | 属性         |      字段    | 值                          |
 |-----|-------------|-------------|----------------------------|
 | 0   | `tm_year`   | 4位数年      |  如`2020`                       |
@@ -877,6 +879,33 @@ time.asctime(        time.ctime(          time.get_clock_info( time.localtime(  
 | 6   | `tm_wday`   | 一周的第几日  | `0`到`6` (0是周一)               |
 | 7   | `tm_yday`   | 一年的第几日  | `1`到`366`             |
 | 8   | `tm_isdst`  | 夏令时      |  `-1`, `0`, `1`, 是决定是否为夏令时的标志 |
+
+### `time.asctime([t])`接受时间元组并返回一个可读的形式字符串
+
+`time.asctime([t])`函数将表示由`gmtime()`或`localtime()`返回的时间的元组或`struct_time`转换为以下形式的字符串：`Sun Jun 20 23:21:05 1993`。 如果未提供`t`，则使用`localtime()`返回的当前时间。`asctime()`不使用语言环境信息。
+
+::: tip 说明
+`time.asctime([t])`函数返回默认不会加换行符。
+:::
+
+```py
+>>> import time
+
+>>> time.asctime?
+Docstring:
+asctime([tuple]) -> string
+
+Convert a time tuple to a string, e.g. 'Sat Jun 06 16:26:11 1998'.
+When the time tuple is not present, current time as returned by localtime()
+is used.
+Type:      builtin_function_or_method
+
+>>> time.asctime()
+'Sun May 24 22:37:11 2020'
+```
+
+### `time.localtime()`
+
 
 ## `datetime`模块
 
