@@ -839,6 +839,22 @@ also includes default encodings for all supported locale names.
 
 ## `time`模块
 
+查看`time`模块有哪些函数或方法：
+
+```py
+$ python
+Python 3.6.8 (tags/v3.6.8:3c6b436a57, Dec 24 2018, 00:16:47) [MSC v.1916 64 bit (AMD64)] on win32
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import time
+>>> time.
+time.altzone         time.clock(          time.daylight        time.gmtime(         time.mktime(         time.perf_counter(   time.sleep(          time.strptime(       time.time(           time.tzname
+time.asctime(        time.ctime(          time.get_clock_info( time.localtime(      time.monotonic(      time.process_time(   time.strftime(       time.struct_time(    time.timezone
+>>> exit()
+```
+
+
+
+
 
 ## `datetime`模块
 
