@@ -904,8 +904,34 @@ Type:      builtin_function_or_method
 'Sun May 24 22:37:11 2020'
 ```
 
-### `time.localtime()`
+### `time.clock()`获取处理器时间
 
+`time.clock()`在Unix系统中可以获取处理器时间，在Windows系统中可以返回第一次调用该函数后经过的时间(以秒为单位)的浮点数。从版本3.3开始不推荐使用：此功能的行为取决于平台：请根据您的要求使用`perf_counter()`或`process_time()`来具有明确定义的行为。
+
+```py
+>>> time.clock()
+1e-07
+
+>>> time.clock()
+15.5999267
+
+>>> time.clock()
+18.5321979
+
+>>> time.clock()
+19.6224457
+
+>>> time.clock()
+20.509851
+
+>>> time.clock()
+21.280692
+```
+
+
+### `time.localtime([secs])`获取当地时间的时间元组
+
+`time.localtime([secs])`接收时间戳(1970纪元后经过的浮点秒数)并返回当地时间下的时间元组`t`，如果未指定`secs`，则使用当前时间。
 
 ## `datetime`模块
 
