@@ -945,6 +945,39 @@ time.struct_time(tm_year=1970, tm_mon=1, tm_mday=1, tm_hour=8, tm_min=0, tm_sec=
 
 可以发现当`time.localtime(0)`时,`tm_hour=8`,这是因为参数0表示距离纪元的时间秒数，而本地时间为东8区，因此当UTC时间为0时，东8区的时间是8点。
 
+### `time.ctime([secs])`将时间秒数转换成本地时间
+
+`time.ctime([secs])`将自纪元以来的秒数转换为代表本地时间的字符串。等阶于`time.asctime(time.localtime())`:
+
+```py
+>>> time.ctime()
+'Tue May 26 08:18:22 2020'
+
+>>> time.asctime(time.localtime())
+'Tue May 26 08:18:49 2020'
+```
+
+
+### `time.time()`获取纪元以来的时间秒数
+
+`time.time()`获取纪元以来的时间秒数，可以通过`time.gmtime(0)`获取纪元开始时间。
+
+```py
+>>> time.time?
+Docstring:
+time() -> floating point number
+
+Return the current time in seconds since the Epoch.
+Fractions of a second may be present if the system clock provides them.
+Type:      builtin_function_or_method
+
+>>> time.time()
+1590452682.4995768
+
+>>> time.gmtime(0)
+time.struct_time(tm_year=1970, tm_mon=1, tm_mday=1, tm_hour=0, tm_min=0, tm_sec=0, tm_wday=3, tm_yday=1, tm_isdst=0)
+```
+
 
 ## `datetime`模块
 
