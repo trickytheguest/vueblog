@@ -863,7 +863,7 @@ time.asctime(        time.ctime(          time.get_clock_info( time.localtime(  
 - UTC是协调世界时(以前称为格林尼治标准时间，GMT)。缩写UTC不是一个错误，而是英语和法语之间的妥协。
 - DST是夏令时，在一年中的某些时候，时区通常会调整一个小时。DST规则是神奇的(由当地法律决定)，每年都在变化。
 - 各种实时函数的精度可能低于表示其值或参数的单位所建议的精度。例如。在大多数Unix系统上，时钟每秒仅滴答50或100次。
-- 整个世界分为24个时区，每个时区都有自己的本地时间，`UTC`协议世界时与英国伦敦的本地时相同。中国的北京时区位于东八区，领先UTC八个小时。`UTC + 时区差 = 本地时间`， 时区差东为正，西为负。在此，把东八区时区差记为`+0800`。
+- 整个世界分为24个时区，每个时区都有自己的本地时间，`UTC`协议世界时与英国伦敦的本地时相同。中国的北京时区位于东八区，领先UTC八个小时。`UTC + 时区差 = 本地时间`， 时区差东为正，西为负。因此，把东八区时区差记为`+0800`。
 
 ### 时间元组`struct_time`
 
@@ -932,7 +932,19 @@ Type:      builtin_function_or_method
 
 ### `time.localtime([secs])`获取当地时间的时间元组
 
-`time.localtime([secs])`接收时间戳(1970纪元后经过的浮点秒数)并返回当地时间下的时间元组`t`，如果未指定`secs`，则使用当前时间。
+`time.localtime([secs])`接收时间戳(1970纪元后经过的浮点秒数)并返回当地时间下的时间元组`t`，如果未指定`secs`，则使用`time.time()`获取当前时间。
+
+```py
+>>> time.localtime()
+time.struct_time(tm_year=2020, tm_mon=5, tm_mday=26, tm_hour=8, tm_min=6, tm_sec=13, tm_wday=1, tm_yday=147, tm_isdst=0)
+
+
+>>> time.localtime(0)
+time.struct_time(tm_year=1970, tm_mon=1, tm_mday=1, tm_hour=8, tm_min=0, tm_sec=0, tm_wday=3, tm_yday=1, tm_isdst=0)
+```
+
+可以发现当`time.localtime(0)`时,`tm_hour=8`,这是因为参数0表示距离纪元的时间秒数，而本地时间为东8区，因此当UTC时间为0时，东8区的时间是8点。
+
 
 ## `datetime`模块
 
