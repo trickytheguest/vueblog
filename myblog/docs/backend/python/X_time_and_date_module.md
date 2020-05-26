@@ -978,6 +978,36 @@ Type:      builtin_function_or_method
 time.struct_time(tm_year=1970, tm_mon=1, tm_mday=1, tm_hour=0, tm_min=0, tm_sec=0, tm_wday=3, tm_yday=1, tm_isdst=0)
 ```
 
+### `time.gmtime([secs])`获取时间戳的时间元组
+
+```py
+>>> time.gmtime?
+Docstring:
+gmtime([seconds]) -> (tm_year, tm_mon, tm_mday, tm_hour, tm_min,
+                       tm_sec, tm_wday, tm_yday, tm_isdst)
+
+Convert seconds since the Epoch to a time tuple expressing UTC (a.k.a.
+GMT).  When 'seconds' is not passed in, convert the current time instead.
+
+If the platform supports the tm_gmtoff and tm_zone, they are available as
+attributes only.
+Type:      builtin_function_or_method
+
+>>> time.gmtime()
+time.struct_time(tm_year=2020, tm_mon=5, tm_mday=26, tm_hour=0, tm_min=28, tm_sec=15, tm_wday=1, tm_yday=147, tm_isdst=
+)
+
+>>> time.gmtime(60)
+time.struct_time(tm_year=1970, tm_mon=1, tm_mday=1, tm_hour=0, tm_min=1, tm_sec=0, tm_wday=3, tm_yday=1, tm_isdst=0)
+
+>>> time.gmtime(3600)
+time.struct_time(tm_year=1970, tm_mon=1, tm_mday=1, tm_hour=1, tm_min=0, tm_sec=0, tm_wday=3, tm_yday=1, tm_isdst=0)
+
+>>> time.gmtime(36000)
+time.struct_time(tm_year=1970, tm_mon=1, tm_mday=1, tm_hour=10, tm_min=0, tm_sec=0, tm_wday=3, tm_yday=1, tm_isdst=0)
+
+>>>
+```
 
 ## `datetime`模块
 
