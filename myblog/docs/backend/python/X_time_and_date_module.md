@@ -903,6 +903,9 @@ Type:      builtin_function_or_method
 
 >>> time.asctime()
 'Sun May 24 22:37:11 2020'
+
+>>> print('now time is: %s. this is no trailing endline' % time.asctime())
+now time is: Wed May 24 22:38:36 2020. this is no trailing endline
 ```
 
 ### `time.clock()`获取处理器时间
