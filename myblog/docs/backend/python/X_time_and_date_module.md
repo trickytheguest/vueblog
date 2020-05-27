@@ -1074,6 +1074,169 @@ time.struct_time(tm_year=2020, tm_mon=5, tm_mday=27, tm_hour=22, tm_min=2, tm_se
 ```
 可以看出在`for`语句中，每次循环时中间都会暂停2秒再执行下一次循环。
 
+### `time.strftime`将时间元组转换成指定格式的字符串
+
+常用的格式化符号可见下面的帮助信息（注：后面的中文是我加上去的）：
+
+```py
+>>> time.strftime?
+Docstring:
+strftime(format[, tuple]) -> string
+
+Convert a time tuple to a string according to a format specification.
+See the library reference manual for formatting codes. When the time tuple
+is not present, current time as returned by localtime() is used.
+
+Commonly used format codes:
+
+%Y  Year with century as a decimal number.  4位年份，如2020
+%m  Month as a decimal number [01,12]. 月份，如05
+%d  Day of the month as a decimal number [01,31]. 日期，如06
+%H  Hour (24-hour clock) as a decimal number [00,23]. 24小时制小时数，如07
+%M  Minute as a decimal number [00,59]. 分钟数，如08
+%S  Second as a decimal number [00,61]. 秒数，如09
+%z  Time zone offset from UTC. 时区偏差
+%a  Locale's abbreviated weekday name. 本地简化星期名称
+%A  Locale's full weekday name. 本地完整星期名称
+%b  Locale's abbreviated month name. 简化月份名称
+%B  Locale's full month name. 完整月份名称
+%c  Locale's appropriate date and time representation. 本地相应的日期表示和时间表示
+%I  Hour (12-hour clock) as a decimal number [01,12]. 12小时制小时数
+%p  Locale's equivalent of either AM or PM. 上午或下午表示符
+
+Other codes may be available on your platform.  See documentation for
+the C library strftime function.
+Type:      builtin_function_or_method
+
+# 按4位年2位月2位日 2位时2位分2位秒输出当前时间
+>>> time.strftime('%Y%m%d %H%M%S', time.localtime())
+'20200527 221453'
+
+>>> time.strftime('%Y%m%d %H%M%S', time.localtime())
+'20200527 221455'
+
+>>> time.strftime('%Y%m%d %H%M%S', time.localtime())
+'20200527 221458'
+
+>>> time.strftime('%Y%m%d %H%M%S', time.localtime())
+'20200527 221500'
+
+>>> time.strftime('%Y%m%d %H%M%S', time.localtime())
+'20200527 221501'
+
+>>> time.strftime('%Y%m%d %H%M%S', time.localtime())
+'20200527 221503'
+
+# 时间格式中加入其他元素
+>>> time.strftime('%Y年%m月%d日 %H:%M:%S', time.localtime())
+'2020年05月27日 22:19:10'
+
+>>> time.strftime('%Y年%m月%d日 %H:%M:%S')
+'2020年05月27日 22:21:50'
+
+# 输出时间偏差和星期简写
+>>> time.strftime('%Y年%m月%d日 %H:%M:%S %z %a')
+'2020年05月27日 22:29:24 +0800 Wed'
+
+# 输出时间偏差和星期全称
+>>> time.strftime('%Y年%m月%d日 %H:%M:%S %z %A')
+'2020年05月27日 22:29:33 +0800 Wednesday'
+
+
+>>> time.strftime('%Y %B %d', time.gmtime(1))
+'1970 January 01'
+
+>>> time.strftime('%Y %b %d', time.gmtime(1))
+'1970 Jan 01'
+
+>>> time.strftime('%c', time.gmtime(1))
+'Thu Jan  1 00:00:01 1970'
+
+>>> time.strftime('%c')
+'Wed May 27 22:35:20 2020'
+
+>>> time.strftime('%c', time.gmtime(123456789))
+'Thu Nov 29 21:33:09 1973'
+
+# 数据太大，无法存储
+>>> time.strftime('%c', time.gmtime(1234567891011121314))
+---------------------------------------------------------------------------
+OSError                                   Traceback (most recent call last)
+<ipython-input-83-13fec9b44855> in <module>
+----> 1 time.strftime('%c', time.gmtime(1234567891011121314))
+
+OSError: [Errno 84] Value too large to be stored in data type
+
+>>> time.strftime('%c', time.gmtime(12345678910111213))
+'Tue Sep  2 08:40:13 391220960'
+
+>>> time.strftime('%c', time.gmtime(123456789101112))
+'Wed Nov 28 00:05:12 3914159'
+
+>>> time.strftime('%c', time.gmtime(1234567891011))
+'Wed Nov 25 05:16:51 41091'
+
+>>> time.strftime('%c', time.gmtime(12345678910))
+'Tue Mar 21 19:15:10 2361'
+
+>>> time.strftime('%c', time.gmtime(123456789))
+'Thu Nov 29 21:33:09 1973'
+
+>>> time.strftime('%c', time.localtime())
+'Wed May 27 22:39:01 2020'
+
+>>>
+```
+
+
+### `time.strptime`将时间字符串按指定格式解析成时间元组
+
+ `time.strptime(string, format)`将时间字符串按指定格式解析成时间元组,注意时间字符串在前，时间格式化参数在后。
+ 
+```py
+>>> time.strptime?
+Docstring:
+strptime(string, format) -> struct_time
+
+Parse a string to a time tuple according to a format specification.
+See the library reference manual for formatting codes (same as
+strftime()).
+
+Commonly used format codes:
+
+%Y  Year with century as a decimal number.
+%m  Month as a decimal number [01,12].
+%d  Day of the month as a decimal number [01,31].
+%H  Hour (24-hour clock) as a decimal number [00,23].
+%M  Minute as a decimal number [00,59].
+%S  Second as a decimal number [00,61].
+%z  Time zone offset from UTC.
+%a  Locale's abbreviated weekday name.
+%A  Locale's full weekday name.
+%b  Locale's abbreviated month name.
+%B  Locale's full month name.
+%c  Locale's appropriate date and time representation.
+%I  Hour (12-hour clock) as a decimal number [01,12].
+%p  Locale's equivalent of either AM or PM.
+
+Other codes may be available on your platform.  See documentation for
+the C library strftime function.
+Type:      builtin_function_or_method
+
+>>> time.strptime('20200527 224734', '%Y%m%d %H%M%S')
+time.struct_time(tm_year=2020, tm_mon=5, tm_mday=27, tm_hour=22, tm_min=47, tm_sec=34, tm_wday=2, tm_yday=148, tm_isdst=-1)
+
+# 给的时间字符串与格式化字符串需要对应，不对应匹配则会抛出异常
+>>> time.strptime('20200527 224734', '%Y年%m月%d日 %H:%M:%S')
+--出现异常...
+ValueError: time data '20200527 224734' does not match format '%Y年%m月%d日 %H:%M:%S'
+
+>>> time.strptime('2020年05月27日 22:47:34', '%Y年%m月%d日 %H:%M:%S')
+time.struct_time(tm_year=2020, tm_mon=5, tm_mday=27, tm_hour=22, tm_min=47, tm_sec=34, tm_wday=2, tm_yday=148, tm_isdst=-1)
+
+>>>
+```
+
 ## `datetime`模块
 
 
