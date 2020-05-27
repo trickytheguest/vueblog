@@ -1237,6 +1237,54 @@ time.struct_time(tm_year=2020, tm_mon=5, tm_mday=27, tm_hour=22, tm_min=47, tm_s
 >>>
 ```
 
+
+
+### `time.perf_counter()`计算程序运行时间
+
+官方文档介绍如下：
+
+> Return the value (in fractional seconds) of a performance counter, i.e. a clock with the highest available resolution to measure a short duration. It does include time elapsed during sleep and is system-wide. The reference point of the returned value is undefined, so that only the difference between the results of consecutive calls is valid.
+    
+ 即：`time.perf_counter()`返回性能计数器的值（以分数秒为单位），即具有最高可用分辨率的时钟，以测量较短的持续时间。 它包含整个系统的睡眠时间。 返回值的参考点是不确定的，因此仅连续调用的结果之间的差有效。  
+    
+```py
+>>> time.perf_counter?
+Docstring:
+perf_counter() -> float
+
+Performance counter for benchmarking.
+Type:      builtin_function_or_method
+>>> def timeit(n):
+...     start = time.perf_counter()
+...     sum = 0
+...     for i in range(n):
+...         sum += i
+...     time.sleep(n)
+...     end = time.perf_counter()
+...     print(start, end, end - start)
+...
+
+>>> timeit(3)
+16912.547074853 16915.552290544 3.005215691002377
+
+>>> timeit(10)
+16927.02270078 16937.027870937 10.005170157000975
+```
+
+ time.process_time()
+
+> Return the value (in fractional seconds) of the sum of the system and user CPU time of the current process. It does not include time elapsed during sleep. It is process-wide by definition. The reference point of the returned value is undefined, so that only the difference between the results of consecutive calls is valid.
+
+参考：
+[Python time.tzsets 代码实例 https://www.kutu66.com//Python-Module-Examples/article_59589](https://www.kutu66.com//Python-Module-Examples/article_59589)
+
+
+time.monotonic(
+time.altzone
+time.daylight
+time.timezone
+time.tzname
+
 ## `datetime`模块
 
 
