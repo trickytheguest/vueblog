@@ -1306,11 +1306,67 @@ Type:      builtin_function_or_method
 ```
 可以发现此时并没有考虑程序暂停时所花费的时间。
 
+计算程序的运行时间可以用`timeit`模块，后续补充。
+
+### `time.get_clock_info(name)`获取指定时间类型的时钟信息
+
+获取有关指定时钟的信息作为名称空间对象。 支持的时钟名称和读取其值的相应功能是：
+
+- 'clock': `time.clock()`
+- 'monotonic': `time.monotonic()`
+- 'perf_counter': `time.perf_counter()`
+- 'process_time': `time.process_time()`
+- 'time': `time.time()`
+
+```py
+>>> time.get_clock_info?
+Docstring:
+get_clock_info(name: str) -> dict
+
+Get information of the specified clock.
+Type:      builtin_function_or_method
+
+>>> time.get_clock_info('clock')
+namespace(adjustable=False, implementation='clock()', monotonic=True, resolution=1e-06)
+
+>>> time.get_clock_info('time')
+namespace(adjustable=True, implementation='gettimeofday()', monotonic=False, resolution=1e-06)
+
+>>> time.get_clock_info('monotonic')
+namespace(adjustable=False, implementation='mach_absolute_time()', monotonic=True, resolution=1e-09)
+
+>>> time.get_clock_info('perf_counter')
+namespace(adjustable=False, implementation='mach_absolute_time()', monotonic=True, resolution=1e-09)
+
+>>> time.get_clock_info('process_time')
+namespace(adjustable=False, implementation='getrusage(RUSAGE_SELF)', monotonic=True, resolution=1e-06)
+```
+
+### `time.monotonic()`返回一个只增加的时钟
+
+```py
+>>> time.monotonic?
+Docstring:
+monotonic() -> float
+
+Monotonic clock, cannot go backward.
+Type:      builtin_function_or_method
+
+>>> time.monotonic()
+19785.01834342
+
+>>> time.monotonic()
+19786.86552583
+
+>>> time.monotonic()
+19787.973120366
+```
+
 参考：
 [Python time.tzsets 代码实例 https://www.kutu66.com//Python-Module-Examples/article_59589](https://www.kutu66.com//Python-Module-Examples/article_59589)
 
 
-time.monotonic(
+
 time.altzone
 time.daylight
 time.timezone
