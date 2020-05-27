@@ -1270,10 +1270,41 @@ Type:      builtin_function_or_method
 >>> timeit(10)
 16927.02270078 16937.027870937 10.005170157000975
 ```
+可以看到，当`n`值不同时，程序执行的时间不同，当`n`为3时，执行时间为`3.005215691002377`,当`n`为10时，执行时间为`10.005170157000975`,而这其中包含`time.sleep(n)`程序暂停的时间。
 
- time.process_time()
+ time.process_time()计算程序(不含睡眠时间)的运行时间
+
+官方文档介绍如下：
 
 > Return the value (in fractional seconds) of the sum of the system and user CPU time of the current process. It does not include time elapsed during sleep. It is process-wide by definition. The reference point of the returned value is undefined, so that only the difference between the results of consecutive calls is valid.
+
+即：返回当前进程的系统和用户CPU时间之和的值（以秒为单位）。 它不包括睡眠期间经过的时间。 根据定义，它是整个过程的。 返回值的参考点是不确定的，因此仅连续调用的结果之间的差有效。
+
+```py
+>>> time.process_time?
+Docstring:
+process_time() -> float
+
+Process time for profiling: sum of the kernel and user-space CPU time.
+Type:      builtin_function_or_method
+
+>>> def timeit(n):
+...     start = time.process_time()
+...     sum = 0
+...     for i in range(n):
+...         sum += i
+...     time.sleep(n)
+...     end = time.process_time()
+...     print(start, end, end - start)
+...
+
+>>> timeit(3)
+21.771753 21.772565 0.0008119999999998129
+
+>>> timeit(10)
+21.81368 21.81468 0.0009999999999976694
+```
+可以发现此时并没有考虑程序暂停时所花费的时间。
 
 参考：
 [Python time.tzsets 代码实例 https://www.kutu66.com//Python-Module-Examples/article_59589](https://www.kutu66.com//Python-Module-Examples/article_59589)
