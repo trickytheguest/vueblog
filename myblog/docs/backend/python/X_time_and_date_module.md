@@ -941,6 +941,8 @@ now time is: Wed May 24 22:38:36 2020. this is no trailing endline
 >>> time.localtime()
 time.struct_time(tm_year=2020, tm_mon=5, tm_mday=26, tm_hour=8, tm_min=6, tm_sec=13, tm_wday=1, tm_yday=147, tm_isdst=0)
 
+>>> time.localtime(time.time())
+time.struct_time(tm_year=2020, tm_mon=5, tm_mday=26, tm_hour=8, tm_min=6, tm_sec=45, tm_wday=1, tm_yday=147, tm_isdst=0)
 
 >>> time.localtime(0)
 time.struct_time(tm_year=1970, tm_mon=1, tm_mday=1, tm_hour=8, tm_min=0, tm_sec=0, tm_wday=3, tm_yday=1, tm_isdst=0)
@@ -1011,6 +1013,66 @@ time.struct_time(tm_year=1970, tm_mon=1, tm_mday=1, tm_hour=10, tm_min=0, tm_sec
 
 >>>
 ```
+
+### `time.mktime(t)`将时间元组转换成时间戳
+
+```py
+>>> time.mktime?
+Docstring:
+mktime(tuple) -> floating point number
+
+Convert a time tuple in local time to seconds since the Epoch.
+Note that mktime(gmtime(0)) will not generally return zero for most
+time zones; instead the returned value will either be equal to that
+of the timezone or altzone attributes on the time module.
+Type:      builtin_function_or_method
+
+>>> time.localtime()
+time.struct_time(tm_year=2020, tm_mon=5, tm_mday=27, tm_hour=21, tm_min=58, tm_sec=18, tm_wday=2, tm_yday=148, tm_isdst=0)
+
+>>> time.gmtime()
+time.struct_time(tm_year=2020, tm_mon=5, tm_mday=27, tm_hour=13, tm_min=58, tm_sec=23, tm_wday=2, tm_yday=148, tm_isdst=0)
+
+>>> time.time()
+1590587909.801845
+
+>>> time.mktime(time.localtime())
+1590587921.0
+
+>>> time.mktime(time.localtime())
+1590587926.0
+
+>>>
+```
+
+### `time.sleep(seconds)`让程序暂停执行
+
+```py
+>>> time.sleep?
+Docstring:
+sleep(seconds)
+
+Delay execution for a given number of seconds.  The argument may be
+a floating point number for subsecond precision.
+Type:      builtin_function_or_method
+
+>>> time.sleep(2)
+
+>>> for i in range(3):
+...     print(time.localtime())
+...     time.sleep(2)
+...     print(time.localtime())
+...
+time.struct_time(tm_year=2020, tm_mon=5, tm_mday=27, tm_hour=22, tm_min=2, tm_sec=51, tm_wday=2, tm_yday=148, tm_isdst=0)
+time.struct_time(tm_year=2020, tm_mon=5, tm_mday=27, tm_hour=22, tm_min=2, tm_sec=53, tm_wday=2, tm_yday=148, tm_isdst=0)
+time.struct_time(tm_year=2020, tm_mon=5, tm_mday=27, tm_hour=22, tm_min=2, tm_sec=53, tm_wday=2, tm_yday=148, tm_isdst=0)
+time.struct_time(tm_year=2020, tm_mon=5, tm_mday=27, tm_hour=22, tm_min=2, tm_sec=55, tm_wday=2, tm_yday=148, tm_isdst=0)
+time.struct_time(tm_year=2020, tm_mon=5, tm_mday=27, tm_hour=22, tm_min=2, tm_sec=55, tm_wday=2, tm_yday=148, tm_isdst=0)
+time.struct_time(tm_year=2020, tm_mon=5, tm_mday=27, tm_hour=22, tm_min=2, tm_sec=57, tm_wday=2, tm_yday=148, tm_isdst=0)
+
+>>>
+```
+可以看出在`for`语句中，每次循环时中间都会暂停2秒再执行下一次循环。
 
 ## `datetime`模块
 
