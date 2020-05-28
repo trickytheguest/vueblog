@@ -28,7 +28,8 @@
 27. [Python WEB](./X_web.html)
 28. [glob模块](./X_glob_module.html)
 29. [程序和进程](./X_Programs_and_Processes.html)
-30. [模块-日期和时间模块](./X_time_and_date_module.html)
+30. [模块-日期和时间模块之calendar日历模块](./X_time_and_date_module_calendar.html)
+30. [模块-日期和时间模块之time时间模块](./X_time_and_date_module_time.html)
 1. [Python代码检查](./X_Python_style_and_static_check.html) 
 1. [Python面试总结](./X_python_interview.html) 
 
