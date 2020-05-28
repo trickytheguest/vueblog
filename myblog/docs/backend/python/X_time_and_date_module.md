@@ -1987,10 +1987,47 @@ Type:      builtin_function_or_method
 
 设置`TZ`环境变量，并使用`time.tzset()`使时间转换规则生效
 
-```py
+官方文档中介绍`time.tzset()`如下：
+> `time.tzset()` Resets the time conversion rules used by the library routines. The environment variable TZ specifies how this is done. 
+> 
+>  Availability: Unix.
+> 
+> Note: Although in many cases, changing the TZ environment variable may affect the output of functions like localtime() without calling tzset(), this behavior should not be relied on.The TZ environment variable should contain no whitespace.
 
+即：
+> 通过设置环境变量`TZ`来重置库程序使用的时间转换规则。 
+> 
+> 可用性：Unix。
+> 
+> 注意: 尽管在很多情况下，更改`TZ`环境变量可能会影响诸如`localtime()`之类的函数的输出而无需调用`tzset()`，但不应依赖此行为。
+>
+> TZ环境变量不应包含空格。
+
+
+也就是说，我们在更改`TZ`环境变量后，应该使用`time.tzset()`使时区切换生效。
+
+```py
+>>> time.tzset?
+Docstring:
+tzset()
+
+Initialize, or reinitialize, the local timezone to the value stored in
+os.environ['TZ']. The TZ environment variable should be specified in
+standard Unix timezone format as documented in the tzset man page
+(eg. 'US/Eastern', 'Europe/Amsterdam'). Unknown timezones will silently
+fall back to UTC. If the TZ environment variable is not set, the local
+timezone is set to the systems best guess of wallclock time.
+Changing the TZ environment variable without calling tzset *may* change
+the local timezone used by methods such as localtime, but this behaviour
+should not be relied on.
+Type:      builtin_function_or_method
+
+>>> import os
+
+# 设置TZ环境变量
 >>> os.environ['TZ'] = 'UTC'
 
+# 重新设置时区为标准时区
 >>> time.tzset()
 
 >>> time.altzone
@@ -2002,7 +2039,7 @@ Type:      builtin_function_or_method
 >>> time.timezone
 0
 
-# 
+# 查看当前时区属性
 >>> time.tzname
 ('UTC', 'UTC')
 
