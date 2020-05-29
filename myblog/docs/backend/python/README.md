@@ -30,6 +30,12 @@
 29. [程序和进程](./X_Programs_and_Processes.html)
 30. [模块-日期和时间模块之calendar日历模块](./X_time_and_date_module_calendar.html)
 30. [模块-日期和时间模块之time时间模块](./X_time_and_date_module_time.html)
+31. [模块-日期和时间模块之datetime日期时间模块](./X_time_and_date_module_datetime.html)
+32. [模块-日期和时间模块之dateutil日期工具模块](./X_time_and_date_module_dateutil.html) 
+33. [模块-日期和时间模块之arrow日期时间模块](./X_time_and_date_module_arrow.html)
+34. [模块-日期和时间模块之fleming时区模块](./X_time_and_date_module_fleming.html)
+35. [模块-日期和时间模块之pytz时区模块](./X_time_and_date_module_pytz.html)
+36. [模块-日期和时间模块之timeit计算程序运行时间模块](./X_time_and_date_module_timeit.html)
 1. [Python代码检查](./X_Python_style_and_static_check.html) 
 1. [Python面试总结](./X_python_interview.html) 
 

@@ -1250,19 +1250,3 @@ time.struct_time(tm_year=2020, tm_mon=5, tm_mday=28, tm_hour=4, tm_min=10, tm_se
 - [Python time.tzsets 代码实例 https://www.kutu66.com//Python-Module-Examples/article_59589](https://www.kutu66.com//Python-Module-Examples/article_59589)
 - [time — Time access and conversions https://docs.python.org/3.6/library/time.html](https://docs.python.org/3.6/library/time.html)
 
-## `datetime`模块
-
-
-## `dateutil`模块
-
-
-## `arrow`模块
-
-## `fleming`模块
-
-## `pytz`时区模块
-
-## `timeit`时间统计模块
-
-
-
