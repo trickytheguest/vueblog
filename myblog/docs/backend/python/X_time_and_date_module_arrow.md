@@ -37,6 +37,9 @@ arrow.Arrow(        arrow.factory       arrow.locales       arrow.ParserError(
 参考：
 
 - [https://pypi.org/project/arrow/](https://pypi.org/project/arrow/)
+- [https://github.com/crsmithdev/arrow/](https://github.com/crsmithdev/arrow/)
+- [https://arrow.readthedocs.io/en/latest/](https://arrow.readthedocs.io/en/latest/)
+
 
 
 
