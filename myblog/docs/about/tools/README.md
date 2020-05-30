@@ -56,3 +56,20 @@ Typora所见即所得模式比较好，下载地址[https://www.typora.io/](http
 [https://www.jsdelivr.com/?docs=gh](https://www.jsdelivr.com/?docs=gh), 可以用这个网站进行图片等的加速！
 
 ![](https://cdn.jsdelivr.net/gh/meizhaohui/cloudimg@master/data/20200511233130.png)
+
+### cmder windows系统上面的命令行工具
+
+Windows系统自带的`cmd`命令行使用起来非常不方便，粘贴文本必须使用鼠标，不能使用快捷键，我们可以使用`cmder`工具使用windows系统上面的命令行工具。
+
+官网地址：[https://cmder.net/](https://cmder.net/)
+
+界面如下图所示：
+
+![cmder](https://cmder.net/img/main.png)
+
+将`Cmder.exe`文件所在目录添加到`Path`环境变量中，以管理员身份打开`cmd`命令行容器，执行以下命令注册右键：
+
+```sh
+// 设置任意地方鼠标右键启动Cmder
+Cmder.exe /REGISTER ALL
+```
