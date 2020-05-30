@@ -73,3 +73,9 @@ Windows系统自带的`cmd`命令行使用起来非常不方便，粘贴文本�
 // 设置任意地方鼠标右键启动Cmder
 Cmder.exe /REGISTER ALL
 ```
+
+### windows系统录屏软件EV录屏
+
+官网地址：[https://www.ieway.cn/evcapture.html](https://www.ieway.cn/evcapture.html)
+
+![evcapture](https://public.ieway.cn/public/v6/imgs/banner1@2x.png)
