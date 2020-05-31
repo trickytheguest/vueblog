@@ -51,13 +51,13 @@ Typora所见即所得模式比较好，下载地址[https://www.typora.io/](http
 
 ![tsinghua_mirror.png](/img/tsinghua_mirror.png)
 
-### jsDelivr – Open Source CDN 开源CDN
+## 6. jsDelivr – Open Source CDN 开源CDN
 
 [https://www.jsdelivr.com/?docs=gh](https://www.jsdelivr.com/?docs=gh), 可以用这个网站进行图片等的加速！
 
 ![](https://cdn.jsdelivr.net/gh/meizhaohui/cloudimg@master/data/20200511233130.png)
 
-### cmder windows系统上面的命令行工具
+## 7. cmder windows系统上面的命令行工具
 
 Windows系统自带的`cmd`命令行使用起来非常不方便，粘贴文本必须使用鼠标，不能使用快捷键，我们可以使用`cmder`工具使用windows系统上面的命令行工具。
 
@@ -74,12 +74,12 @@ Windows系统自带的`cmd`命令行使用起来非常不方便，粘贴文本�
 Cmder.exe /REGISTER ALL
 ```
 
-### windows系统录屏软件EV录屏
+## 8. windows系统录屏软件EV录屏
 
 官网地址：[https://www.ieway.cn/evcapture.html](https://www.ieway.cn/evcapture.html)
 
 
-### windows系统传输文件到远程备份服务器工具putty
+## 9. windows系统传输文件到远程备份服务器工具putty
 
 putty官网介绍`PuTTY: a free SSH and Telnet client`即是一个免费的SSH和Telnet客户端，我们可以通过它提供的`pscp`将windows系统的文件传输到远程的备份服务器中。
 
