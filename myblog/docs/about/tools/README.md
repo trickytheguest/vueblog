@@ -78,4 +78,10 @@ Cmder.exe /REGISTER ALL
 
 官网地址：[https://www.ieway.cn/evcapture.html](https://www.ieway.cn/evcapture.html)
 
-![evcapture](https://public.ieway.cn/public/v6/imgs/banner1@2x.png)
+
+### windows系统传输文件到远程备份服务器工具putty
+
+putty官网介绍`PuTTY: a free SSH and Telnet client`即是一个免费的SSH和Telnet客户端，我们可以通过它提供的`pscp`将windows系统的文件传输到远程的备份服务器中。
+
+官网地址[https://www.chiark.greenend.org.uk/~sgtatham/putty/](https://www.chiark.greenend.org.uk/~sgtatham/putty/)
+
