@@ -37,3 +37,59 @@
 俗话说，人多好办事。增加工人可以更快地洗盘子，前提是使用`队列`。
 
 通常来说，队列用来传递消息，消息可以是任意类型的消息。在本例中，我们用队列来管理分布式任务，这种队列也称为`工作队列`或者`任务队列`。水池中的每个盘子都会发给一个闲置的洗盘子的人，他会洗盘子并把盘子传给一个闲置的烘干盘子的人，他会烘干盘子并把盘子传给一个闲置的放盘子的人。这个过程可以是`同步`的(工人等着处理盘子，处理完等着把盘子给下一个人)，也可以是`异步`的(盘子堆在两个工人中间)。只要你有足够多的工人并且他们都能认真工作，完成速度会非常快。
+
+### 进程
+
+你可以用很多方法来实现队列。对单机来说，标准库中的`multiprocessing`模块有一个`Queue`函数。接下来模拟一个洗盘子的人和多个烘干进程（不用担心，会有人放盘子放好）。我们使用一个中间队列`dish_queue`，把下面的代码保存到`dishes.py`中：
+
+```py
+# Filename: dishes.py
+import multiprocessing as mp
+
+
+def washer(dishes, output):
+    """洗盘子"""
+    for dish in dishes:
+        print('Washing %s dish' % dish)
+        output.put(dish)
+
+
+def dryer(input):
+    """烘干盘子"""
+    while True:
+        dish = input.get()
+        print('Drying %s dish' % dish)
+        input.task_done()
+
+
+def main():
+    """构建队列"""
+    dish_queue = mp.JoinableQueue()
+    dish_proc = mp.Process(target=dryer, args=(dish_queue,))
+    dish_proc.daemon = True
+    dish_proc.start()
+
+    dishes = ['p1', 'p2', 'p3', 'p4']
+    washer(dishes, dish_queue)
+    dish_queue.join()
+
+
+if __name__ == '__main__':
+    main()
+```
+
+运行这个程序，输出如下：
+
+```sh
+$ python3 dishes.py
+Washing p1 dish
+Washing p2 dish
+Washing p3 dish
+Washing p4 dish
+Drying p1 dish
+Drying p2 dish
+Drying p3 dish
+Drying p4 dish
+```
+
+这个队列看起来像一个简单的Python迭代器，会生成一系列盘子。这段代码实际上会启动几个独立的进程，先盘子的人和烘干盘子的人会用它们来进行通信。我使用`JoinableQueue`和最后的`join()`方法让洗盘子的人知道，所有的盘子都已经烘干。
