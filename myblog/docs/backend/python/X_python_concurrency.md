@@ -193,5 +193,7 @@ working in main. after dish_queue.join() PID: 24030
 
 ### 线程
 
-线程运行在进程内部，可以访问进程的所有内容。
+线程运行在进程内部，可以访问进程的所有内容。`multiprocessing`模块有一个兄弟模块`threading`，后者用线程来代替进程(实际上，`multiprocessing`是在`threading`之后设计出来的，基于进程来完成各种任务)。我们使用线程来重写上面的进程实例：
+
+
 
