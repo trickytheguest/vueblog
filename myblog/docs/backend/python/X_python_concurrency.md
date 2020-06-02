@@ -93,3 +93,101 @@ Drying p4 dish
 ```
 
 这个队列看起来像一个简单的Python迭代器，会生成一系列盘子。这段代码实际上会启动几个独立的进程，先盘子的人和烘干盘子的人会用它们来进行通信。我使用`JoinableQueue`和最后的`join()`方法让洗盘子的人知道，所有的盘子都已经烘干。
+
+
+增加一些`print`语句，打印一下PID:
+
+```py
+# Filename: dishes.py
+import os
+import multiprocessing as mp
+
+
+def washer(dishes, output):
+    """洗盘子"""
+    print('working in washer. PID: %s' % os.getpid())
+    for dish in dishes:
+        print('Washing %s dish' % dish)
+        print('working in washer for before output.put. PID: %s' % os.getpid())
+        output.put(dish)
+        print('working in washer for after outout.put. PID: %s' % os.getpid())
+
+
+def dryer(input):
+    """烘干盘子"""
+    print('working in dryer. PID: %s' % os.getpid())
+    while True:
+        print('working in dryer. before input.get(). PID: %s' % os.getpid())
+        dish = input.get()
+        print('working in dryer. after input.get(). PID: %s' % os.getpid())
+        print('Drying %s dish' % dish)
+        input.task_done()
+        print('working in dryer. after input.task_done(). PID: %s' % os.getpid())
+
+
+
+def main():
+    """构建队列"""
+    print('working in main. PID: %s' % os.getpid())
+    dish_queue = mp.JoinableQueue()
+    dish_proc = mp.Process(target=dryer, args=(dish_queue,))
+    dish_proc.daemon = True
+    dish_proc.start()
+
+    dishes = ['p1', 'p2', 'p3', 'p4']
+    print('working in main. before washer() PID: %s' % os.getpid())
+    washer(dishes, dish_queue)
+    print('working in main. after washer() PID: %s' % os.getpid())
+    print('working in main. before dish_queue.join() PID: %s' % os.getpid())
+    dish_queue.join()
+    print('working in main. after dish_queue.join() PID: %s' % os.getpid())
+
+
+if __name__ == '__main__':
+    main()
+```
+
+再次运行结果如下：
+
+```sh
+$ python3 dishes.py
+working in main. PID: 24030
+working in main. before washer() PID: 24030
+working in washer. PID: 24030
+Washing p1 dish
+working in washer for before output.put. PID: 24030
+working in washer for after outout.put. PID: 24030
+Washing p2 dish
+working in washer for before output.put. PID: 24030
+working in washer for after outout.put. PID: 24030
+Washing p3 dish
+working in washer for before output.put. PID: 24030
+working in washer for after outout.put. PID: 24030
+Washing p4 dish
+working in washer for before output.put. PID: 24030
+working in washer for after outout.put. PID: 24030
+working in main. after washer() PID: 24030
+working in main. before dish_queue.join() PID: 24030
+working in dryer. PID: 24031
+working in dryer. before input.get(). PID: 24031
+working in dryer. after input.get(). PID: 24031
+Drying p1 dish
+working in dryer. after input.task_done(). PID: 24031
+working in dryer. before input.get(). PID: 24031
+working in dryer. after input.get(). PID: 24031
+Drying p2 dish
+working in dryer. after input.task_done(). PID: 24031
+working in dryer. before input.get(). PID: 24031
+working in dryer. after input.get(). PID: 24031
+Drying p3 dish
+working in dryer. after input.task_done(). PID: 24031
+working in dryer. before input.get(). PID: 24031
+working in dryer. after input.get(). PID: 24031
+Drying p4 dish
+working in dryer. after input.task_done(). PID: 24031
+working in dryer. before input.get(). PID: 24031
+working in main. after dish_queue.join() PID: 24030
+```
+
+可以看到洗盘子使用的进程是`24030`，烘干盘子使用的进程是`24031`，也就是洗盘子和烘干盘子使用独立的进程。
+
