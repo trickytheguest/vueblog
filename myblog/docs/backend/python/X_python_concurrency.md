@@ -251,3 +251,56 @@ Check PID: 25206
 Thread <_MainThread(MainThread, started 140734900350400)> says: not in threading
 ```
 
+使用线程重定盘子示例：
+
+```py
+# Filename: dishes.py
+import os
+import threading, queue
+import time
+
+
+def washer(dishes, dish_queue):
+    """洗盘子"""
+    print('working in washer. PID: %s' % os.getpid())
+    for dish in dishes:
+        print('Washing %s dish' % dish)
+        print('working in washer for before dish_queue.put. PID: %s' % os.getpid())
+        time.sleep(2)
+        dish_queue.put(dish)
+        print('working in washer for after dish_queue.put. PID: %s' % os.getpid())
+
+
+def dryer(dish_queue):
+    """烘干盘子"""
+    print('working in dryer. PID: %s' % os.getpid())
+    while True:
+        print('working in dryer. before dish_queue.get(). PID: %s' % os.getpid())
+        dish = dish_queue.get()
+        time.sleep(3)
+        print('working in dryer. after dish_queue.get(). PID: %s' % os.getpid())
+        print('Drying %s dish' % dish)
+        dish_queue.task_done()
+        print('working in dryer. after dish_queue.task_done(). PID: %s' % os.getpid())
+
+
+def main():
+    """构建队列"""
+    print('working in main. PID: %s' % os.getpid())
+    dish_queue = queue.Queue()
+    for n in range(5):
+        dryer_thread = threading.Thread(target=dryer, args=(dish_queue,))
+        dryer_thread.start()
+
+    dishes = ['p1', 'p2', 'p3', 'p4']
+    print('working in main. before washer() PID: %s' % os.getpid())
+    washer(dishes, dish_queue)
+    print('working in main. after washer() PID: %s' % os.getpid())
+    print('working in main. before dish_queue.join() PID: %s' % os.getpid())
+    dish_queue.join()
+    print('working in main. after dish_queue.join() PID: %s' % os.getpid())
+
+
+if __name__ == '__main__':
+    main()
+```
