@@ -304,3 +304,60 @@ def main():
 if __name__ == '__main__':
     main()
 ```
+
+运行后得到以下输出：
+
+```sh
+$ python3 dishes.py
+working in main. PID: 25556
+working in dryer. PID: 25556
+working in dryer. before dish_queue.get(). PID: 25556
+working in dryer. PID: 25556
+working in dryer. before dish_queue.get(). PID: 25556
+working in dryer. PID: 25556
+working in dryer. before dish_queue.get(). PID: 25556
+working in dryer. PID: 25556
+working in dryer. before dish_queue.get(). PID: 25556
+working in dryer. PID: 25556
+working in dryer. before dish_queue.get(). PID: 25556
+working in main. before washer() PID: 25556
+working in washer. PID: 25556
+Washing p1 dish
+working in washer for before dish_queue.put. PID: 25556
+working in washer for after dish_queue.put. PID: 25556
+Washing p2 dish
+working in washer for before dish_queue.put. PID: 25556
+working in washer for after dish_queue.put. PID: 25556
+Washing p3 dish
+working in washer for before dish_queue.put. PID: 25556
+working in dryer. after dish_queue.get(). PID: 25556
+Drying p1 dish
+working in dryer. after dish_queue.task_done(). PID: 25556
+working in dryer. before dish_queue.get(). PID: 25556
+working in washer for after dish_queue.put. PID: 25556
+Washing p4 dish
+working in washer for before dish_queue.put. PID: 25556
+working in dryer. after dish_queue.get(). PID: 25556
+Drying p2 dish
+working in dryer. after dish_queue.task_done(). PID: 25556
+working in dryer. before dish_queue.get(). PID: 25556
+working in washer for after dish_queue.put. PID: 25556
+working in main. after washer() PID: 25556
+working in main. before dish_queue.join() PID: 25556
+working in dryer. after dish_queue.get(). PID: 25556
+Drying p3 dish
+working in dryer. after dish_queue.task_done(). PID: 25556
+working in dryer. before dish_queue.get(). PID: 25556
+working in dryer. after dish_queue.get(). PID: 25556
+Drying p4 dish
+working in dryer. after dish_queue.task_done(). PID: 25556
+working in dryer. before dish_queue.get(). PID: 25556
+working in main. after dish_queue.join() PID: 25556
+```
+
+可以看出使用线程运行该程序时，并没有新的进程产生，全部使用的是`PID: 25556`。
+
+`multiprocessing`和`threading`的区别之一就是`threading`没有`terminate()`函数，很难终止一个正在运行的线程，因为这可能会引起代码和时空连续性上的各种问题。(不懂:cry:)
+
+
+
