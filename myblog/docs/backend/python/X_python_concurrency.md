@@ -195,5 +195,59 @@ working in main. after dish_queue.join() PID: 24030
 
 线程运行在进程内部，可以访问进程的所有内容。`multiprocessing`模块有一个兄弟模块`threading`，后者用线程来代替进程(实际上，`multiprocessing`是在`threading`之后设计出来的，基于进程来完成各种任务)。我们使用线程来重写上面的进程实例：
 
+```py
+import os
+import threading
 
+
+def do_this(what):
+    whoami(what)
+
+
+def whoami(what):
+    print('Check PID: %s' % os.getpid())
+    print("Thread %s says: %s" % (threading.current_thread(), what))
+
+
+def main():
+    whoami("I'm the main program")
+    for i in range(5):
+        p = threading.Thread(
+            target=do_this,
+            args=("I'm function %s" % i,)
+        )
+        p.start()
+        do_this("not in threading")
+
+
+if __name__ == '__main__':
+    main()
+```
+
+运行后得到以下输出：
+
+```sh
+Check PID: 25206
+Thread <_MainThread(MainThread, started 140734900350400)> says: I'm the main program
+Check PID: 25206
+Thread <Thread(Thread-1, started 123145383030784)> says: I'm function 0
+Check PID: 25206
+Thread <_MainThread(MainThread, started 140734900350400)> says: not in threading
+Check PID: 25206
+Check PID: 25206
+Thread <_MainThread(MainThread, started 140734900350400)> says: not in threading
+Thread <Thread(Thread-2, started 123145383030784)> says: I'm function 1
+Check PID: 25206
+Thread <Thread(Thread-3, started 123145388285952)> says: I'm function 2
+Check PID: 25206
+Thread <_MainThread(MainThread, started 140734900350400)> says: not in threading
+Check PID: 25206
+Thread <Thread(Thread-4, started 123145383030784)> says: I'm function 3
+Check PID: 25206
+Thread <_MainThread(MainThread, started 140734900350400)> says: not in threading
+Check PID: 25206
+Thread <Thread(Thread-5, started 123145383030784)> says: I'm function 4
+Check PID: 25206
+Thread <_MainThread(MainThread, started 140734900350400)> says: not in threading
+```
 
