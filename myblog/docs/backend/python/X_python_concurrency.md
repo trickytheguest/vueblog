@@ -419,3 +419,32 @@ Installing collected packages: greenlet, zope.event, zope.interface, gevent
     Running setup.py install for greenlet ... done
 Successfully installed gevent-20.5.2 greenlet-0.4.15 zope.event-4.4 zope.interface-5.1.0
 ```
+
+### gevent示例
+
+```py
+# Filename: use_gevent.py
+import gevent
+from gevent import socket
+
+hosts = [
+    'www.baidu.com',
+    'www.jd.com',
+    'www.zhihu.com'
+]
+jobs = [gevent.spawn(socket.gethostbyname, host) for host in hosts]
+gevent.joinall(jobs, timeout=5)
+for job in jobs:
+    print(job.value)
+```
+
+运行以上程序，输出如下：
+
+```sh
+$ python3 use_gevent.py
+180.101.49.41
+60.174.240.3
+125.78.252.83
+```
+
+可以看到以上程序运行后，可以很快的打印出结果，几乎没有等待。
