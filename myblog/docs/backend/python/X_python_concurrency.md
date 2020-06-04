@@ -393,3 +393,29 @@ working in main. after dish_queue.join() PID: 25556
 如你所见，开发者通常会把程序中运行速度慢的部分划分为多个线程或者进程从而加快速度。Apache Web服务器就是一个典型的例子。
 
 另一种方法是基于事件编程(Event-driven programming)。一个基于事件的程序会运行一个核心事件循环。分配所有任务，然后重复这个循环。Nginx Web服务器就是基于事件的设计，通常来说比Apache快。
+
+gevent就是一个基于事件的很棒的库，你只需要写普通的代码，gevent会神奇的地它们转换成协程。协程就像可以互相通信的生成器，它们会记录自己的位置。gevent可以修改许多Python的标准对象，比如socket,从而使用它自己的机制来代替阻塞。协程无法处理C写成的Python扩展代码，比如一些数据库驱动程序。
+
+### 安装gevent
+
+使用pip安装gevent：
+
+```sh
+$ pip install gevent
+Looking in indexes: http://mirrors.aliyun.com/pypi/simple/
+Collecting gevent
+  Downloading http://mirrors.aliyun.com/pypi/packages/fc/ad/c907f92d34c33ce0c088705dc4675b0a9d22caeb078bf4cb5d9c66329f6e/gevent-20.5.2-cp36-cp36m-macosx_10_15_x86_64.whl (1.8 MB)
+     |████████████████████████████████| 1.8 MB 1.4 MB/s
+Collecting greenlet>=0.4.14; platform_python_implementation == "CPython"
+  Downloading http://mirrors.aliyun.com/pypi/packages/f8/e8/b30ae23b45f69aa3f024b46064c0ac8e5fcb4f22ace0dca8d6f9c8bbe5e7/greenlet-0.4.15.tar.gz (59 kB)
+     |████████████████████████████████| 59 kB 10.6 MB/s
+Requirement already satisfied: setuptools in /Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages (from gevent) (40.6.2)
+Collecting zope.event
+  Downloading http://mirrors.aliyun.com/pypi/packages/c5/96/361edb421a077a4c208b4a5c212737d78ae03ce67fbbcd01621c49f332d1/zope.event-4.4-py2.py3-none-any.whl (7.6 kB)
+Collecting zope.interface
+  Downloading http://mirrors.aliyun.com/pypi/packages/ba/6f/03bcd3038d9f2ed6ec7253a775e45c376ab9382bc2cd17cc7c5dab05e477/zope.interface-5.1.0-cp36-cp36m-macosx_10_6_intel.whl (203 kB)
+     |████████████████████████████████| 203 kB 9.4 MB/s
+Installing collected packages: greenlet, zope.event, zope.interface, gevent
+    Running setup.py install for greenlet ... done
+Successfully installed gevent-20.5.2 greenlet-0.4.15 zope.event-4.4 zope.interface-5.1.0
+```
