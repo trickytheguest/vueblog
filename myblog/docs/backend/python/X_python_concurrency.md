@@ -388,4 +388,8 @@ working in main. after dish_queue.join() PID: 25556
 - 使用线程来解决I/O限制问题。
 - 使用进程、网络或者事件下处理CPU限制问题。
 
+## 绿色线程和gevent
 
+如你所见，开发者通常会把程序中运行速度慢的部分划分为多个线程或者进程从而加快速度。Apache Web服务器就是一个典型的例子。
+
+另一种方法是基于事件编程(Event-driven programming)。一个基于事件的程序会运行一个核心事件循环。分配所有任务，然后重复这个循环。Nginx Web服务器就是基于事件的设计，通常来说比Apache快。
