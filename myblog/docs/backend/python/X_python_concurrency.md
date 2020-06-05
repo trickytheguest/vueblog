@@ -448,3 +448,6 @@ $ python3 use_gevent.py
 ```
 
 可以看到以上程序运行后，可以很快的打印出结果，几乎没有等待。
+
+通过`gethostbyname()`可以通过主机名获取主机名对应的IP地址，`for`循环中的调用可以异步执行，因为使用的是`gevent`版本的`gethostbyname()`。
+`gevent.spawn()`会为每个`gevent.socket.gethostbyname`创建一个绿色线程(也叫做微线程)。
