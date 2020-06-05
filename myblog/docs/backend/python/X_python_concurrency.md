@@ -450,4 +450,22 @@ $ python3 use_gevent.py
 可以看到以上程序运行后，可以很快的打印出结果，几乎没有等待。
 
 通过`gethostbyname()`可以通过主机名获取主机名对应的IP地址，`for`循环中的调用可以异步执行，因为使用的是`gevent`版本的`gethostbyname()`。
+
 `gevent.spawn()`会为每个`gevent.socket.gethostbyname`创建一个绿色线程(也叫做微线程)。
+
+绿色线程和普通线程的区别是前者不会阻塞。如果遇到会阻塞普通线程的情况，gevent会把控制权切换到另一个绿色线程。
+
+`gevent.joinall()`会等待所有的任务完成。最后输出获得的所有IP地址。
+
+除了使用`gevent`版本的`socket`之外，也可以使用`猴子补丁(monkey-patching)`函数。这个函数会修改标准模块，比如`socket`，直接让它们使用绿色线程而不是调用`gevent`版本。如果想在整个程序中应用`gevent`，这种方法非常有用，即使那些你无法直接接触到的代码也会改变。
+
+在程序的开头添加下面的代码:
+
+```py
+from gevent import monkey
+monkey.patch_socket()
+```
+
+这会把程序中所有的普通`socket`都修改成`gevent`版本，即使是标准库也不例外。这个改动只对Python代码有效，对C写成的库无效。
+
+
