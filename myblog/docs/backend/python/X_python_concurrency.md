@@ -468,4 +468,34 @@ monkey.patch_socket()
 
 这会把程序中所有的普通`socket`都修改成`gevent`版本，即使是标准库也不例外。这个改动只对Python代码有效，对C写成的库无效。
 
+我们使用猴子方法修改上面的示例：
 
+```py
+import socket
+from gevent import monkey, spawn, joinall
+
+monkey.patch_socket()
+hosts = [
+    'www.baidu.com',
+    'www.jd.com',
+    'www.zhihu.com'
+]
+jobs = [spawn(socket.gethostbyname, host) for host in hosts]
+joinall(jobs, timeout=5)
+for job in jobs
+    print(job)
+    print(job.value)
+```
+
+运行输出如下:
+
+```sh
+<Greenlet at 0x106bbd748: _run>
+14.215.177.39
+<Greenlet at 0x106bbd848: _run>
+60.174.240.3
+<Greenlet at 0x106bbd948: _run>
+59.63.235.238
+```
+
+可以看到每一个子job都是`Greenlet`绿色线程。
