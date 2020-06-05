@@ -499,3 +499,41 @@ for job in jobs
 ```
 
 可以看到每一个子job都是`Greenlet`绿色线程。
+
+另一个函数会给更多的标准库模块打上补丁：
+
+```py
+from gevent import monkey
+monkey.patch_all()
+```
+
+在程序开头加上以上代码可以让你的程序充分利用`gevent`带来的速度提升。
+
+```py
+import socket
+from gevent import monkey, spawn, joinall
+
+monkey.patch_all()
+hosts = [
+    'www.baidu.com',
+    'www.jd.com',
+    'www.zhihu.com'
+]
+jobs = [spawn(socket.gethostbyname, host) for host in hosts]
+joinall(jobs, timeout=5)
+for job in jobs:
+    print(job)
+    print(job.value)
+```
+
+我们再次运行，输出如下：
+
+```sh
+<Greenlet at 0x106d9b548: _run>
+14.215.177.39
+<Greenlet at 0x106d9b648: _run>
+60.174.240.3
+<Greenlet at 0x106d9b748: _run>
+218.75.176.215
+```
+
