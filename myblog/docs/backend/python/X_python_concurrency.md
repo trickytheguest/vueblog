@@ -548,4 +548,6 @@ for job in jobs:
 
 twisted是一个异步事件驱动的网络框架。你可以把函数关联到事件(比如数据接收或者连接关闭)上，当事件发生时这些函数会被调用。这种设计被称为`回调(callback)`。如果你以前用过JavaScript，那一定不会陌生。对于有些开发者来说，基于回调的代码在应用规模变大之后会很难维护。
 
+Twisted支持许多常见的传输及应用层协议，包括TCP、UDP、SSL/TLS、HTP、IMAP、SSH、IRC以及FTP。就像Python一样，Twisted也具有`内置电池(batteries-included)`的特点。Twisted对于其支持的所有协议都带有客户端和服务器实现，同时附带有基于命令行的工具，使得配置和部署产品级的Twisted应用变得非常方便。
 
+后续补充twisted相关示例和详情。
