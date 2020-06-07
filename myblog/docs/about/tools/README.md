@@ -74,7 +74,9 @@ Windows系统自带的`cmd`命令行使用起来非常不方便，粘贴文本�
 Cmder.exe /REGISTER ALL
 ```
 
-## 8. windows系统录屏软件EV录屏
+## 8. 录屏软件EV录屏
+
+EV录屏支持windows操作系统和MacOS操作系统。录屏非常方便，可以全屏录制也可以选定区域录制。
 
 官网地址：[https://www.ieway.cn/evcapture.html](https://www.ieway.cn/evcapture.html)
 
@@ -84,4 +86,5 @@ Cmder.exe /REGISTER ALL
 putty官网介绍`PuTTY: a free SSH and Telnet client`即是一个免费的SSH和Telnet客户端，我们可以通过它提供的`pscp`将windows系统的文件传输到远程的备份服务器中。
 
 官网地址[https://www.chiark.greenend.org.uk/~sgtatham/putty/](https://www.chiark.greenend.org.uk/~sgtatham/putty/)
+
 
