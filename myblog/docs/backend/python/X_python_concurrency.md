@@ -559,3 +559,9 @@ asyncio模块在python 3.4中首次出现。它提供了一种能用的事件循
 
 参考：[https://docs.python.org/3.6/library/asyncio.html](https://docs.python.org/3.6/library/asyncio.html)
 
+
+##  Redis实现队列
+
+我们之前的洗盘子示例代码，无论使用的是进程还是线程，都运行在一台机器上。下面我们使用另一种方法来实际队列。让它可以既支持单机又支持网络。有时候用了进程和线程，单机仍然无法满足需求。本章的目的就是帮助你从一个盒子(单机)过滤到多个并发的盒子。
+
+
