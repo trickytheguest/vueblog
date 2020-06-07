@@ -551,3 +551,11 @@ twisted是一个异步事件驱动的网络框架。你可以把函数关联到�
 Twisted支持许多常见的传输及应用层协议，包括TCP、UDP、SSL/TLS、HTP、IMAP、SSH、IRC以及FTP。就像Python一样，Twisted也具有`内置电池(batteries-included)`的特点。Twisted对于其支持的所有协议都带有客户端和服务器实现，同时附带有基于命令行的工具，使得配置和部署产品级的Twisted应用变得非常方便。
 
 后续补充twisted相关示例和详情。
+
+
+## asyncio
+
+asyncio模块在python 3.4中首次出现。它提供了一种能用的事件循环，可以兼容twisted/gevent和其他异步方法。目标是提供一种标准、简洁、高性能的异步API。
+
+参考：[https://docs.python.org/3.6/library/asyncio.html](https://docs.python.org/3.6/library/asyncio.html)
+
