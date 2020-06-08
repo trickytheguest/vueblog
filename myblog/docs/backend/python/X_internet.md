@@ -21,3 +21,25 @@
 发布-订阅模式并不是队列，而是广播。一个或多个进程发布信息，每个订阅进程声明自己感兴趣的消息类型，然后每个消息都会被复制一份发给感兴趣的订阅进程。因此，一个消息可能只被处理一次，也可能多于一次，还可能完全不被处理。每个发布者只负责广播，并不知道谁(如果有人的话)在监听。
 
 
+#### Redis发布订阅模式
+
+你可以使用Redis搭建一个发布订阅系统。发布者会发出包含话题和值的消息，订阅者会声明它们对什么话题感兴趣。
+
+下面是发布者，redis_pub.py:
+
+```py
+import redis
+import random
+
+conn = redis.Redis()
+
+cats = ['catA', 'catB', 'catC', 'catD']
+hats = ['hatA', 'hatB', 'hatC', 'hatD']
+for msg in range(10):
+    cat = random.choice(cats)
+    hat = random.choice(hats)
+    print('Publish: %s wears a %s' % (cat, hat))
+    conn.publish(cat, hat)
+```
+
+每个话题是猫🐱的一个品种，每个消息的值是帽子的一种类型。
