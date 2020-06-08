@@ -43,3 +43,23 @@ for msg in range(10):
 ```
 
 每个话题是猫🐱的一个品种，每个消息的值是帽子的一种类型。
+
+下面是订阅者，redis_sub.py:
+
+```py
+import redis
+conn = redis.Redis()
+topics = ['catA', 'catC']
+sub = conn.pubsub()
+sub.subscribe(topics)
+for msg in sub.listen():
+    print(msg)
+    if msg['type'] == 'message':
+        cat = msg['channel']
+        hat = msg['data']
+        print('Subscribe: %s wears a %s' % (cat, hat))
+    import time
+    time.sleep(1)
+```
+
+
