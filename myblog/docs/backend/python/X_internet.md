@@ -114,4 +114,6 @@ Publish: message 3 : catA wears a hatC
 Publish: message 7 : catA wears a hatA
 ```
 
-我们并没有让订阅者退出，因此它会一直等待消息。
+我们并没有让订阅者退出，因此它会一直等待消息。如果重新启动一个发布者，那订阅者会继续抓取消息并输出。我们重新运行一下redis_pub.py:
+
+
