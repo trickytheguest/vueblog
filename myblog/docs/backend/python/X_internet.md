@@ -114,6 +114,37 @@ Publish: message 3 : catA wears a hatC
 Publish: message 7 : catA wears a hatA
 ```
 
-我们并没有让订阅者退出，因此它会一直等待消息。如果重新启动一个发布者，那订阅者会继续抓取消息并输出。我们重新运行一下redis_pub.py:
+我们并没有让订阅者退出，因此它会一直等待消息。如果重新启动一个发布者，那订阅者会继续抓取消息并输出。我们重新运行一下redis_pub.py,在redis_sub.py控制台可以看到订阅者仍然可以接收到新的消息:
+
+
+```sh
+/usr/local/bin/python3 redis_sub.py
+{'type': 'subscribe', 'pattern': None, 'channel': b'catA', 'data': 1}
+{'type': 'subscribe', 'pattern': None, 'channel': b'catC', 'data': 2}
+{'type': 'message', 'pattern': None, 'channel': b'catA', 'data': b'hatC'}
+Subscribe: b'catA' wears a b'hatC'
+{'type': 'message', 'pattern': None, 'channel': b'catA', 'data': b'hatB'}
+Subscribe: b'catA' wears a b'hatB'
+{'type': 'message', 'pattern': None, 'channel': b'catC', 'data': b'hatA'}
+Subscribe: b'catC' wears a b'hatA'
+{'type': 'message', 'pattern': None, 'channel': b'catC', 'data': b'hatB'}
+Subscribe: b'catC' wears a b'hatB'
+{'type': 'message', 'pattern': None, 'channel': b'catA', 'data': b'hatD'}
+Subscribe: b'catA' wears a b'hatD'
+{'type': 'message', 'pattern': None, 'channel': b'catA', 'data': b'hatC'}
+Subscribe: b'catA' wears a b'hatC'
+{'type': 'message', 'pattern': None, 'channel': b'catA', 'data': b'hatC'}
+Subscribe: b'catA' wears a b'hatC'
+{'type': 'message', 'pattern': None, 'channel': b'catA', 'data': b'hatD'}
+Subscribe: b'catA' wears a b'hatD'
+{'type': 'message', 'pattern': None, 'channel': b'catC', 'data': b'hatA'}
+Subscribe: b'catC' wears a b'hatA'
+{'type': 'message', 'pattern': None, 'channel': b'catC', 'data': b'hatD'}
+Subscribe: b'catC' wears a b'hatD'
+{'type': 'message', 'pattern': None, 'channel': b'catC', 'data': b'hatA'}
+Subscribe: b'catC' wears a b'hatA'
+{'type': 'message', 'pattern': None, 'channel': b'catC', 'data': b'hatB'}
+Subscribe: b'catC' wears a b'hatB'
+```
 
 
