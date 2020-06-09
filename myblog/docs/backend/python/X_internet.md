@@ -62,4 +62,56 @@ for msg in sub.listen():
     time.sleep(1)
 ```
 
+订阅者只会展示猫的品种为`catA`或者`catC`的消息，`listen()`方法会返回一个字典，如果它的类型是`message`消息，那就是由发布者发出的消息，`channel`键是话题(猫的种类)，`data`键包含消息的值(帽子)。
 
+注意一点，如果先启动发布者，这时没有订阅者，就像电台发布广播却没有听从一样。我们需要先启动订阅者：
+
+```sh
+/usr/local/bin/python3 redis_sub.py
+{'type': 'subscribe', 'pattern': None, 'channel': b'catA', 'data': 1}
+{'type': 'subscribe', 'pattern': None, 'channel': b'catC', 'data': 2}
+```
+
+此时，订阅者在监听发布者发布的消息，一直等待发布者发布消息，我们再启动发布者，它会发布10个消息：
+
+```sh
+/usr/local/bin/python3 redis_pub.py
+Publish: message 0 : catB wears a hatA
+Publish: message 1 : catC wears a hatA
+Publish: message 2 : catA wears a hatD
+Publish: message 3 : catA wears a hatC
+Publish: message 4 : catB wears a hatB
+Publish: message 5 : catD wears a hatC
+Publish: message 6 : catD wears a hatD
+Publish: message 7 : catA wears a hatA
+Publish: message 8 : catD wears a hatD
+Publish: message 9 : catB wears a hatD
+
+Process finished with exit code 0
+```
+
+这时，可以在订阅者运行的控制台可以看到监听到了消息：
+
+```sh
+/usr/local/bin/python3 redis_sub.py
+{'type': 'subscribe', 'pattern': None, 'channel': b'catA', 'data': 1}
+{'type': 'subscribe', 'pattern': None, 'channel': b'catC', 'data': 2}
+{'type': 'message', 'pattern': None, 'channel': b'catC', 'data': b'hatA'}
+Subscribe: b'catC' wears a b'hatA'
+{'type': 'message', 'pattern': None, 'channel': b'catA', 'data': b'hatD'}
+Subscribe: b'catA' wears a b'hatD'
+{'type': 'message', 'pattern': None, 'channel': b'catA', 'data': b'hatC'}
+Subscribe: b'catA' wears a b'hatC'
+{'type': 'message', 'pattern': None, 'channel': b'catA', 'data': b'hatA'}
+Subscribe: b'catA' wears a b'hatA'
+```
+此时可以看到，订阅者获取到的消息与发布者发布的消息的顺序是相同的，获取到发布者的以下消息：
+
+```sh
+Publish: message 1 : catC wears a hatA
+Publish: message 2 : catA wears a hatD
+Publish: message 3 : catA wears a hatC
+Publish: message 7 : catA wears a hatA
+```
+
+我们并没有让订阅者退出，因此它会一直等待消息。
