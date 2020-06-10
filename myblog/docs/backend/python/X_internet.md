@@ -270,3 +270,17 @@ Subscribe: catA wears a hatB
 Subscribe: catC wears a hatD
 Subscribe: catA wears a hatC
 ```
+
+### 其他发布订阅工具
+
+- RabbitMQ, 这是一个非常著名的消息发送器。
+    - 需要安装RabbitMQ服务端和客户端，pika是RabbitMQ的Python客户端。可参考以下链接：
+    - [https://www.rabbitmq.com/tutorials/tutorial-one-python.html](https://www.rabbitmq.com/tutorials/tutorial-one-python.html)
+    - [https://www.rabbitmq.com/tutorials/tutorial-three-python.html](https://www.rabbitmq.com/tutorials/tutorial-three-python.html)
+    - `pip install pika`安装pika包。参考[https://pypi.org/project/pika/](https://pypi.org/project/pika/)
+    - pika包的使用文档[https://pika.readthedocs.io/en/stable/](https://pika.readthedocs.io/en/stable/)
+- pysubsub，参考：
+    - `pip install PyPubSub`安装`PyPubSub`包。
+    - Github code:[https://github.com/schollii/pypubsub](https://github.com/schollii/pypubsub)
+    - Project on PyPI: [https://pypi.python.org/pypi/PyPubSub](https://pypi.python.org/pypi/PyPubSub)
+    - The documentation for latest stable release is at [http://pypubsub.readthedocs.io](http://pypubsub.readthedocs.io).    - The documentation for latest code is at [http://pypubsub.readthedocs.io/en/latest](http://pypubsub.readthedocs.io/en/latest).
