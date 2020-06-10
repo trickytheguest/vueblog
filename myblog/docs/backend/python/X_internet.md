@@ -147,4 +147,17 @@ Subscribe: b'catC' wears a b'hatA'
 Subscribe: b'catC' wears a b'hatB'
 ```
 
+### ZeroMQ发布订阅模式
+
+ZeroMQ没有核心的服务器，因此每个发布者都会发送给所有订阅者。我们来使用ZeroMQ重写一下上面的猫-帽子示例。
+
+安装ZeroMQ python包：
+
+```sh
+pip install pyzmq
+```
+
+参考：[https://zeromq.org/languages/python/](https://zeromq.org/languages/python/)
+
+发布者为zmq_pub.py，内容如下：
 
