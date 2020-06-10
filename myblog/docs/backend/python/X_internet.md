@@ -161,3 +161,27 @@ pip install pyzmq
 
 发布者为zmq_pub.py，内容如下：
 
+```py
+import zmq
+import random
+import time
+
+host = '*'
+port = 6789
+ctx = zmq.Context()
+pub = ctx.socket(zmq.PUB)
+pub.bind('tcp://%s:%s' % (host, port))
+
+cats = ['catA', 'catB', 'catC', 'catD']
+hats = ['hatA', 'hatB', 'hatC', 'hatD']
+time.sleep(1)
+
+for msg in range(10):
+    cat = random.choice(cats)
+    hat = random.choice(hats)
+    cat_bytes = cat.encode('utf-8')
+    hat_bytes = hat.encode('utf-8')
+    print('Publish: message %s : %s wears a %s' % (msg, cat, hat))
+    pub.send_multipart([cat_bytes, hat_bytes])
+```
+
