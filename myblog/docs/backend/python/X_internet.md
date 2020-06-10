@@ -214,3 +214,59 @@ while True:
 假如你要订阅所有话题，需要订阅空比特字符串`b''`，否则什么消息都得不到。
 
 注意，我们在发布者中调用了`send_multipart()`，在订阅者中调用了`recv_multipart()`，这样就可以收到消息的多个部分并使用第一部分来判断话题是否匹配。也可以选择使用一个字符串或者比特字符串来发送话题和消息值，但是把猫和帽子分开发送会更加清晰。
+
+像Redis消息订阅一样，我们先启动订阅者，再启动发布者。
+
+启动订阅者：
+
+```sh
+/usr/local/bin/python3 zmq_sub.py
+```
+
+此时订阅者会一直等待发布者发送消息，程序一直运行中，控制台没有其他输出。
+
+启动发布者，它会立即发布10条消息并退出：
+
+```sh
+/usr/local/bin/python3 zmq_pub.py
+Publish: message 0 : catD wears a hatA
+Publish: message 1 : catB wears a hatC
+Publish: message 2 : catD wears a hatD
+Publish: message 3 : catC wears a hatB
+Publish: message 4 : catC wears a hatB
+Publish: message 5 : catA wears a hatC
+Publish: message 6 : catC wears a hatD
+Publish: message 7 : catC wears a hatD
+Publish: message 8 : catD wears a hatD
+Publish: message 9 : catA wears a hatA
+
+Process finished with exit code 0
+```
+
+这时，可以在订阅者控制台看到输出了它想要的内容：
+
+```sh
+/usr/local/bin/python3 zmq_sub.py
+Subscribe: catC wears a hatB
+Subscribe: catC wears a hatB
+Subscribe: catA wears a hatC
+Subscribe: catC wears a hatD
+Subscribe: catC wears a hatD
+Subscribe: catA wears a hatA
+```
+
+我们再运行一次发布者，这时再在订阅者控制台查看，发现会多出几条输出消息：
+
+```sh
+/usr/local/bin/python3 /Users/mzh/PycharmProjects/base/zmq_sub.py
+Subscribe: catC wears a hatB
+Subscribe: catC wears a hatB
+Subscribe: catA wears a hatC
+Subscribe: catC wears a hatD
+Subscribe: catC wears a hatD
+Subscribe: catA wears a hatA (# 以下4条输出是多出的消息)
+Subscribe: catA wears a hatB
+Subscribe: catA wears a hatB
+Subscribe: catC wears a hatD
+Subscribe: catA wears a hatC
+```
