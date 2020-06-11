@@ -284,3 +284,11 @@ Subscribe: catA wears a hatC
     - Github code:[https://github.com/schollii/pypubsub](https://github.com/schollii/pypubsub)
     - Project on PyPI: [https://pypi.python.org/pypi/PyPubSub](https://pypi.python.org/pypi/PyPubSub)
     - The documentation for latest stable release is at [http://pypubsub.readthedocs.io](http://pypubsub.readthedocs.io).    - The documentation for latest code is at [http://pypubsub.readthedocs.io/en/latest](http://pypubsub.readthedocs.io/en/latest).
+
+
+## TCP/IP协议
+
+我们一直处在网络的世界中，理所当然地认为底层的一切都可以正常的工作。现在，我们来真正的深入底层，看看那些维持系统运转的东西到底是什么样的。
+
+因特网是基于规则的，这些规则定义了如何创建连接、交通数据、终止连接、处理超时等，这些规则被称为`协议`，它们分布在不同的层中。分层的目的是兼容多种实现方法。你可以在某一层中做任何想做的事，只要遵循上一层和下一层的约定就行。
+
