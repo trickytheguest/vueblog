@@ -316,7 +316,31 @@ TCP会在发送者和接收者之间通过秘密握手建立有保障的连接�
 
 最底层的网络编程使用的是套接字，源于C语言和Unix操作系统。套接字层的编程是非常繁琐的。使用类似ZeroMQ的库会简单很多，但是了解一下底层的工作原理还是非常有用的。举例来说，网络发生错误时出现的错误信息通常是和套接字相关的。
 
-我们来编写一个非常简单的客户端-服务器通信示例。
+我们来编写一个非常简单的客户端-服务器通信示例。客户端发送一个包含字符串的UDP数据报给服务器，服务器会返回一个包含字符串的数据包。服务器需要监听特定的地址和端口--就像邮局和邮筒一样。客户端需要知道这个值才能发送、接收和响应消息。
+
+在下面的客户端和服务器代码中，`address`是一个(地址，端口)元组。 `address`是一个字符串，可以是名称或者IP地址，当你的程序和同一台机器上的另一个程序通信时，可以使用名称`localhost`或者等价的地址`127.0.0.1`。
+
+首先编写服务器端程序，udp_server.py:
+
+```py
+from datetime import datetime
+import socket
+
+server_address = ('localhost', 6789)
+max_size = 4096
+print('Starting the server at %s' % datetime.now())
+print('Waiting for a client to call.')
+server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+server.bind(server_address)
+
+data, client = server.recvfrom(max_size)
+print('At %s %s said %s' % (datetime.now(), client, data))
+server.sendto(b'Are you talking to me?', client)
+server.close()
+```
+
+
+
 
 
 
