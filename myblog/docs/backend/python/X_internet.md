@@ -570,7 +570,15 @@ Process finished with exit code 0
 
 当编写复杂的代码时，套接字编码就会非常的难。下面是一些需要处理的问题。
 
+- UDP可以发送消息，但是消息的大小有限制，而且不能保证消息到达目的地。
+- TCP发送字节流，不是消息。你不知道每次调用时系统会发送或者接收多少字节。
+- 如果要用TCP传输完整的消息，需要一些额外的信息来把片段拼凑成整个消息；固定的消息大小(字节)、整个消息的大小或者一些特殊的哨兵字符。
+- 由于消息是字节，不是Unicde文本字符串，你需要使用python的bytes类型。
 
+如果你对套接字编程感兴趣，可以参考Python套接字编程教程：
+
+- [https://docs.python.org/3.6/library/socket.html](https://docs.python.org/3.6/library/socket.html)。
+- [https://docs.python.org/3.6/howto/sockets.html](https://docs.python.org/3.6/howto/sockets.html)。
 
 
 
