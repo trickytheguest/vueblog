@@ -511,6 +511,41 @@ Starting the server at 2020-06-14 07:08:05.999256
 Waiting for a client to call.
 ```
 
+再编写客户端程序tcp_client.py:
+
+```py
+from datetime import datetime
+import socket
+
+# 指定服务器端的IP地址和端口号
+server_address = ('localhost', 6789)
+# 最大接收数据量
+max_size = 4096
+print('Starting the client at %s' % datetime.now())
+
+# 建立网络连接，使用socket.socket创建一个套接字
+# AF_INET表示创建一个因特网(IP)套接字
+# 注意此处将SOCK_DGRAM改成了SOCK_STREAM，表示使用TCP流协议
+client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+# 使用connect()来建立流
+# 使用UDP时不需要这么做，因为每个数据报都是直接暴露在互联网中
+client.connect(server_address)
+
+# 客户端向服务端发送数据
+client.sendall(b'Hello!')
+
+# 客户端接收服务端的响应数据
+# data变量用于保存服务端响应的数据
+data = client.recv(max_size)
+print('At %s someone replied said %s' % (datetime.now(), data))
+# 关闭连接
+client.close()
+```
+
+我们启动客户端程序：
+
+```sh
+```
 
 
 
