@@ -503,6 +503,13 @@ client.close()
 server.close()
 ```
 
+然后启动服务端程序，控制台会输出信息，并等待客户端请求：
+
+```sh
+/usr/local/bin/python3 tcp_server.py
+Starting the server at 2020-06-14 07:08:05.999256
+Waiting for a client to call.
+```
 
 
 
