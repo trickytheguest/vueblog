@@ -408,6 +408,32 @@ client.close()
 
 增加注释信息后如下：
 
+```py
+from datetime import datetime
+import socket
+
+# 指定服务器端的IP地址和端口号
+server_address = ('localhost', 6789)
+# 最大接收数据量
+max_size = 4096
+print('Starting the client at %s' % datetime.now())
+
+# 建立网络连接，使用socket.socket创建一个套接字
+# AF_INET表示创建一个因特网(IP)套接字
+# SOCK_DGRAM表示我们要发送和接收数据报，即使用UDP
+client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+# 客户端向服务端发送数据
+client.sendto(b'Hello!', server_address)
+
+# 客户端接收服务端的响应数据
+# server变量包含服务端的地址和端口
+# data变量用于保存服务端响应的数据
+data, server = client.recvfrom(max_size)
+print('At %s %s said %s' % (datetime.now(), server, data))
+# 关闭连接
+client.close()
+```
 
 
 
