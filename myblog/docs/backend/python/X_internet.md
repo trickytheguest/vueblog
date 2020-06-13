@@ -467,6 +467,41 @@ UDP使用一个块来发送数据，并且不能保证一定可以送达。如�
 
 我们下面来编写服务端和客户端的程序。
 
+我们先增加服务端代码tcp_server.py:
+
+```py
+from datetime import datetime
+import socket
+
+# 指定服务器端的IP地址和端口号
+server_address = ('localhost', 6789)
+# 最大接收数据量
+max_size = 4096
+print('Starting the server at %s' % datetime.now())
+print('Waiting for a client to call.')
+# 建立网络连接，使用socket.socket创建一个套接字
+# AF_INET表示创建一个因特网(IP)套接字
+# 注意此处将SOCK_DGRAM改成了SOCK_STREAM，表示使用TCP流协议
+server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+# 使用bind绑定到套接字上，也就是监听这个IP地址和端口的所有数据
+server.bind(server_address)
+# 最多可以与5个客户端连接，超过5个就会拒绝
+server.listen(5)
+
+# server.accept()接收第一个到达的消息
+# client变量包含客户端的地址和端口，用于给客户端发送数据
+# data变量用于保存客户端发送的数据
+client, addr = server.accept()
+# 指字最大的可接收消息长度为max_size字节
+data = client.recv(max_size)
+print('At %s %s said %s' % (datetime.now(), client, data))
+print('The client address: %s' % addr)
+# 向客户端发送一个响应
+client.sendall(b'Are you talking to me?')
+client.close()
+# 关闭连接
+server.close()
+```
 
 
 
