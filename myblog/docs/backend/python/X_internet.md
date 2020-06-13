@@ -369,6 +369,46 @@ server.sendto(b'Are you talking to me?', client)
 server.close()
 ```
 
+服务器端程序首先定义服务端的IP地址和端口元组`server_address`以及最大允许传送的数据量`max_size`字节数，允许最多4096个字节，超过该字节数的数据会被截断。
+
+`server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)`会启动一个使用UDP的因特网套接字，然后`server.bind(server_address)`绑定、监听这个IP地址和端口的所有数据。
+
+`data, client = server.recvfrom(max_size)`会等待客户端的数据报到达，收到数据报后，服务器端会被唤醒并获取到客户端发送的数据以及客户端信息，`data`是获取到的用户发送的数据，最多不能超过`max_size`个字节，`client`是客户端信息，包含客户端的IP地址和端口号。
+
+`server.sendto(b'Are you talking to me?', client)` 向客户端发送一个响应，最后使用`server.close()`关闭连接。
+
+此处我们需要先运行服务器端，然后再运行客户端程序。
+
+我们先运行服务器端程序：
+
+```sh
+/usr/local/bin/python3 udp_server.py
+Starting the server at 2020-06-13 08:39:17.857956
+Waiting for a client to call.
+```
+
+此时服务器端已经启动，等待客户端发送请求。
+
+然后我们再编写客户端程序udp_client.py:
+
+```py
+from datetime import datetime
+import socket
+
+server_address = ('localhost', 6789)
+max_size = 4096
+print('Starting the client at %s' % datetime.now())
+client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+client.sendto(b'Hello!', server_address)
+
+data, server = client.recvfrom(max_size)
+print('At %s %s said %s' % (datetime.now(), server, data))
+client.close()
+```
+
+增加注释信息后如下：
+
+
 
 
 
