@@ -507,7 +507,7 @@ server.close()
 
 ```sh
 /usr/local/bin/python3 tcp_server.py
-Starting the server at 2020-06-14 07:08:05.999256
+Starting the server at 2020-06-14 07:15:39.162465
 Waiting for a client to call.
 ```
 
@@ -553,6 +553,22 @@ Process finished with exit code 0
 ```
 
 此时查看服务端输出：
+
+```sh
+/usr/local/bin/python3 tcp_server.py
+Starting the server at 2020-06-14 07:15:39.162465
+Waiting for a client to call.
+At 2020-06-14 07:15:44.287609 <socket.socket fd=6, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 6789), raddr=('127.0.0.1', 57130)> said b'Hello!'
+The client address: ('127.0.0.1', 57130)
+
+Process finished with exit code 0
+```
+
+发现增加了输出内容。服务器会收集消息，并打印出来，发送响应最后退出。
+
+可以看到TCP服务器使用`client.sendall()`发送响应，之前的UDP服务器使用的是`client.sendto()`。TCP会维持多个客户端-服务器套接字并保存客户端的IP地址。
+
+当编写复杂的代码时，套接字编码就会非常的难。下面是一些需要处理的问题。
 
 
 
