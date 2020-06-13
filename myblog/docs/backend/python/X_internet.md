@@ -495,7 +495,7 @@ client, addr = server.accept()
 # 指字最大的可接收消息长度为max_size字节
 data = client.recv(max_size)
 print('At %s %s said %s' % (datetime.now(), client, data))
-print('The client address: %s' % addr)
+print('The client address:', addr)
 # 向客户端发送一个响应
 client.sendall(b'Are you talking to me?')
 client.close()
@@ -545,7 +545,14 @@ client.close()
 我们启动客户端程序：
 
 ```sh
+/usr/local/bin/python3 tcp_client.py
+Starting the client at 2020-06-14 07:15:44.283065
+At 2020-06-14 07:15:44.287791 someone replied said b'Are you talking to me?'
+
+Process finished with exit code 0
 ```
+
+此时查看服务端输出：
 
 
 
