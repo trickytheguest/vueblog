@@ -339,6 +339,37 @@ server.sendto(b'Are you talking to me?', client)
 server.close()
 ```
 
+增加说明后的服务器端程序，udp_server.py:
+
+```py
+from datetime import datetime
+import socket
+
+# 指定服务器端的IP地址和端口号
+server_address = ('localhost', 6789)
+# 最大接收数据量
+max_size = 4096
+print('Starting the server at %s' % datetime.now())
+print('Waiting for a client to call.')
+# 建立网络连接，使用socket.socket创建一个套接字
+# AF_INET表示创建一个因特网(IP)套接字
+# SOCK_DGRAM表示我们要发送和接收数据报，即使用UDP
+server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+# 使用bind绑定到套接字上，也就是监听这个IP地址和端口的所有数据
+server.bind(server_address)
+
+# recvfrom等待数据报送达，数据报送达后，服务器会被唤醒并获取数据和客户端的信息
+# client变量包含客户端的地址和端口，用于给客户端发送数据
+# data变量用于保存客户端发送的数据
+data, client = server.recvfrom(max_size)
+print('At %s %s said %s' % (datetime.now(), client, data))
+# 向客户端发送一个响应
+server.sendto(b'Are you talking to me?', client)
+# 关闭连接
+server.close()
+```
+
+
 
 
 
