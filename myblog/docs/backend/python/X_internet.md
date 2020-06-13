@@ -387,7 +387,7 @@ Starting the server at 2020-06-13 08:39:17.857956
 Waiting for a client to call.
 ```
 
-此时服务器端已经启动，等待客户端发送请求。
+此时服务器端已经启动，等待客户端发送请求。此时它会一直沉默，直到客户端发送数据。
 
 然后我们再编写客户端程序udp_client.py:
 
@@ -435,6 +435,28 @@ print('At %s %s said %s' % (datetime.now(), server, data))
 client.close()
 ```
 
+客户端程序的许多方法和服务器端的一样，除了没有`bind()`方法，客户端同样使用`socket.socket()`建立因特网套接字，使用`client.sendto()`发送请求，使用`client.recvfrom()`接送服务端的响应，使用`client.close()`关闭连接。
+
+我们在另一个窗口中启动客户端程序，它会打印出欢迎信息并向服务端发送请求数据，并打印出服务端的响应并退出：
+
+```sh
+/usr/local/bin/python3 udp_client.py
+Starting the client at 2020-06-13 08:51:31.130012
+At 2020-06-13 08:51:31.133815 ('127.0.0.1', 6789) said b'Are you talking to me?'
+
+Process finished with exit code 0
+```
+
+此时在服务器端控制台输出中可以看到有响应，并增加了输出内容：
+
+```sh
+/usr/local/bin/python3 udp_server.py
+Starting the server at 2020-06-13 08:39:17.857956
+Waiting for a client to call.
+At 2020-06-13 08:51:31.133642 ('127.0.0.1', 65450) said b'Hello!'    # 说明，此行是增加的输出
+
+Process finished with exit code 0
+```
 
 
 
