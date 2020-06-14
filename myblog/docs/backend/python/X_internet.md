@@ -585,6 +585,14 @@ Process finished with exit code 0
 
 我们之前使用ZeroMQ创建过发布订阅模式，现在我们使用ZeroMQ来进行scoket请求响应。
 
+ZeroMQ是一个库，有时候也被称为打了激素的套接字(sockets on steroids)。ZeroMQ套接字实现了很多你需要但是普通套接字没有的功能：
+
+- 传输完整的消息
+- 重连
+- 当发送方和接收方的时间不同步时缓存数据
+
+
+
 
 
 
