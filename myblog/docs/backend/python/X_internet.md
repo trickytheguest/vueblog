@@ -581,6 +581,9 @@ Process finished with exit code 0
 - [https://docs.python.org/3.6/howto/sockets.html](https://docs.python.org/3.6/howto/sockets.html)。
 
 
+## ZeroMQ socket请求-响应对
+
+我们之前使用ZeroMQ创建过发布订阅模式，现在我们使用ZeroMQ来进行scoket请求响应。
 
 
 
