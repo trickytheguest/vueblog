@@ -606,6 +606,41 @@ ZeroMQ就像乐高积木，我们可能用很少的积木就能搭建出很多�
 
 安装Python的ZeroMQ库`pip instll pyzmq`。
 
+最简单的模式是一个请求-响应对，这是同步的。一个套接字发送请求，另一个发送响应。
+
+首先编写服务器端发送响应的代码， zmq_server.py:
+
+```py
+import zmq
+
+# 定义服务器IP和端口
+host = '127.0.0.1'
+port = 6789
+
+# 创建Context对象，是一个能够保存状态的ZeroMQ对象
+context = zmq.Context()
+# 创建一个REP类型的ZeroMQ套接字
+server = context.socket(zmq.REP)
+# 调用bind()，监听特定的IP地址和端口
+# 此处地址和端口字符串不是普通套接字中的元组
+server.bind('tcp://%s:%s' % (host, port))
+while True:
+    # 等待客户端的下一个请求，一直监听客户请求
+    request_bytes = server.recv()
+    request_str = request_bytes.decode('utf-8')
+    print('Request says:%s' % request_str)
+    reply_str = 'Stop saying: %s' % request_str
+    reply_bytes = bytes(reply_str, 'utf-8')
+    # 发送响应字节流
+    server.send(reply_bytes)
+```
+
+先启动服务端zmq_server.py：
+
+```sh
+/usr/local/bin/python3 zmq_server.py
+```
+
 
 
 
