@@ -593,8 +593,18 @@ ZeroMQ是一个库，有时候也被称为打了激素的套接字(sockets on st
 
 ZeroMQ的在线教程[https://zeromq.org/languages/python/](https://zeromq.org/languages/python/)写得非常好，是作者见过的最好的讲解网络化模型的教程。本章会讲解一些Python写成的简单的ZeroMQ示例。
 
+ZeroMQ就像乐高积木，我们可能用很少的积木就能搭建出很多东西。一样，你可以用很少几个套接字类型和模式来构建网络。下面的ZeroMQ的套接字类型，看下来像之前说过的网络模型：
 
+- REQ(同步请求)
+- REP(同步响应)
+- DEALER(异步请求)
+- ROUTER(异步响应)
+- PUB(发布)
+- SUB(订阅)
+- PUSH(扇出)
+- PULL(扇入)
 
+安装Python的ZeroMQ库`pip instll pyzmq`。
 
 
 
