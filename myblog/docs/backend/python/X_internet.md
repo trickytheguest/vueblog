@@ -675,8 +675,28 @@ for num in range(1, 6):
 这时我们运行客户端zmq_client.py:
 
 ```py
+/usr/local/bin/python3 zmq_client.py
+Sent message #1, receiced Stop saying: message #1
+Sent message #2, receiced Stop saying: message #2
+Sent message #3, receiced Stop saying: message #3
+Sent message #4, receiced Stop saying: message #4
+Sent message #5, receiced Stop saying: message #5
 
+Process finished with exit code 0
 ```
+
+客户端输出以上消息。此时可以在服务端看到也有消息输出：
+
+```sh
+/usr/local/bin/python3 zmq_server.py
+Request says:message #1
+Request says:message #2
+Request says:message #3
+Request says:message #4
+Request says:message #5
+```
+
+如果你仔细观察，可以看到客户端和服务器的消息是交替出现的。
 
 
 
