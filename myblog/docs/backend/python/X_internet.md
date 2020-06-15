@@ -591,6 +591,8 @@ ZeroMQ是一个库，有时候也被称为打了激素的套接字(sockets on st
 - 重连
 - 当发送方和接收方的时间不同步时缓存数据
 
+ZeroMQ的在线教程[https://zeromq.org/languages/python/](https://zeromq.org/languages/python/)写得非常好，是作者见过的最好的讲解网络化模型的教程。本章会讲解一些Python写成的简单的ZeroMQ示例。
+
 
 
 
