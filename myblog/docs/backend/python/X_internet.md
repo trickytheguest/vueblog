@@ -641,6 +641,42 @@ while True:
 /usr/local/bin/python3 zmq_server.py
 ```
 
+此时服务端没有任何输出，因为此时没有客户端请求！
+
+
+我们再来编写客户端代码，zmq_client.py:
+
+```py
+import time
+import zmq
+
+# 定义服务器IP和端口
+host = '127.0.0.1'
+port = 6789
+
+# 创建Context对象，是一个能够保存状态的ZeroMQ对象
+context = zmq.Context()
+# 创建一个REP类型的ZeroMQ套接字
+client = context.socket(zmq.REQ)
+# 此处地址和端口字符串不是普通套接字中的元组
+client.connect('tcp://%s:%s' % (host, port))
+for num in range(1, 6):
+    request_str = 'message #%s' % num
+    request_bytes = request_str.encode('utf-8')
+    # 发送请求
+    client.send(request_bytes)
+    # 接收服务端响应
+    reply_bytes = client.recv()
+    reply_str = reply_bytes.decode('utf-8')
+    print('Sent %s, receiced %s' % (request_str, reply_str))
+    time.sleep(2)
+```
+
+这时我们运行客户端zmq_client.py:
+
+```py
+
+```
 
 
 
