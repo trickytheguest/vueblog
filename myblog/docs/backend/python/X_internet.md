@@ -739,6 +739,12 @@ Scapy是一款强大的交互式数据包处理工具、数据包生成器、网
 
 注意，不要将Scapy与Scrapy搞混！！！后续你可以阅读以上帮助文档详细学习Scapy工具。
 
+## 网络服务
+
+Python有许多网络工具。下面的内容会介绍如何用自动化的方式实现那些最流行的网络服务。可以参考官方的完整文档[https://docs.python.org/3.6/library/internet.html](https://docs.python.org/3.6/library/internet.html)。
+
+
+
 
 
 
