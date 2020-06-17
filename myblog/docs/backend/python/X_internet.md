@@ -731,9 +731,11 @@ ZeroMQ并不是Python支持的唯一一个消息传递库。消息传递是网�
 
 Scapy是一款强大的交互式数据包处理工具、数据包生成器、网络扫描器、网络发现工具和包嗅探工具。它提供多种类别的交互式生成数据包或数据包集合、对 数据包进行操作、发送数据包、包嗅探、应答和反馈匹配等等功能。Python解释器提供交互功能，所以要用到Python编程知识（例如 variables、loops、和functions）。支持生成报告，且报告生成简单。
 
-Scapy的github源码地址[https://github.com/secdev/scapy](https://github.com/secdev/scapy)。
-官网地址[https://scapy.net/](https://scapy.net/)。
-官方文档[https://scapy.readthedocs.io/en/latest/](https://scapy.readthedocs.io/en/latest/)。
+![](/img/animation-scapy-install.svg)
+
+- Scapy的github源码地址[https://github.com/secdev/scapy](https://github.com/secdev/scapy)。
+- 官网地址[https://scapy.net/](https://scapy.net/)。
+- 官方文档[https://scapy.readthedocs.io/en/latest/](https://scapy.readthedocs.io/en/latest/)。
 
 注意，不要将Scapy与Scrapy搞混！！！后续你可以阅读以上帮助文档详细学习Scapy工具。
 
