@@ -747,6 +747,43 @@ Python有许多网络工具。下面的内容会介绍如何用自动化的方�
 
 计算机有类似192.168.12.1的数字IP地址，但是相对数字，我们更容易记住名称。域名系统DNS是一个非常重要的网络服务，通过一个分布式的数据库实现IP地址和名称的转换。当你使用Web浏览器并且看到类似查找主机的消息时，那可能就是网络连接中断了，第一种可能就是DNS错误。
 
+在底层`socket`模块中有一些DNS函数：
+
+- `socket.gethostbyname()`会返回一个域名的IP地址。
+- `socket.gethostbyname_ex()`扩展版本会返回名称、一个可选名称列表和一个地址列表。
+- `socket.getaddrinfo()`方法会查找IP地址，不过返回的信息很全，可以用于创建套接字连接。
+
+```py
+[mzh@MacBookPro python (master ✗)]$ python3
+Python 3.6.8 (v3.6.8:3c6b436a57, Dec 24 2018, 02:10:22)
+[GCC 4.2.1 (Apple Inc. build 5666) (dot 3)] on darwin
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import socket
+>>> socket.
+Display all 216 possibilities? (y or n)
+>>> addr = 'python.org'
+>>> socket.gethostbyname(addr)
+'45.55.99.72'
+>>> socket.gethostbyname_ex(addr)
+('python.org', [], ['45.55.99.72'])
+>>> socket.getaddrinfo(addr)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: getaddrinfo() missing 1 required positional argument: 'port'
+>>> socket.getaddrinfo(addr, 80)
+[(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_DGRAM: 2>, 17, '', ('45.55.99.72', 80)), (<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('45.55.99.72', 80))]
+>>>
+```
+
+也可以直接只获取TCP或者UDP信息：
+
+```py
+>>> socket.getaddrinfo(addr, 80, socket.AF_INET, socket.SOCK_STREAM)
+[(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('45.55.99.72', 80))]
+>>>
+```
+
+
 
 
 
