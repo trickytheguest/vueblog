@@ -783,6 +783,21 @@ TypeError: getaddrinfo() missing 1 required positional argument: 'port'
 >>>
 ```
 
+有些TCP和UDP端口号是IANA为特定服务保留的，每个端口号关联一个服务名。举例来说，`HTTP`关联的名称是`http`，关联到TCP端口`80`,下面的函数可以实现服务名和端口号的转换：
+
+```py
+>>> import socket
+>>> socket.getservbyname('http')
+80
+>>> socket.getservbyname('https')
+443
+>>> socket.getservbyport(80)
+'http'
+>>> socket.getservbyport(443)
+'https'
+```
+
+
 
 
 
