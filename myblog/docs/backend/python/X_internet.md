@@ -735,6 +735,10 @@ Scapy的github源码地址[https://github.com/secdev/scapy](https://github.com/s
 官网地址[https://scapy.net/](https://scapy.net/)。
 官方文档[https://scapy.readthedocs.io/en/latest/](https://scapy.readthedocs.io/en/latest/)。
 
+注意，不要将Scapy与Scrapy搞混！！！后续你可以阅读以上帮助文档详细学习Scapy工具。
+
+
+
 
 
 
