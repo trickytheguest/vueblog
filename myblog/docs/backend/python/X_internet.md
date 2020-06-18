@@ -801,7 +801,7 @@ TypeError: getaddrinfo() missing 1 required positional argument: 'port'
 
 标准库中有以下这些Email模块：
 
-
+- `smtplib`使用简单邮件传输协议(SMTP)发送邮件，我们经常在自动化任务中使用python自动发送邮件通知，后续可以补充此模块的详细使用方法。
 
 
 
