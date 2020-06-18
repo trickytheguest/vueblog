@@ -808,6 +808,13 @@ TypeError: getaddrinfo() missing 1 required positional argument: 'port'
 
 官方文档包含这些库对应的示例代码[https://docs.python.org/3/library/email.html](https://docs.python.org/3/library/email.html)。SMTP协议客户端可以参考[https://docs.python.org/3/library/smtplib.html#module-smtplib](https://docs.python.org/3/library/smtplib.html#module-smtplib)。如果你想编写自己的Python SMTP服务器，可以试试`smtpd`模块，参考[https://docs.python.org/3/library/smtpd.html#module-smtpd](https://docs.python.org/3/library/smtpd.html#module-smtpd)。
 
+### 其他协议
+
+标准的`ftplib`模块[https://docs.python.org/3/library/ftplib.html](https://docs.python.org/3/library/ftplib.html)可以使用文件传输协议(FTP)来发送字节。虽然这是一个很古老的协议，但它的表现仍然非常优秀。
+
+现在已经介绍了很多标准库中的模块，不过还是推荐你阅读一下标准库文档中的网络协议[https://docs.python.org/3/library/internet.html](https://docs.python.org/3/library/internet.html)部分。
+![](/img/internet_protocols.png)
+
 
 
 
