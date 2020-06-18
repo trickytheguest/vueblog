@@ -806,6 +806,8 @@ TypeError: getaddrinfo() missing 1 required positional argument: 'port'
 - `poplib`可以使用邮递协议(POP3)来读取邮件。
 - `imaplib`可以使用因特网消息访问协议(IMAP)来读取邮件。
 
+官方文档包含这些库对应的示例代码[https://docs.python.org/3/library/email.html](https://docs.python.org/3/library/email.html)。SMTP协议客户端可以参考[https://docs.python.org/3/library/smtplib.html#module-smtplib](https://docs.python.org/3/library/smtplib.html#module-smtplib)。如果你想编写自己的Python SMTP服务器，可以试试`smtpd`模块，参考[https://docs.python.org/3/library/smtpd.html#module-smtpd](https://docs.python.org/3/library/smtpd.html#module-smtpd)。
+
 
 
 
