@@ -822,7 +822,27 @@ TypeError: getaddrinfo() missing 1 required positional argument: 'port'
 
 通常来说，最简单的API是一个web接口，可以提供类似JSON或者XML的结构化数据，而不是纯文本或者HTML，API既可以做到非常简单也可以是一套成熟的RESTful API，后者可以更好地处理那些不安分的字节。
 
+如下面这个从GitHub上面获取我的用户信息的示例：
 
+```py
+import requests
+
+url = 'https://api.github.com/users/meizhaohui'
+response = requests.get(url)
+print(response)
+data = response.json()
+print(data)
+```
+
+运行程序后，输出如下：
+
+```sh
+/usr/local/bin/python3 webapi.py
+<Response [200]>
+{'login': 'meizhaohui', 'id': 18098773, 'node_id': 'MDQ6VXNlcjE4MDk4Nzcz', 'avatar_url': 'https://avatars2.githubusercontent.com/u/18098773?v=4', 'gravatar_id': '', 'url': 'https://api.github.com/users/meizhaohui', 'html_url': 'https://github.com/meizhaohui', 'followers_url': 'https://api.github.com/users/meizhaohui/followers', 'following_url': 'https://api.github.com/users/meizhaohui/following{/other_user}', 'gists_url': 'https://api.github.com/users/meizhaohui/gists{/gist_id}', 'starred_url': 'https://api.github.com/users/meizhaohui/starred{/owner}{/repo}', 'subscriptions_url': 'https://api.github.com/users/meizhaohui/subscriptions', 'organizations_url': 'https://api.github.com/users/meizhaohui/orgs', 'repos_url': 'https://api.github.com/users/meizhaohui/repos', 'events_url': 'https://api.github.com/users/meizhaohui/events{/privacy}', 'received_events_url': 'https://api.github.com/users/meizhaohui/received_events', 'type': 'User', 'site_admin': False, 'name': 'Zhaohui Mei ', 'company': None, 'blog': 'https://hellogitlab.com', 'location': 'Wuhan in China', 'email': None, 'hireable': True, 'bio': 'Enjoy coding!', 'twitter_username': None, 'public_repos': 28, 'public_gists': 0, 'followers': 5, 'following': 34, 'created_at': '2016-03-27T10:40:19Z', 'updated_at': '2020-06-20T23:26:20Z'}
+
+Process finished with exit code 0
+```
 
 
 
