@@ -845,6 +845,10 @@ print(data)
 Process finished with exit code 0
 ```
 
+在挖掘知名社交媒体网站时，如Facebook、微博、知乎等等时，API非常有用。
+
+
+
 
 
 
