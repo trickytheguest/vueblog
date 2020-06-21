@@ -873,9 +873,35 @@ Process finished with exit code 0
 最后，发起请求的客户端的机器把字节解码成返回值。
 
 
+RPC是一种非常流行的技术，有很多种实现方式。在服务端，你可以启动一个服务器程序，把它和一些字节传输和编码、解码方法连接起来，定义一些访问函数并宣布你的RPC开始正常运转。客户端可以连接到服务器并通过RPC调用服务器的函数。
+
+标准库中包含一种RPC实现`xmlrpc`，使用XML作为传输格式，你在服务器上定义并注册函数，客户端使用类似导入的方式来调用它们。
+
+首先来编写服务器端文件xmlrpc_server.py:
+
+```py
+# Filename:xmlrpc_server.py
+from xmlrpc.server import SimpleXMLRPCServer
 
 
+def double(num):
+    return 2 * num
 
+
+server = SimpleXMLRPCServer(('localhost', 6789))
+server.register_function(double, 'double')
+server.serve_forever()
+```
+
+服务器端先定义`double`函数，然后再定义一个XMLRPC服务器，通过`('localhost', 6789)`元组指定服务器地址和启动端口，通过`server.register_function(double, 'double')`注册函数，这样它才能让客户端通过RPC调用，最后`server.serve_forever()`启动服务器并等待。
+
+先运行服务端，xmlrpc_server.py:
+
+```sh
+/usr/local/bin/python3 xmlrpc_server.py
+```
+
+此时控制台没有任务输出，等待客户端请求。
 
 
 
