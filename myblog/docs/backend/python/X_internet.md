@@ -904,6 +904,34 @@ server.serve_forever()
 此时控制台没有任务输出，等待客户端请求。
 
 
+然后编写客户端代码，xmlrpc_client.py:
+
+```py
+# Filename:xmlrpc_client.py
+from xmlrpc.client import ServerProxy
+
+proxy = ServerProxy('http://localhost:6789/')
+num = 7
+result = proxy.double(num)
+print('Double %s is %s' % (num, result))
+```
+
+客户端通过`ServerProxy('http://localhost:6789/')`和服务器连接，接着它会调用`proxy,double()`，这个函数是由服务器动态生成的。RPC机制会截获这个函数名并在远程服务器上调用它。
+
+运行客户端xmlrpc_client.py:
+
+```py
+/usr/local/bin/python3 xmlrpc_client.py
+Double 7 is 14
+
+Process finished with exit code 0
+```
+
+可以看到能够正常运行，并返回了7的2倍的值14！说明与服务器端正常通信了。
+
+
+
+
 
 
 
