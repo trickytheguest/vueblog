@@ -929,6 +929,8 @@ Process finished with exit code 0
 
 可以看到能够正常运行，并返回了7的2倍的值14！说明与服务器端正常通信了。
 
+[https://docs.python.org/3/library/xmlrpc.client.html#xmlrpc.client.ServerProxy.system.listMethods](https://docs.python.org/3/library/xmlrpc.client.html#xmlrpc.client.ServerProxy.system.listMethods)中指出可以使用` ServerProxy.system.listMethods()`返回所有注册的函数的组成的字符串列表，但在客户端使用`proxy. system.listMethods()`未能成功，不知道原因！！！
+
 
 
 
