@@ -735,6 +735,51 @@ Done. 3.28 kB in 0.00093s (3.44 MB/s)
 
 
 
+## 开启和关闭SSH服务
+
+mac本身安装了SSH服务，默认情况下不会开机自启。
+
+启动SSH服务：
+
+```sh
+$ sudo launchctl load -w /System/Library/LaunchDaemons/ssh.plist
+Password: 输入你的密码
+```
+
+查看是否启动SSH服务：
+
+```sh
+$ sudo launchctl list|grep ssh
+-	0	com.openssh.sshd
+```
+
+如果看到上面的输出表示成功启动了，可以尝试通过ssh连接到本地：
+
+```sh
+$ ssh mzh@localhost
+The authenticity of host 'localhost (::1)' can't be established.
+ECDSA key fingerprint is SHA256:gkrDoGnOl7VCoFTyfpRO/7UGR0FeB9x0eJY1X0kLzTw.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added 'localhost' (ECDSA) to the list of known hosts.
+Password:
+Last login: Mon Jun 22 20:08:51 2020
+$ whoami
+mzh
+$ exit
+Connection to localhost closed.
+```
+
+关闭SSH服务：
+
+```sh
+$ sudo launchctl unload -w /System/Library/LaunchDaemons/ssh.plist
+Password:
+$ sudo launchctl list|grep ssh
+$ echo $?
+1
+```
+
+说明已经正常关闭了SSH服务。
 
 
 

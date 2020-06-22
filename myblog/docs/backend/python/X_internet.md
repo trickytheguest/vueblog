@@ -1145,6 +1145,19 @@ Successfully installed fabric-2.5.0 invoke-1.4.1
 ```
 
 
+pypi上面有fabric和fabric2现在(2020年6月23日)是一个东西，因此官方现在支持Python 3了，所以fabric 3是以前fabric官网不支持Python3时，别人从fabric 1中克隆出来的非官方版本。现在我们直接使用官方版本Fabric就可以。
+
+查看Python版本和fab版本：
+
+```sh
+$ python -V
+Python 2.7.16
+
+$ fab -V
+Fabric 2.5.0
+Paramiko 2.7.1
+Invoke 1.4.1
+```
 
 
 
