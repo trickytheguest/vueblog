@@ -952,6 +952,36 @@ server.py:288:                methods |= set(self.instance._listMethods())
 server.py:871:        for method_name in self.system_listMethods():
 ```
 
+可以看到只在server端存在`listMethods`相关的方法，可以通过`system_listMethods`方法获取所有的方法列表。
+
+我们重新修改一下服务端和客户端代码。
+
+xmlrpc_server.py更新后的代码：
+
+```py
+# Filename:xmlrpc_server.py
+from xmlrpc.server import SimpleXMLRPCServer
+
+
+def double(num):
+    """return num + num"""
+    return 2 * num
+
+
+def power(num):
+    """return num * num"""
+    return pow(num, 2)
+
+
+server = SimpleXMLRPCServer(('localhost', 6789))
+server.register_function(double, 'double')
+server.register_function(power, 'power')
+print(type(server))
+print(server.system_listMethods())
+print(server.system_methodHelp('double'))
+print(server.system_methodHelp('power'))
+server.serve_forever()
+```
 
 
 
