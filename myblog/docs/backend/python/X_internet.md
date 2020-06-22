@@ -931,6 +931,26 @@ Process finished with exit code 0
 
 [https://docs.python.org/3/library/xmlrpc.client.html#xmlrpc.client.ServerProxy.system.listMethods](https://docs.python.org/3/library/xmlrpc.client.html#xmlrpc.client.ServerProxy.system.listMethods)中指出可以使用` ServerProxy.system.listMethods()`返回所有注册的函数的组成的字符串列表，但在客户端使用`proxy. system.listMethods()`未能成功，不知道原因！！！
 
+查看源码，可以知道client.py中并没有`listMethods()`方法:
+
+```sh
+[mzh@MacBookPro xmlrpc ]$ pwd
+/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/xmlrpc
+[mzh@MacBookPro xmlrpc ]$ ls
+__init__.py __pycache__ client.py   server.py
+[mzh@MacBookPro xmlrpc ]$ grep -n 'listMethods' *
+grep: __pycache__: Is a directory
+server.py:33:    def _listMethods(self):
+server.py:34:        # implement this method so that system.listMethods
+server.py:49:    def _listMethods(self):
+server.py:50:        # this method must be present for system.listMethods
+server.py:225:        self.funcs.update({'system.listMethods' : self.system_listMethods,
+server.py:278:    def system_listMethods(self):
+server.py:279:        """system.listMethods() => ['add', 'subtract', 'multiple']
+server.py:287:            if hasattr(self.instance, '_listMethods'):
+server.py:288:                methods |= set(self.instance._listMethods())
+server.py:871:        for method_name in self.system_listMethods():
+```
 
 
 
