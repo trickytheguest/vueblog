@@ -1029,7 +1029,34 @@ Process finished with exit code 0
 
 就像访问Web服务一样的日志信息。
 
+常用的传输方式是`HTTP`和`ZeroMQ`。除了xml外，JSON、Protocol Buffers和MessagePack也是常用的编码方式。
 
+前面也讲过可以使用MessagePack来对消息的数据进行处理。现在我们使用MessagePack的Python RPC实现完成上述的服务端和客户端的数据调用。
+
+可以参考[MessagePack RPC for Python](https://github.com/msgpack-rpc/msgpack-rpc-python)。
+
+安装包：
+
+```sh
+$ pip install msgpack-rpc-python
+Looking in indexes: http://mirrors.aliyun.com/pypi/simple/
+Collecting msgpack-rpc-python
+  Downloading http://mirrors.aliyun.com/pypi/packages/bf/67/c3cfa7158c46fa3fb1898783ff722f94c52e8b65f601922c853f46405df3/msgpack-rpc-python-0.4.1.tar.gz (7.7 kB)
+Collecting msgpack-python
+  Downloading http://mirrors.aliyun.com/pypi/packages/8a/20/6eca772d1a5830336f84aca1d8198e5a3f4715cd1c7fc36d3cc7f7185091/msgpack-python-0.5.6.tar.gz (138 kB)
+     |████████████████████████████████| 138 kB 3.1 MB/s
+Collecting tornado<5,>=3
+  Downloading http://mirrors.aliyun.com/pypi/packages/e3/7b/e29ab3d51c8df66922fea216e2bddfcb6430fb29620e5165b16a216e0d3c/tornado-4.5.3.tar.gz (484 kB)
+     |████████████████████████████████| 484 kB 9.6 MB/s
+Using legacy setup.py install for msgpack-rpc-python, since package 'wheel' is not installed.
+Using legacy setup.py install for msgpack-python, since package 'wheel' is not installed.
+Using legacy setup.py install for tornado, since package 'wheel' is not installed.
+Installing collected packages: msgpack-python, tornado, msgpack-rpc-python
+    Running setup.py install for msgpack-python ... done
+    Running setup.py install for tornado ... done
+    Running setup.py install for msgpack-rpc-python ... done
+Successfully installed msgpack-python-0.5.6 msgpack-rpc-python-0.4.1 tornado-4.5.3
+```
 
 
 
