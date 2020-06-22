@@ -983,6 +983,54 @@ print(server.system_methodHelp('power'))
 server.serve_forever()
 ```
 
+我们运行服务端程序：
+
+```sh
+/usr/local/bin/python3 xmlrpc_server.py
+<class 'xmlrpc.server.SimpleXMLRPCServer'>
+['double', 'power']
+return num + num
+return num * num
+```
+
+可以看到通过`server.system_listMethods()`能够正常获取到已经注册的带个函数组成的列表`['double', 'power']`，通过`server.system_methodHelp('double')`能够获取到`double`函数的doc文档`return num + num`，通过`server.system_methodHelp('power')`能够获取到`power`函数的doc文档`return num * num`。
+
+我们更新一下客户端代码：
+
+```py
+# Filename:xmlrpc_client.py
+
+import xmlrpc.client
+proxy = xmlrpc.client.ServerProxy('http://localhost:6789/')
+num = 7
+result = proxy.double(num)
+print('Double %s is %s' % (num, result))
+print('power(%s, 2) is %s' % (num, proxy.power(num)))
+```
+
+运行客户端程序：
+
+```sh
+/usr/local/bin/python3 xmlrpc_client.py
+Double 7 is 14
+power(7, 2) is 49
+
+Process finished with exit code 0
+```
+
+可以看到客户端能够正常的运行注册的两个函数`double`和`power`。
+
+此时服务端控制台会新增以下日志信息：
+
+```sh
+127.0.0.1 - - [22/Jun/2020 20:40:41] "POST / HTTP/1.1" 200 -
+127.0.0.1 - - [22/Jun/2020 20:40:41] "POST / HTTP/1.1" 200 -
+```
+
+就像访问Web服务一样的日志信息。
+
+
+
 
 
 
