@@ -1112,6 +1112,38 @@ Process finished with exit code 0
 
 可以看到客户端输出与xmlrpc_client.py运行时的输出结果一致，但通过此处的服务端和客户端代码可以看出，使用MessagePack RPC实现进行远程调用相对来说编码简单一些。只需要在服务端定义一个`Services`类，类中的方法自动注册为可用函数，不需要手动再去注册函数。
 
+### fabric执行远程命令
+
+fabric包可以运行远程或者本地命令、上传或者下载文件、用sudo权限运行命令等。这个包使用安全Shell来运行远程程序。
+
+可参考：
+
+- [ fabric 2.5.0 :High level SSH command execution](https://pypi.org/project/fabric/)
+- [Fabric--Pythonic remote execution](https://www.fabfile.org/)
+- [Fabric Docs](https://docs.fabfile.org/en/2.5/getting-started.html)
+
+安装：
+
+```sh
+$ pip install fabric
+Looking in indexes: http://mirrors.aliyun.com/pypi/simple/
+Collecting fabric
+  Downloading http://mirrors.aliyun.com/pypi/packages/d7/cb/47feeb00dae857f0fbd1153a61e902e54ed77ccdc578b371a514a3959a19/fabric-2.5.0-py2.py3-none-any.whl (51 kB)
+     |████████████████████████████████| 51 kB 1.6 MB/s
+Requirement already satisfied: paramiko>=2.4 in /Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages (from fabric) (2.7.1)
+Collecting invoke<2.0,>=1.3
+  Downloading http://mirrors.aliyun.com/pypi/packages/2c/16/f00efa99ae9f255142a230ce6819c37ae9dd29a7144477c1161cc72d01ed/invoke-1.4.1-py3-none-any.whl (210 kB)
+     |████████████████████████████████| 210 kB 1.9 MB/s
+Requirement already satisfied: cryptography>=2.5 in /Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages (from paramiko>=2.4->fabric) (2.8)
+Requirement already satisfied: pynacl>=1.0.1 in /Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages (from paramiko>=2.4->fabric) (1.3.0)
+Requirement already satisfied: bcrypt>=3.1.3 in /Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages (from paramiko>=2.4->fabric) (3.1.7)
+Requirement already satisfied: cffi!=1.11.3,>=1.8 in /Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages (from cryptography>=2.5->paramiko>=2.4->fabric) (1.14.0)
+Requirement already satisfied: six>=1.4.1 in /Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages (from cryptography>=2.5->paramiko>=2.4->fabric) (1.14.0)
+Requirement already satisfied: pycparser in /Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages (from cffi!=1.11.3,>=1.8->cryptography>=2.5->paramiko>=2.4->fabric) (2.20)
+Installing collected packages: invoke, fabric
+Successfully installed fabric-2.5.0 invoke-1.4.1
+```
+
 
 
 
