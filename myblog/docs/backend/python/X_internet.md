@@ -1058,6 +1058,39 @@ Installing collected packages: msgpack-python, tornado, msgpack-rpc-python
 Successfully installed msgpack-python-0.5.6 msgpack-rpc-python-0.4.1 tornado-4.5.3
 ```
 
+我们来编写服务端msgpack_server.py:
+
+```py
+# Filename:msgpack_server.py
+from msgpackrpc import Server, Address
+
+
+class Services:
+    def double(self, num):
+        """return num + num"""
+        return 2 * num
+
+    def power(self, num):
+        """return num * num"""
+        return pow(num, 2)
+
+
+server = Server(Services())
+server.listen(Address('localhost', 6789))
+server.start()
+```
+
+先启动服务端：
+
+```sh
+/usr/local/bin/python3 msgpack_server.py
+```
+
+此时服务端静默等待客户端请求，服务端控制台没有任何输出。
+
+
+
+
 
 
 
