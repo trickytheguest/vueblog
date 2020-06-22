@@ -1088,8 +1088,29 @@ server.start()
 
 此时服务端静默等待客户端请求，服务端控制台没有任何输出。
 
+再编写客户端msgpack_client.py:
 
+```py
+# Filename:msgpack_client.py
+from msgpackrpc import Client, Address
 
+client = Client(Address('localhost', 6789))
+num = 7
+print('Double %s is %s' % (num, client.call('double', num)))
+print('Power(%s, 2) is %s' % (num, client.call('power', num)))
+```
+
+再启动客户端：
+
+```sh
+/usr/local/bin/python3 msgpack_client.py
+Double 7 is 14
+Power(7, 2) is 49
+
+Process finished with exit code 0
+```
+
+可以看到客户端输出与xmlrpc_client.py运行时的输出结果一致，但通过此处的服务端和客户端代码可以看出，使用MessagePack RPC实现进行远程调用相对来说编码简单一些。只需要在服务端定义一个`Services`类，类中的方法自动注册为可用函数，不需要手动再去注册函数。
 
 
 
