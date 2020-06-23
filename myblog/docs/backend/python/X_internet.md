@@ -1116,6 +1116,12 @@ Process finished with exit code 0
 
 fabric包可以运行远程或者本地命令、上传或者下载文件、用sudo权限运行命令等。这个包使用安全Shell来运行远程程序。
 
+- Fabric是一个高级Python(2.7，3.4+)库，旨在通过SSH远程执行shell命令，从而返回有用的Python对象。
+- Fabric建立在Invoke(子过程命令执行和命令行功能)和Paramiko(SSH协议实现)的基础上，扩展了它们的API以相互补充并提供附加功能。
+- 你可能对另外两个库感兴趣， `Invocations (Invoke-only, locally-focused CLI tasks)`和`Patchwork (remote-friendly, typically shell-command-focused, utility functions)`，前者关注本地命令行任务，后者更关注远程命令。
+
+
+
 可参考：
 
 - [ fabric 2.5.0 :High level SSH command execution](https://pypi.org/project/fabric/)
@@ -1159,6 +1165,29 @@ Paramiko 2.7.1
 Invoke 1.4.1
 ```
 
+在远程服务器上面运行命令：
+
+```py
+from fabric import Connection
+
+host = 'hellogitlab.com'
+username = 'meizhaohui'
+port = 10000
+result = Connection(host=host, user=username, port=port).run('uname -s', hide=True)
+msg = "Ran {0.command!r} on {0.connection.host}, got stdout:\n{0.stdout}"
+print(msg.format(result))
+```
+
+运行：
+
+```sh
+/usr/local/bin/python3 fabfile.py
+Ran 'uname -s' on hellogitlab.com, got stdout:
+Linux
+
+
+Process finished with exit code 0
+```
 
 
 
