@@ -1219,6 +1219,18 @@ True
 'UTF-8'
 ```
 
+- 在单个的主机上面运行单独的命令
+
+运行本地命令：
+
+```py
+>>> from fabric import Connection
+>>> Connection('localhost')
+<Connection host=localhost>
+>>> Connection('localhost').run('whoami')
+mzh
+<Result cmd='whoami' exited=0>
+```
 
 
 
