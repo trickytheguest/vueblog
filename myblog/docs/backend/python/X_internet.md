@@ -1282,6 +1282,15 @@ print(disk_free(Connection('localhost')))
 
 
 
+### 运维自动化工具
+
+现在比较流行的自动化工具有puppet(用ruby开发的，不是Python开发的)，SaltStack(Python开发的)，Ansible(Python开发的)，这些工具都可以完成fabric类似的功能，可以进行初始化配置，部署和远程执行等。后续专门弄一个专题写Ansible的使用。
+
+
+
+
+
+
 
 
 
