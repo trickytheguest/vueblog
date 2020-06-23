@@ -1190,6 +1190,35 @@ Process finished with exit code 0
 ```
 
 
+示例2：
+
+```py
+$ python3
+Python 3.6.8 (v3.6.8:3c6b436a57, Dec 24 2018, 02:10:22)
+[GCC 4.2.1 (Apple Inc. build 5666) (dot 3)] on darwin
+Type "help", "copyright", "credits" or "license" for more information.
+>>> from fabric import Connection
+>>> host = 'hellogitlab.com'
+>>> username = 'meizhaohui'
+>>> port = 10000
+>>> result = Connection(host=host, user=username, port=port).run('hostname')
+hellogitlab.com
+>>> result
+<Result cmd='hostname' exited=0>
+>>> result.
+result.command     result.env         result.hide        result.return_code result.stdout
+result.connection  result.exited      result.ok          result.shell       result.tail(
+result.encoding    result.failed      result.pty         result.stderr
+>>> result.command
+'hostname'
+>>> result.hide
+()
+>>> result.ok
+True
+>>> result.encoding
+'UTF-8'
+```
+
 
 
 
