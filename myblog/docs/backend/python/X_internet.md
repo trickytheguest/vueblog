@@ -1232,6 +1232,55 @@ mzh
 <Result cmd='whoami' exited=0>
 ```
 
+运行远程命令：
+
+```py
+>>> Connection(host=host,user=username,port=port).run('whoami')
+meizhaohui
+<Result cmd='whoami' exited=0>
+
+>>> Connection('meizhaohui@hellogitlab.com:10000').run('whoami')
+meizhaohui
+<Result cmd='whoami' exited=0>
+```
+
+- 跨多个主机的单个命令
+
+运行命令：
+
+```py
+>>> from fabric import SerialGroup
+>>> result = SerialGroup('localhost', '127.0.0.1').run('whoami')
+mzh
+mzh
+>>> sorted(result.items())
+[(<Connection host=127.0.0.1>, <Result cmd='whoami' exited=0>), (<Connection host=localhost>, <Result cmd='whoami' exited=0>)]
+```
+
+- 运行python代码块
+
+```py
+from fabric import Connection
+
+
+def disk_free(c):
+    uname = c.run('uname -s', hide=True)
+    if 'Darwin' in uname.stdout:
+        command = "df -h /|tail -n1|awk -F'[ %]+' '{print (100-$5)\"%\"}'"
+        return c.run(command, hide=True).stdout.strip()
+
+
+print(disk_free(Connection('localhost')))
+# 92%
+```
+
+
+尝试了一下fabric，当SSH端口为非标准端口时比较麻烦。感觉不是很好用。
+
+
+
+
+
 
 
 
