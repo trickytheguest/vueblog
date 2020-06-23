@@ -1275,7 +1275,10 @@ print(disk_free(Connection('localhost')))
 ```
 
 
-尝试了一下fabric，当SSH端口为非标准端口时比较麻烦。感觉不是很好用。其他示例可参考[https://www.fabfile.org/](https://www.fabfile.org/)。
+尝试了一下fabric，当SSH端口为非标准端口时比较麻烦。感觉不是很好用。其他示例可参考：
+
+- [https://www.fabfile.org/](https://www.fabfile.org/)。
+- [API Docs https://docs.fabfile.org/en/2.5/](https://docs.fabfile.org/en/2.5/)。
 
 
 
