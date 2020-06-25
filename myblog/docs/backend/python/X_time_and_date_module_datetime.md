@@ -358,3 +358,35 @@ time.struct_time(tm_year=2020, tm_mon=6, tm_mday=25, tm_hour=0, tm_min=0, tm_sec
 
 ## `datetime.time`时间类
 
+`class datetime.time(hour=0, minute=0, second=0, microsecond=0, tzinfo=None, *, fold=0)`时间对象，所有参数可选。
+
+
+
+参数取值说明：
+
+  - `0 <= hour < 24`,
+  - `0 <= minute < 60`,
+  - `0 <= second < 60`,
+  - `0 <= microsecond < 1000000`,
+  - `fold in [0, 1]`.
+
+查看
+
+```python
+>>> datetime.time?
+Init signature: datetime.time(self, /, *args, **kwargs)
+Docstring:
+time([hour[, minute[, second[, microsecond[, tzinfo]]]]]) --> a time object
+
+All arguments are optional. tzinfo may be None, or an instance of
+a tzinfo subclass. The remaining arguments may be ints.
+File:           /Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/datetime.py
+Type:           type
+Subclasses:
+
+>>> ntime = datetime.time(6,48,5)
+
+>>> ntime
+datetime.time(6, 48, 5)
+```
+
