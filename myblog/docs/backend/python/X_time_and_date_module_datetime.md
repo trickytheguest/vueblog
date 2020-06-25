@@ -238,3 +238,121 @@ datetime.date(9999, 12, 31)
 datetime.timedelta(1)
 ```
 
+- 查看类方法
+
+```python
+# 返回当前的本地日期，相当于datetime.date.fromtimestamp(time.time())
+>>> datetime.date.today()
+datetime.date(2020, 6, 25)
+
+>>> import time
+
+# 返回时间戳对应的date对象
+>>> datetime.date.fromtimestamp(time.time())
+datetime.date(2020, 6, 25)
+```
+
+- 实例的方法
+
+`date.replace(year=self.year, month=self.month, day=self.day)`返回一个具有同样值的日期，除非通过任何关键字参数给出了某些形参的新值。
+
+```python
+>>> ndate
+datetime.date(2020, 6, 25)
+
+>>> ndate.replace(day=26)
+datetime.date(2020, 6, 26)
+
+>>> ndate
+datetime.date(2020, 6, 25)
+
+>>> ndate.replace(year=2021, month=5, day=1)
+datetime.date(2021, 5, 1)
+
+>>> ndate
+datetime.date(2020, 6, 25)
+```
+
+可以看到使用`replace`方法替换时，只是返回一个新的`date`类对象，不会改变原来的实例。
+
+
+
+`date.timetuple()` 返回一个 time.struct_time时间元组。
+
+
+
+```python
+>>> ndate.timetuple()
+time.struct_time(tm_year=2020, tm_mon=6, tm_mday=25, tm_hour=0, tm_min=0, tm_sec=0, tm_wday=3, tm_yday=177, tm_isdst=-1)
+```
+
+
+
+`date.weekday()`返回当前日期是星期几，0代表周一，6代表周日。
+
+```python
+# 2020年6月25日是周四
+>>> ndate.weekday()
+3
+```
+
+`date.isoweekday()`返回当前日期是星期几，1代表周一，7代表周日。
+
+```python
+# 2020年6月25日是周四
+>>> ndate.isoweekday()
+4
+```
+
+`date.isocalendar()`返回当前日期对应的日历元组` (ISO year, ISO week number, ISO weekday)`。
+
+```python
+# 2020年6月25日的年份是2020年，是该年的第26周，周四
+>>> ndate.isocalendar()
+(2020, 26, 4)
+```
+
+`date.isoformat()`返回一个以 ISO 8601 格式`YYYY-MM-DD`来表示日期的字符串。与`date.__str__()`等价。
+
+```python
+>>> ndate.isoformat()
+'2020-06-25'
+
+>>> ndate.__str__()
+'2020-06-25'
+```
+
+可以看到此时日期字符串是四位数字的年份-两位数字的月份-两位数字的日期。
+
+`date.ctime()`返回一个表示日期的字符串。
+
+```python
+>>> ndate.ctime()
+'Thu Jun 25 00:00:00 2020'
+```
+
+`date.strftime(format)`返回一个由显式格式字符串所指明的代表日期的字符串。与`date.__format__(format)`等价。
+
+```python
+>>> ndate.strftime('%Y%m%d')
+'20200625'
+
+>>> ndate.strftime('%Y-%m-%d')
+'2020-06-25'
+
+>>> ndate.strftime('%Y年%m月%d日')
+'2020年06月25日'
+
+>>> ndate.strftime('%Y %b %d')
+'2020 Jun 25'
+
+>>> ndate.__format__('%Y %b %d')
+'2020 Jun 25'
+
+>>> ndate.__format__('%Y-%m-%d')
+'2020-06-25'
+
+>>> ndate.__format__('%Y年%m月%d日')
+'2020年06月25日'
+```
+
