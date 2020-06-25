@@ -90,11 +90,20 @@ TypeError: Required argument 'year' (pos 1) not found
 
 可以看到`datetime.date`类实例化时需要提供year, month, day三个参数。
 
+参数说明如下：
+
+- 所有参数都是必须的。
+- 参数都需要为integer整数。
+
+- `MINYEAR <= year <= MAXYEAR`
+- `1 <= month <= 12`
+- `1 <= day <= number of days in the given month and year`
+
 我们来实现化一个`datetime.date`类对象。
 
+正常实例化：
 
-
-```py
+```python
 >>> datetime.date(2020, 6, 25)
 datetime.date(2020, 6, 25)
 
@@ -102,5 +111,130 @@ datetime.date(2020, 6, 25)
 
 >>> ndate
 datetime.date(2020, 6, 25)
+```
+
+检查异常：
+
+
+
+#### 整型检查
+
+```python
+>>> datetime.date(2020.3, 6, 25)
+---------------------------------------------------------------------------
+TypeError                                 Traceback (most recent call last)
+<ipython-input-12-378e9f0dc353> in <module>
+----> 1 datetime.date(2020.3, 6, 25)
+
+TypeError: integer argument expected, got float
+
+>>> datetime.date(2020, 6.3, 25)
+---------------------------------------------------------------------------
+TypeError                                 Traceback (most recent call last)
+<ipython-input-13-7f03f9cdb50c> in <module>
+----> 1 datetime.date(2020, 6.3, 25)
+
+TypeError: integer argument expected, got float
+
+>>> datetime.date(2020, 6, 25.3)
+---------------------------------------------------------------------------
+TypeError                                 Traceback (most recent call last)
+<ipython-input-15-b1a4edea2412> in <module>
+----> 1 datetime.date(2020, 6, 25.3)
+
+TypeError: integer argument expected, got float
+```
+
+可以发现输入小数后实例化会报`TypeError`异常。
+
+
+
+#### 值异常检查
+
+```python
+>>> datetime.date(9999, 6, 25)
+datetime.date(9999, 6, 25)
+
+>>> datetime.date(10000, 6, 25)
+---------------------------------------------------------------------------
+ValueError                                Traceback (most recent call last)
+<ipython-input-18-254ebe0a2d38> in <module>
+----> 1 datetime.date(10000, 6, 25)
+
+ValueError: year 10000 is out of range
+
+>>> datetime.date(0, 6, 25)
+---------------------------------------------------------------------------
+ValueError                                Traceback (most recent call last)
+<ipython-input-19-5753139fb256> in <module>
+----> 1 datetime.date(0, 6, 25)
+
+ValueError: year 0 is out of range
+
+>>> datetime.date(-0, 6, 25)
+---------------------------------------------------------------------------
+ValueError                                Traceback (most recent call last)
+<ipython-input-20-1c1ea584a919> in <module>
+----> 1 datetime.date(-0, 6, 25)
+
+ValueError: year 0 is out of range
+
+>>> datetime.date(-2020, 6, 25)
+---------------------------------------------------------------------------
+ValueError                                Traceback (most recent call last)
+<ipython-input-21-5def12532dda> in <module>
+----> 1 datetime.date(-2020, 6, 25)
+
+ValueError: year -2020 is out of range
+```
+
+可以发现输入年份不在[0, 9999]区间时，实例化会报`ValueError`异常。
+
+查看源码可知实例化时会使用`year, month, day = _check_date_fields(year, month, day)`对年月日参数进行有效性检查。
+
+#### `datetime.date`类的方法和属性
+
+查看`datetime.date`类的方法和属性：
+
+```python
+>>> ndate.
+           ctime()         fromtimestamp() isoweekday()    month           strftime()      toordinal()
+           day             isocalendar()   max             replace()       timetuple()     weekday()
+           fromordinal()   isoformat()     min             resolution      today()         year
+```
+
+- 查看实例的年月日属性
+
+```python
+>>> ndate
+datetime.date(2020, 6, 25)
+
+# 年份
+>>> ndate.year
+2020
+
+# 月份
+>>> ndate.month
+6
+
+# 日期
+>>> ndate.day
+25
+```
+
+- 查看类属性
+
+```python
+# 最小的日期
+>>> ndate.min
+datetime.date(1, 1, 1)
+
+# 最大的日期
+>>> ndate.max
+datetime.date(9999, 12, 31)
+
+# 两个日期对象的最小间隔
+>>> ndate.resolution
+datetime.timedelta(1)
 ```
 
