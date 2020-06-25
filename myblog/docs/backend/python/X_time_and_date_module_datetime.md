@@ -388,18 +388,57 @@ Subclasses:
 
 >>> ntime
 datetime.time(6, 48, 5)
+
+>>> ntime.
+ntime.dst(        ntime.isoformat(  ntime.min         ntime.resolution  ntime.tzinfo
+ntime.fold        ntime.max         ntime.minute      ntime.second      ntime.tzname(
+ntime.hour        ntime.microsecond ntime.replace(    ntime.strftime(   ntime.utcoffset(
 ```
 
 ### `datetime.time`类方法
 
 ```python
+# 最小时间
 >>> datetime.time.min
 datetime.time(0, 0)
 
+# 最大时间
 >>> datetime.time.max
 datetime.time(23, 59, 59, 999999)
 
+# 时间对象的最小间隔
 >>> datetime.time.resolution
 datetime.timedelta(0, 0, 1)
+```
+
+### `datetime.time`类实例属性
+
+
+
+```python
+>>> ntime.
+ntime.dst(        ntime.isoformat(  ntime.min         ntime.resolution  ntime.tzinfo
+ntime.fold        ntime.max         ntime.minute      ntime.second      ntime.tzname(
+ntime.hour        ntime.microsecond ntime.replace(    ntime.strftime(   ntime.utcoffset(
+
+# 获取时间对象小时值
+>>> ntime.hour
+6
+
+# 获取时间对象分钟值
+>>> ntime.minute
+48
+
+# 获取时间对象秒值
+>>> ntime.second
+5
+
+# 获取时间对象微秒值
+>>> ntime.microsecond
+0
+  
+# 获取tzinfo参数传递的值，没有指定tzinfo时，返回None
+>>> ntime.tzinfo
+  
 ```
 
