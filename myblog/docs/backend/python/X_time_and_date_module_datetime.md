@@ -370,7 +370,7 @@ time.struct_time(tm_year=2020, tm_mon=6, tm_mday=25, tm_hour=0, tm_min=0, tm_sec
   - `0 <= microsecond < 1000000`,
   - `fold in [0, 1]`.
 
-查看
+查看帮助信息并实例化对象：
 
 ```python
 >>> datetime.time?
@@ -388,5 +388,18 @@ Subclasses:
 
 >>> ntime
 datetime.time(6, 48, 5)
+```
+
+### `datetime.time`类方法
+
+```python
+>>> datetime.time.min
+datetime.time(0, 0)
+
+>>> datetime.time.max
+datetime.time(23, 59, 59, 999999)
+
+>>> datetime.time.resolution
+datetime.timedelta(0, 0, 1)
 ```
 
