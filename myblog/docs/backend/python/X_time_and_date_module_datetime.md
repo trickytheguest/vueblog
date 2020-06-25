@@ -3,7 +3,7 @@
 
 [[toc]]
 
-## `datetime`模块
+
 
 查看`datetime`模块有哪些函数或方法：
 
@@ -32,7 +32,7 @@ datetime.datetime(     datetime.MAXYEAR       datetime.sys           datetime.ti
 
 在支持日期时间数学运算的同时，实现的关注点更着重于如何能够更有效地解析其属性用于格式化输出和数据操作。
 
-### 常量
+## 常量
 
 `date`和`datetime`对象允许的最小、最大年份，最小年份为1，最大年份为9999。
 ```py
@@ -52,7 +52,7 @@ datetime.datetime(     datetime.MAXYEAR       datetime.sys           datetime.ti
 - `class datetime.timezone`时区设置，是tzinfo类的子类。
 
 
-### 通用的特征属性
+## 通用的特征属性
 
 `date`, `datetime`, `time`和`timezone`类型共享这些通用特性:
 
@@ -60,7 +60,7 @@ datetime.datetime(     datetime.MAXYEAR       datetime.sys           datetime.ti
 - 这些类型的对象是可哈希的，这意味着它们可被作为字典的键。
 - 这些类型的对象支持通过 pickle 模块进行高效的封存。
 
-### `datetime.date`日期类
+## `datetime.date`日期类
 
 初步使用date类：
 
@@ -117,7 +117,7 @@ datetime.date(2020, 6, 25)
 
 
 
-#### 整型检查
+### 整型检查
 
 ```python
 >>> datetime.date(2020.3, 6, 25)
@@ -149,7 +149,7 @@ TypeError: integer argument expected, got float
 
 
 
-#### 值异常检查
+### 值异常检查
 
 ```python
 >>> datetime.date(9999, 6, 25)
@@ -192,7 +192,7 @@ ValueError: year -2020 is out of range
 
 查看源码可知实例化时会使用`year, month, day = _check_date_fields(year, month, day)`对年月日参数进行有效性检查。
 
-#### `datetime.date`类的方法和属性
+### `datetime.date`类的方法和属性
 
 查看`datetime.date`类的方法和属性：
 
@@ -355,4 +355,6 @@ time.struct_time(tm_year=2020, tm_mon=6, tm_mday=25, tm_hour=0, tm_min=0, tm_sec
 >>> ndate.__format__('%Y年%m月%d日')
 '2020年06月25日'
 ```
+
+## `datetime.time`时间类
 
