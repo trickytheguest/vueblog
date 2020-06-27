@@ -469,3 +469,22 @@ True
 
 ### `datetime.time`类实例方法
 
+
+
+`time.replace(hour=self.hour, minute=self.minute, second=self.second, microsecond=self.microsecond, tzinfo=self.tzinfo, * fold=0)`时间对象替换，返回新的`time`对象。
+
+```python
+>>> ntime.replace?
+Docstring: Return time with new specified fields.
+Type:      builtin_function_or_method
+
+>>> ntime
+datetime.time(6, 48, 5)
+
+>>> ntime.replace(7,3,6)
+datetime.time(7, 3, 6)
+
+>>> ntime
+datetime.time(6, 48, 5)
+```
+
