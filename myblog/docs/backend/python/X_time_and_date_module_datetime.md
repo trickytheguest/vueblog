@@ -413,8 +413,6 @@ datetime.timedelta(0, 0, 1)
 
 ### `datetime.time`类实例属性
 
-
-
 ```python
 >>> ntime.
 ntime.dst(        ntime.isoformat(  ntime.min         ntime.resolution  ntime.tzinfo
@@ -439,6 +437,18 @@ ntime.hour        ntime.microsecond ntime.replace(    ntime.strftime(   ntime.ut
   
 # 获取tzinfo参数传递的值，没有指定tzinfo时，返回None
 >>> ntime.tzinfo
-  
+
+# 取值范围是 [0, 1]。 用于在重复的时间段中消除边界时间歧义，对于中国没有夏令时似乎没有实际意义，不用理会
+>>> ntime.fold
+0
 ```
+
+布尔运算时，`datetime.time`时间对象永远认为是`True`真值。
+
+```python
+>>> bool(ntime)
+True
+```
+
+
 
