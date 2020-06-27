@@ -443,6 +443,23 @@ ntime.hour        ntime.microsecond ntime.replace(    ntime.strftime(   ntime.ut
 0
 ```
 
+`datetime.time`对象支持`time`与`time`之间的比较：
+
+```python
+>>> atime = datetime.time(6, 48, 5)
+
+>>> btime = datetime.time(19, 53, 6)
+
+>>> atime < btime
+True
+
+>>> atime == btime
+False
+
+>>> atime != btime
+True
+```
+
 布尔运算时，`datetime.time`时间对象永远认为是`True`真值。
 
 ```python
@@ -450,5 +467,5 @@ ntime.hour        ntime.microsecond ntime.replace(    ntime.strftime(   ntime.ut
 True
 ```
 
-
+### `datetime.time`类实例方法
 
