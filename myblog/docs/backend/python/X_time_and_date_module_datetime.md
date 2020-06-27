@@ -488,3 +488,38 @@ datetime.time(7, 3, 6)
 datetime.time(6, 48, 5)
 ```
 
+`time.isoformat(timespec='auto')`返回表示为 ISO 8601 格式之一的时间字符串。
+
+```python
+>>> ntime.isoformat?
+Docstring:
+Return string in ISO 8601 format, [HH[:MM[:SS[.mmm[uuu]]]]][+HH:MM].
+
+timespec specifies what components of the time to include.
+Type:      builtin_function_or_method
+
+>>> ntime.isoformat()
+'06:48:05'
+
+# 自动设置格式，等价于'seconds'，返回HH:MM:SS格式
+>>> ntime.isoformat(timespec='auto')
+'06:48:05'
+
+# 返回小时
+>>> ntime.isoformat(timespec='hours')
+'06'
+
+# 返回小时和分钟
+>>> ntime.isoformat(timespec='minutes')
+'06:48'
+
+>>> ntime.isoformat(timespec='seconds')
+'06:48:05'
+
+>>> ntime.isoformat(timespec='milliseconds')
+'06:48:05.000'
+
+>>> ntime.isoformat(timespec='microseconds')
+'06:48:05.000000'
+```
+
