@@ -526,3 +526,16 @@ Type:      builtin_function_or_method
 '06:48:05.000000'
 ```
 
+`time.__str__()`对于`time`时间对象`t`，`str(t)`与`t.isoformat()`等价。返回标准时间字符串。
+
+```python
+>>> str(ntime)
+'06:48:05'
+
+>>> ntime.isoformat()
+'06:48:05'
+
+>>> ntime.__str__()
+'06:48:05'
+```
+
