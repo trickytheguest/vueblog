@@ -539,3 +539,16 @@ Type:      builtin_function_or_method
 '06:48:05'
 ```
 
+`time.strftime(format)`按指定格式格式化时间对象。具体的格式化标志请参考[https://docs.python.org/3.6/library/datetime.html#strftime-strptime-behavior](https://docs.python.org/3.6/library/datetime.html#strftime-strptime-behavior)。
+
+```python
+>>> ntime.strftime('%H%M%S')
+'064805'
+
+>>> ntime.strftime('%H:%M:%S')
+'06:48:05'
+
+>>> ntime.strftime('%H:%M:%S %p')
+'06:48:05 AM'
+```
+
