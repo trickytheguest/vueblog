@@ -550,5 +550,10 @@ Type:      builtin_function_or_method
 
 >>> ntime.strftime('%H:%M:%S %p')
 '06:48:05 AM'
+
+
+time.__format__(format)与time.strftime(format)等价
+>>> ntime.__format__('%H:%M:%S')
+'06:48:05'
 ```
 
