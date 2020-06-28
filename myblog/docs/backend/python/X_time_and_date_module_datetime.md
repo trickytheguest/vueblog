@@ -513,12 +513,15 @@ Type:      builtin_function_or_method
 >>> ntime.isoformat(timespec='minutes')
 '06:48'
 
+# 返回小时、分钟和秒数
 >>> ntime.isoformat(timespec='seconds')
 '06:48:05'
 
+# 返回小时、分钟和秒数，秒数精确到毫秒
 >>> ntime.isoformat(timespec='milliseconds')
 '06:48:05.000'
 
+# 返回小时、分钟和秒数，秒数精确到微秒
 >>> ntime.isoformat(timespec='microseconds')
 '06:48:05.000000'
 ```
