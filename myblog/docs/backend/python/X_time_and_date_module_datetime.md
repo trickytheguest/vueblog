@@ -557,3 +557,17 @@ time.__format__(format)与time.strftime(format)等价
 '06:48:05'
 ```
 
+另外三个方法`time.utcoffset()`、`time.dst()`、`time.tzname()`与`tzinfo`相关，如果`datetime.time`对象没有设置tzinfo,则返回值为`None`。
+
+```python
+>>> ntime.utcoffset()
+
+>>> ntime.dst()
+
+>>> ntime.tzname()
+```
+
+
+
+
+
