@@ -574,3 +574,20 @@ time.__format__(format)与time.strftime(format)等价
 `datetime.datetime`对象是包含来自`datetime.time`对象和`datetime.date`对象的所有信息的单一对象。
 
 与`datetime.date`对象一样，`datetime.datetime`假定当前的格列高利历(Gregorian calendar)向前后两个方向无限延伸；与`datetime.time`对象一样，`datetime.datetime`假定假定每一天恰好有 3600*24 秒。
+
+ `class datetime.datetime(year, month, day, hour=0, minute=0, second=0, microsecond=0, tzinfo=None, *, fold=0)`*year*, *month* 和 *day* 参数是必须的。 *tzinfo* 可以是 `None` 或者是一个 [`tzinfo`](https://docs.python.org/zh-cn/3/library/datetime.html#datetime.tzinfo)子类的实例。 其余的参数必须是在下面范围内的整数：
+
+- `MINYEAR <= year <= MAXYEAR`,
+- `1 <= month <= 12`,
+- `1 <= day <= 指定年月的天数`,
+- `0 <= hour < 24`,
+- `0 <= minute < 60`,
+- `0 <= second < 60`,
+- `0 <= microsecond < 1000000`,
+- `fold in [0, 1]`.
+
+如果参数不在这些范围内，则抛出 [`ValueError`](https://docs.python.org/zh-cn/3/library/exceptions.html#ValueError) 异常。
+
+
+
+### `datetime.datetime`类方法
