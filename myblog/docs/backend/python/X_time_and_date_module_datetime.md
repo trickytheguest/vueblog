@@ -569,5 +569,8 @@ time.__format__(format)与time.strftime(format)等价
 
 
 
+## `datetime.datetime`日期时间类
 
+`datetime.datetime`对象是包含来自`datetime.time`对象和`datetime.date`对象的所有信息的单一对象。
 
+与`datetime.date`对象一样，`datetime.datetime`假定当前的格列高利历(Gregorian calendar)向前后两个方向无限延伸；与`datetime.time`对象一样，`datetime.datetime`假定假定每一天恰好有 3600*24 秒。
