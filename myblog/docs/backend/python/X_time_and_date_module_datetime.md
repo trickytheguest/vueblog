@@ -591,3 +591,28 @@ time.__format__(format)与time.strftime(format)等价
 
 
 ### `datetime.datetime`类方法
+
+
+
+```python
+>>> datetime.datetime?
+Init signature: datetime.datetime(self, /, *args, **kwargs)
+Docstring:
+datetime(year, month, day[, hour[, minute[, second[, microsecond[,tzinfo]]]]])
+
+The year, month and day arguments are required. tzinfo may be None, or an
+instance of a tzinfo subclass. The remaining arguments may be ints.
+File:           /Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/datetime.py
+Type:           type
+Subclasses:
+  
+>>> datetime.datetime.today()
+datetime.datetime(2020, 6, 30, 7, 28, 8, 46004)
+
+>>> datetime.datetime.now()
+datetime.datetime(2020, 6, 30, 7, 28, 27, 965728)
+
+>>> datetime.datetime.utcnow()
+datetime.datetime(2020, 6, 29, 23, 28, 46, 771171)
+```
+
