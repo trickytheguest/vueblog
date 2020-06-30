@@ -987,3 +987,31 @@ Type:      builtin_function_or_method
 >>> ndatetime.isocalendar()
 (2020, 27, 2)
 ```
+
+- ` datetime.isoformat(sep='T', timespec='auto')`返回一个以 ISO 8601 格式表示的日期和时间字符串
+
+```python
+>>> ndatetime.isoformat?
+Docstring:
+[sep] -> string in ISO 8601 format, YYYY-MM-DDT[HH[:MM[:SS[.mmm[uuu]]]]][+HH:MM].
+sep is used to separate the year from the time, and defaults to 'T'.
+timespec specifies what components of the time to include (allowed values are 'auto', 'hours', 'minutes', 'seconds', 'milliseconds', and 'microseconds').
+Type:      builtin_function_or_method
+
+>>> ndatetime.isoformat()
+'2020-06-30T20:55:14.377464'
+
+>>> ndatetime.isoformat(timespec='minutes')
+'2020-06-30T20:55'
+
+>>> ndatetime.isoformat(timespec='seconds')
+'2020-06-30T20:55:14'
+```
+
+- `datetime.__str__()`等价于`datetime.isoformat(sep=' '`)。
+
+```python
+>>> ndatetime.__str__()
+'2020-06-30 20:55:14.377464'
+```
+
