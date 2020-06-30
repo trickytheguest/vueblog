@@ -1,3 +1,5 @@
+
+
 # 日期和时间模块-`datetime`日期时间模块
 
 
@@ -746,5 +748,90 @@ datetime.datetime(9999, 12, 31, 23, 59, 59, 999999)
 # 两个datetime对象之间的最小间隔
 >>> datetime.datetime.resolution
 datetime.timedelta(0, 0, 1)
+```
+
+### `datetime.datetime`实例属性
+
+查看`datetime.datetime`实例的所有属性和方法：
+
+```python
+>>> ndatetime = datetime.datetime.today()
+>>> ndatetime.
+ndatetime.astimezone(       ndatetime.isocalendar(      ndatetime.resolution        ndatetime.tzinfo
+ndatetime.combine(          ndatetime.isoformat(        ndatetime.second            ndatetime.tzname(
+ndatetime.ctime(            ndatetime.isoweekday(       ndatetime.strftime(         ndatetime.utcfromtimestamp(
+ndatetime.date(             ndatetime.max               ndatetime.strptime(         ndatetime.utcnow(
+ndatetime.day               ndatetime.microsecond       ndatetime.time(             ndatetime.utcoffset(
+ndatetime.dst(              ndatetime.min               ndatetime.timestamp(        ndatetime.utctimetuple(
+ndatetime.fold              ndatetime.minute            ndatetime.timetuple(        ndatetime.weekday(
+ndatetime.fromordinal(      ndatetime.month             ndatetime.timetz(           ndatetime.year
+ndatetime.fromtimestamp(    ndatetime.now(              ndatetime.today(
+ndatetime.hour              ndatetime.replace(          ndatetime.toordinal(
+>>> 
+```
+
+`datetime.datetime`实例属性：
+
+```python
+>>> datetime.datetime.today()
+datetime.datetime(2020, 6, 30, 20, 54, 51, 974744)
+
+>>> ndatetime = datetime.datetime.today()
+
+>>> ndatetime
+datetime.datetime(2020, 6, 30, 20, 55, 14, 377464)
+
+# 年
+>>> ndatetime.year
+2020
+
+# 月
+>>> ndatetime.month
+6
+
+# 日
+>>> ndatetime.day
+30
+
+# 小时
+>>> ndatetime.hour
+20
+
+# 分钟
+>>> ndatetime.minute
+55
+
+# 秒
+>>> ndatetime.second
+14
+
+# 微秒
+>>> ndatetime.microsecond
+377464
+
+# 作为 tzinfo 参数被传给 datetime 构造器的对象，如果没有传入值则为 None
+>>> ndatetime.tzinfo
+
+# 取值范围是 [0, 1]。 用于在重复的时间段中消除边界时间歧义。
+>>> ndatetime.fold
+0
+```
+
+
+
+### `datetime.datetime`实例方法
+
+```python
+>>> ndatetime.date()
+datetime.date(2020, 6, 30)
+
+>>> ndatetime.time()
+datetime.time(20, 55, 14, 377464)
+
+>>> ndatetime.timetz()
+datetime.time(20, 55, 14, 377464)
+
+>>> ndatetime.timetuple()
+time.struct_time(tm_year=2020, tm_mon=6, tm_mday=30, tm_hour=20, tm_min=55, tm_sec=14, tm_wday=1, tm_yday=182, tm_isdst=-1)
 ```
 
