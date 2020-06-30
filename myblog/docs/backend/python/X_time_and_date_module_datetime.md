@@ -592,8 +592,6 @@ time.__format__(format)与time.strftime(format)等价
 
 ### `datetime.datetime`类方法
 
-
-
 ```python
 >>> datetime.datetime?
 Init signature: datetime.datetime(self, /, *args, **kwargs)
@@ -730,5 +728,23 @@ Type:      builtin_function_or_method
 
 >>> datetime.datetime.strptime('2020-06-30 20:30:32', '%Y-%m-%d %H:%M:%S')
 datetime.datetime(2020, 6, 30, 20, 30, 32)
+```
+
+
+
+### `datetime.datetime`类属性
+
+```python
+# 最早可以表示的日期时间
+>>> datetime.datetime.min
+datetime.datetime(1, 1, 1, 0, 0)
+
+# 最晚可以表示的日期时间
+>>> datetime.datetime.max
+datetime.datetime(9999, 12, 31, 23, 59, 59, 999999)
+
+# 两个datetime对象之间的最小间隔
+>>> datetime.datetime.resolution
+datetime.timedelta(0, 0, 1)
 ```
 
