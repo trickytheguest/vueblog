@@ -605,14 +605,105 @@ instance of a tzinfo subclass. The remaining arguments may be ints.
 File:           /Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/datetime.py
 Type:           type
 Subclasses:
-  
+
+# 返回表示当前地方时的datetime对象，其中tzinfo为None
+>>> datetime.datetime.today?
+Docstring: Current date or datetime:  same as self.__class__.fromtimestamp(time.time()).
+Type:      builtin_function_or_method
+
 >>> datetime.datetime.today()
 datetime.datetime(2020, 6, 30, 7, 28, 8, 46004)
 
+
+# 返回当前地方时的日期和时间，如果tz参数未指定，则与today()类方法等价。如果 tz 不为 None，它必须是 tzinfo 子类的一个实例，并且当前日期和时间将被转换到 tz 时区。
+>>> datetime.datetime.now?
+Signature: datetime.datetime.now(tz=None)
+Docstring:
+Returns new datetime object representing current time local to tz.
+
+  tz
+    Timezone object.
+
+If no tz is specified, uses local timezone.
+Type:      builtin_function_or_method
+  
 >>> datetime.datetime.now()
 datetime.datetime(2020, 6, 30, 7, 28, 27, 965728)
 
+
+# 返回表示当前 UTC 时间的 date 和 time，其中 tzinfo 为 None
+>>> datetime.datetime.utcnow?
+Docstring: Return a new datetime representing UTC day and time.
+Type:      builtin_function_or_method
+  
 >>> datetime.datetime.utcnow()
 datetime.datetime(2020, 6, 29, 23, 28, 46, 771171)
+
+# 返回时间戳timestamp对应的本地日期和时间,如果指定tz，则其必须是tzinfo子类
+>>> datetime.datetime.fromtimestamp?
+Docstring: timestamp[, tz] -> tz's local time from POSIX timestamp.
+Type:      builtin_function_or_method
+
+>>> import time
+
+>>> datetime.datetime.fromtimestamp(time.time())
+datetime.datetime(2020, 6, 30, 7, 55, 54, 336472)
+
+>>> time.time()
+1593474958.3385558
+
+# 返回时间戳timestamp对应的UTC日期和时间
+>>> datetime.datetime.utcfromtimestamp?
+Docstring: Construct a naive UTC datetime from a POSIX timestamp.
+Type:      builtin_function_or_method
+
+>>> datetime.datetime.utcfromtimestamp(time.time())
+datetime.datetime(2020, 6, 30, 0, 6, 44, 530452)
+
+
+# 返回对应于预期格列高利历序号的 datetime，其中公元 1 年 1 月 1 日的序号为 1。结果的 hour, minute, second 和 microsecond 值均为 0，并且 tzinfo 值为 None。
+>>> datetime.datetime.fromordinal?
+Docstring: int -> date corresponding to a proleptic Gregorian ordinal.
+Type:      builtin_function_or_method
+
+# 格列高利历序号1对应的日期
+>>> datetime.datetime.fromordinal(1)
+datetime.datetime(1, 1, 1, 0, 0)
+
+# 格列高利历序号2对应的日期
+>>> datetime.datetime.fromordinal(2)
+datetime.datetime(1, 1, 2, 0, 0)
+
+>>> datetime.datetime.fromordinal(30)
+datetime.datetime(1, 1, 30, 0, 0)
+
+>>> datetime.datetime.fromordinal(31)
+datetime.datetime(1, 1, 31, 0, 0)
+
+>>> datetime.datetime.fromordinal(32)
+datetime.datetime(1, 2, 1, 0, 0)
+
+>>> datetime.datetime.fromordinal(365)
+datetime.datetime(1, 12, 31, 0, 0)
+
+# 从公元 1 年 1 月 1 日到现在已经经过了737606天呢！# 格列高利历序号737606对应的日期是今天2020年6月30日
+>>> datetime.datetime.fromordinal(737606)
+datetime.datetime(2020, 6, 30, 0, 0)
+
+# 最大的日期不能超过9999年12月31日
+>>> datetime.datetime.max
+datetime.datetime(9999, 12, 31, 23, 59, 59, 999999)
+
+# 也就是最大的格列高得历序号为3652059，超过这个值就会引发ValueError异常
+>>> datetime.datetime.max.toordinal()
+3652059
+
+>>> datetime.datetime.fromordinal(datetime.datetime.max.toordinal() + 1)
+---------------------------------------------------------------------------
+ValueError                                Traceback (most recent call last)
+<ipython-input-177-8452070d41ee> in <module>
+----> 1 datetime.datetime.fromordinal(datetime.datetime.max.toordinal() + 1)
+
+ValueError: year 10000 is out of range
 ```
 
