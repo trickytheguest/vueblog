@@ -893,3 +893,50 @@ Type:      builtin_function_or_method
 >>> ndatetime.utcoffset()
 ```
 
+- `datetime.dst()`如果 [`tzinfo`](https://docs.python.org/zh-cn/3/library/datetime.html#datetime.datetime.tzinfo) 为 `None`，则返回 `None`，否则返回 `self.tzinfo.dst(self)`。
+
+```python
+>>> ndatetime.dst?
+Docstring: Return self.tzinfo.dst(self).
+Type:      builtin_function_or_method
+
+>>> ndatetime.dst()
+```
+
+- `datetime.tzname()`如果 tzinfo 为`None`，则返回`None`，否则返回 `self.tzinfo.tzname(self)`。
+
+```python
+>>> ndatetime.tzname?
+Docstring: Return self.tzinfo.tzname(self).
+Type:      builtin_function_or_method
+
+>>> ndatetime.tzname()
+```
+
+- `datetime.utftimetuple()`返回UTC形式的时间元组。
+
+```python
+>>> ndatetime.utctimetuple?
+Docstring: Return UTC time tuple, compatible with time.localtime().
+Type:      builtin_function_or_method
+
+>>> ndatetime.utctimetuple()
+time.struct_time(tm_year=2020, tm_mon=6, tm_mday=30, tm_hour=20, tm_min=55, tm_sec=14, tm_wday=1, tm_yday=182, tm_isdst=0)
+```
+
+- `datetime.toordinal()`返回日期的预期格列高利历序号。 与 `self.date().toordinal()` 相同。
+
+```python
+>>> ndatetime.toordinal?
+Docstring: Return proleptic Gregorian ordinal.  January 1 of year 1 is day 1.
+Type:      builtin_function_or_method
+
+# 返回日期的格列高利序号
+>>> ndatetime.toordinal()
+737606
+
+# 从公元 1 年 1 月 1 日到现在已经经过了737606天呢！# 格列高利历序号737606对应的日期是今天2020年6月30日
+>>> datetime.datetime.fromordinal(737606)
+datetime.datetime(2020, 6, 30, 0, 0)
+```
+
