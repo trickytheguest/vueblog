@@ -940,3 +940,50 @@ Type:      builtin_function_or_method
 datetime.datetime(2020, 6, 30, 0, 0)
 ```
 
+- `datetime.timestamp()`返回日期时间对象对应的时间戳。
+
+```python
+>>> ndatetime.timestamp?
+Docstring: Return POSIX timestamp as float.
+Type:      builtin_function_or_method
+
+>>> ndatetime.timestamp()
+1593521714.377464
+```
+
+- `datetime.weekday()`返回日期时间对象是星期几。0代表周一，1代表周二，6代码周日。
+
+```python
+>>> ndatetime.weekday?
+Docstring:
+Return the day of the week represented by the date.
+Monday == 0 ... Sunday == 6
+Type:      builtin_function_or_method
+
+>>> ndatetime.weekday()
+1
+```
+
+- `datetime.isoweekday()`返回日期时间对象是星期几。1代表周一，2代表周二，7代码周日。
+
+```python
+>>> ndatetime.isoweekday?
+Docstring:
+Return the day of the week represented by the date.
+Monday == 1 ... Sunday == 7
+Type:      builtin_function_or_method
+
+>>> ndatetime.isoweekday()
+2
+```
+
+- `datetime.isocalendar()`返回一个 3 元组 (ISO 年份, ISO 周序号, ISO 周日期)。 等同于 self.date().isocalendar()。
+
+```python
+>>> ndatetime.isocalendar?
+Docstring: Return a 3-tuple containing ISO year, week number, and weekday.
+Type:      builtin_function_or_method
+
+>>> ndatetime.isocalendar()
+(2020, 27, 2)
+```
