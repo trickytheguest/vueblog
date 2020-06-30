@@ -705,5 +705,30 @@ ValueError                                Traceback (most recent call last)
 ----> 1 datetime.datetime.fromordinal(datetime.datetime.max.toordinal() + 1)
 
 ValueError: year 10000 is out of range
+  
+  
+>>> ndate
+datetime.date(2020, 6, 25)
+
+>>> ntime
+datetime.time(6, 48, 5)
+
+# 返回一个新的 datetime 对象，对象的日期部分等于给定的 date 对象的值，而其时间部分等于给定的 time 对象的值。
+# combine是结合、合并的意思 
+>>> datetime.datetime.combine?
+Docstring: date, time -> datetime with same date and time fields
+Type:      builtin_function_or_method
+  
+>>> datetime.datetime.combine(ndate, ntime)
+datetime.datetime(2020, 6, 25, 6, 48, 5)
+
+
+# 返回一个对应于 string，根据 format 进行解析得到的 datetime 对象。即将日期时间字符串转换成datetime对象
+>>> datetime.datetime.strptime?
+Docstring: string, format -> new datetime parsed from a string (like time.strptime()).
+Type:      builtin_function_or_method
+
+>>> datetime.datetime.strptime('2020-06-30 20:30:32', '%Y-%m-%d %H:%M:%S')
+datetime.datetime(2020, 6, 30, 20, 30, 32)
 ```
 
