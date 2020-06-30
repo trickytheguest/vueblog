@@ -821,17 +821,75 @@ datetime.datetime(2020, 6, 30, 20, 55, 14, 377464)
 
 ### `datetime.datetime`实例方法
 
+- `datetime.date()`返回date日期对象:
+
 ```python
+# 返回具有同样 year, month 和 day 值的 date 对象。
 >>> ndatetime.date()
 datetime.date(2020, 6, 30)
+```
 
+- `datetime.time()`返回time时间对象：
+
+```python
+# 返回具有同样 hour, minute, second, microsecond 和 fold 值的 time 对象。 tzinfo 值为 None。
 >>> ndatetime.time()
 datetime.time(20, 55, 14, 377464)
+```
 
+- `datetime.timetz()`返回具有同样 hour, minute, second, microsecond, fold 和 tzinfo 属性性的 time 对象。
+
+```python
+# 返回具有同样 hour, minute, second, microsecond, fold 和 tzinfo 属性性的 time 对象。
 >>> ndatetime.timetz()
 datetime.time(20, 55, 14, 377464)
+```
 
+- `datetime.timetuple()`返回时间元组
+
+```python
+# 返回一个 time.struct_time时间元组，即 time.localtime() 所返回的类型。
 >>> ndatetime.timetuple()
 time.struct_time(tm_year=2020, tm_mon=6, tm_mday=30, tm_hour=20, tm_min=55, tm_sec=14, tm_wday=1, tm_yday=182, tm_isdst=-1)
+```
+
+- `datetime.replace(year=self.year, month=self.month, day=self.day, hour=self.hour, minute=self.minute, second=self.second, microsecond=self.microsecond, tzinfo=self.tzinfo, * fold=0)`返回一个具有同样属性值的 datetime，除非通过任何关键字参数为某些属性指定了新值。 请注意可以通过指定 `tzinfo=None` 来从一个感知型 datetime 创建一个简单型 datetime 而不必转换日期和时间数据。
+
+```python
+>>> ndatetime
+datetime.datetime(2020, 6, 30, 20, 55, 14, 377464)
+
+>>> ndatetime.replace?
+Docstring: Return datetime with new specified fields.
+Type:      builtin_function_or_method
+
+# 返回新的datetime对象
+>>> ndatetime.replace(month=7, day=1, hour=7, minute=16, second=30)
+datetime.datetime(2020, 7, 1, 7, 16, 30, 377464)
+
+# ndatetime实例并没有发生变化
+>>> ndatetime
+datetime.datetime(2020, 6, 30, 20, 55, 14, 377464)
+```
+
+- `datetime.astimezone(tz=None)`返回一个具有新的 [`tzinfo`](https://docs.python.org/zh-cn/3/library/datetime.html#datetime.datetime.tzinfo) 属性 *tz* 的 [`datetime`](https://docs.python.org/zh-cn/3/library/datetime.html#datetime.datetime) 对象，并会调整日期和时间数据使得结果对应的 UTC 时间与 *self* 相同，但为 *tz* 时区的本地时间。
+
+```python
+>>> ndatetime.astimezone?
+Docstring: tz -> convert to local time in new timezone tz
+Type:      builtin_function_or_method
+
+>>> ndatetime.astimezone()
+datetime.datetime(2020, 6, 30, 20, 55, 14, 377464, tzinfo=datetime.timezone(datetime.timedelta(0, 28800), 'CST'))
+```
+
+- `datetime.utcoffset`如果 [`tzinfo`](https://docs.python.org/zh-cn/3/library/datetime.html#datetime.datetime.tzinfo) 为 `None`，则返回 `None`，否则返回 `self.tzinfo.utcoffset(self)`。
+
+```python
+>>> ndatetime.utcoffset?
+Docstring: Return self.tzinfo.utcoffset(self).
+Type:      builtin_function_or_method
+
+>>> ndatetime.utcoffset()
 ```
 
