@@ -1139,3 +1139,45 @@ Subclasses:
 datetime.timedelta(64, 29156, 10)
 ```
 
+
+
+### 对日期、时间对象进行算术运算操作
+
+- 对datetime.datetime对象进行算术运算操作
+
+```python
+# 对datetime.datetime对象进行算术运算操作
+>>> ndatetime
+datetime.datetime(2020, 6, 30, 20, 55, 14, 377464)
+
+>>> d1 = ndatetime
+
+>>> d2 = datetime.datetime.today()
+
+>>> d1 < d2
+True
+
+>>> d2 > d1
+True
+
+>>> d2 - d1
+datetime.timedelta(1, 39023, 96117)
+
+>>> delta1 = d2 - d1
+
+>>> delta1
+datetime.timedelta(1, 39023, 96117)
+
+>>> d1 + delta1
+datetime.datetime(2020, 7, 2, 7, 45, 37, 473581)
+
+>>> d1 + delta1 == d2
+True
+
+>>> d2 + delta1
+datetime.datetime(2020, 7, 3, 18, 36, 0, 569698)
+
+>>> d2 - delta1 == d1
+True
+```
+
