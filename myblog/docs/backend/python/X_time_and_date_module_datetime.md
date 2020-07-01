@@ -1,5 +1,3 @@
-
-
 # 日期和时间模块-`datetime`日期时间模块
 
 
@@ -1014,4 +1012,68 @@ Type:      builtin_function_or_method
 >>> ndatetime.__str__()
 '2020-06-30 20:55:14.377464'
 ```
+
+-  `datetime.ctime()`返回一个表示日期和时间的字符串。d.ctime() 等效于:`time.ctime(time.mktime(d.timetuple()))`。
+
+```python
+>>> ndatetime.ctime?
+Docstring: Return ctime() style string.
+Type:      builtin_function_or_method
+
+>>> ndatetime.ctime()
+'Tue Jun 30 20:55:14 2020'
+
+>>> import time
+
+>>> ndatetime.timetuple()
+time.struct_time(tm_year=2020, tm_mon=6, tm_mday=30, tm_hour=20, tm_min=55, tm_sec=14, tm_wday=1, tm_yday=182, tm_isdst=-1)
+
+>>> time.mktime(ndatetime.timetuple())
+1593521714.0
+
+>>> time.ctime(time.mktime(ndatetime.timetuple()))
+'Tue Jun 30 20:55:14 2020'
+```
+
+- `datetime.strftime(format)`返回一个由显式格式字符串所指明的代表日期和时间的字符串。
+
+```python
+>>> ndatetime.strftime?
+Docstring: format -> strftime() style string.
+Type:      builtin_function_or_method
+  
+>>> ndatetime.strftime('%Y%m%d')
+'20200630'
+
+>>> ndatetime.strftime('%Y年%m月%d日')
+'2020年06月30日'
+
+>>> ndatetime.strftime('%H:%M:%S')
+'20:55:14'
+
+>>> ndatetime.strftime('%Y%m%d %H:%M:%S')
+'20200630 20:55:14'
+
+>>> ndatetime.strftime('%Y年%m月%d日%H:%M:%S')
+'2020年06月30日20:55:14'
+```
+
+- `datetime.__format__(format)`与 datetime.strftime() 相同。 此方法使得为 datetime 对象指定以 格式化字符串字面值 表示的格式化字符串以及使用 str.format() 进行格式化成为可能。`str.format()`可参考[https://docs.python.org/zh-cn/3/library/string.html#format-examples](https://docs.python.org/zh-cn/3/library/string.html#format-examples)。
+
+```python
+>>> ndatetime.__format__('%Y年%m月%d日%H:%M:%S')
+'2020年06月30日20:55:14'
+
+>>> '{:%Y年%m月%d日}'.format(ndatetime)
+'2020年06月30日'
+
+>>> '{:%Y年%m月%d日%H:%M:%S}'.format(ndatetime)
+'2020年06月30日20:55:14'
+
+
+>>> 'The {1} is {0:%d}, the {2} is {0:%B}, the {3} is {0:%I:%M%p}.'.format(ndatetime, "day", "month", "time")
+'The day is 30, the month is June, the time is 08:55PM.'
+```
+
+
 
