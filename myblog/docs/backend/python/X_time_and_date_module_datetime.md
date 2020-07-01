@@ -406,9 +406,18 @@ datetime.time(0, 0)
 >>> datetime.time.max
 datetime.time(23, 59, 59, 999999)
 
-# 时间对象的最小间隔
+# 时间对象的最小间隔,注意，time对象不支持算术运算！
 >>> datetime.time.resolution
 datetime.timedelta(0, 0, 1)
+
+# 可以看到进行time类算术运算会出现异常
+>>> datetime.time.max - datetime.time.min
+---------------------------------------------------------------------------
+TypeError                                 Traceback (most recent call last)
+<ipython-input-281-c9a8c1713e41> in <module>
+----> 1 datetime.time.max - datetime.time.min
+
+TypeError: unsupported operand type(s) for -: 'datetime.time' and 'datetime.time'
 ```
 
 ### `datetime.time`类实例属性
@@ -1076,4 +1085,57 @@ Type:      builtin_function_or_method
 ```
 
 
+
+## `datetime.timedelta`时间间隔类
+
+` class datetime.timedelta(days=0, seconds=0, microseconds=0, milliseconds=0, minutes=0, hours=0, weeks=0)`表示两个 date 对象或者 time 对象,或者 datetime 对象之间的时间间隔，精确到微秒。
+
+```python
+>>> datetime.timedelta?
+Init signature: datetime.timedelta(self, /, *args, **kwargs)
+Docstring:
+Difference between two datetime values.
+
+timedelta(days=0, seconds=0, microseconds=0, milliseconds=0, minutes=0, hours=0, weeks=0)
+
+All arguments are optional and default to 0.
+Arguments may be integers or floats, and may be positive or negative.
+File:           /Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/datetime.py
+Type:           type
+Subclasses:
+```
+
+所有参数都是可选的并且默认为 `0`。 这些参数可以是整数或者浮点数，也可以是正数或者负数。
+
+只有 *days*, *seconds* 和 *microseconds* 会存储在内部。 参数单位的换算规则如下：
+
+- 1毫秒会转换成1000微秒。
+- 1分钟会转换成60秒。
+- 1小时会转换成3600秒。
+- 1星期会转换成7天。
+
+并且 days, seconds, microseconds 会经标准化处理以保证表达方式的唯一性，即：
+
+- `0 <= microseconds < 1000000`
+- `0 <= seconds < 3600*24` (一天的秒数)
+- `-999999999 <= days <= 999999999`
+
+示例：
+
+```python
+# 如何对 days, seconds 和 microseconds 以外的任意参数执行“合并”操作并标准化为以上三个结果属性
+>>> from datetime import timedelta
+... delta = timedelta(
+...     days=50,
+...     seconds=27,
+...     microseconds=10,
+...     milliseconds=29000,
+...     minutes=5,
+...     hours=8,
+...     weeks=2
+... )
+
+>>> delta
+datetime.timedelta(64, 29156, 10)
+```
 
