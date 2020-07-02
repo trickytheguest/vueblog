@@ -1248,3 +1248,40 @@ datetime.datetime(2020, 7, 3, 18, 36, 0, 569698)
 True
 ```
 
+
+
+### `datetime.timedelta`类属性
+
+```python
+# 最小的timedelta对象
+>>> datetime.timedelta.min
+datetime.timedelta(-999999999)
+
+# 最大的timedelta对象
+>>> datetime.timedelta.max
+datetime.timedelta(999999999, 86399, 999999)
+
+# 两个timedelta对象的最小间隔
+>>> datetime.timedelta.resolution
+datetime.timedelta(0, 0, 1)
+```
+
+需要注意的是，因为标准化的缘故，`timedelta.max` > `-timedelta.min`，`-timedelta.max` 不可以表示一个 [`timedelta`](https://docs.python.org/zh-cn/3/library/datetime.html#datetime.timedelta) 类对象。
+
+```python
+# 将timedelta.max取负时会出现OverflowError异常
+>>> -datetime.timedelta.max
+---------------------------------------------------------------------------
+OverflowError                             Traceback (most recent call last)
+<ipython-input-333-ba8c83a6c9ef> in <module>
+----> 1 -datetime.timedelta.max
+
+OverflowError: days=-1000000000; must have magnitude <= 999999999
+
+>>> -datetime.timedelta.min
+datetime.timedelta(999999999)
+
+>>> datetime.timedelta.max > -datetime.timedelta.min
+True
+```
+
