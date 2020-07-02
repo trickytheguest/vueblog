@@ -1143,6 +1143,73 @@ datetime.timedelta(64, 29156, 10)
 
 ### 对日期、时间对象进行算术运算操作
 
+- 对datetime.date对象进行算术运算操作
+
+```python
+>>> ndate
+datetime.date(2020, 6, 25)
+
+>>> d1 = ndate
+
+>>> d2 = datetime.date.today()
+
+>>> d2
+datetime.date(2020, 7, 2)
+
+>>> d2 - d1
+datetime.timedelta(7)
+
+>>> delta = d2 - d1
+
+>>> delta
+datetime.timedelta(7)
+
+>>> d1 < d2
+True
+
+>>> d1 > d2
+False
+
+>>> d1 + delta
+datetime.date(2020, 7, 2)
+
+>>> d1 + delta == d2
+True
+
+>>> d2 + delta
+datetime.date(2020, 7, 9)
+
+>>> d2 - delta
+datetime.date(2020, 6, 25)
+
+>>> d2 - delta == d1
+True
+```
+
+- 对datetime.time对象进行算术运算操作
+
+datetime.time对象不支持算术运算操作，进行相关操作会提示异常。
+
+```python
+>>> datetime.time.max
+datetime.time(23, 59, 59, 999999)
+
+>>> datetime.time.min
+datetime.time(0, 0)
+
+>>> datetime.time.max - datetime.time.min
+---------------------------------------------------------------------------
+TypeError                                 Traceback (most recent call last)
+<ipython-input-327-c9a8c1713e41> in <module>
+----> 1 datetime.time.max - datetime.time.min
+
+TypeError: unsupported operand type(s) for -: 'datetime.time' and 'datetime.time'
+
+# 可以进行逻辑运行
+>>> datetime.time.max > datetime.time.min
+True
+```
+
 - 对datetime.datetime对象进行算术运算操作
 
 ```python
