@@ -2,7 +2,7 @@
 
 [[toc]]
 
-
+`dateutil - powerful extensions to datetime`官方解释`dateutil`模块是`datetime`模块的超强扩展！
 
 `dateutil`日期工具模块说明：
 
@@ -32,6 +32,161 @@ Python 3.6.8 (v3.6.8:3c6b436a57, Dec 24 2018, 02:10:22)
 Type "help", "copyright", "credits" or "license" for more information.
 >>> import dateutil
 ```
+
+## 官方示例
+
+我们先来参考[https://dateutil.readthedocs.io/en/stable/examples.html](https://dateutil.readthedocs.io/en/stable/examples.html)官方示例来看看`dateutil`能做些啥。
+
+
+
+### relativedelta相对关系示例
+
+首先开始我们的旅程，导入相应的包：
+
+```python
+$ ipython
+Python 3.6.8 (v3.6.8:3c6b436a57, Dec 24 2018, 02:10:22)
+Type 'copyright', 'credits' or 'license' for more information
+IPython 7.13.0 -- An enhanced Interactive Python. Type '?' for help.
+
+>>> import calendar
+
+>>> from datetime import *
+
+>>> from dateutil.relativedelta import *
+```
+
+虽然Google的编码规范中建议不要使用`import *`来导入模块中的所有对象，我们此处参数官方示例来进行相关的测试，忽略此问题。
+
+
+
+存储两个变量`now`和`today`：
+
+```python
+>>> now = datetime.now()
+
+>>> now
+datetime.datetime(2020, 7, 5, 15, 49, 42, 769673)
+
+>>> today = date.today()
+
+>>> today
+datetime.date(2020, 7, 5)
+```
+
+计算下一个月：
+
+```python
+>>> now + relativedelta(months=+1)
+datetime.datetime(2020, 8, 5, 15, 49, 42, 769673)
+```
+
+计算下一个月另外一周后的时间：
+
+```python
+>>> now + relativedelta(months=+1, weeks=+1)
+datetime.datetime(2020, 8, 12, 15, 49, 42, 769673)
+
+>>> now + relativedelta(months=+1, weeks=1)
+datetime.datetime(2020, 8, 12, 15, 49, 42, 769673)
+```
+
+计算下一个月另外一周后上午10点的时间：
+
+```python
+>>> now + relativedelta(months=+1, weeks=+1, hour=10)
+datetime.datetime(2020, 8, 12, 10, 49, 42, 769673)
+```
+
+上例中，使用了`hour`而不是`hours`，对时间对象的小时数进行替换，如果使用`hours`则会进行算术运算！
+
+
+
+下面这个是使用绝对`relativedelta`的示例。 请注意，使用`year`年和`onth`月（均为单数）会导致在原始日期时间替换`replace`值，而不是对其进行算术运算。
+
+```python
+# 使用了单数的year和month，对时间对象进行了替换，输出到了公元1年1月了
+>>> now + relativedelta(year=1, month=1)
+datetime.datetime(1, 1, 5, 15, 49, 42, 769673)
+```
+
+下面我们进行另一种尝试。
+
+计算两个时间对象之间的间隔：
+
+```python
+>>> relativedelta(datetime(2020, 7, 7, 10, 0), today)
+relativedelta(days=+2, hours=+10)
+
+>>> relativedelta(datetime(2020, 8, 7, 10, 0), today)
+relativedelta(months=+1, days=+2, hours=+10)
+
+
+>>> relativedelta(today, datetime(2020, 8, 7, 10, 0))
+relativedelta(months=-1, days=-2, hours=-10)
+```
+
+计算1年后的时间：
+
+```python
+# 1年后
+>>> now + relativedelta(years=1)
+datetime.datetime(2021, 7, 5, 15, 49, 42, 769673)
+
+# 1年后的前一个月
+>>> now + relativedelta(years=1, months=-1)
+datetime.datetime(2021, 6, 5, 15, 49, 42, 769673)
+```
+
+处理不同天数的月份，请注意，添加一个月永远不会超过月份的边界。
+
+```python
+# 2020年1月27后的一个月是2020年2月27日
+>>> date(2020, 1, 27) + relativedelta(months=1)
+datetime.date(2020, 2, 27)
+
+# 2020年1月28后的一个月是2020年2月28日
+>>> date(2020, 1, 28) + relativedelta(months=1)
+datetime.date(2020, 2, 28)
+
+# 2020年1月29后的一个月是2020年2月29日
+>>> date(2020, 1, 29) + relativedelta(months=1)
+datetime.date(2020, 2, 29)
+
+# 2020年1月30后的一个月是2020年2月29日，
+>>> date(2020, 1, 30) + relativedelta(months=1)
+datetime.date(2020, 2, 29)
+
+# 2020年1月2后的一个月是2020年2月27日
+>>> date(2020, 1, 31) + relativedelta(months=1)
+datetime.date(2020, 2, 29)
+
+# 2020年1月27后的一个月是2020年2月27日
+>>> date(2020, 2, 1) + relativedelta(months=1)
+datetime.date(2020, 3, 1)
+
+# 2020年1月27后的一个月是2020年2月27日
+>>> date(2020, 1, 31) + relativedelta(months=2)
+datetime.date(2020, 3, 31)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
