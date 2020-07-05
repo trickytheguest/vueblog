@@ -1324,3 +1324,31 @@ datetime.timedelta(0, 60)
 86400.0
 ```
 
+`datetime`模块中还有`tzinfo`子类，以及`tzinfo`子类的子类`timezone`，使用相对麻烦，在此不提了！总的来说，`datetime`模块并没有想象的那么简单，其中的各个子类还是比较复杂的。在实际编程中，经常使用`datetime`模块来生成当前时间对应的字符串。
+
+```python
+>>> import datetime 
+
+>>> ndatetime = datetime.datetime.today()
+
+>>> ndatetime
+datetime.datetime(2020, 7, 5, 11, 44, 37, 182216)
+
+# 生成当前时间对应的时间字符串
+>>> ndatetime.strftime('%Y年%m月%d日%H:%M:%S')
+'2020年07月05日11:44:37'
+
+# 生成文件名
+>>> filename = ndatetime.strftime('%Y%m%d_%H%M%S.txt')
+
+>>> filename
+'20200705_114437.txt'
+
+# 创建文件并写入数据
+>>> with open(filename,'w', encoding='utf-8') as f:
+...     f.write(ndatetime.strftime('%Y年%m月%d日%H:%M:%S'))
+...
+```
+
+
+
