@@ -1,7 +1,14 @@
 # 日期和时间模块-`dateutil`日期工具模块
 
-
 [[toc]]
+
+
+
+`dateutil`日期工具模块说明：
+
+- 官方指导文档地址[https://dateutil.readthedocs.io/en/stable/](https://dateutil.readthedocs.io/en/stable/)
+- github源码[https://github.com/dateutil/dateutil/](https://github.com/dateutil/dateutil/)
+- PyPI地址[https://pypi.org/project/python-dateutil/](https://pypi.org/project/python-dateutil/)
 
 ## 安装
 
@@ -27,5 +34,9 @@ Type "help", "copyright", "credits" or "license" for more information.
 ```
 
 
+
+
+
 参考：
+
 - [https://pypi.org/project/python-dateutil/](https://pypi.org/project/python-dateutil/)
