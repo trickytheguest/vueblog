@@ -1285,3 +1285,42 @@ datetime.timedelta(999999999)
 True
 ```
 
+
+
+### `datetime.timedelta`类实例方法
+
+`timedelta.total_secounds()`返回时间间隔包含多少秒。
+
+```python
+>>> year = timedelta(days=365)
+
+>>> year.total_seconds?
+Docstring: Total seconds in the duration.
+Type:      builtin_function_or_method
+
+# 一年有多少秒
+>>> year.total_seconds()
+31536000.0
+
+>>> minute = timedelta(minutes=1)
+
+>>> minute
+datetime.timedelta(0, 60)
+
+1分钟有60秒
+>>> minute.total_seconds()
+60.0
+
+>>> hour = timedelta(hours=1)
+
+# 1小时有3600秒
+>>> hour.total_seconds()
+3600.0
+
+>>> day = timedelta(days=1)
+
+# 1天有86400秒
+>>> day.total_seconds()
+86400.0
+```
+
