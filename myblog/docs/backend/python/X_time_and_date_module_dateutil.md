@@ -210,6 +210,78 @@ datetime.date(2017, 2, 28)
 
 
 
+下个星期五：
+
+```python
+# 今天是2020年7月5日，星期日
+>>> today
+datetime.date(2020, 7, 5)
+
+# 下一个周五是2020年7月10日
+>>> today + relativedelta(weekday=dateutil.relativedelta.FR)
+datetime.date(2020, 7, 10)
+
+# 下一个周一是2020年7月6日
+>>> today + relativedelta(weekday=dateutil.relativedelta.MO)
+datetime.date(2020, 7, 6)
+
+# 下一个周二是2020年7月7日
+>>> today + relativedelta(weekday=dateutil.relativedelta.TU)
+datetime.date(2020, 7, 7)
+
+# 下一个周三是2020年7月8日
+>>> today + relativedelta(weekday=dateutil.relativedelta.WE)
+datetime.date(2020, 7, 8)
+
+# 下一个周四是2020年7月9日
+>>> today + relativedelta(weekday=dateutil.relativedelta.TH)
+datetime.date(2020, 7, 9)
+
+# 下一个周五是2020年7月10日
+>>> today + relativedelta(weekday=dateutil.relativedelta.FR)
+datetime.date(2020, 7, 10)
+
+# 下一个周六是2020年7月11日
+>>> today + relativedelta(weekday=dateutil.relativedelta.SA)
+datetime.date(2020, 7, 11)
+
+# 下一个周日是2020年7月5日，也就是今天！！！如果想得到下一个周日不是今天的，就看下面的示例
+>>> today + relativedelta(weekday=dateutil.relativedelta.SU)
+datetime.date(2020, 7, 5)
+
+# 下一个周日是2020年7月12日
+>>> today + relativedelta(days=1, weekday=dateutil.relativedelta.SU)
+datetime.date(2020, 7, 12)
+
+# 因为今天(2020年7月5日)是周日，所以第1个周日就是2020年7月5日
+>>> today + relativedelta(weekday=dateutil.relativedelta.SU(+1))
+datetime.date(2020, 7, 5)
+
+# 因为今天(2020年7月5日)是周日，第2个周日就是2020年7月12日
+>>> today + relativedelta(weekday=dateutil.relativedelta.SU(2))
+datetime.date(2020, 7, 12)
+
+# 因为今天(2020年7月5日)是周日，所以第2个周日就是2020年7月12日
+>>> today + relativedelta(weekday=dateutil.relativedelta.SU(+2))
+datetime.date(2020, 7, 12)
+
+# 本月最后一个星期五刚好是2020年7月31日，这种方式不准确！！！
+>>> today + relativedelta(day=31, weekday=dateutil.relativedelta.FR)
+datetime.date(2020, 7, 31)
+
+# 本想计算本月最后一个星期天，结果2020年8月2日，已经到下一个月了！！
+>>> today + relativedelta(day=31, weekday=dateutil.relativedelta.SU)
+datetime.date(2020, 8, 2)
+
+# 本月最后一个星期日是好是2020年7月26日
+>>> today + relativedelta(day=31, weekday=dateutil.relativedelta.SU(-1))
+datetime.date(2020, 7, 26)
+
+# 本月最后一个星期五刚好是2020年7月31日
+>>> today + relativedelta(day=31, weekday=dateutil.relativedelta.FR(-1))
+datetime.date(2020, 7, 31)
+```
+
 
 
 
