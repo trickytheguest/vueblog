@@ -172,7 +172,41 @@ datetime.date(2020, 3, 31)
 
 
 
+处理年份也是同样的逻辑，即使是闰年。
 
+```python
+# 2020年1月31日后一年是2021年1月31日
+>>> date(2020, 1, 31) + relativedelta(years=1)
+datetime.date(2021, 1, 31)
+
+# 2020年2月28日后一年是2021年2月28日
+>>> date(2020, 2, 28) + relativedelta(years=1)
+datetime.date(2021, 2, 28)
+
+# 2020年2月29日后一年是2021年2月28日，不会超过2月
+>>> date(2020, 2, 29) + relativedelta(years=1)
+datetime.date(2021, 2, 28)
+
+# 2020年3月1日后一年是2021年3月1日
+>>> date(2020, 3, 1) + relativedelta(years=1)
+datetime.date(2021, 3, 1)
+
+# 1999年2月28日后一年是2000年2月28日
+>>> date(1999, 2, 28) + relativedelta(years=1)
+datetime.date(2000, 2, 28)
+
+# 1999年3月1日后一年是2000年3月1日
+>>> date(1999, 3, 1) + relativedelta(years=1)
+datetime.date(2000, 3, 1)
+
+# 2016年2月28日后一年是2017年2月28日
+>>> date(2016, 2, 28) + relativedelta(years=1)
+datetime.date(2017, 2, 28)
+
+# 2016年2月29日后一年是2017年2月28日，不会超过2月
+>>> date(2016, 2, 29) + relativedelta(years=1)
+datetime.date(2017, 2, 28)
+```
 
 
 
