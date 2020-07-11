@@ -634,6 +634,33 @@ datetime.datetime(2020, 7, 11, 0, 0)
 datetime.datetime(2020, 7, 11, 0, 0)
 ```
 
+iso变异没有分隔符：
+
+```python
+>>> parse('20200711T16:18:44.608638')
+datetime.datetime(2020, 7, 11, 16, 18, 44, 608638)
+
+>>> parse('20200711T161844.608638')
+datetime.datetime(2020, 7, 11, 16, 18, 44, 608638)
+
+>>> parse('20200711T161844')
+datetime.datetime(2020, 7, 11, 16, 18, 44)
+
+>>> parse('20200711T1618')
+datetime.datetime(2020, 7, 11, 16, 18)
+
+>>> parse('20200711T16')
+datetime.datetime(2020, 7, 11, 16, 0)
+
+>>> parse('20200711')
+datetime.datetime(2020, 7, 11, 0, 0)
+
+>>> parse('20200711161844')
+datetime.datetime(2020, 7, 11, 16, 18, 44)
+```
+
+日期的前后顺序：
+
 
 
 
