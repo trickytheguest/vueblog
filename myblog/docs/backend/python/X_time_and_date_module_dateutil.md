@@ -1045,6 +1045,8 @@ if __name__ == '__main__':
 
 
 
+官方文档[https://dateutil.readthedocs.io/en/stable/examples.html](https://dateutil.readthedocs.io/en/stable/examples.html)中还有很多其他的示例，以及其他的一些内容，此处不再详细测试。可以看到`dateutil`模块的功能非常强大。
+
 
 
 
@@ -1052,3 +1054,4 @@ if __name__ == '__main__':
 参考：
 
 - [https://pypi.org/project/python-dateutil/](https://pypi.org/project/python-dateutil/)
+- 官方文档[https://dateutil.readthedocs.io/en/stable/index.html](https://dateutil.readthedocs.io/en/stable/index.html)
