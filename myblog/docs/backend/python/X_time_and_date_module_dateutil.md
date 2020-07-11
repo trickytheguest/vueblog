@@ -282,6 +282,74 @@ datetime.date(2020, 7, 26)
 datetime.date(2020, 7, 31)
 ```
 
+按照ISO年份周编号表示法，可以找到1997年第15周的第一天。
+
+```python
+>>> datetime(1997, 1, 1)  + relativedelta(day=4, weeks=+14, weekday=dateutil.relativedelta.MO(-1))
+datetime.datetime(1997, 4, 7, 0, 0)
+```
+
+计算一个人有多少岁：
+
+```python
+>>> now
+datetime.datetime(2020, 7, 5, 15, 49, 42, 769673)
+
+>>> birthday = datetime(1978, 4, 25, 12, 0)
+
+>>> relativedelta(now, birthday)
+relativedelta(years=+42, months=+2, days=+10, hours=+3, minutes=+49, seconds=+42, microseconds=+769673)
+
+>>> today
+datetime.date(2020, 7, 5)
+
+>>> relativedelta(today, birthday)
+relativedelta(years=+42, months=+2, days=+9, hours=+12)
+```
+
+计算某年第N天的日期：
+
+```python
+# 平年时，2019年的第260天是2019年9月17日
+>>> date(2019,1,1) + relativedelta(yearday=260)
+datetime.date(2019, 9, 17)
+
+# 平年时，2019年的第260天是2019年9月17日
+>>> datetime(2019,1,1) + relativedelta(yearday=260)
+datetime.datetime(2019, 9, 17, 0, 0)
+
+# 平年时，2018年的第260天是2018年9月17日
+>>> datetime(2018,1,1) + relativedelta(yearday=260)
+datetime.datetime(2018, 9, 17, 0, 0)
+
+# 平年时，2018年的第260天是2018年9月17日
+>>> date(2018,1,1) + relativedelta(yearday=260)
+datetime.date(2018, 9, 17)
+
+# 平年时，2018年的第260天是2018年9月17日，虽然此时使用的date(2018,2,1)与relativedelta相加，但2018年的第260年不会变，yearday计算的是绝对日期！
+>>> date(2018,2,1) + relativedelta(yearday=260)
+datetime.date(2018, 9, 17)
+
+# 闫年，2月多一天，所有2020年的第260天是2020年9月16日
+>>> today + relativedelta(yearday=260)
+datetime.date(2020, 9, 16)
+
+# 闫年，2月多一天，所有2020年的第260天是2020年9月16日
+>>> now + relativedelta(yearday=260)
+datetime.datetime(2020, 9, 16, 15, 49, 42, 769673)
+
+# 我们可以使用non-leap year day来忽略闫年的影响，此时使用nlyearday参数，计算2020年的第260天也是9月17日
+>>> now + relativedelta(nlyearday=260)
+datetime.datetime(2020, 9, 17, 15, 49, 42, 769673)
+
+>>> today + relativedelta(nlyearday=260)
+datetime.date(2020, 9, 17)
+
+# 实际上，考虑闫年的话，2020年9月17日是2020年的261天
+>>> datetime(2020,9,17).timetuple()
+time.struct_time(tm_year=2020, tm_mon=9, tm_mday=17, tm_hour=0, tm_min=0, tm_sec=0, tm_wday=3, tm_yday=261, tm_isdst=-1)
+```
+
 
 
 
