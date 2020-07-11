@@ -661,6 +661,100 @@ datetime.datetime(2020, 7, 11, 16, 18, 44)
 
 日期的前后顺序：
 
+```python
+>>> parse("2003-09-25")
+datetime.datetime(2003, 9, 25, 0, 0)
+
+>>>  parse("2003-Sep-25")
+datetime.datetime(2003, 9, 25, 0, 0)
+
+>>> parse("25-Sep-2003")
+datetime.datetime(2003, 9, 25, 0, 0)
+
+>>> parse("Sep-25-2003")
+datetime.datetime(2003, 9, 25, 0, 0)
+
+>>> parse("09-25-2003")
+datetime.datetime(2003, 9, 25, 0, 0)
+
+# 此时因为25不可能是月份，所以将25判断为日期，09判断为月份
+>>> parse("25-09-2003")
+datetime.datetime(2003, 9, 25, 0, 0)
+```
+
+可以看到以上这些年月日的顺序都解析出来的日期。
+
+
+
+有时有可能出现比较含糊的日期字符串。
+
+```python
+# 此时因10小于或等于12，因此有可能10为月份，这中parse会把前面的解析为月，后面的解析为日，所以些时解析出了10月9日
+>>> parse("10-09-2003")
+datetime.datetime(2003, 10, 9, 0, 0)
+
+# 通过dayfirst参数设置为True将前面的解析为日，后面解析为月，所以此时解析出了9月10日
+>>> parse("10-09-2003", dayfirst=True)
+datetime.datetime(2003, 9, 10, 0, 0)
+
+# 当年月日都是两位数时，会将最前面的解析为月份，中间为日期，最后为年份
+>>> parse("10-09-03")
+datetime.datetime(2003, 10, 9, 0, 0)
+
+>>> parse("10-09-04")
+datetime.datetime(2004, 10, 9, 0, 0)
+
+>>> parse("10-09-11")
+datetime.datetime(2011, 10, 9, 0, 0)
+
+>>> parse("10-09-20")
+datetime.datetime(2020, 10, 9, 0, 0)
+
+# 通过yearfirst=True设置前面的为年份，此时解析出的是2010年9月3日
+>>> parse("10-09-03", yearfirst=True)
+datetime.datetime(2010, 9, 3, 0, 0)
+
+# 默认yearfirst=False
+>>> parse("10-09-03", yearfirst=False)
+datetime.datetime(2003, 10, 9, 0, 0)
+```
+
+也可以使用其他的分隔符：
+
+```python
+# 使用点号分隔
+>>> parse("2003.Sep.25")
+datetime.datetime(2003, 9, 25, 0, 0)
+
+>>> parse("2003.09.25")
+datetime.datetime(2003, 9, 25, 0, 0)
+
+# 使用斜杠分隔
+>>> parse("2003/09/25")
+datetime.datetime(2003, 9, 25, 0, 0)
+
+# 当年份放在前面时，只能按年月日的顺序解析
+# 否则会出现解析异常！
+>>> parse("2003.25.09")
+ValueError: month must be in 1..12
+ParserError: month must be in 1..12: 2003.25.09
+    
+>>> parse("2003/25/09")
+ValueError: month must be in 1..12
+ParserError: month must be in 1..12: 2003/25/09
+    
+# 也可以使用空格作为分隔符
+>>>  parse("2003 Sep 25")
+datetime.datetime(2003, 9, 25, 0, 0)
+
+>>>  parse("2003 09 25")
+datetime.datetime(2003, 9, 25, 0, 0)
+
+# 此时25被解析为年份
+>>>  parse("03 09 25")
+datetime.datetime(2025, 3, 9, 0, 0)
+```
+
 
 
 
