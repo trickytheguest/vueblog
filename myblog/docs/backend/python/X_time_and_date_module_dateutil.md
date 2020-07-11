@@ -757,7 +757,291 @@ datetime.datetime(2025, 3, 9, 0, 0)
 
 
 
+带字母小时分钟秒的时间字符也是可以解析的：
 
+```python
+# h和m被解析成了小时和分钟
+>>> parse("01h02m03")
+datetime.datetime(2020, 7, 11, 1, 2, 3)
+
+# h、m和s被解析成了小时、分钟和秒
+>>> parse("10h36m03s")
+datetime.datetime(2020, 7, 11, 10, 36, 3)
+
+>>> today
+datetime.datetime(2020, 7, 11, 16, 18, 44, 608638)
+
+# 此处的01s没有被解析为秒
+>>> parse("01s02h03m", default=today)
+datetime.datetime(2020, 7, 11, 2, 3, 44)
+
+# 此处的01s没有被解析为秒
+>>> parse("01s02h03m", default=datetime.datetime.today())
+datetime.datetime(2020, 7, 11, 2, 3, 9)
+
+# 此处的01s没有被解析为秒
+>>> parse("01s02h03m", default=datetime.datetime.today())
+datetime.datetime(2020, 7, 11, 2, 3, 15)
+
+# 小时h后的22直接被解析为分钟
+>>> parse("10h22")
+datetime.datetime(2020, 7, 11, 10, 22)
+
+# 如果数字后面指定s，22s就会解析为秒了
+>>> parse("10h22s")
+datetime.datetime(2020, 7, 11, 10, 0, 22)
+
+# 解析出小时和分钟
+>>> parse("10h22m")
+datetime.datetime(2020, 7, 11, 10, 22)
+
+# 解析出小时和秒
+>>> parse("10m22s")
+datetime.datetime(2020, 7, 11, 0, 10, 22)
+
+# 解析出小时
+>>> parse("10h")
+datetime.datetime(2020, 7, 11, 10, 0)
+
+# 解析出分钟
+>>> parse("10m")
+datetime.datetime(2020, 7, 11, 0, 10)
+
+# 解析出秒
+>>> parse("10s")
+datetime.datetime(2020, 7, 11, 0, 0, 10)
+```
+
+也可以解析上午和下午AM/PM:
+
+```python
+>>> parse("10h am")
+datetime.datetime(2020, 7, 11, 10, 0)
+
+>>> parse("10h pm")
+datetime.datetime(2020, 7, 11, 22, 0)
+
+>>> parse("12:00 pm")
+datetime.datetime(2020, 7, 11, 12, 0)
+
+>>> parse("12:00 am")
+datetime.datetime(2020, 7, 11, 0, 0)
+
+>>> parse("12pm")
+datetime.datetime(2020, 7, 11, 12, 0)
+
+>>> parse("12h23m pm")
+datetime.datetime(2020, 7, 11, 12, 23)
+
+# 没有添加空格分隔，解析异常
+>>> parse("12h23mpm")
+ParserError: Unknown string format: 12h23mpm
+```
+
+此时am或pm与前面的时间字符要分隔开。不分隔的时候就会抛出`ParserError`异常！
+
+使用字母时大小写不敏感：
+
+```python
+>>> parse("12h PM")
+datetime.datetime(2020, 7, 11, 12, 0)
+
+>>> parse("12h Pm")
+datetime.datetime(2020, 7, 11, 12, 0)
+
+>>> parse("12h pM")
+datetime.datetime(2020, 7, 11, 12, 0)
+
+>>> parse("12h aM")
+datetime.datetime(2020, 7, 11, 0, 0)
+
+>>> parse("22H13m23S")
+datetime.datetime(2020, 7, 11, 22, 13, 23)
+
+>>> parse("22h13M23s")
+datetime.datetime(2020, 7, 11, 22, 13, 23)
+```
+
+
+
+仅包含年月的特殊字符：
+
+```python
+# 03解析为03日
+>>> parse("Sep 03")
+datetime.datetime(2020, 9, 3, 0, 0)
+
+# 因为多了of，03被解析为2003年
+>>> parse("Sep of 03")
+datetime.datetime(2003, 9, 11, 0, 0)
+```
+
+
+
+模糊解析：
+
+```python
+# 定义一个包含日期时间的句子
+>>> s = "Today is 25 of September of 2003, exactly at 10:49:41"
+
+>>> s
+'Today is 25 of September of 2003, exactly at 10:49:41'
+
+# 直接解析，抛出异常
+>>> parse(s)
+ParserError: Unknown string format: Today is 25 of September of 2003, exactly at 10:49:41
+        
+
+# 开启模糊解析功能，正常解析
+>>> parse(s, fuzzy=1)
+datetime.datetime(2003, 9, 25, 10, 49, 41)
+
+>>> parse(s, fuzzy=True)
+datetime.datetime(2003, 9, 25, 10, 49, 41)        
+```
+
+其他一些随机格式：
+
+```python
+>>> parse("Wed, July 10, '96")
+datetime.datetime(1996, 7, 10, 0, 0)
+
+>>> parse("1996.07.10 AD at 15:08:56 PDT", ignoretz=True)
+datetime.datetime(1996, 7, 10, 15, 8, 56)
+
+>>> parse("1996.07.10 AD at 15:08:56 PDT", ignoretz=0)
+/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/dateutil/parser/_parser.py:1218: UnknownTimezoneWarning: tzname PDT identified but not understood.  Pass `tzinfos` argument in order to correctly return a timezone-aware datetime.  In a future version, this will raise an exception.
+  category=UnknownTimezoneWarning)
+datetime.datetime(1996, 7, 10, 15, 8, 56)
+
+>>> parse("Tuesday, April 12, 1952 AD 3:30:42pm PST", ignoretz=True)
+datetime.datetime(1952, 4, 12, 15, 30, 42)
+
+>>> parse("November 5, 1994, 8:15:30 am EST", ignoretz=True)
+datetime.datetime(1994, 11, 5, 8, 15, 30)
+
+>>> parse("3rd of May 2001")
+datetime.datetime(2001, 5, 3, 0, 0)
+
+>>> parse("5:50 A.M. on June 13, 1990")
+/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/dateutil/parser/_parser.py:1218: UnknownTimezoneWarning: tzname M identified but not understood.  Pass `tzinfos` argument in order to correctly return a timezone-aware datetime.  In a future version, this will raise an exception.
+  category=UnknownTimezoneWarning)
+datetime.datetime(1990, 6, 13, 5, 50)
+
+>>>
+```
+
+通过`parse`的示例可以看到，`parse`解析实在太灵活了，有时你一不小心就有可能解析出不是自己要想的结果！
+
+
+
+自定义解析信息：
+
+```python
+>>> from dateutil.parser import parse, parserinfo
+
+>>> parserinfo.MONTHS
+[('Jan', 'January'),
+ ('Feb', 'February'),
+ ('Mar', 'March'),
+ ('Apr', 'April'),
+ ('May', 'May'),
+ ('Jun', 'June'),
+ ('Jul', 'July'),
+ ('Aug', 'August'),
+ ('Sep', 'Sept', 'September'),
+ ('Oct', 'October'),
+ ('Nov', 'November'),
+ ('Dec', 'December')]
+
+>>> parserinfo.MONTHS[0]
+('Jan', 'January')
+
+>>> parserinfo.AMPM
+[('am', 'a'), ('pm', 'p')]
+
+
+>>> class CustomParserInfo(parserinfo):
+...     AMPM = [("am", "a", "上午"), ("pm", "p", "下午")]
+...
+
+# 直接解析会抛出异常
+>>> parse("2020-07-11 10:20 上午")
+ParserError: Unknown string format: 2020-07-11 10:20 上午
+      
+# 通过指定parserinfo为CustomParseInfo()进行自定义解析
+>>> parse("2020-07-11 10:20 上午", parserinfo=CustomParserInfo())
+datetime.datetime(2020, 7, 11, 10, 20)
+
+>>> parse("2020-07-11 10:20 下午", parserinfo=CustomParserInfo())
+datetime.datetime(2020, 7, 11, 22, 20)
+
+# 虽然可以使用fuzzy模糊解析来解析时间，但解析时间都与上午下午字符串无关
+>>> parse("2020-07-11 10:20 上午", fuzzy=1)
+datetime.datetime(2020, 7, 11, 10, 20)
+
+>>> parse("2020-07-11 10:20 下午", fuzzy=1)
+datetime.datetime(2020, 7, 11, 10, 20)
+```
+
+使用自定义parserinfo能够正常解析中文的月份和星期：
+
+```python
+from dateutil.parser import parse, parserinfo
+
+
+class CustomParserInfo(parserinfo):
+    AMPM = [("am", "a", "上午"), ("pm", "p", "下午")]
+    WEEKDAYS = [("Mon", "Monday", "周一"),
+                ("Tue", "Tuesday", "周二"),  # TODO: "Tues"
+                ("Wed", "Wednesday", "周三"),
+                ("Thu", "Thursday", "周四"),  # TODO: "Thurs"
+                ("Fri", "Friday", "周五"),
+                ("Sat", "Saturday", "周六"),
+                ("Sun", "Sunday", "周日")]
+    MONTHS = [("Jan", "January", "一月"),
+              ("Feb", "February", "二月"),  # TODO: "Febr"
+              ("Mar", "March", "三月"),
+              ("Apr", "April", "四月"),
+              ("May", "May", "五月"),
+              ("Jun", "June", "六月"),
+              ("Jul", "July", "七月"),
+              ("Aug", "August", "八月"),
+              ("Sep", "Sept", "September", "九月"),
+              ("Oct", "October", "十月"),
+              ("Nov", "November", "十一月"),
+              ("Dec", "December", "十二月")]
+
+
+def myparse(datetimestr):
+    return parse(datetimestr, parserinfo=CustomParserInfo())
+
+
+def main():
+    print(myparse("2020-07-11 10:20 上午"))
+    print(myparse("2020-07-11 10:20 下午"))
+    print(myparse("周日 10:20 上午"))
+    print(myparse("周日 10:20 下午"))
+    print(myparse("周日 一月 10:20 下午"))
+    print(myparse("二月 10:20"))
+    print(myparse("2020 三月 14"))
+    print(myparse("2020 七月 11"))
+
+
+if __name__ == '__main__':
+    main()
+
+
+# output:
+# 2020-07-11 10:20:00
+# 2020-07-11 22:20:00
+# 2020-07-12 10:20:00
+# 2020-07-12 22:20:00
+# 2020-01-12 22:20:00
+# 2020-02-11 10:20:00
+# 2020-03-14 00:00:00
+# 2020-07-11 00:00:00
+```
 
 
 
