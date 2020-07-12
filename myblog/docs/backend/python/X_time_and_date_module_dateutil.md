@@ -35,11 +35,11 @@ Type "help", "copyright", "credits" or "license" for more information.
 
 ## 官方示例
 
-我们先来参考[https://dateutil.readthedocs.io/en/stable/examples.html](https://dateutil.readthedocs.io/en/stable/examples.html)官方示例来看看`dateutil`能做些啥。
+我们先来参考[https://dateutil.readthedocs.io/en/stable/examples.html](https://dateutil.readthedocs.io/en/stable/examples.html)官方示例来看看`dateutil`能做些啥。下面大部分示例都是直接参数官方示例的。
 
 
 
-### relativedelta相对关系示例
+## relativedelta相对关系示例
 
 首先开始我们的旅程，导入相应的包：
 
@@ -354,7 +354,7 @@ time.struct_time(tm_year=2020, tm_mon=9, tm_mday=17, tm_hour=0, tm_min=0, tm_sec
 
 
 
-### parser parse将字符串解析成`datetime.datetime`日期时间对象
+## parser parse将字符串解析成`datetime.datetime`日期时间对象
 
 parser是根据字符串解析成datetime,字符串可以很随意，可以用时间日期的英文单词，可以用横线、逗号、空格等做分隔符。
 没指定时间默认是0点，没指定日期默认是今天，没指定年份默认是今年。
@@ -1046,6 +1046,186 @@ if __name__ == '__main__':
 
 
 官方文档[https://dateutil.readthedocs.io/en/stable/examples.html](https://dateutil.readthedocs.io/en/stable/examples.html)中还有很多其他的示例，以及其他的一些内容，此处不再详细测试。可以看到`dateutil`模块的功能非常强大。总体感觉虽然模块功能强大，但要用好也不容易，一不小心容易出错。所有使用时还是需要谨慎操作！
+
+## rrule输出datetime对象
+
+
+
+查看`rrule`的方法和属性：
+
+```python
+$ python3
+Python 3.6.8 (v3.6.8:3c6b436a57, Dec 24 2018, 02:10:22)
+[GCC 4.2.1 (Apple Inc. build 5666) (dot 3)] on darwin
+Type "help", "copyright", "credits" or "license" for more information.
+>>> from dateutil import rrule
+>>> rrule.
+rrule.advance_iterator( rrule.HOURLY            rrule.MINUTELY          rrule.rrulebase(        rrule.warn(
+rrule.calendar          rrule.integer_types     rrule.MO(               rrule.rruleset(         rrule.WDAYMASK
+rrule.DAILY             rrule.itertools         rrule.MONTHLY           rrule.rrulestr(         rrule.WE(
+rrule.datetime          rrule.M365MASK          rrule.NMDAY365MASK      rrule.SA(               rrule.weekday(
+rrule.easter            rrule.M365RANGE         rrule.NMDAY366MASK      rrule.SECONDLY          rrule.weekdaybase(
+rrule.FR(               rrule.M366MASK          rrule.parser            rrule.SU(               rrule.weekdays
+rrule.FREQNAMES         rrule.M366RANGE         rrule.range(            rrule.sys               rrule.WEEKLY
+rrule.gcd(              rrule.MDAY365MASK       rrule.re                rrule.TH(               rrule.YEARLY
+rrule.heapq             rrule.MDAY366MASK       rrule.rrule(            rrule.TU(
+>>> rrule.
+```
+
+`rrule.rrule`类：
+
+`class dateutil.rrule.rrule(freq, dtstart=None, interval=1, wkst=None, count=None, until=None, bysetpos=None, bymonth=None, bymonthday=None, byyearday=None, byeaster=None, byweekno=None, byweekday=None, byhour=None, byminute=None, bysecond=None, cache=False)`
+
+参数比较多！
+
+参数说明如下：
+
+- `freq`单位
+
+> freq must be one of YEARLY, MONTHLY, WEEKLY, DAILY, HOURLY, MINUTELY, or SECONDLY
+
+即`freq`参数只能是`YEARLY, MONTHLY, WEEKLY, DAILY, HOURLY, MINUTELY, or SECONDLY`这些值。
+
+- `dtstart`开始时间
+- `count`生成datetime对象的个数
+- `interval`时间间隔
+- `wkst`周开始时间
+- `until`结束时间
+- `bysetpos`匹配
+
+### 输出指定个数的datetime对象
+
+```python
+$ ipython
+Python 3.6.8 (v3.6.8:3c6b436a57, Dec 24 2018, 02:10:22)
+Type 'copyright', 'credits' or 'license' for more information
+IPython 7.13.0 -- An enhanced Interactive Python. Type '?' for help.
+
+>>> from dateutil.rrule import rrule, MONTHLY
+
+>>> from datetime import datetime
+
+# 定义一个开始日期
+>>> start_date = datetime.today()
+
+>>> start_date
+datetime.datetime(2020, 7, 12, 10, 37, 2, 615526)
+
+>>> rrule(freq=MONTHLY, count=4, dtstart=start_date)
+<dateutil.rrule.rrule at 0x10ef37518>
+
+# 输出4个月份datetime对象
+>>> list(rrule(freq=MONTHLY, count=4, dtstart=start_date))
+[datetime.datetime(2020, 7, 12, 10, 37, 2),
+ datetime.datetime(2020, 8, 12, 10, 37, 2),
+ datetime.datetime(2020, 9, 12, 10, 37, 2),
+ datetime.datetime(2020, 10, 12, 10, 37, 2)]
+```
+
+通过`count`指定输出的datetime对象的个数！
+
+### 指定起始时间和终止时间
+
+```python
+# 定义一个结束日期
+>>> end_date = datetime(2020,12,25)
+
+>>> end_date
+datetime.datetime(2020, 12, 25, 0, 0)
+
+# 输出从起始时间到终止时间的datetime对象序列，此时可以看输出了2020年7月、8月、9月、10月、11月、12月，共计6个对象
+>>> list(rrule(freq=MONTHLY, dtstart=start_date, until=end_date))
+[datetime.datetime(2020, 7, 12, 10, 37, 2),
+ datetime.datetime(2020, 8, 12, 10, 37, 2),
+ datetime.datetime(2020, 9, 12, 10, 37, 2),
+ datetime.datetime(2020, 10, 12, 10, 37, 2),
+ datetime.datetime(2020, 11, 12, 10, 37, 2),
+ datetime.datetime(2020, 12, 12, 10, 37, 2)]
+
+# 如果指定了count参数，此时count数为4，小于最多允许的个数6，因此此时仅输出4个datetime对象
+>>> list(rrule(freq=MONTHLY, count=4, dtstart=start_date, until=end_date))
+[datetime.datetime(2020, 7, 12, 10, 37, 2),
+ datetime.datetime(2020, 8, 12, 10, 37, 2),
+ datetime.datetime(2020, 9, 12, 10, 37, 2),
+ datetime.datetime(2020, 10, 12, 10, 37, 2)]
+
+# 当count大于最多允许的个数时，也只能输出最多允许的个数的datetime对象
+>>> list(rrule(freq=MONTHLY, count=8, dtstart=start_date, until=end_date))
+[datetime.datetime(2020, 7, 12, 10, 37, 2),
+ datetime.datetime(2020, 8, 12, 10, 37, 2),
+ datetime.datetime(2020, 9, 12, 10, 37, 2),
+ datetime.datetime(2020, 10, 12, 10, 37, 2),
+ datetime.datetime(2020, 11, 12, 10, 37, 2),
+ datetime.datetime(2020, 12, 12, 10, 37, 2)]
+
+# 当count大于最多允许的个数时，也只能输出最多允许的个数的datetime对象
+>>> list(rrule(freq=MONTHLY, count=9, dtstart=start_date, until=end_date))
+[datetime.datetime(2020, 7, 12, 10, 37, 2),
+ datetime.datetime(2020, 8, 12, 10, 37, 2),
+ datetime.datetime(2020, 9, 12, 10, 37, 2),
+ datetime.datetime(2020, 10, 12, 10, 37, 2),
+ datetime.datetime(2020, 11, 12, 10, 37, 2),
+ datetime.datetime(2020, 12, 12, 10, 37, 2)]
+```
+
+### 改变输出单位
+
+上面的示例是按朋份输出的，我们尝试改变一下输出单位，如按天输出，或按年输出等。
+
+```python
+# 导入可用的单位
+>>> from dateutil.rrule import YEARLY, MONTHLY, WEEKLY, DAILY, HOURLY, MINUTELY, SECONDLY
+
+# 按日期生成对象
+>>> list(rrule(freq=DAILY, count=4, dtstart=start_date, until=end_date))
+[datetime.datetime(2020, 7, 12, 10, 37, 2),
+ datetime.datetime(2020, 7, 13, 10, 37, 2),
+ datetime.datetime(2020, 7, 14, 10, 37, 2),
+ datetime.datetime(2020, 7, 15, 10, 37, 2)]
+
+# 按年份生成对象
+>>> list(rrule(freq=YEARLY, count=4, dtstart=start_date, until=end_date))
+[datetime.datetime(2020, 7, 12, 10, 37, 2)]
+
+# 按年份生成对象，不指定结束时间
+>>> list(rrule(freq=YEARLY, count=4, dtstart=start_date))
+[datetime.datetime(2020, 7, 12, 10, 37, 2),
+ datetime.datetime(2021, 7, 12, 10, 37, 2),
+ datetime.datetime(2022, 7, 12, 10, 37, 2),
+ datetime.datetime(2023, 7, 12, 10, 37, 2)]
+
+# 按周生成对象
+>>> list(rrule(freq=WEEKLY, count=4, dtstart=start_date, until=end_date))
+[datetime.datetime(2020, 7, 12, 10, 37, 2),
+ datetime.datetime(2020, 7, 19, 10, 37, 2),
+ datetime.datetime(2020, 7, 26, 10, 37, 2),
+ datetime.datetime(2020, 8, 2, 10, 37, 2)]
+
+# 按小时生成对象
+>>> list(rrule(freq=HOURLY, count=4, dtstart=start_date, until=end_date))
+[datetime.datetime(2020, 7, 12, 10, 37, 2),
+ datetime.datetime(2020, 7, 12, 11, 37, 2),
+ datetime.datetime(2020, 7, 12, 12, 37, 2),
+ datetime.datetime(2020, 7, 12, 13, 37, 2)]
+
+# 按分钟生成对象
+>>> list(rrule(freq=MINUTELY, count=4, dtstart=start_date, until=end_date))
+[datetime.datetime(2020, 7, 12, 10, 37, 2),
+ datetime.datetime(2020, 7, 12, 10, 38, 2),
+ datetime.datetime(2020, 7, 12, 10, 39, 2),
+ datetime.datetime(2020, 7, 12, 10, 40, 2)]
+
+# 按秒生成对象
+>>> list(rrule(freq=SECONDLY, count=4, dtstart=start_date, until=end_date))
+[datetime.datetime(2020, 7, 12, 10, 37, 2),
+ datetime.datetime(2020, 7, 12, 10, 37, 3),
+ datetime.datetime(2020, 7, 12, 10, 37, 4),
+ datetime.datetime(2020, 7, 12, 10, 37, 5)]
+
+>>>
+```
+
+
 
 
 
