@@ -1045,8 +1045,6 @@ if __name__ == '__main__':
 
 
 
-官方文档[https://dateutil.readthedocs.io/en/stable/examples.html](https://dateutil.readthedocs.io/en/stable/examples.html)中还有很多其他的示例，以及其他的一些内容，此处不再详细测试。可以看到`dateutil`模块的功能非常强大。总体感觉虽然模块功能强大，但要用好也不容易，一不小心容易出错。所有使用时还是需要谨慎操作！
-
 ## rrule输出datetime对象
 
 
@@ -1087,11 +1085,18 @@ rrule.heapq             rrule.MDAY366MASK       rrule.rrule(            rrule.TU
 即`freq`参数只能是`YEARLY, MONTHLY, WEEKLY, DAILY, HOURLY, MINUTELY, or SECONDLY`这些值。
 
 - `dtstart`开始时间
+
 - `count`生成datetime对象的个数
+
 - `interval`时间间隔
+
 - `wkst`周开始时间
+
 - `until`结束时间
+
 - `byxxx`:指定匹配的周期。比如`byweekday=(MO,TU)`则只有周一周二的匹配。byweekday可以指定MO,TU,WE,TH,FR,SA,SU。即周一到周日。
+
+- `cache`如果给定，它必须是一个布尔值，指定启用或禁用缓存结果。如果您将多次使用相同的rrule实例，启用缓存将显着提高性能。
 
 ### 输出指定个数的datetime对象
 
@@ -1994,7 +1999,7 @@ ValueError: second must be in 0..59
 >>>
 ```
 
-
+官方文档[https://dateutil.readthedocs.io/en/stable/examples.html](https://dateutil.readthedocs.io/en/stable/examples.html)中还有很多其他的示例，以及其他的一些内容，此处不再详细测试。可以看到`dateutil`模块的功能非常强大。总体感觉虽然模块功能强大，但要用好也不容易，一不小心容易出错。所有使用时还是需要谨慎操作！
 
 
 
