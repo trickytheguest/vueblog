@@ -1534,6 +1534,276 @@ datetime.datetime(2020, 12, 25, 0, 0)
 >>>
 ```
 
+- `byweekno`匹配年中的指定的周
+
+通过`byweekno`匹配一年中的指定的周。需要注意的是，该周至少需要包含新年后的4天！
+
+
+
+```python
+# 匹配每年的第一周
+# 因为今天是2020年7月12日，过了今天的第1周了，要从2021年开始算起
+# 2021年1月1日是周五，2021年1月2日是周六，2021年1月3日是周日，如果将这一周作为2021年的第一周，则该周只包含新年后的三天，因此不满足至少4天的要求，因此从2021年1月4日开始作为2021年的第1周，因此2021年1月4日到2021年1月10日会被输出出来
+
+# 2022年1月1日是周六，2022年1月2日是周日，如果将这一周作为2022年的第一周，则该周只包含新年后的两天，因此不满足至少4天的要求，因此从2022年1月3日开始作为2022年的第1周，因此2022年1月3日到2021年1月9日会被输出出来
+
+# 2022年1月1日是周六，2022年1月2日是周日，如果将这一周作为2022年的第一周，则该周只包含新年后的两天，因此不满足至少4天的要求，因此从2022年1月3日开始作为2022年的第1周，因此2022年1月3日到2021年1月9日会被输出出来
+
+# 2023年1月1日是周日，如果将这一周作为2023年的第一周，则该周只包含新年后的一天，因此不满足至少4天的要求，因此从2023年1月2日开始作为2022年的第1周，因此2023年1月2日到2021年1月8日会被输出出来
+
+# 2024年1月1日是周一，2024年1月2日是周二，如果将这一周作为2024年的第一周，则该周包含新年后的七天，因此满足至少4天的要求，因此从2024年1月1日开始作为2024年的第1周，因此2024年1月1日到2024年1月7日会被输出出来
+
+# 2025年1月1日是周三，2025年1月2日是周四，如果将这一周作为2025年的第一周，则该周只包含新年后的五天，因此满足至少4天的要求，因此从2024年12月30日开始作为2025年的第1周，因此2024年12月30日、2024年12月31日、2025年1月1日、2025年1月2日、2025年1月3日、2025年1月4日、2025年1月5日会被输出出来
+
+# 2026年1月1日是周四，2022年1月2日是周五，如果将这一周作为2026年的第一周，则该周只包含新年后的四天，因此满足至少4天的要求，因此从2025年12月29日开始作为2026年的第1周，因此2024年12月29日、2024年12月30日、2024年12月31日、2025年1月1日、2025年1月2日、2025年1月3日、2025年1月4日会被输出出来
+>>> list(rrule(freq=YEARLY, count=40, dtstart=start_date, byweekno=1))
+[datetime.datetime(2021, 1, 4, 10, 37, 2),
+ datetime.datetime(2021, 1, 5, 10, 37, 2),
+ datetime.datetime(2021, 1, 6, 10, 37, 2),
+ datetime.datetime(2021, 1, 7, 10, 37, 2),
+ datetime.datetime(2021, 1, 8, 10, 37, 2),
+ datetime.datetime(2021, 1, 9, 10, 37, 2),
+ datetime.datetime(2021, 1, 10, 10, 37, 2),
+ datetime.datetime(2022, 1, 3, 10, 37, 2),
+ datetime.datetime(2022, 1, 4, 10, 37, 2),
+ datetime.datetime(2022, 1, 5, 10, 37, 2),
+ datetime.datetime(2022, 1, 6, 10, 37, 2),
+ datetime.datetime(2022, 1, 7, 10, 37, 2),
+ datetime.datetime(2022, 1, 8, 10, 37, 2),
+ datetime.datetime(2022, 1, 9, 10, 37, 2),
+ datetime.datetime(2023, 1, 2, 10, 37, 2),
+ datetime.datetime(2023, 1, 3, 10, 37, 2),
+ datetime.datetime(2023, 1, 4, 10, 37, 2),
+ datetime.datetime(2023, 1, 5, 10, 37, 2),
+ datetime.datetime(2023, 1, 6, 10, 37, 2),
+ datetime.datetime(2023, 1, 7, 10, 37, 2),
+ datetime.datetime(2023, 1, 8, 10, 37, 2),
+ datetime.datetime(2024, 1, 1, 10, 37, 2),
+ datetime.datetime(2024, 1, 2, 10, 37, 2),
+ datetime.datetime(2024, 1, 3, 10, 37, 2),
+ datetime.datetime(2024, 1, 4, 10, 37, 2),
+ datetime.datetime(2024, 1, 5, 10, 37, 2),
+ datetime.datetime(2024, 1, 6, 10, 37, 2),
+ datetime.datetime(2024, 1, 7, 10, 37, 2),
+ datetime.datetime(2024, 12, 30, 10, 37, 2),
+ datetime.datetime(2024, 12, 31, 10, 37, 2),
+ datetime.datetime(2025, 1, 1, 10, 37, 2),
+ datetime.datetime(2025, 1, 2, 10, 37, 2),
+ datetime.datetime(2025, 1, 3, 10, 37, 2),
+ datetime.datetime(2025, 1, 4, 10, 37, 2),
+ datetime.datetime(2025, 1, 5, 10, 37, 2),
+ datetime.datetime(2025, 12, 29, 10, 37, 2),
+ datetime.datetime(2025, 12, 30, 10, 37, 2),
+ datetime.datetime(2025, 12, 31, 10, 37, 2),
+ datetime.datetime(2026, 1, 1, 10, 37, 2),
+ datetime.datetime(2026, 1, 2, 10, 37, 2)]
+
+# 输出第1周的四天
+>>> list(rrule(freq=YEARLY, count=4, dtstart=start_date, byweekno=1))
+[datetime.datetime(2021, 1, 4, 10, 37, 2),
+ datetime.datetime(2021, 1, 5, 10, 37, 2),
+ datetime.datetime(2021, 1, 6, 10, 37, 2),
+ datetime.datetime(2021, 1, 7, 10, 37, 2)]
+
+# 输出第2周的四天
+>>> list(rrule(freq=YEARLY, count=4, dtstart=start_date, byweekno=2))
+[datetime.datetime(2021, 1, 11, 10, 37, 2),
+ datetime.datetime(2021, 1, 12, 10, 37, 2),
+ datetime.datetime(2021, 1, 13, 10, 37, 2),
+ datetime.datetime(2021, 1, 14, 10, 37, 2)]
+
+# 输出第3周的四天
+>>> list(rrule(freq=YEARLY, count=4, dtstart=start_date, byweekno=3))
+[datetime.datetime(2021, 1, 18, 10, 37, 2),
+ datetime.datetime(2021, 1, 19, 10, 37, 2),
+ datetime.datetime(2021, 1, 20, 10, 37, 2),
+ datetime.datetime(2021, 1, 21, 10, 37, 2)]
+
+# 输出第1周和第2周的4天
+>>> list(rrule(freq=YEARLY, count=4, dtstart=start_date, byweekno=(1,2)))
+[datetime.datetime(2021, 1, 4, 10, 37, 2),
+ datetime.datetime(2021, 1, 5, 10, 37, 2),
+ datetime.datetime(2021, 1, 6, 10, 37, 2),
+ datetime.datetime(2021, 1, 7, 10, 37, 2)]
+
+# 输出第1周和第2周的14天
+>>> list(rrule(freq=YEARLY, count=14, dtstart=start_date, byweekno=(1,2)))
+[datetime.datetime(2021, 1, 4, 10, 37, 2),
+ datetime.datetime(2021, 1, 5, 10, 37, 2),
+ datetime.datetime(2021, 1, 6, 10, 37, 2),
+ datetime.datetime(2021, 1, 7, 10, 37, 2),
+ datetime.datetime(2021, 1, 8, 10, 37, 2),
+ datetime.datetime(2021, 1, 9, 10, 37, 2),
+ datetime.datetime(2021, 1, 10, 10, 37, 2),
+ datetime.datetime(2021, 1, 11, 10, 37, 2),
+ datetime.datetime(2021, 1, 12, 10, 37, 2),
+ datetime.datetime(2021, 1, 13, 10, 37, 2),
+ datetime.datetime(2021, 1, 14, 10, 37, 2),
+ datetime.datetime(2021, 1, 15, 10, 37, 2),
+ datetime.datetime(2021, 1, 16, 10, 37, 2),
+ datetime.datetime(2021, 1, 17, 10, 37, 2)]
+
+# 输出第2周和第3周的4天
+>>> list(rrule(freq=YEARLY, count=4, dtstart=start_date, byweekno=(2,3)))
+[datetime.datetime(2021, 1, 11, 10, 37, 2),
+ datetime.datetime(2021, 1, 12, 10, 37, 2),
+ datetime.datetime(2021, 1, 13, 10, 37, 2),
+ datetime.datetime(2021, 1, 14, 10, 37, 2)]
+
+# 输出第2周和第3周的14天
+>>> list(rrule(freq=YEARLY, count=14, dtstart=start_date, byweekno=(2,3)))
+[datetime.datetime(2021, 1, 11, 10, 37, 2),
+ datetime.datetime(2021, 1, 12, 10, 37, 2),
+ datetime.datetime(2021, 1, 13, 10, 37, 2),
+ datetime.datetime(2021, 1, 14, 10, 37, 2),
+ datetime.datetime(2021, 1, 15, 10, 37, 2),
+ datetime.datetime(2021, 1, 16, 10, 37, 2),
+ datetime.datetime(2021, 1, 17, 10, 37, 2),
+ datetime.datetime(2021, 1, 18, 10, 37, 2),
+ datetime.datetime(2021, 1, 19, 10, 37, 2),
+ datetime.datetime(2021, 1, 20, 10, 37, 2),
+ datetime.datetime(2021, 1, 21, 10, 37, 2),
+ datetime.datetime(2021, 1, 22, 10, 37, 2),
+ datetime.datetime(2021, 1, 23, 10, 37, 2),
+ datetime.datetime(2021, 1, 24, 10, 37, 2)]
+
+# 输出第2周和第3周的14天,虽然些时单位发生变化，但结果和上面的一样
+>>> list(rrule(freq=MONTHLY, count=14, dtstart=start_date, byweekno=(2,3)))
+[datetime.datetime(2021, 1, 11, 10, 37, 2),
+ datetime.datetime(2021, 1, 12, 10, 37, 2),
+ datetime.datetime(2021, 1, 13, 10, 37, 2),
+ datetime.datetime(2021, 1, 14, 10, 37, 2),
+ datetime.datetime(2021, 1, 15, 10, 37, 2),
+ datetime.datetime(2021, 1, 16, 10, 37, 2),
+ datetime.datetime(2021, 1, 17, 10, 37, 2),
+ datetime.datetime(2021, 1, 18, 10, 37, 2),
+ datetime.datetime(2021, 1, 19, 10, 37, 2),
+ datetime.datetime(2021, 1, 20, 10, 37, 2),
+ datetime.datetime(2021, 1, 21, 10, 37, 2),
+ datetime.datetime(2021, 1, 22, 10, 37, 2),
+ datetime.datetime(2021, 1, 23, 10, 37, 2),
+ datetime.datetime(2021, 1, 24, 10, 37, 2)]
+
+# 输出第10周的14天
+>>> list(rrule(freq=MONTHLY, count=14, dtstart=start_date, byweekno=(10)))
+[datetime.datetime(2021, 3, 8, 10, 37, 2),
+ datetime.datetime(2021, 3, 9, 10, 37, 2),
+ datetime.datetime(2021, 3, 10, 10, 37, 2),
+ datetime.datetime(2021, 3, 11, 10, 37, 2),
+ datetime.datetime(2021, 3, 12, 10, 37, 2),
+ datetime.datetime(2021, 3, 13, 10, 37, 2),
+ datetime.datetime(2021, 3, 14, 10, 37, 2),
+ datetime.datetime(2022, 3, 7, 10, 37, 2),
+ datetime.datetime(2022, 3, 8, 10, 37, 2),
+ datetime.datetime(2022, 3, 9, 10, 37, 2),
+ datetime.datetime(2022, 3, 10, 10, 37, 2),
+ datetime.datetime(2022, 3, 11, 10, 37, 2),
+ datetime.datetime(2022, 3, 12, 10, 37, 2),
+ datetime.datetime(2022, 3, 13, 10, 37, 2)]
+
+# 输出第20周的14天
+>>> list(rrule(freq=MONTHLY, count=14, dtstart=start_date, byweekno=(20)))
+[datetime.datetime(2021, 5, 17, 10, 37, 2),
+ datetime.datetime(2021, 5, 18, 10, 37, 2),
+ datetime.datetime(2021, 5, 19, 10, 37, 2),
+ datetime.datetime(2021, 5, 20, 10, 37, 2),
+ datetime.datetime(2021, 5, 21, 10, 37, 2),
+ datetime.datetime(2021, 5, 22, 10, 37, 2),
+ datetime.datetime(2021, 5, 23, 10, 37, 2),
+ datetime.datetime(2022, 5, 16, 10, 37, 2),
+ datetime.datetime(2022, 5, 17, 10, 37, 2),
+ datetime.datetime(2022, 5, 18, 10, 37, 2),
+ datetime.datetime(2022, 5, 19, 10, 37, 2),
+ datetime.datetime(2022, 5, 20, 10, 37, 2),
+ datetime.datetime(2022, 5, 21, 10, 37, 2),
+ datetime.datetime(2022, 5, 22, 10, 37, 2)]
+
+# 输出第30周的14天
+>>> list(rrule(freq=MONTHLY, count=14, dtstart=start_date, byweekno=(30)))
+[datetime.datetime(2020, 7, 20, 10, 37, 2),
+ datetime.datetime(2020, 7, 21, 10, 37, 2),
+ datetime.datetime(2020, 7, 22, 10, 37, 2),
+ datetime.datetime(2020, 7, 23, 10, 37, 2),
+ datetime.datetime(2020, 7, 24, 10, 37, 2),
+ datetime.datetime(2020, 7, 25, 10, 37, 2),
+ datetime.datetime(2020, 7, 26, 10, 37, 2),
+ datetime.datetime(2021, 7, 26, 10, 37, 2),
+ datetime.datetime(2021, 7, 27, 10, 37, 2),
+ datetime.datetime(2021, 7, 28, 10, 37, 2),
+ datetime.datetime(2021, 7, 29, 10, 37, 2),
+ datetime.datetime(2021, 7, 30, 10, 37, 2),
+ datetime.datetime(2021, 7, 31, 10, 37, 2),
+ datetime.datetime(2021, 8, 1, 10, 37, 2)]
+
+# 输出第40周的14天
+>>> list(rrule(freq=MONTHLY, count=14, dtstart=start_date, byweekno=(40)))
+[datetime.datetime(2020, 9, 28, 10, 37, 2),
+ datetime.datetime(2020, 9, 29, 10, 37, 2),
+ datetime.datetime(2020, 9, 30, 10, 37, 2),
+ datetime.datetime(2020, 10, 1, 10, 37, 2),
+ datetime.datetime(2020, 10, 2, 10, 37, 2),
+ datetime.datetime(2020, 10, 3, 10, 37, 2),
+ datetime.datetime(2020, 10, 4, 10, 37, 2),
+ datetime.datetime(2021, 10, 4, 10, 37, 2),
+ datetime.datetime(2021, 10, 5, 10, 37, 2),
+ datetime.datetime(2021, 10, 6, 10, 37, 2),
+ datetime.datetime(2021, 10, 7, 10, 37, 2),
+ datetime.datetime(2021, 10, 8, 10, 37, 2),
+ datetime.datetime(2021, 10, 9, 10, 37, 2),
+ datetime.datetime(2021, 10, 10, 10, 37, 2)]
+
+# 输出第50周的14天
+>>> list(rrule(freq=MONTHLY, count=14, dtstart=start_date, byweekno=(50)))
+[datetime.datetime(2020, 12, 7, 10, 37, 2),
+ datetime.datetime(2020, 12, 8, 10, 37, 2),
+ datetime.datetime(2020, 12, 9, 10, 37, 2),
+ datetime.datetime(2020, 12, 10, 10, 37, 2),
+ datetime.datetime(2020, 12, 11, 10, 37, 2),
+ datetime.datetime(2020, 12, 12, 10, 37, 2),
+ datetime.datetime(2020, 12, 13, 10, 37, 2),
+ datetime.datetime(2021, 12, 13, 10, 37, 2),
+ datetime.datetime(2021, 12, 14, 10, 37, 2),
+ datetime.datetime(2021, 12, 15, 10, 37, 2),
+ datetime.datetime(2021, 12, 16, 10, 37, 2),
+ datetime.datetime(2021, 12, 17, 10, 37, 2),
+ datetime.datetime(2021, 12, 18, 10, 37, 2),
+ datetime.datetime(2021, 12, 19, 10, 37, 2)]
+
+# 输出第48周的14天
+>>> list(rrule(freq=MONTHLY, count=14, dtstart=start_date, byweekno=(48)))
+[datetime.datetime(2020, 11, 23, 10, 37, 2),
+ datetime.datetime(2020, 11, 24, 10, 37, 2),
+ datetime.datetime(2020, 11, 25, 10, 37, 2),
+ datetime.datetime(2020, 11, 26, 10, 37, 2),
+ datetime.datetime(2020, 11, 27, 10, 37, 2),
+ datetime.datetime(2020, 11, 28, 10, 37, 2),
+ datetime.datetime(2020, 11, 29, 10, 37, 2),
+ datetime.datetime(2021, 11, 29, 10, 37, 2),
+ datetime.datetime(2021, 11, 30, 10, 37, 2),
+ datetime.datetime(2021, 12, 1, 10, 37, 2),
+ datetime.datetime(2021, 12, 2, 10, 37, 2),
+ datetime.datetime(2021, 12, 3, 10, 37, 2),
+ datetime.datetime(2021, 12, 4, 10, 37, 2),
+ datetime.datetime(2021, 12, 5, 10, 37, 2)]
+
+# 输出第40-41周的14天，此时因为这些日期都处于今年，因此年份都是2020年
+>>> list(rrule(freq=MONTHLY, count=14, dtstart=start_date, byweekno=(40,41)))
+[datetime.datetime(2020, 9, 28, 10, 37, 2),
+ datetime.datetime(2020, 9, 29, 10, 37, 2),
+ datetime.datetime(2020, 9, 30, 10, 37, 2),
+ datetime.datetime(2020, 10, 1, 10, 37, 2),
+ datetime.datetime(2020, 10, 2, 10, 37, 2),
+ datetime.datetime(2020, 10, 3, 10, 37, 2),
+ datetime.datetime(2020, 10, 4, 10, 37, 2),
+ datetime.datetime(2020, 10, 5, 10, 37, 2),
+ datetime.datetime(2020, 10, 6, 10, 37, 2),
+ datetime.datetime(2020, 10, 7, 10, 37, 2),
+ datetime.datetime(2020, 10, 8, 10, 37, 2),
+ datetime.datetime(2020, 10, 9, 10, 37, 2),
+ datetime.datetime(2020, 10, 10, 10, 37, 2),
+ datetime.datetime(2020, 10, 11, 10, 37, 2)]
+```
+
 
 
 
