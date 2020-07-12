@@ -1294,28 +1294,28 @@ datetime.datetime(2020, 12, 25, 0, 0)
 >>> from calendar import MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY
 
 # 匹配周一、三、五日期
->>> list(rrule(freq=DAILY,  count=4, dtstart=start_date, byweekday=(0,2,4)))
+>>> list(rrule(freq=DAILY, count=4, dtstart=start_date, byweekday=(0,2,4)))
 [datetime.datetime(2020, 7, 13, 10, 37, 2),
  datetime.datetime(2020, 7, 15, 10, 37, 2),
  datetime.datetime(2020, 7, 17, 10, 37, 2),
  datetime.datetime(2020, 7, 20, 10, 37, 2)]
 
 # 匹配周一、二、三日期
->>> list(rrule(freq=DAILY,  count=4, dtstart=start_date, byweekday=(MO,TU,WE)))
+>>> list(rrule(freq=DAILY, count=4, dtstart=start_date, byweekday=(MO,TU,WE)))
 [datetime.datetime(2020, 7, 13, 10, 37, 2),
  datetime.datetime(2020, 7, 14, 10, 37, 2),
  datetime.datetime(2020, 7, 15, 10, 37, 2),
  datetime.datetime(2020, 7, 20, 10, 37, 2)]
 
 # 匹配周一、三、五日期
->>> list(rrule(freq=DAILY,  count=4, dtstart=start_date, byweekday=(MO,WE,FR)))
+>>> list(rrule(freq=DAILY, count=4, dtstart=start_date, byweekday=(MO,WE,FR)))
 [datetime.datetime(2020, 7, 13, 10, 37, 2),
  datetime.datetime(2020, 7, 15, 10, 37, 2),
  datetime.datetime(2020, 7, 17, 10, 37, 2),
  datetime.datetime(2020, 7, 20, 10, 37, 2)]
 
 # 匹配周一、二、三日期
->>> list(rrule(freq=DAILY,  count=4, dtstart=start_date, byweekday=(MONDAY, TUESDAY, WEDNESDAY)))
+>>> list(rrule(freq=DAILY, count=4, dtstart=start_date, byweekday=(MONDAY, TUESDAY, WEDNESDAY)))
 [datetime.datetime(2020, 7, 13, 10, 37, 2),
  datetime.datetime(2020, 7, 14, 10, 37, 2),
  datetime.datetime(2020, 7, 15, 10, 37, 2),
@@ -1326,14 +1326,14 @@ datetime.datetime(2020, 12, 25, 0, 0)
 
 ```python
 # 只匹配1月和2月
->>> list(rrule(freq=MONTHLY,  count=4, dtstart=start_date, bymonth=(1,2)))
+>>> list(rrule(freq=MONTHLY, count=4, dtstart=start_date, bymonth=(1,2)))
 [datetime.datetime(2021, 1, 12, 10, 37, 2),
  datetime.datetime(2021, 2, 12, 10, 37, 2),
  datetime.datetime(2022, 1, 12, 10, 37, 2),
  datetime.datetime(2022, 2, 12, 10, 37, 2)]
 
 # 只匹配1月和2月
->>> list(rrule(freq=MONTHLY,  count=8, dtstart=start_date, bymonth=(1,2)))
+>>> list(rrule(freq=MONTHLY, count=8, dtstart=start_date, bymonth=(1,2)))
 [datetime.datetime(2021, 1, 12, 10, 37, 2),
  datetime.datetime(2021, 2, 12, 10, 37, 2),
  datetime.datetime(2022, 1, 12, 10, 37, 2),
@@ -1344,7 +1344,7 @@ datetime.datetime(2020, 12, 25, 0, 0)
  datetime.datetime(2024, 2, 12, 10, 37, 2)]
 
 # 只匹配1月、2月、3月
->>> list(rrule(freq=MONTHLY,  count=8, dtstart=start_date, bymonth=(1,2,3)))
+>>> list(rrule(freq=MONTHLY, count=8, dtstart=start_date, bymonth=(1,2,3)))
 [datetime.datetime(2021, 1, 12, 10, 37, 2),
  datetime.datetime(2021, 2, 12, 10, 37, 2),
  datetime.datetime(2021, 3, 12, 10, 37, 2),
@@ -1355,7 +1355,7 @@ datetime.datetime(2020, 12, 25, 0, 0)
  datetime.datetime(2023, 2, 12, 10, 37, 2)]
 
 # 只匹配1月、2月、3月、8月和9月
->>> list(rrule(freq=MONTHLY,  count=8, dtstart=start_date, bymonth=(1,2,3,8,9)))
+>>> list(rrule(freq=MONTHLY, count=8, dtstart=start_date, bymonth=(1,2,3,8,9)))
 [datetime.datetime(2020, 8, 12, 10, 37, 2),
  datetime.datetime(2020, 9, 12, 10, 37, 2),
  datetime.datetime(2021, 1, 12, 10, 37, 2),
@@ -1366,7 +1366,7 @@ datetime.datetime(2020, 12, 25, 0, 0)
  datetime.datetime(2022, 1, 12, 10, 37, 2)]
 
 # 只匹配1月
->>> list(rrule(freq=MONTHLY,  count=8, dtstart=start_date, bymonth=1))
+>>> list(rrule(freq=MONTHLY, count=8, dtstart=start_date, bymonth=1))
 [datetime.datetime(2021, 1, 12, 10, 37, 2),
  datetime.datetime(2022, 1, 12, 10, 37, 2),
  datetime.datetime(2023, 1, 12, 10, 37, 2),
@@ -1377,7 +1377,7 @@ datetime.datetime(2020, 12, 25, 0, 0)
  datetime.datetime(2028, 1, 12, 10, 37, 2)]
 
 # 只匹配7月
->>> list(rrule(freq=MONTHLY,  count=8, dtstart=start_date, bymonth=7))
+>>> list(rrule(freq=MONTHLY, count=8, dtstart=start_date, bymonth=7))
 [datetime.datetime(2020, 7, 12, 10, 37, 2),
  datetime.datetime(2021, 7, 12, 10, 37, 2),
  datetime.datetime(2022, 7, 12, 10, 37, 2),
@@ -1386,6 +1386,152 @@ datetime.datetime(2020, 12, 25, 0, 0)
  datetime.datetime(2025, 7, 12, 10, 37, 2),
  datetime.datetime(2026, 7, 12, 10, 37, 2),
  datetime.datetime(2027, 7, 12, 10, 37, 2)]
+```
+
+- `bymonthay`只匹配月份中每定的日期
+
+```python
+# 只匹配每月的7日
+>>> list(rrule(freq=MONTHLY, count=8, dtstart=start_date, bymonthday=7))
+[datetime.datetime(2020, 8, 7, 10, 37, 2),
+ datetime.datetime(2020, 9, 7, 10, 37, 2),
+ datetime.datetime(2020, 10, 7, 10, 37, 2),
+ datetime.datetime(2020, 11, 7, 10, 37, 2),
+ datetime.datetime(2020, 12, 7, 10, 37, 2),
+ datetime.datetime(2021, 1, 7, 10, 37, 2),
+ datetime.datetime(2021, 2, 7, 10, 37, 2),
+ datetime.datetime(2021, 3, 7, 10, 37, 2)]
+
+# 只匹配每月的1日
+>>> list(rrule(freq=MONTHLY, count=8, dtstart=start_date, bymonthday=1))
+[datetime.datetime(2020, 8, 1, 10, 37, 2),
+ datetime.datetime(2020, 9, 1, 10, 37, 2),
+ datetime.datetime(2020, 10, 1, 10, 37, 2),
+ datetime.datetime(2020, 11, 1, 10, 37, 2),
+ datetime.datetime(2020, 12, 1, 10, 37, 2),
+ datetime.datetime(2021, 1, 1, 10, 37, 2),
+ datetime.datetime(2021, 2, 1, 10, 37, 2),
+ datetime.datetime(2021, 3, 1, 10, 37, 2)]
+
+# 只匹配每月的1日和2日
+>>> list(rrule(freq=MONTHLY, count=8, dtstart=start_date, bymonthday=(1,2)))
+[datetime.datetime(2020, 8, 1, 10, 37, 2),
+ datetime.datetime(2020, 8, 2, 10, 37, 2),
+ datetime.datetime(2020, 9, 1, 10, 37, 2),
+ datetime.datetime(2020, 9, 2, 10, 37, 2),
+ datetime.datetime(2020, 10, 1, 10, 37, 2),
+ datetime.datetime(2020, 10, 2, 10, 37, 2),
+ datetime.datetime(2020, 11, 1, 10, 37, 2),
+ datetime.datetime(2020, 11, 2, 10, 37, 2)]
+
+# 只匹配每月的1日、2日、15日和16日
+>>> list(rrule(freq=MONTHLY, count=8, dtstart=start_date, bymonthday=(1,2,15,16)))
+[datetime.datetime(2020, 7, 15, 10, 37, 2),
+ datetime.datetime(2020, 7, 16, 10, 37, 2),
+ datetime.datetime(2020, 8, 1, 10, 37, 2),
+ datetime.datetime(2020, 8, 2, 10, 37, 2),
+ datetime.datetime(2020, 8, 15, 10, 37, 2),
+ datetime.datetime(2020, 8, 16, 10, 37, 2),
+ datetime.datetime(2020, 9, 1, 10, 37, 2),
+ datetime.datetime(2020, 9, 2, 10, 37, 2)]
+```
+
+- `byyearday`匹配年中的指定天
+
+通过`byyearday`来指定匹配一年中的指定天。
+
+```python
+# 匹配每年的第一天
+>>> list(rrule(freq=YEARLY, count=8, dtstart=start_date, byyearday=1))
+[datetime.datetime(2021, 1, 1, 10, 37, 2),
+ datetime.datetime(2022, 1, 1, 10, 37, 2),
+ datetime.datetime(2023, 1, 1, 10, 37, 2),
+ datetime.datetime(2024, 1, 1, 10, 37, 2),
+ datetime.datetime(2025, 1, 1, 10, 37, 2),
+ datetime.datetime(2026, 1, 1, 10, 37, 2),
+ datetime.datetime(2027, 1, 1, 10, 37, 2),
+ datetime.datetime(2028, 1, 1, 10, 37, 2)]
+
+# 匹配每年的第二天
+>>> list(rrule(freq=YEARLY, count=8, dtstart=start_date, byyearday=2))
+[datetime.datetime(2021, 1, 2, 10, 37, 2),
+ datetime.datetime(2022, 1, 2, 10, 37, 2),
+ datetime.datetime(2023, 1, 2, 10, 37, 2),
+ datetime.datetime(2024, 1, 2, 10, 37, 2),
+ datetime.datetime(2025, 1, 2, 10, 37, 2),
+ datetime.datetime(2026, 1, 2, 10, 37, 2),
+ datetime.datetime(2027, 1, 2, 10, 37, 2),
+ datetime.datetime(2028, 1, 2, 10, 37, 2)]
+
+# 匹配每年的第三天
+>>> list(rrule(freq=YEARLY, count=8, dtstart=start_date, byyearday=3))
+[datetime.datetime(2021, 1, 3, 10, 37, 2),
+ datetime.datetime(2022, 1, 3, 10, 37, 2),
+ datetime.datetime(2023, 1, 3, 10, 37, 2),
+ datetime.datetime(2024, 1, 3, 10, 37, 2),
+ datetime.datetime(2025, 1, 3, 10, 37, 2),
+ datetime.datetime(2026, 1, 3, 10, 37, 2),
+ datetime.datetime(2027, 1, 3, 10, 37, 2),
+ datetime.datetime(2028, 1, 3, 10, 37, 2)]
+
+# 匹配每年的第31天
+>>> list(rrule(freq=YEARLY, count=8, dtstart=start_date, byyearday=31))
+[datetime.datetime(2021, 1, 31, 10, 37, 2),
+ datetime.datetime(2022, 1, 31, 10, 37, 2),
+ datetime.datetime(2023, 1, 31, 10, 37, 2),
+ datetime.datetime(2024, 1, 31, 10, 37, 2),
+ datetime.datetime(2025, 1, 31, 10, 37, 2),
+ datetime.datetime(2026, 1, 31, 10, 37, 2),
+ datetime.datetime(2027, 1, 31, 10, 37, 2),
+ datetime.datetime(2028, 1, 31, 10, 37, 2)]
+
+# 匹配每年的第32天
+>>> list(rrule(freq=YEARLY, count=8, dtstart=start_date, byyearday=32))
+[datetime.datetime(2021, 2, 1, 10, 37, 2),
+ datetime.datetime(2022, 2, 1, 10, 37, 2),
+ datetime.datetime(2023, 2, 1, 10, 37, 2),
+ datetime.datetime(2024, 2, 1, 10, 37, 2),
+ datetime.datetime(2025, 2, 1, 10, 37, 2),
+ datetime.datetime(2026, 2, 1, 10, 37, 2),
+ datetime.datetime(2027, 2, 1, 10, 37, 2),
+ datetime.datetime(2028, 2, 1, 10, 37, 2)]
+
+# 匹配每年的第60天
+>>> list(rrule(freq=YEARLY, count=8, dtstart=start_date, byyearday=60))
+[datetime.datetime(2021, 3, 1, 10, 37, 2),
+ datetime.datetime(2022, 3, 1, 10, 37, 2),
+ datetime.datetime(2023, 3, 1, 10, 37, 2),
+ datetime.datetime(2024, 2, 29, 10, 37, 2),
+ datetime.datetime(2025, 3, 1, 10, 37, 2),
+ datetime.datetime(2026, 3, 1, 10, 37, 2),
+ datetime.datetime(2027, 3, 1, 10, 37, 2),
+ datetime.datetime(2028, 2, 29, 10, 37, 2)]
+
+# 匹配每年的第180天
+>>> list(rrule(freq=YEARLY, count=8, dtstart=start_date, byyearday=180))
+[datetime.datetime(2021, 6, 29, 10, 37, 2),
+ datetime.datetime(2022, 6, 29, 10, 37, 2),
+ datetime.datetime(2023, 6, 29, 10, 37, 2),
+ datetime.datetime(2024, 6, 28, 10, 37, 2),
+ datetime.datetime(2025, 6, 29, 10, 37, 2),
+ datetime.datetime(2026, 6, 29, 10, 37, 2),
+ datetime.datetime(2027, 6, 29, 10, 37, 2),
+ datetime.datetime(2028, 6, 28, 10, 37, 2)]
+
+# 匹配每年的第1、28、29、30、180天
+>>> list(rrule(freq=YEARLY, count=10, dtstart=start_date, byyearday=(1,28,29,30,180)))
+[datetime.datetime(2021, 1, 1, 10, 37, 2),
+ datetime.datetime(2021, 1, 28, 10, 37, 2),
+ datetime.datetime(2021, 1, 29, 10, 37, 2),
+ datetime.datetime(2021, 1, 30, 10, 37, 2),
+ datetime.datetime(2021, 6, 29, 10, 37, 2),
+ datetime.datetime(2022, 1, 1, 10, 37, 2),
+ datetime.datetime(2022, 1, 28, 10, 37, 2),
+ datetime.datetime(2022, 1, 29, 10, 37, 2),
+ datetime.datetime(2022, 1, 30, 10, 37, 2),
+ datetime.datetime(2022, 6, 29, 10, 37, 2)]
+
+>>>
 ```
 
 
