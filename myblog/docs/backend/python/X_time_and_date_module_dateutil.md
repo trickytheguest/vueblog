@@ -1902,6 +1902,70 @@ ValueError: hour must be in 0..23
 >>>
 ```
 
+- `byminute`匹配指定分钟数
+
+```python
+# 匹配分钟数为30
+>>> list(rrule(freq=DAILY, count=14, dtstart=start_date, byminute=30))
+[datetime.datetime(2020, 7, 13, 10, 30, 2),
+ datetime.datetime(2020, 7, 14, 10, 30, 2),
+ datetime.datetime(2020, 7, 15, 10, 30, 2),
+ datetime.datetime(2020, 7, 16, 10, 30, 2),
+ datetime.datetime(2020, 7, 17, 10, 30, 2),
+ datetime.datetime(2020, 7, 18, 10, 30, 2),
+ datetime.datetime(2020, 7, 19, 10, 30, 2),
+ datetime.datetime(2020, 7, 20, 10, 30, 2),
+ datetime.datetime(2020, 7, 21, 10, 30, 2),
+ datetime.datetime(2020, 7, 22, 10, 30, 2),
+ datetime.datetime(2020, 7, 23, 10, 30, 2),
+ datetime.datetime(2020, 7, 24, 10, 30, 2),
+ datetime.datetime(2020, 7, 25, 10, 30, 2),
+ datetime.datetime(2020, 7, 26, 10, 30, 2)]
+
+# 匹配分钟数为30或45
+>>> list(rrule(freq=DAILY, count=14, dtstart=start_date, byminute=(30,45)))
+[datetime.datetime(2020, 7, 12, 10, 45, 2),
+ datetime.datetime(2020, 7, 13, 10, 30, 2),
+ datetime.datetime(2020, 7, 13, 10, 45, 2),
+ datetime.datetime(2020, 7, 14, 10, 30, 2),
+ datetime.datetime(2020, 7, 14, 10, 45, 2),
+ datetime.datetime(2020, 7, 15, 10, 30, 2),
+ datetime.datetime(2020, 7, 15, 10, 45, 2),
+ datetime.datetime(2020, 7, 16, 10, 30, 2),
+ datetime.datetime(2020, 7, 16, 10, 45, 2),
+ datetime.datetime(2020, 7, 17, 10, 30, 2),
+ datetime.datetime(2020, 7, 17, 10, 45, 2),
+ datetime.datetime(2020, 7, 18, 10, 30, 2),
+ datetime.datetime(2020, 7, 18, 10, 45, 2),
+ datetime.datetime(2020, 7, 19, 10, 30, 2)]
+
+# 匹配分钟数有效范围为[0, 59]，超出有效范围抛出ValueError异常
+>>> list(rrule(freq=DAILY, count=14, dtstart=start_date, byminute=(30,60)))
+ValueError: minute must be in 0..59
+
+# 匹配分钟数为30或59，注意30小于start_date中的分钟数37,因此今天的只会显示10点59分的
+>>> list(rrule(freq=DAILY, count=14, dtstart=start_date, byminute=(30,59)))
+[datetime.datetime(2020, 7, 12, 10, 59, 2),
+ datetime.datetime(2020, 7, 13, 10, 30, 2),
+ datetime.datetime(2020, 7, 13, 10, 59, 2),
+ datetime.datetime(2020, 7, 14, 10, 30, 2),
+ datetime.datetime(2020, 7, 14, 10, 59, 2),
+ datetime.datetime(2020, 7, 15, 10, 30, 2),
+ datetime.datetime(2020, 7, 15, 10, 59, 2),
+ datetime.datetime(2020, 7, 16, 10, 30, 2),
+ datetime.datetime(2020, 7, 16, 10, 59, 2),
+ datetime.datetime(2020, 7, 17, 10, 30, 2),
+ datetime.datetime(2020, 7, 17, 10, 59, 2),
+ datetime.datetime(2020, 7, 18, 10, 30, 2),
+ datetime.datetime(2020, 7, 18, 10, 59, 2),
+ datetime.datetime(2020, 7, 19, 10, 30, 2)]
+
+>>> start_date
+datetime.datetime(2020, 7, 12, 10, 37, 2, 615526)
+
+>>>
+```
+
 
 
 
