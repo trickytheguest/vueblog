@@ -1966,7 +1966,33 @@ datetime.datetime(2020, 7, 12, 10, 37, 2, 615526)
 >>>
 ```
 
+- `bysecond`匹配指定秒数
 
+使用`bysecond`可以匹配指定的秒数。秒数必须为`[0, 59]`区间内的整数。
+
+```python
+>>> list(rrule(freq=DAILY, count=14, dtstart=start_date, bysecond=60))
+ValueError: second must be in 0..59
+
+# 匹配每分钟内的15秒、30秒和45秒
+>>> list(rrule(freq=HOURLY, count=14, dtstart=start_date, bysecond=(15,30,45)))
+[datetime.datetime(2020, 7, 12, 10, 37, 15),
+ datetime.datetime(2020, 7, 12, 10, 37, 30),
+ datetime.datetime(2020, 7, 12, 10, 37, 45),
+ datetime.datetime(2020, 7, 12, 11, 37, 15),
+ datetime.datetime(2020, 7, 12, 11, 37, 30),
+ datetime.datetime(2020, 7, 12, 11, 37, 45),
+ datetime.datetime(2020, 7, 12, 12, 37, 15),
+ datetime.datetime(2020, 7, 12, 12, 37, 30),
+ datetime.datetime(2020, 7, 12, 12, 37, 45),
+ datetime.datetime(2020, 7, 12, 13, 37, 15),
+ datetime.datetime(2020, 7, 12, 13, 37, 30),
+ datetime.datetime(2020, 7, 12, 13, 37, 45),
+ datetime.datetime(2020, 7, 12, 14, 37, 15),
+ datetime.datetime(2020, 7, 12, 14, 37, 30)]
+
+>>>
+```
 
 
 
