@@ -1804,6 +1804,104 @@ datetime.datetime(2020, 12, 25, 0, 0)
  datetime.datetime(2020, 10, 11, 10, 37, 2)]
 ```
 
+- `byhour`匹配指定小时数
+
+通过`byhour`参数来指定小时数，小时数必须为`[0, 23]`区间内的整数。
+
+```python
+# 匹配每天的7时
+>>> list(rrule(freq=DAILY, count=14, dtstart=start_date, byhour=7))
+[datetime.datetime(2020, 7, 13, 7, 37, 2),
+ datetime.datetime(2020, 7, 14, 7, 37, 2),
+ datetime.datetime(2020, 7, 15, 7, 37, 2),
+ datetime.datetime(2020, 7, 16, 7, 37, 2),
+ datetime.datetime(2020, 7, 17, 7, 37, 2),
+ datetime.datetime(2020, 7, 18, 7, 37, 2),
+ datetime.datetime(2020, 7, 19, 7, 37, 2),
+ datetime.datetime(2020, 7, 20, 7, 37, 2),
+ datetime.datetime(2020, 7, 21, 7, 37, 2),
+ datetime.datetime(2020, 7, 22, 7, 37, 2),
+ datetime.datetime(2020, 7, 23, 7, 37, 2),
+ datetime.datetime(2020, 7, 24, 7, 37, 2),
+ datetime.datetime(2020, 7, 25, 7, 37, 2),
+ datetime.datetime(2020, 7, 26, 7, 37, 2)]
+
+# 匹配每天的8时
+>>> list(rrule(freq=DAILY, count=14, dtstart=start_date, byhour=8))
+[datetime.datetime(2020, 7, 13, 8, 37, 2),
+ datetime.datetime(2020, 7, 14, 8, 37, 2),
+ datetime.datetime(2020, 7, 15, 8, 37, 2),
+ datetime.datetime(2020, 7, 16, 8, 37, 2),
+ datetime.datetime(2020, 7, 17, 8, 37, 2),
+ datetime.datetime(2020, 7, 18, 8, 37, 2),
+ datetime.datetime(2020, 7, 19, 8, 37, 2),
+ datetime.datetime(2020, 7, 20, 8, 37, 2),
+ datetime.datetime(2020, 7, 21, 8, 37, 2),
+ datetime.datetime(2020, 7, 22, 8, 37, 2),
+ datetime.datetime(2020, 7, 23, 8, 37, 2),
+ datetime.datetime(2020, 7, 24, 8, 37, 2),
+ datetime.datetime(2020, 7, 25, 8, 37, 2),
+ datetime.datetime(2020, 7, 26, 8, 37, 2)]
+
+# 匹配每天的9时
+>>> list(rrule(freq=DAILY, count=14, dtstart=start_date, byhour=9))
+[datetime.datetime(2020, 7, 13, 9, 37, 2),
+ datetime.datetime(2020, 7, 14, 9, 37, 2),
+ datetime.datetime(2020, 7, 15, 9, 37, 2),
+ datetime.datetime(2020, 7, 16, 9, 37, 2),
+ datetime.datetime(2020, 7, 17, 9, 37, 2),
+ datetime.datetime(2020, 7, 18, 9, 37, 2),
+ datetime.datetime(2020, 7, 19, 9, 37, 2),
+ datetime.datetime(2020, 7, 20, 9, 37, 2),
+ datetime.datetime(2020, 7, 21, 9, 37, 2),
+ datetime.datetime(2020, 7, 22, 9, 37, 2),
+ datetime.datetime(2020, 7, 23, 9, 37, 2),
+ datetime.datetime(2020, 7, 24, 9, 37, 2),
+ datetime.datetime(2020, 7, 25, 9, 37, 2),
+ datetime.datetime(2020, 7, 26, 9, 37, 2)]
+
+# 匹配每天的7时或8时或9时
+>>> list(rrule(freq=DAILY, count=14, dtstart=start_date, byhour=(7,8,9)))
+[datetime.datetime(2020, 7, 13, 7, 37, 2),
+ datetime.datetime(2020, 7, 13, 8, 37, 2),
+ datetime.datetime(2020, 7, 13, 9, 37, 2),
+ datetime.datetime(2020, 7, 14, 7, 37, 2),
+ datetime.datetime(2020, 7, 14, 8, 37, 2),
+ datetime.datetime(2020, 7, 14, 9, 37, 2),
+ datetime.datetime(2020, 7, 15, 7, 37, 2),
+ datetime.datetime(2020, 7, 15, 8, 37, 2),
+ datetime.datetime(2020, 7, 15, 9, 37, 2),
+ datetime.datetime(2020, 7, 16, 7, 37, 2),
+ datetime.datetime(2020, 7, 16, 8, 37, 2),
+ datetime.datetime(2020, 7, 16, 9, 37, 2),
+ datetime.datetime(2020, 7, 17, 7, 37, 2),
+ datetime.datetime(2020, 7, 17, 8, 37, 2)]
+
+# 指定小数时超出范围，抛出ValueError异常，小数时必须在0到23之间
+>>> list(rrule(freq=DAILY, count=14, dtstart=start_date, byhour=(7,8,24)))
+---------------------------------------------------------------------------
+ValueError: hour must be in 0..23
+
+# 匹配每天的7时或8时或23时
+>>> list(rrule(freq=DAILY, count=14, dtstart=start_date, byhour=(7,8,23)))
+[datetime.datetime(2020, 7, 12, 23, 37, 2),
+ datetime.datetime(2020, 7, 13, 7, 37, 2),
+ datetime.datetime(2020, 7, 13, 8, 37, 2),
+ datetime.datetime(2020, 7, 13, 23, 37, 2),
+ datetime.datetime(2020, 7, 14, 7, 37, 2),
+ datetime.datetime(2020, 7, 14, 8, 37, 2),
+ datetime.datetime(2020, 7, 14, 23, 37, 2),
+ datetime.datetime(2020, 7, 15, 7, 37, 2),
+ datetime.datetime(2020, 7, 15, 8, 37, 2),
+ datetime.datetime(2020, 7, 15, 23, 37, 2),
+ datetime.datetime(2020, 7, 16, 7, 37, 2),
+ datetime.datetime(2020, 7, 16, 8, 37, 2),
+ datetime.datetime(2020, 7, 16, 23, 37, 2),
+ datetime.datetime(2020, 7, 17, 7, 37, 2)]
+
+>>>
+```
+
 
 
 
