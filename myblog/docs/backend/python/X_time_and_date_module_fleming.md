@@ -36,7 +36,8 @@ fleming.ceil(          fleming.fleming        fleming.intervals(
 参考：
 
 - [https://pypi.org/project/fleming/](https://pypi.org/project/fleming/)
-
+- [https://github.com/ambitioninc/fleming](https://github.com/ambitioninc/fleming)
+- [https://fleming.readthedocs.io/en/develop/index.html](https://fleming.readthedocs.io/en/develop/index.html)
 
 
 
