@@ -1463,6 +1463,8 @@ pytz.lazy.LazySet.__new__.<locals>.LazySet
 
 ### 国家名称country_names
 
+通过ISO-3166国家码可以反查对应的国家名称信息。
+
 ```python
 >>> from pytz import country_names
 
@@ -1755,7 +1757,11 @@ pytz.lazy.LazySet.__new__.<locals>.LazySet
 'India'
 ```
 
+### UTC时区
 
+UTC是世界标准时间。它是格林威治标准时间（GMT）和世界时的各种定义的继任者，但与格林威治标准时间和世界时的各种定义不同。 UTC现在是调节时钟和时间测量的全球标准。
+
+所有其他时区都是相对于UTC定义的，并且包括`UTC+0800`之类的偏移量-从UTC加上或减去小时数以得出本地时间。 UTC不会出现夏令时，因此它成为执行日期算术的有用时区，而不必担心夏令时转换，以及您所在国家/地区更改时区或漫游到多个时区的移动计算机所造成的混乱和歧义等问题。
 
 
 
