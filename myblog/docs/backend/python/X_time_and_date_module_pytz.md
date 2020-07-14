@@ -1938,16 +1938,99 @@ datetime.datetime(2020, 7, 14, 21, 16, tzinfo=<DstTzInfo 'Asia/Shanghai' CST+8:0
 >>>
 ```
 
+#### 时间和日期计算
 
+- 使用本地时间进行算术计算比较麻烦，需要处理夏令时等问题，此处忽略。创建本地时间也比较棘手，也忽略掉。
+- 如果要进行时间的转换，建议使用UTC标准时再转换到相应时区设置后，再进行本地化时间字符串输出。
+- tzinfo api相关也忽略不谈！
 
+#### 本地化存在的问题
 
+我们必须处理的主要问题是，某些日期时间可能一年发生两次。 例如，在十月最后一个星期日早晨的美国/东部时区，将发生以下顺序：
 
-参考：
+- 美国EDT 01:00发生（EDT: Eastern Daylight Timing美国东部夏令时间）。
+- 1小时后，而不是凌晨2:00，时钟被调回1小时，并且再次发生01:00（这次是EST 01:00）（EST eastern standard time 美国东部标准时间)。
 
-- [https://pypi.org/project/pytz/](https://pypi.org/project/pytz/)
+实际上，01:00到02:00之间的每个瞬间都会出现两次。 这意味着，如果您尝试在标准日期时间语法的`US/Eastern`美国/东部时区中创建时间，则无法指定是否要在夏令时结束之前或之后指定。 使用pytz自定义语法，最好的办法是进行有根据的猜测：
 
-- [https://pythonhosted.org/pytz/](https://pythonhosted.org/pytz/)
-- [https://github.com/stub42/pytz](https://github.com/stub42/pytz)
+```python
+>>> loc_dt = eastern.localize(datetime(2002, 10, 27, 1, 30, 00))
+
+>>> loc_dt.strftime(fmt)
+'2002-10-27 01:30:00 EST-0500'
+```
+
+如您所见，系统已经为您选择了一个，一小时之内就有50％的机会被淘汰。 对于某些应用程序，这无关紧要。 但是，如果您尝试与不同时区的人安排会议或分析日志文件，则不可接受。
+
+最好和最简单的解决方案是坚持使用UTC。 pytz软件包通过在Python文档中包含基于标准Python参考实现的特殊UTC实现，鼓励使用UTC进行内部时区表示。
+
+与其他pytz tzinfo实例相比，UTC timezone反序列化(unpickles)将是相同的对象，序列化(pickles)时相对较小。 可以通过pytz.utc，pytz.UTC或pytz.timezone('UTC')获得UTC实现。
+
+```python
+>>> import pickle
+
+>>> utc_dt = datetime(2020,7,14,14,27,21,tzinfo=UTC)
+
+>>> utc_dt
+datetime.datetime(2020, 7, 14, 14, 27, 21, tzinfo=<UTC>)
+
+>>> naive = utc_dt.replace(tzinfo=None)
+
+>>> naive
+datetime.datetime(2020, 7, 14, 14, 27, 21)
+
+>>> p = pickle.dumps(utc_dt,1)
+
+>>> p
+b'cdatetime\ndatetime\nq\x00(c_codecs\nencode\nq\x01(X\x0b\x00\x00\x00\x07\xc3\xa4\x07\x0e\x0e\x1b\x15\x00\x00\x00q\x02X\x06\x00\x00\x00latin1q\x03tq\x04Rq\x05cpytz\n_UTC\nq\x06)Rq\x07tq\x08Rq\t.'
+
+>>> naive_p = pickle.dumps(naive,1)
+
+>>> naive_p
+b'cdatetime\ndatetime\nq\x00(c_codecs\nencode\nq\x01(X\x0b\x00\x00\x00\x07\xc3\xa4\x07\x0e\x0e\x1b\x15\x00\x00\x00q\x02X\x06\x00\x00\x00latin1q\x03tq\x04Rq\x05tq\x06Rq\x07.'
+
+>>> len(p) - len(naive_p)
+17
+
+>>> new = pickle.loads(p)
+
+>>> new == utc_dt
+True
+
+>>> naive_new = pickle.loads(naive_p)
+
+>>> naive_new
+datetime.datetime(2020, 7, 14, 14, 27, 21)
+
+>>> new
+datetime.datetime(2020, 7, 14, 14, 27, 21, tzinfo=<UTC>)
+
+>>> naive_new == naive
+True
+
+>>> new is utc_dt
+False
+
+>>> new.tzinfo
+<UTC>
+
+>>> new.tzinfo is utc_dt.tzinfo
+True
+
+>>> naive_new is naive
+False
+
+>>>
+```
+
+## 最后的总结
+
+在处理与时区相关的数据时，始终以UTC标准时间来进行计算，得到最终的结果后，最终再将结果转换成对应时间的本地化时间，切记！！
+
+- 参考：
+- pytz-World timezone definitions, modern and historical [https://pypi.org/project/pytz/](https://pypi.org/project/pytz/)
+- pytz - World Timezone Definitions for Python [https://pythonhosted.org/pytz/](https://pythonhosted.org/pytz/)
+- pytz code[https://github.com/stub42/pytz](https://github.com/stub42/pytz)
 
 
 
