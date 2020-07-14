@@ -1763,6 +1763,121 @@ UTC是世界标准时间。它是格林威治标准时间（GMT）和世界时�
 
 所有其他时区都是相对于UTC定义的，并且包括`UTC+0800`之类的偏移量-从UTC加上或减去小时数以得出本地时间。 UTC不会出现夏令时，因此它成为执行日期算术的有用时区，而不必担心夏令时转换，以及您所在国家/地区更改时区或漫游到多个时区的移动计算机所造成的混乱和歧义等问题。
 
+### pytz模块常量
+
+```python
+# pytz的版本号
+>>> pytz.VERSION
+'2020.1'
+
+# pytz时间0
+>>> pytz.ZERO
+datetime.timedelta(0)
+
+# pytz时间小数
+>>> pytz.HOUR
+datetime.timedelta(0, 3600)
+
+# Olson数据库版本号，旧版本中拼写错误导致的名称
+>>> pytz.OLSEN_VERSION
+'2020a'
+
+# Olson数据库版本号
+>>> pytz.OLSON_VERSION
+'2020a'
+```
+
+
+
+### 本地化时间和日期计算
+
+准备需要使用的数据和变量：
+
+```python
+>>> from datetime import datetime, timedelta
+
+>>> from pytz import timezone, utc, UTC
+
+>>> utc
+<UTC>
+
+>>> UTC
+<UTC>
+
+>>> type(utc)
+pytz.UTC
+
+>>> type(UTC)
+pytz.UTC
+
+>>> utc == UTC
+True
+
+>>> utc.zone
+'UTC'
+
+>>> UTC.zone
+'UTC'
+
+>>> eastern = timezone('US/Eastern')
+
+>>> eastern
+<DstTzInfo 'US/Eastern' LMT-1 day, 19:04:00 STD>
+
+>>> eastern.zone
+'US/Eastern'
+
+>>> china = timezone('Asia/Shanghai')
+
+>>> china
+<DstTzInfo 'Asia/Shanghai' LMT+8:06:00 STD>
+
+>>> fmt = '%Y-%m-%d %H:%M:%S %Z%z'
+
+>>> fmt
+'%Y-%m-%d %H:%M:%S %Z%z'
+```
+
+pytz模块提供了两种方式来进行本地化处理。
+
+- 第一种方法是使用`pytz.localize()`方法，用于本地化原始日期时间（没有时区信息的日期时间）。
+- 第二种方法是使用`astimezone()`方法将一个存在的本地化时间转换成本地化时间(什么鬼👻，有点绕，原文`The second way of building a localized time is by converting an existing localized time using the standard `astimezone()` method`)。
+
+#### 使用`pytz.localize()`方法获取本地化时间
+
+```python
+>>> local_dt = eastern.localize(datetime(2020,7,14,8,51,0))
+
+>>> local_dt.astimezone?
+Docstring: tz -> convert to local time in new timezone tz
+Type:      builtin_function_or_method
+
+>>> local_dt.strftime?
+Docstring: format -> strftime() style string.
+Type:      builtin_function_or_method
+
+>>> local_dt
+datetime.datetime(2020, 7, 14, 8, 51, tzinfo=<DstTzInfo 'US/Eastern' EDT-1 day, 20:00:00 DST>)
+
+# 美国东部US/Eastern时区处于东-4时区，比UTC晚4个小时
+>>> local_dt.strftime(fmt)
+'2020-07-14 08:51:00 EDT-0400'
+```
+
+#### 使用`pytz.astimezone()`转换成本地时间
+
+```python
+# 将美国东部的本地时间转换成UTC标准时，可以发现时间增加了4小时
+>>> local_dt.astimezone(UTC)
+datetime.datetime(2020, 7, 14, 12, 51, tzinfo=<UTC>)
+
+# 将美国东部的本地时间转换成中国的本地时间，可以发现时间多了12小时，CST是中国标准时间，比UTC标准时早8个小时
+>>> local_dt.astimezone(china)
+datetime.datetime(2020, 7, 14, 20, 51, tzinfo=<DstTzInfo 'Asia/Shanghai' CST+8:00:00 STD>)
+```
+
+
+
 
 
 参考：
