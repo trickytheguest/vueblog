@@ -2025,7 +2025,7 @@ False
 
 ## 最后的总结
 
-在处理与时区相关的数据时，始终以UTC标准时间来进行计算，得到最终的结果后，最终再将结果转换成对应时间的本地化时间，切记！！
+在处理与时区相关的数据时，始终以UTC标准时间来进行计算，得到最终的结果后，最终再将结果转换成对应时区的本地化时间，切记！！
 
 - 参考：
 - pytz-World timezone definitions, modern and historical [https://pypi.org/project/pytz/](https://pypi.org/project/pytz/)
