@@ -1876,6 +1876,68 @@ datetime.datetime(2020, 7, 14, 12, 51, tzinfo=<UTC>)
 datetime.datetime(2020, 7, 14, 20, 51, tzinfo=<DstTzInfo 'Asia/Shanghai' CST+8:00:00 STD>)
 ```
 
+但不幸的是，在很多时区中，**使用标准日期时间构造函数的tzinfo参数pytz都不起作用**：
+
+```python
+>>> datetime(2020,7,14,8,51,0, tzinfo=eastern)
+datetime.datetime(2020, 7, 14, 8, 51, tzinfo=<DstTzInfo 'US/Eastern' LMT-1 day, 19:04:00 STD>)
+
+>>> datetime(2020,7,14,8,51,0, tzinfo=china)
+datetime.datetime(2020, 7, 14, 8, 51, tzinfo=<DstTzInfo 'Asia/Shanghai' LMT+8:06:00 STD>)
+
+# 可以发现转换的时间不对
+>>> datetime(2020,7,14,8,51,0, tzinfo=eastern).strftime(fmt)
+'2020-07-14 08:51:00 LMT-0456'
+
+# 可以发现转换的时间不对
+>>> datetime(2020,7,14,8,51,0, tzinfo=china).strftime(fmt)
+'2020-07-14 08:51:00 LMT+0806'
+
+>>>
+```
+
+而对于没有夏令时过渡的时区，例如UTC，却是安全的：
+
+```python
+>>> datetime(2020,7,14,8,51,0, tzinfo=utc).strftime(fmt)
+'2020-07-14 08:51:00 UTC+0000'
+
+>>> datetime(2020,7,14,8,51,0, tzinfo=UTC).strftime(fmt)
+'2020-07-14 08:51:00 UTC+0000'
+```
+
+处理时间的首选方法是始终使用UTC，仅在生成人类可读的输出时才转换为本地时间。
+
+```python
+# 定义UTC标准时
+>>> utc_dt = datetime(2020,7,14,13,16,0, tzinfo=UTC)
+
+>>> utc_dt
+datetime.datetime(2020, 7, 14, 13, 16, tzinfo=<UTC>)
+
+# 将标准时转换成美国东部本地化时间
+>>> eastern_local_dt = utc_dt.astimezone(eastern)
+
+>>> eastern_local_dt
+datetime.datetime(2020, 7, 14, 9, 16, tzinfo=<DstTzInfo 'US/Eastern' EDT-1 day, 20:00:00 DST>)
+
+# 将标准时转换成中国本地化时间
+>>> china_local_dt = utc_dt.astimezone(china)
+
+>>> china_local_dt
+datetime.datetime(2020, 7, 14, 21, 16, tzinfo=<DstTzInfo 'Asia/Shanghai' CST+8:00:00 STD>)
+
+# 输出本地化时间字符串
+>>> eastern_local_dt.strftime(fmt)
+'2020-07-14 09:16:00 EDT-0400'
+
+# 输出本地化时间字符串
+>>> china_local_dt.strftime(fmt)
+'2020-07-14 21:16:00 CST+0800'
+
+>>>
+```
+
 
 
 
