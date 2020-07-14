@@ -1399,12 +1399,14 @@ pytz.lazy.LazySet.__new__.<locals>.LazySet
 ```python
 >>> from pytz import country_timezones
 
+# 阿富汗伊斯兰共和国🇦🇫，亚洲/喀布尔
 >>> country_timezones['af']
 ['Asia/Kabul']
 
 >>> country_timezones['AF']
 ['Asia/Kabul']
 
+# 阿尔巴尼亚共和国🇦🇱ALBANIA, 欧洲/地拉那
 >>> country_timezones['AL']
 ['Europe/Tirane']
 
@@ -1412,7 +1414,7 @@ pytz.lazy.LazySet.__new__.<locals>.LazySet
 >>> country_timezones['CN']
 ['Asia/Shanghai', 'Asia/Urumqi']
 
-# 斐济对应的时区
+# 斐济🇫🇯对应的时区
 >>> country_timezones['FJ']
 ['Pacific/Fiji']
 
@@ -1452,7 +1454,7 @@ pytz.lazy.LazySet.__new__.<locals>.LazySet
 >>> country_timezones['JP']
 ['Asia/Tokyo']
 
-# 印度对应的时区，亚洲/加尔各答
+# 印度🇮🇳对应的时区，亚洲/加尔各答
 >>> country_timezones['IN']
 ['Asia/Kolkata']
 ```
