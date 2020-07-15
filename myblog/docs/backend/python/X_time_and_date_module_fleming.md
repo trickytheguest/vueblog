@@ -178,7 +178,9 @@ datetime.datetime(2020, 7, 15, 16, 45, 20, tzinfo=<DstTzInfo 'Asia/Shanghai' CST
 
 
 
-## `fleming.add_timedelta(dt, td, within_tz=None)`给datetime对象增加时间增量
+## `add_timedelta`给datetime对象增加时间增量
+
+`fleming.add_timedelta(dt, td, within_tz=None)`给datetime对象增加时间增量。
 
 参数说明：
 
@@ -217,9 +219,142 @@ datetime.datetime(2020, 7, 29, 20, 45, 20, tzinfo=<DstTzInfo 'Asia/Shanghai' CST
 >>>
 ```
 
+## `floor`向下取最近的时间边界值
 
+`fleming.floor(dt, within_tz=None, year=None, month=None, week=None, day=None, hour=None, minute=None, second=None, microsecond=None, extra_td_if_floor=None)`向下取最近的时间边界值。将日期时间四舍五入到最接近的时间间隔。 可用的时间间隔是年`year`，月`month`，周`week`，日`day`，小时`hour`，分钟`minute`，秒`second`和微秒`microsecond`。
 
+参数中需要注意的是`week`参数，代码周，只能是1或默认的`None`，指定`week`时则`year`和`month`参数不生效。
 
+```python
+$ ipython
+Python 3.6.8 (v3.6.8:3c6b436a57, Dec 24 2018, 02:10:22)
+Type 'copyright', 'credits' or 'license' for more information
+IPython 7.13.0 -- An enhanced Interactive Python. Type '?' for help.
+
+>>> from datetime import datetime
+
+>>> from pytz import timezone, UTC
+
+>>> from fleming import floor, convert_to_tz
+
+>>> today = datetime.today()
+
+# 本地时间，不带时区信息
+>>> today
+datetime.datetime(2020, 7, 15, 22, 15, 33, 460350)
+
+# 本地时间，带时区信息
+>> dt_local = today.replace(tzinfo=timezone('Asia/Shanghai'))
+
+# 本地时间，带时区信息
+>>> dt_local
+datetime.datetime(2020, 7, 15, 22, 15, 33, 460350, tzinfo=<DstTzInfo 'Asia/Shanghai' LMT+8:06:00 STD>)
+
+# 将本地时间转换成UTC标准时间
+>>> dt_utc = convert_to_tz(dt_local, UTC)
+
+# UTC标准时间
+>>> dt_utc
+datetime.datetime(2020, 7, 15, 14, 9, 33, 460350, tzinfo=<UTC>)
+
+>>>
+```
+
+### 对无时区时间对象进行处理
+
+对年和月间隔的处理：
+
+```python
+>>> floor(today, year=1)
+datetime.datetime(2020, 1, 1, 0, 0)
+
+>>> floor(today, year=2)
+datetime.datetime(2020, 1, 1, 0, 0)
+
+>>> floor(today, year=3)
+datetime.datetime(2019, 1, 1, 0, 0)
+
+>>> floor(today, year=4)
+datetime.datetime(2020, 1, 1, 0, 0)
+
+>>> floor(today, year=5)
+datetime.datetime(2020, 1, 1, 0, 0)
+
+>>> floor(today, year=6)
+datetime.datetime(2016, 1, 1, 0, 0)
+
+>>> floor(today, year=7)
+datetime.datetime(2016, 1, 1, 0, 0)
+
+>>> floor(today, year=8)
+datetime.datetime(2016, 1, 1, 0, 0)
+
+>>> floor(today, year=9)
+datetime.datetime(2016, 1, 1, 0, 0)
+
+>>> floor(today, year=10)
+datetime.datetime(2020, 1, 1, 0, 0)
+
+>>> floor(today, year=11)
+datetime.datetime(2013, 1, 1, 0, 0)
+
+>>> for i in range(1, 50):
+...     print('floor(today,year=%s) = %s' % (i, floor(today, year=i)))
+...
+floor(today,year=1) = 2020-01-01 00:00:00
+floor(today,year=2) = 2020-01-01 00:00:00
+floor(today,year=3) = 2019-01-01 00:00:00
+floor(today,year=4) = 2020-01-01 00:00:00
+floor(today,year=5) = 2020-01-01 00:00:00
+floor(today,year=6) = 2016-01-01 00:00:00
+floor(today,year=7) = 2016-01-01 00:00:00
+floor(today,year=8) = 2016-01-01 00:00:00
+floor(today,year=9) = 2016-01-01 00:00:00
+floor(today,year=10) = 2020-01-01 00:00:00
+floor(today,year=11) = 2013-01-01 00:00:00
+floor(today,year=12) = 2016-01-01 00:00:00
+floor(today,year=13) = 2015-01-01 00:00:00
+floor(today,year=14) = 2016-01-01 00:00:00
+floor(today,year=15) = 2010-01-01 00:00:00
+floor(today,year=16) = 2016-01-01 00:00:00
+floor(today,year=17) = 2006-01-01 00:00:00
+floor(today,year=18) = 2016-01-01 00:00:00
+floor(today,year=19) = 2014-01-01 00:00:00
+floor(today,year=20) = 2020-01-01 00:00:00
+floor(today,year=21) = 2016-01-01 00:00:00
+floor(today,year=22) = 2002-01-01 00:00:00
+floor(today,year=23) = 2001-01-01 00:00:00
+floor(today,year=24) = 2016-01-01 00:00:00
+floor(today,year=25) = 2000-01-01 00:00:00
+floor(today,year=26) = 2002-01-01 00:00:00
+floor(today,year=27) = 1998-01-01 00:00:00
+floor(today,year=28) = 2016-01-01 00:00:00
+floor(today,year=29) = 2001-01-01 00:00:00
+floor(today,year=30) = 2010-01-01 00:00:00
+floor(today,year=31) = 2015-01-01 00:00:00
+floor(today,year=32) = 2016-01-01 00:00:00
+floor(today,year=33) = 2013-01-01 00:00:00
+floor(today,year=34) = 2006-01-01 00:00:00
+floor(today,year=35) = 1995-01-01 00:00:00
+floor(today,year=36) = 2016-01-01 00:00:00
+floor(today,year=37) = 1998-01-01 00:00:00
+floor(today,year=38) = 2014-01-01 00:00:00
+floor(today,year=39) = 1989-01-01 00:00:00
+floor(today,year=40) = 2000-01-01 00:00:00
+floor(today,year=41) = 2009-01-01 00:00:00
+floor(today,year=42) = 2016-01-01 00:00:00
+floor(today,year=43) = 1978-01-01 00:00:00
+floor(today,year=44) = 1980-01-01 00:00:00
+floor(today,year=45) = 1980-01-01 00:00:00
+floor(today,year=46) = 1978-01-01 00:00:00
+floor(today,year=47) = 1974-01-01 00:00:00
+floor(today,year=48) = 2016-01-01 00:00:00
+floor(today,year=49) = 2009-01-01 00:00:00
+
+>>>
+```
+
+你发现的什么规律吗？当`year`值从1到49时，floor得到的值有什么规律？我完成没有发现，输出完成与预期不一样！:cry: 搞不懂！我猜后面的`ceil`方法也可能有类似的问题，我决定放弃这个模块的学习。Bye! 你如果想再深入的学习，可参考[https://fleming.readthedocs.io/en/develop/index.html](https://fleming.readthedocs.io/en/develop/index.html)。
 
 
 
