@@ -178,6 +178,51 @@ datetime.datetime(2020, 7, 15, 16, 45, 20, tzinfo=<DstTzInfo 'Asia/Shanghai' CST
 
 
 
+## `fleming.add_timedelta(dt, td, within_tz=None)`给datetime对象增加时间增量
+
+参数说明：
+
+- `dt`，datetime对象，如果datetime对象没有时区设置，则默认以UTC作为其时区。
+- `td`，timedelta对象，需要添加的时间增量。
+- `within_tz`，pytz模块的timezone对象，如果指定该参数，则dt将在日期时间算术之前转换为该时区，然后再转换回其原始时区。
+
+```python
+>>> from datetime import timedelta
+
+>>> from fleming import add_timedelta
+
+# UTC标准时间,为2020年7月15日
+>>> dt_utc
+datetime.datetime(2020, 7, 15, 12, 45, 20, tzinfo=<UTC>)
+
+# 在UTC标准时间的基础上增加两周，变成了2020年7月29日，此时时间对象仍然是UTC标准时间对象
+>>> dt_delta1 = add_timedelta(dt_utc, timedelta(weeks=2))
+
+# 通过UTC进行时间增量处理，得到的结果是正确的
+>>> dt_delta1
+datetime.datetime(2020, 7, 29, 12, 45, 20, tzinfo=<UTC>)
+
+# 指定的转换过程中需要使用的时区，会先将dt_utc转换成美国东部时间，再增加两周，再将美国东部时间转换成UTC标准时间，此时转换的结果也是正确的
+>>> dt_delta2 = add_timedelta(dt_utc, timedelta(weeks=2), within_tz=eastern)
+
+>>> dt_delta2
+datetime.datetime(2020, 7, 29, 12, 45, 20, tzinfo=<UTC>)
+
+# 将中国本地时间加两周，最终的结果也是对的
+>>> dt_delta3 = add_timedelta(dt_local, timedelta(weeks=2), within_tz=eastern)
+
+>>> dt_delta3
+datetime.datetime(2020, 7, 29, 20, 45, 20, tzinfo=<DstTzInfo 'Asia/Shanghai' CST+8:00:00 STD>)
+
+>>>
+```
+
+
+
+
+
+
+
 参考：
 
 - [https://pypi.org/project/fleming/](https://pypi.org/project/fleming/)
