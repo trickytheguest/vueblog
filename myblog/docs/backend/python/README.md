@@ -33,7 +33,7 @@
 31. [模块-日期和时间模块之datetime日期时间模块](./X_time_and_date_module_datetime.html)
 32. [模块-日期和时间模块之dateutil日期工具模块](./X_time_and_date_module_dateutil.html) 
 33. [模块-日期和时间模块之pytz时区模块](./X_time_and_date_module_pytz.html)
-34. [模块-日期和时间模块之fleming时区模块](./X_time_and_date_module_fleming.html)
+34. [模块-日期和时间模块之fleming时区模块(不推荐学习该模块)](./X_time_and_date_module_fleming.html)
 35. [模块-日期和时间模块之arrow日期时间模块](./X_time_and_date_module_arrow.html)
 36. [模块-日期和时间模块之timeit计算程序运行时间模块](./X_time_and_date_module_timeit.html)
 37. [Python并发](./X_python_concurrency.html)
