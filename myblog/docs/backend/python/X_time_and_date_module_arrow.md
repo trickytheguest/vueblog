@@ -583,6 +583,45 @@ Type:      method
 <Arrow [2020-07-19T13:19:35.632796+00:00]>
 ```
 
+## 格式化
+
+可以使用format方法进对arrow对象进行格式化。
+
+```python
+>>> a.format?
+Signature: a.format(fmt='YYYY-MM-DD HH:mm:ssZZ', locale='en_us')
+Docstring:
+Returns a string representation of the :class:`Arrow <arrow.arrow.Arrow>` object,
+formatted according to a format string.
+
+:param fmt: the format string.
+
+Usage::
+
+    >>> arrow.utcnow().format('YYYY-MM-DD HH:mm:ss ZZ')
+    '2013-05-09 03:56:47 -00:00'
+
+    >>> arrow.utcnow().format('X')
+    '1368071882'
+
+    >>> arrow.utcnow().format('MMMM DD, YYYY')
+    'May 09, 2013'
+
+    >>> arrow.utcnow().format()
+    '2013-05-09 03:56:47 -00:00'
+File:      /Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/arrow/arrow.py
+Type:      method
+  
+
+>>> a.format()
+'2020-07-18 13:19:35+00:00'
+
+>>> a.format('YYYY-MM-DD HH:mm:ss ZZ')
+'2020-07-18 13:19:35 +00:00'
+```
+
+
+
 
 
 参考：
