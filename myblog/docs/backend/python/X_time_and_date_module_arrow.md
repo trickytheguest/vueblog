@@ -274,6 +274,77 @@ Type:      function
 <Arrow [2020-07-17T14:45:13.434300+00:00]>
 ```
 
+### 通过无时区/有时区信息的datetime或者指定时区
+
+```python
+$ ipython
+Python 3.6.8 (v3.6.8:3c6b436a57, Dec 24 2018, 02:10:22)
+Type 'copyright', 'credits' or 'license' for more information
+IPython 7.13.0 -- An enhanced Interactive Python. Type '?' for help.
+
+>>> import arrow
+
+>>> from datetime import datetime
+
+>>> from dateutil import tz
+
+>>> arrow.get(datetime.utcnow())
+<Arrow [2020-07-18T12:21:17.701713+00:00]>
+
+>>> arrow.get(datetime(2020, 7, 18), 'US/Eastern')
+<Arrow [2020-07-18T00:00:00-04:00]>
+
+>>> arrow.get(datetime(2020, 7, 18), tz.gettz('US/Eastern'))
+<Arrow [2020-07-18T00:00:00-04:00]>
+
+>>> arrow.get(datetime.now(tz.gettz('US/Eastern')))
+<Arrow [2020-07-18T08:23:01.146618-04:00]>
+
+>>>
+```
+
+### 通过解析时间字符串
+
+```python
+>>> arrow.get('2020-07-18 20:24:45', 'YYYY-MM-DD HH:mm:ss')
+<Arrow [2020-07-18T20:24:45+00:00]>
+```
+
+### 在字符串中搜索时间对象
+
+```python
+>>> arrow.get('June was born in May 1980', 'MMMM YYYY')
+<Arrow [1980-05-01T00:00:00+00:00]>
+```
+
+### 在不使用格式字符串的情况下，可以识别和解析一些符合ISO 8601的字符串
+
+```python
+>>> arrow.get('2013-09-30T15:34:00.000-07:00')
+<Arrow [2013-09-30T15:34:00-07:00]>
+
+>>> arrow.get('2020-07-19T20:28:00.000-08:00')
+<Arrow [2020-07-19T20:28:00-08:00]>
+```
+
+### 直接实例化
+
+Arrow对象也可以直接实例化，只需要传入类似`datetime`对象一样的参数即可。
+
+```python
+>>> arrow.get(2020,7,18,20,29,30)
+<Arrow [2020-07-18T20:29:30+00:00]>
+
+>>> arrow.get(2020,7,18)
+<Arrow [2020-07-18T00:00:00+00:00]>
+
+>>> arrow.Arrow(2020,7,18)
+<Arrow [2020-07-18T00:00:00+00:00]>
+
+>>> arrow.Arrow(2020,7,18,20,29,30)
+<Arrow [2020-07-18T20:29:30+00:00]>
+```
+
 
 
 参考：
