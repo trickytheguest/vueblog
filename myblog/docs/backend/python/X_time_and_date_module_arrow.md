@@ -430,6 +430,159 @@ datetime.date(2020, 7, 18)
 datetime.time(13, 19, 35, 632796)
 ```
 
+## Replace替换或Shift移位
+
+你可以像datetime一样，对arrow对象进行替换和修改。注意，替换或移位时不会对原来的对象进行修改，只会生成一个新的对象。
+
+```python
+# 查年Arrow对象
+>>> a
+<Arrow [2020-07-18T13:19:35.632796+00:00]>
+
+# 查看replace方法的帮助信息
+>>> a.replace?
+Signature: a.replace(**kwargs)
+Docstring:
+Returns a new :class:`Arrow <arrow.arrow.Arrow>` object with attributes updated
+according to inputs.
+
+Use property names to set their value absolutely::
+
+    >>> import arrow
+    >>> arw = arrow.utcnow()
+    >>> arw
+    <Arrow [2013-05-11T22:27:34.787885+00:00]>
+    >>> arw.replace(year=2014, month=6)
+    <Arrow [2014-06-11T22:27:34.787885+00:00]>
+
+You can also replace the timezone without conversion, using a
+:ref:`timezone expression <tz-expr>`::
+
+    >>> arw.replace(tzinfo=tz.tzlocal())
+    <Arrow [2013-05-11T22:27:34.787885-07:00]>
+File:      /Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/arrow/arrow.py
+Type:      method
+
+# 进行替换，生成一个新的Arrow对象
+# 对年月日小时分钟秒和微秒都可以进行替换
+>>> a.replace(year=2021,month=8,day=9,hour=19,minute=25,second=15,microsecond=1234)
+<Arrow [2021-08-09T19:25:15.001234+00:00]>
+
+# 查看原来的Arrow对象，并没有更新
+>>> a
+<Arrow [2020-07-18T13:19:35.632796+00:00]>
+
+# 也可以对时区进行替换，可以直接以时区数字表示，也可以用英文方式表示
+# 替换成西四区
+>>> a.replace(tzinfo='-04:00')
+<Arrow [2020-07-18T13:19:35.632796-04:00]>
+
+# 替换成东八区
+>>> a.replace(tzinfo='+08:00')
+<Arrow [2020-07-18T13:19:35.632796+08:00]>
+
+# 也可以直接使用timezone信息代替
+>>> a.replace(tzinfo='US/Eastern')
+<Arrow [2020-07-18T13:19:35.632796-04:00]>
+
+>>> a.replace(tzinfo='US/eastErn')
+<Arrow [2020-07-18T13:19:35.632796-04:00]>
+
+>>> a.replace(tzinfo='us/eastErn')
+<Arrow [2020-07-18T13:19:35.632796-04:00]>
+
+>>> a.replace(tzinfo='Asia/Shanghai')
+<Arrow [2020-07-18T13:19:35.632796+08:00]>
+```
+
+或者直接使用`shift`来向前或向后改变属性：
+
+```python
+>>> a.shift?
+Signature: a.shift(**kwargs)
+Docstring:
+Returns a new :class:`Arrow <arrow.arrow.Arrow>` object with attributes updated
+according to inputs.
+
+Use pluralized property names to relatively shift their current value:
+
+>>> import arrow
+>>> arw = arrow.utcnow()
+>>> arw
+<Arrow [2013-05-11T22:27:34.787885+00:00]>
+>>> arw.shift(years=1, months=-1)
+<Arrow [2014-04-11T22:27:34.787885+00:00]>
+
+Day-of-the-week relative shifting can use either Python's weekday numbers
+(Monday = 0, Tuesday = 1 .. Sunday = 6) or using dateutil.relativedelta's
+day instances (MO, TU .. SU).  When using weekday numbers, the returned
+date will always be greater than or equal to the starting date.
+
+Using the above code (which is a Saturday) and asking it to shift to Saturday:
+
+>>> arw.shift(weekday=5)
+<Arrow [2013-05-11T22:27:34.787885+00:00]>
+
+While asking for a Monday:
+
+>>> arw.shift(weekday=0)
+<Arrow [2013-05-13T22:27:34.787885+00:00]>
+File:      /Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/arrow/arrow.py
+Type:      method
+
+>>> a
+<Arrow [2020-07-18T13:19:35.632796+00:00]>
+
+
+# 差一个月一年后的日期
+>>> a.shift(years=+1, months=-1)
+<Arrow [2021-06-18T13:19:35.632796+00:00]>
+
+# 一年又一个月后的日期
+>>> a.shift(years=+1, months=+1)
+<Arrow [2021-08-18T13:19:35.632796+00:00]>
+
+# 一年前一个月后的日期
+>>> a.shift(years=-1, months=+1)
+<Arrow [2019-08-18T13:19:35.632796+00:00]>
+
+# 两天后的日期
+>>> a.shift(days=+2)
+<Arrow [2020-07-20T13:19:35.632796+00:00]>
+
+# 两天前的日期
+>>> a.shift(days=-2)
+<Arrow [2020-07-16T13:19:35.632796+00:00]>
+
+# 周一的日期
+>>> a.shift(weekday=0)
+<Arrow [2020-07-20T13:19:35.632796+00:00]>
+
+# 周二的日期
+>>> a.shift(weekday=1)
+<Arrow [2020-07-21T13:19:35.632796+00:00]>
+
+# 周三的日期
+>>> a.shift(weekday=2)
+<Arrow [2020-07-22T13:19:35.632796+00:00]>
+
+# 周四的日期
+>>> a.shift(weekday=3)
+<Arrow [2020-07-23T13:19:35.632796+00:00]>
+
+# 周五的日期
+>>> a.shift(weekday=4)
+<Arrow [2020-07-24T13:19:35.632796+00:00]>
+
+# 周六的日期，就是今天！！！
+>>> a.shift(weekday=5)
+<Arrow [2020-07-18T13:19:35.632796+00:00]>
+
+# 周日的日期，明天！
+>>> a.shift(weekday=6)
+<Arrow [2020-07-19T13:19:35.632796+00:00]>
+```
+
 
 
 参考：
