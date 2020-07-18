@@ -345,6 +345,91 @@ Arrow对象也可以直接实例化，只需要传入类似`datetime`对象一�
 <Arrow [2020-07-18T20:29:30+00:00]>
 ```
 
+## 获取属性
+
+### `datetime`对象
+
+获取`datetime`属性：
+
+```python
+# 获取当前UTC标准时间
+>>> a = arrow.utcnow()
+
+>>> a
+<Arrow [2020-07-18T13:19:35.632796+00:00]>
+
+获取datetime属性，返回datetime对象
+>>> a.datetime
+datetime.datetime(2020, 7, 18, 13, 19, 35, 632796, tzinfo=tzutc())
+```
+
+### `timestamp`时间戳
+
+获取`timestamp`时间戳：
+
+```python
+>>> a.timestamp
+1595078375
+```
+
+### 无时区`datetime`对象和`tzinfo`
+
+可以通过`naive`属性获取无时区`datetime`对象，`tzinfo`属性获取tzinfo信息。
+
+```python
+# 无时区`datetime`对象
+>>> a.naive
+datetime.datetime(2020, 7, 18, 13, 19, 35, 632796)
+
+# 时区信息
+>>> a.tzinfo
+tzutc()
+```
+
+### datetime年月月等信息
+
+```python
+# 年
+>>> a.year
+2020
+
+# 月
+>>> a.month
+7
+
+# 日
+>>> a.day
+18
+
+# 小时
+>>> a.hour
+13
+
+# 分钟
+>>> a.minute
+19
+
+# 秒
+>>> a.second
+35
+
+# 微秒
+>>> a.microsecond
+632796
+```
+
+### 调用datetime的功能返回属性值
+
+```python
+# 获取日期信息
+>>> a.date()
+datetime.date(2020, 7, 18)
+
+# 获取时间信息
+>>> a.time()
+datetime.time(13, 19, 35, 632796)
+```
+
 
 
 参考：
