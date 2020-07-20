@@ -618,6 +618,60 @@ Type:      method
 
 >>> a.format('YYYY-MM-DD HH:mm:ss ZZ')
 '2020-07-18 13:19:35 +00:00'
+
+>>> a.format('X')
+'1595078375'
+
+>>> a.format('MMMM DD, YYYY')
+'July 18, 2020'
+
+>>> a.format('MMM DD, YYYY')
+'Jul 18, 2020'
+
+>>> a.format('MM DD, YYYY')
+'07 18, 2020'
+```
+
+## 时区转换
+
+可以很好地将UTC标准时间转换成其他时区的时间：
+
+```python
+$ ipython
+Python 3.6.8 (v3.6.8:3c6b436a57, Dec 24 2018, 02:10:22)
+Type 'copyright', 'credits' or 'license' for more information
+IPython 7.13.0 -- An enhanced Interactive Python. Type '?' for help.
+
+>>> from dateutil import tz
+
+>>> import arrow
+
+>>> utcnow = arrow.utcnow()
+
+# UTC标准时间
+>>> utcnow
+<Arrow [2020-07-20T12:06:49.508271+00:00]>
+
+# 转换成美国东部时区时间
+>>> utcnow.to('US/Eastern')
+<Arrow [2020-07-20T08:06:49.508271-04:00]>
+
+# 转换成中国时间
+>>> utcnow.to('Asia/Shanghai')
+<Arrow [2020-07-20T20:06:49.508271+08:00]>
+
+# 也可以通过tz.gettz来指定时区
+>>> utcnow.to(tz.gettz('Asia/Shanghai'))
+<Arrow [2020-07-20T20:06:49.508271+08:00]>
+
+>>> utcnow.to(tz.gettz('US/Eastern'))
+<Arrow [2020-07-20T08:06:49.508271-04:00]>
+
+>>> tz.gettz('Asia/Shanghai')
+tzfile('/usr/share/zoneinfo/Asia/Shanghai')
+
+>>> tz.gettz('US/Eastern')
+tzfile('/usr/share/zoneinfo/US/Eastern')
 ```
 
 
