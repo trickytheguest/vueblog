@@ -674,6 +674,296 @@ tzfile('/usr/share/zoneinfo/Asia/Shanghai')
 tzfile('/usr/share/zoneinfo/US/Eastern')
 ```
 
+也可以使用一些速记方式：
+
+```python
+# 转化成本地时间
+>>> utcnow.to('local')
+<Arrow [2020-07-20T20:06:49.508271+08:00]>
+
+# 转换成UTC标准时间
+>>> utcnow.to('local').to('utc')
+<Arrow [2020-07-20T12:06:49.508271+00:00]>
+```
+
+## 人性化设置
+
+时间的相对关系更加人性化：
+
+```python
+# 过去的时间
+# 6秒前
+>>> past = arrow.utcnow().shift(seconds=-6)
+
+>>> past.humanize()
+'just now'
+
+# 6分钟前
+>>> past = arrow.utcnow().shift(minutes=-6)
+
+>>> past.humanize()
+'6 minutes ago'
+
+# 1小时前
+>>> past = arrow.utcnow().shift(hours=-1)
+
+>>> past
+<Arrow [2020-07-20T12:32:57.575819+00:00]>
+
+>>> past.humanize()
+'an hour ago'
+
+# 两小时前
+>>> past = arrow.utcnow().shift(hours=-2)
+
+>>> past.humanize()
+'2 hours ago'
+
+# 三小时前
+>>> past = arrow.utcnow().shift(hours=-3)
+
+>>> past.humanize()
+'3 hours ago'
+
+# 1天前
+>>> past = arrow.utcnow().shift(days=-1)
+
+>>> past.humanize()
+'a day ago'
+
+# 两天前
+>>> past = arrow.utcnow().shift(days=-2)
+
+>>> past.humanize()
+'2 days ago'
+
+# 31天前，程序自动考虑为1个月前
+>>> past = arrow.utcnow().shift(days=-31)
+
+>>> past.humanize()
+'a month ago'
+
+# 30天前，程序自动考虑为1个月前
+>>> past = arrow.utcnow().shift(days=-30)
+
+>>> past.humanize()
+'a month ago'
+
+# 1年1个月前
+>>> past = arrow.utcnow().shift(years=-1, days=-30)
+
+>>> past.humanize()
+'a year ago'
+
+# 未来的时间
+# 五分钟后
+>>> future = arrow.utcnow().shift(minutes=6)
+
+>>> future.humanize()
+'in 5 minutes'
+
+>>> future.humanize(locale='zh')
+'5分钟后'
+
+# 2小时后
+>>> future = arrow.utcnow().shift(hours=3)
+
+>>> future.humanize()
+'in 2 hours'
+
+# 切换语言
+>>> future.humanize(locale='zh')
+'2小时后'
+
+# 2天后
+>>> future = arrow.utcnow().shift(days=3)
+
+>>> future.humanize()
+'in 2 days'
+
+>>> future.humanize(locale='zh')
+'2天后'
+
+# 6个月后
+>>> future = arrow.utcnow().shift(months=6)
+
+>>> future.humanize()
+'in 6 months'
+
+>>> future.humanize(locale='zh')
+'6个月后'
+
+# 11个月后
+>>> future = arrow.utcnow().shift(years=1, days=-30)
+
+>>> future.humanize()
+'in 11 months'
+
+>>> future.humanize(locale='zh')
+'11个月后'
+
+
+# 法语的11个月后
+>>> future.humanize(locale='fr')
+'dans 11 mois'
+
+# 日语的11个月后
+>>> future.humanize(locale='ja')
+'11ヶ月後'
+
+# 韩语的11个月后
+>>> future.humanize(locale='ko')
+'11개월 후'
+
+# 德语的11个月后
+>>> future.humanize(locale='de')
+'in 11 Monaten'
+```
+
+查看所有支持的语言：
+
+```python
+>>> from arrow.locales import _locales
+
+>>> _locales
+{'af': arrow.locales.AfrikaansLocale,
+ 'af_nl': arrow.locales.AfrikaansLocale,
+ 'ar_tn': arrow.locales.AlgeriaTunisiaArabicLocale,
+ 'ar_dz': arrow.locales.AlgeriaTunisiaArabicLocale,
+ 'ar': arrow.locales.ArabicLocale,
+ 'ar_ae': arrow.locales.ArabicLocale,
+ 'ar_bh': arrow.locales.ArabicLocale,
+ 'ar_dj': arrow.locales.ArabicLocale,
+ 'ar_eg': arrow.locales.ArabicLocale,
+ 'ar_eh': arrow.locales.ArabicLocale,
+ 'ar_er': arrow.locales.ArabicLocale,
+ 'ar_km': arrow.locales.ArabicLocale,
+ 'ar_kw': arrow.locales.ArabicLocale,
+ 'ar_ly': arrow.locales.ArabicLocale,
+ 'ar_om': arrow.locales.ArabicLocale,
+ 'ar_qa': arrow.locales.ArabicLocale,
+ 'ar_sa': arrow.locales.ArabicLocale,
+ 'ar_sd': arrow.locales.ArabicLocale,
+ 'ar_so': arrow.locales.ArabicLocale,
+ 'ar_ss': arrow.locales.ArabicLocale,
+ 'ar_td': arrow.locales.ArabicLocale,
+ 'ar_ye': arrow.locales.ArabicLocale,
+ 'de_at': arrow.locales.AustrianLocale,
+ 'az': arrow.locales.AzerbaijaniLocale,
+ 'az_az': arrow.locales.AzerbaijaniLocale,
+ 'eu': arrow.locales.BasqueLocale,
+ 'eu_eu': arrow.locales.BasqueLocale,
+ 'be': arrow.locales.BelarusianLocale,
+ 'be_by': arrow.locales.BelarusianLocale,
+ 'bn': arrow.locales.BengaliLocale,
+ 'bn_bd': arrow.locales.BengaliLocale,
+ 'bn_in': arrow.locales.BengaliLocale,
+ 'pt_br': arrow.locales.BrazilianPortugueseLocale,
+ 'bg': arrow.locales.BulgarianLocale,
+ 'bg_bg': arrow.locales.BulgarianLocale,
+ 'ca': arrow.locales.CatalanLocale,
+ 'ca_es': arrow.locales.CatalanLocale,
+ 'ca_ad': arrow.locales.CatalanLocale,
+ 'ca_fr': arrow.locales.CatalanLocale,
+ 'ca_it': arrow.locales.CatalanLocale,
+ 'zh': arrow.locales.ChineseCNLocale,
+ 'zh_cn': arrow.locales.ChineseCNLocale,
+ 'zh_tw': arrow.locales.ChineseTWLocale,
+ 'cs': arrow.locales.CzechLocale,
+ 'cs_cz': arrow.locales.CzechLocale,
+ 'da': arrow.locales.DanishLocale,
+ 'da_dk': arrow.locales.DanishLocale,
+ 'nl': arrow.locales.DutchLocale,
+ 'nl_nl': arrow.locales.DutchLocale,
+ 'en': arrow.locales.EnglishLocale,
+ 'en_us': arrow.locales.EnglishLocale,
+ 'en_gb': arrow.locales.EnglishLocale,
+ 'en_au': arrow.locales.EnglishLocale,
+ 'en_be': arrow.locales.EnglishLocale,
+ 'en_jp': arrow.locales.EnglishLocale,
+ 'en_za': arrow.locales.EnglishLocale,
+ 'en_ca': arrow.locales.EnglishLocale,
+ 'en_ph': arrow.locales.EnglishLocale,
+ 'eo': arrow.locales.EsperantoLocale,
+ 'eo_xx': arrow.locales.EsperantoLocale,
+ 'ee': arrow.locales.EstonianLocale,
+ 'et': arrow.locales.EstonianLocale,
+ 'fa': arrow.locales.FarsiLocale,
+ 'fa_ir': arrow.locales.FarsiLocale,
+ 'fi': arrow.locales.FinnishLocale,
+ 'fi_fi': arrow.locales.FinnishLocale,
+ 'fr': arrow.locales.FrenchLocale,
+ 'fr_fr': arrow.locales.FrenchLocale,
+ 'de': arrow.locales.GermanLocale,
+ 'de_de': arrow.locales.GermanLocale,
+ 'el': arrow.locales.GreekLocale,
+ 'el_gr': arrow.locales.GreekLocale,
+ 'he': arrow.locales.HebrewLocale,
+ 'he_il': arrow.locales.HebrewLocale,
+ 'hi': arrow.locales.HindiLocale,
+ 'zh_hk': arrow.locales.HongKongLocale,
+ 'hu': arrow.locales.HungarianLocale,
+ 'hu_hu': arrow.locales.HungarianLocale,
+ 'is': arrow.locales.IcelandicLocale,
+ 'is_is': arrow.locales.IcelandicLocale,
+ 'id': arrow.locales.IndonesianLocale,
+ 'id_id': arrow.locales.IndonesianLocale,
+ 'it': arrow.locales.ItalianLocale,
+ 'it_it': arrow.locales.ItalianLocale,
+ 'ja': arrow.locales.JapaneseLocale,
+ 'ja_jp': arrow.locales.JapaneseLocale,
+ 'ko': arrow.locales.KoreanLocale,
+ 'ko_kr': arrow.locales.KoreanLocale,
+ 'ar_iq': arrow.locales.LevantArabicLocale,
+ 'ar_jo': arrow.locales.LevantArabicLocale,
+ 'ar_lb': arrow.locales.LevantArabicLocale,
+ 'ar_ps': arrow.locales.LevantArabicLocale,
+ 'ar_sy': arrow.locales.LevantArabicLocale,
+ 'mk': arrow.locales.MacedonianLocale,
+ 'mk_mk': arrow.locales.MacedonianLocale,
+ 'ml': arrow.locales.MalayalamLocale,
+ 'mr': arrow.locales.MarathiLocale,
+ 'ar_mr': arrow.locales.MauritaniaArabicLocale,
+ 'ar_ma': arrow.locales.MoroccoArabicLocale,
+ 'ne': arrow.locales.NepaliLocale,
+ 'ne_np': arrow.locales.NepaliLocale,
+ 'nn': arrow.locales.NewNorwegianLocale,
+ 'nn_no': arrow.locales.NewNorwegianLocale,
+ 'nb': arrow.locales.NorwegianLocale,
+ 'nb_no': arrow.locales.NorwegianLocale,
+ 'pl': arrow.locales.PolishLocale,
+ 'pl_pl': arrow.locales.PolishLocale,
+ 'pt': arrow.locales.PortugueseLocale,
+ 'pt_pt': arrow.locales.PortugueseLocale,
+ 'ro': arrow.locales.RomanianLocale,
+ 'ro_ro': arrow.locales.RomanianLocale,
+ 'rm': arrow.locales.RomanshLocale,
+ 'rm_ch': arrow.locales.RomanshLocale,
+ 'ru': arrow.locales.RussianLocale,
+ 'ru_ru': arrow.locales.RussianLocale,
+ 'sk': arrow.locales.SlovakLocale,
+ 'sk_sk': arrow.locales.SlovakLocale,
+ 'sl': arrow.locales.SlovenianLocale,
+ 'sl_si': arrow.locales.SlovenianLocale,
+ 'es': arrow.locales.SpanishLocale,
+ 'es_es': arrow.locales.SpanishLocale,
+ 'sv': arrow.locales.SwedishLocale,
+ 'sv_se': arrow.locales.SwedishLocale,
+ 'de_ch': arrow.locales.SwissLocale,
+ 'tl': arrow.locales.TagalogLocale,
+ 'tl_ph': arrow.locales.TagalogLocale,
+ 'th': arrow.locales.ThaiLocale,
+ 'th_th': arrow.locales.ThaiLocale,
+ 'tr': arrow.locales.TurkishLocale,
+ 'tr_tr': arrow.locales.TurkishLocale,
+ 'ua': arrow.locales.UkrainianLocale,
+ 'uk_ua': arrow.locales.UkrainianLocale,
+ 'vi': arrow.locales.VietnameseLocale,
+ 'vi_vn': arrow.locales.VietnameseLocale}
+
+>>>
+```
+
 
 
 
