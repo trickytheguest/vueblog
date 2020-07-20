@@ -1111,6 +1111,77 @@ tzfile('/usr/share/zoneinfo/US/Eastern')
 
 
 
+## 工厂模式
+
+使用工厂模式将Arrow的模块API应用于自定义的Arrow衍生类型。 首先，编写您的自定义类，以及相应的方法，然后获取并使用工厂函数。
+
+如下面的定义的`CustomArrow`类继承自`Arrow`类，并在其中定义了一个`days_till_xmas`方法。通过`ArrowFactory(CustomArrow)`构建一个工厂对象，然后再生成一个Arrow时间对象，最后调用自定义的`days_till_xmas`方法！
+
+在pycham中测试：
+
+```python
+from arrow import Arrow, ArrowFactory
+
+
+class CustomArrow(Arrow):
+    """使用arrow模块的工厂模式进行自定义模块功能开发"""
+
+    def days_till_xmas(self):
+        """距离圣诞节的天数"""
+        xmas = Arrow(self.year, 12, 25)
+        if self > xmas:
+            xmas = xmas.shift(years=1)
+
+        return (xmas - self).days
+
+
+def main():
+    """测试使用工厂模块的函数"""
+    factory = ArrowFactory(CustomArrow)
+    custom = factory.utcnow()
+    print(custom)
+    print(custom.days_till_xmas())
+    
+
+if __name__ == '__main__':
+    main()
+
+# output:
+# 2020-07-20T14:27:53.958652+00:00
+# 157
+```
+
+在ipython中测试：
+
+```python
+>>> from arrow import Arrow, ArrowFactory
+...
+...
+... class CustomArrow(Arrow):
+...     """使用arrow模块的工厂模式进行自定义模块功能开发"""
+...
+...     def days_till_xmas(self):
+...         """距离圣诞节的天数"""
+...         xmas = Arrow(self.year, 12, 25)
+...         if self > xmas:
+...             xmas = xmas.shift(years=1)
+...
+...         return (xmas - self).days
+...
+
+>>> factory = ArrowFactory(CustomArrow)
+
+>>> custom = factory.utcnow()
+
+>>> custom
+<CustomArrow [2020-07-20T14:30:46.109427+00:00]>
+
+>>> custom.days_till_xmas()
+157
+
+>>>
+```
+
 
 
 
