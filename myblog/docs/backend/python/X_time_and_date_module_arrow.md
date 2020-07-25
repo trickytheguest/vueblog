@@ -1182,11 +1182,57 @@ if __name__ == '__main__':
 >>>
 ```
 
+## 支持的令牌
+
+使用以下标记进行解析和格式化。 请注意，它们与strptime的令牌不同：
+
+|                                        | Token令牌 | Output输出                                                   |
+| -------------------------------------- | --------- | ------------------------------------------------------------ |
+| **Year年**                             | YYYY      | 2000, 2001, 2002 … 2012, 2013                                |
+|                                        | YY        | 00, 01, 02 … 12, 13                                          |
+| **Month月**                            | MMMM      | January, February, March … [1](https://arrow.readthedocs.io/en/latest/#t1) |
+|                                        | MMM       | Jan, Feb, Mar … [1](https://arrow.readthedocs.io/en/latest/#t1) |
+|                                        | MM        | 01, 02, 03 … 11, 12                                          |
+|                                        | M         | 1, 2, 3 … 11, 12                                             |
+| **Day of Year年中的某一天**            | DDDD      | 001, 002, 003 … 364, 365                                     |
+|                                        | DDD       | 1, 2, 3 … 364, 365                                           |
+| **Day of Month月中的某一天**           | DD        | 01, 02, 03 … 30, 31                                          |
+|                                        | D         | 1, 2, 3 … 30, 31                                             |
+|                                        | Do        | 1st, 2nd, 3rd … 30th, 31st                                   |
+| **Day of Week周中的某一天**            | dddd      | Monday, Tuesday, Wednesday … [2](https://arrow.readthedocs.io/en/latest/#t2) |
+|                                        | ddd       | Mon, Tue, Wed … [2](https://arrow.readthedocs.io/en/latest/#t2) |
+|                                        | d         | 1, 2, 3 … 6, 7                                               |
+| **ISO week date**                      | W         | 2011-W05-4, 2019-W17                                         |
+| **Hour小时**                           | HH        | 00, 01, 02 … 23, 24                                          |
+|                                        | H         | 0, 1, 2 … 23, 24                                             |
+|                                        | hh        | 01, 02, 03 … 11, 12                                          |
+|                                        | h         | 1, 2, 3 … 11, 12                                             |
+| **AM / PM上午与下午**                  | A         | AM, PM, am, pm [1](https://arrow.readthedocs.io/en/latest/#t1) |
+|                                        | a         | am, pm [1](https://arrow.readthedocs.io/en/latest/#t1)       |
+| **Minute分钟**                         | mm        | 00, 01, 02 … 58, 59                                          |
+|                                        | m         | 0, 1, 2 … 58, 59                                             |
+| **Second秒**                           | ss        | 00, 01, 02 … 58, 59                                          |
+|                                        | s         | 0, 1, 2 … 58, 59                                             |
+| **Sub-second**                         | S…        | 0, 02, 003, 000006, 123123123123… [3](https://arrow.readthedocs.io/en/latest/#t3) |
+| **Timezone时区**                       | ZZZ       | Asia/Baku, Europe/Warsaw, GMT … [4](https://arrow.readthedocs.io/en/latest/#t4) |
+|                                        | ZZ        | -07:00, -06:00 … +06:00, +07:00, +08, Z                      |
+|                                        | Z         | -0700, -0600 … +0600, +0700, +08, Z                          |
+| **Seconds Timestamp秒时间戳**          | X         | 1381685817, 1381685817.915482 … [5](https://arrow.readthedocs.io/en/latest/#t5) |
+| **ms or µs Timestamp毫秒与微秒时间戳** | x         | 1569980330813, 1569980330813221                              |
+
+Footnotes脚注说明：
+
+- 1([1](https://arrow.readthedocs.io/en/latest/#id1),[2](https://arrow.readthedocs.io/en/latest/#id2),[3](https://arrow.readthedocs.io/en/latest/#id5),[4](https://arrow.readthedocs.io/en/latest/#id6)) localization support for parsing and formatting
+- 2([1](https://arrow.readthedocs.io/en/latest/#id3),[2](https://arrow.readthedocs.io/en/latest/#id4)) localization support only for formatting
+- [3 ](https://arrow.readthedocs.io/en/latest/#id7) the result is truncated to microseconds, with [half-to-even rounding](https://en.wikipedia.org/wiki/IEEE_floating_point#Roundings_to_nearest).
+- [4](https://arrow.readthedocs.io/en/latest/#id8)  timezone names from [tz database](https://www.iana.org/time-zones) provided via dateutil package
+- [5](https://arrow.readthedocs.io/en/latest/#id9)  this token cannot be used for parsing timestamps out of natural language strings due to compatibility reasons
 
 
 
+## 内置格式化
 
-
+有几种格式标准作为内置令牌提供。看下面的示例。
 
 
 
