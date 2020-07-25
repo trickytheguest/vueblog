@@ -1234,6 +1234,97 @@ Footnotes脚注说明：
 
 有几种格式标准作为内置令牌提供。看下面的示例。
 
+可以通过以下方式查看arrow的版本信息：
+
+```python
+$ ipython
+Python 3.6.8 (v3.6.8:3c6b436a57, Dec 24 2018, 02:10:22)
+Type 'copyright', 'credits' or 'license' for more information
+IPython 7.13.0 -- An enhanced Interactive Python. Type '?' for help.
+
+>>> import arrow
+
+>>> arrow.__version__
+'0.15.8'
+```
+
+
+
+注意，内置格式化是在0.15.7版本引入的，如果你的arrow版本相对较低的话，可以使用以下命令升级arrow版本：
+
+```sh
+$ pip install -U arrow
+Looking in indexes: http://mirrors.aliyun.com/pypi/simple/
+Collecting arrow
+  Downloading http://mirrors.aliyun.com/pypi/packages/40/2a/9dd6a391e7813b9908b4dcaec7df0f2d365cfc0f071799f2ae5147707923/arrow-0.15.8-py2.py3-none-any.whl (49 kB)
+     |████████████████████████████████| 49 kB 4.3 MB/s
+Requirement already satisfied, skipping upgrade: python-dateutil in /Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages (from arrow) (2.8.1)
+Requirement already satisfied, skipping upgrade: six>=1.5 in /Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages (from python-dateutil->arrow) (1.14.0)
+Installing collected packages: arrow
+  Attempting uninstall: arrow
+    Found existing installation: arrow 0.15.6
+    Uninstalling arrow-0.15.6:
+      Successfully uninstalled arrow-0.15.6
+Successfully installed arrow-0.15.8
+```
+
+[可以在这里看到提交修改信息](https://github.com/arrow-py/arrow/commit/22acd93050aa23147c9122f143a3069dc7f5b89f#diff-98102a005603dcf5eb33f3152fe5099e)，定义的几个内置格式化常量为：
+
+```python
+FORMAT_ATOM = "YYYY-MM-DD HH:mm:ssZZ"
+FORMAT_COOKIE = "dddd, DD-MMM-YYYY HH:mm:ss ZZZ"
+FORMAT_RFC822 = "ddd, DD MMM YY HH:mm:ss Z"
+FORMAT_RFC850 = "dddd, DD-MMM-YY HH:mm:ss ZZZ"
+FORMAT_RFC1036 = "ddd, DD MMM YY HH:mm:ss Z"
+FORMAT_RFC1123 = "ddd, DD MMM YYYY HH:mm:ss Z"
+FORMAT_RFC2822 = "ddd, DD MMM YYYY HH:mm:ss Z"
+FORMAT_RFC3339 = "YYYY-MM-DD HH:mm:ssZZ"
+FORMAT_RSS = "ddd, DD MMM YYYY HH:mm:ss Z"
+FORMAT_W3C = "YYYY-MM-DD HH:mm:ssZZ"
+```
+
+我们来试一下，这些内置的格式化输出。
+
+```python
+# UTC标准时间
+>>> now = arrow.utcnow()
+
+>>> now
+<Arrow [2020-07-25T09:53:41.904664+00:00]>
+
+>>> now.format(arrow.FORMAT_ATOM)
+'2020-07-25 09:53:41+00:00'
+
+>>> now.format(arrow.FORMAT_COOKIE)
+'Saturday, 25-Jul-2020 09:53:41 UTC'
+
+>>> now.format(arrow.FORMAT_RFC822)
+'Sat, 25 Jul 20 09:53:41 +0000'
+
+>>> now.format(arrow.FORMAT_RFC850)
+'Saturday, 25-Jul-20 09:53:41 UTC'
+
+>>> now.format(arrow.FORMAT_RFC1036)
+'Sat, 25 Jul 20 09:53:41 +0000'
+
+>>> now.format(arrow.FORMAT_RFC1123)
+'Sat, 25 Jul 2020 09:53:41 +0000'
+
+>>> now.format(arrow.FORMAT_RFC2822)
+'Sat, 25 Jul 2020 09:53:41 +0000'
+
+>>> now.format(arrow.FORMAT_RFC3339)
+'2020-07-25 09:53:41+00:00'
+
+>>> now.format(arrow.FORMAT_RSS)
+'Sat, 25 Jul 2020 09:53:41 +0000'
+
+>>> now.format(arrow.FORMAT_W3C)
+'2020-07-25 09:53:41+00:00'
+```
+
+
+
 
 
 
