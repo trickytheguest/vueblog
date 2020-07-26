@@ -1389,9 +1389,38 @@ FORMAT_W3C = "YYYY-MM-DD HH:mm:ssZZ"
 <Arrow [2014-09-08T16:41:45+00:00]>
 ```
 
+### 标点符号转义
+
+日期格式可能在下面的列表中的任何一个标点符号两侧`, . ; : ? ! "  ' [ ] { } ( ) < >`
+
+```python
+>>> arrow.get("Tomorrow (2019-10-31) is Halloween!", "YYYY-MM-DD")
+<Arrow [2019-10-31T00:00:00+00:00]>
+
+>>> arrow.get("Halloween is on 2019.10.31.", "YYYY.MM.DD")
+<Arrow [2019-10-31T00:00:00+00:00]>
+
+>>> arrow.get("It's Halloween tomorrow (2019/10/31)", "YYYY/MM/DD")
+<Arrow [2019-10-31T00:00:00+00:00]>
+
+>>> arrow.get("It's Halloween tomorrow 2019/10/31", "YYYY/MM/DD")
+<Arrow [2019-10-31T00:00:00+00:00]>
+
+# Raises exception because there are multiple punctuation marks following the date
+>>> arrow.get("It's Halloween tomorrow (2019-10-31)!", "YYYY-MM-DD")
+---------------------------------------------------------------------------
+ParserMatchError: Failed to match 'YYYY-MM-DD' when parsing 'It's Halloween tomorrow (2019-10-31)!'
+
+>>>
+```
+
+## Arrow模块的API
+
+官方文档中提供了详细的api文档，具体可参考[https://arrow.readthedocs.io/en/stable/#api-guide](https://arrow.readthedocs.io/en/stable/#api-guide)。
 
 
 
+在github上面可以看到该模块最近也有更新，说明比较活跃！通过本文中的一些示例可以看到，使用arrow模块处理日期时间相关的操作非常的方法，后续可以使用这个模块作为代码中日期的默认的处理方式！
 
 
 
