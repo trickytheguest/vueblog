@@ -273,6 +273,106 @@ Type:      builtin_function_or_method
 
 为了修复这个问题，我们需要改进代码！
 
+我们可以使用`title()`函数，我们把`cap.py`中的`capitalize()`替换成`title()`：
 
+```python
+def just_do_it(text):
+    # return text.capitalize()
+    return text.title()
+```
+
+```sh
+$ cat cap.py 
+def just_do_it(text):
+    # return text.capitalize()
+    return text.title()
+```
+
+我们再次运行测试，看看结果如何：
+
+```sh
+$ python3 test_cap.py
+..
+----------------------------------------------------------------------
+Ran 2 tests in 0.000s
+
+OK
+```
+
+这时两个测试都运行通过了，看起来没问题了。不过，其实还是有问题的，我们还需要在`test_cap.py`中添加另一个方法，修改后内容如下：
+
+```python
+import unittest
+
+import cap
+
+
+class TestCap(unittest.TestCase):
+    def setUp(self) -> None:
+        pass
+
+    def tearDown(self) -> None:
+        pass
+
+    def test_one_word(self):
+        """测试单个单词的情况"""
+        text = 'duck'
+        result = cap.just_do_it(text)
+        self.assertEqual(result, 'Duck')
+
+    def test_multiple_words(self):
+        """测试多个单词的情况"""
+        text = 'a veritable flock of ducks'
+        result = cap.just_do_it(text)
+        self.assertEqual(result, 'A Veritable Flock Of Ducks')
+
+    def test_words_with_apostrophes(self):
+        """测试带撇号的情况"""
+        text = "I'm fresh out of ideas"
+        result = cap.just_do_it(text)
+        self.assertEqual(result, "I'm Fresh Out Of Ideas")
+
+
+if __name__ == '__main__':
+    unittest.main()
+
+```
+
+我们再次运行测试：
+
+```sh
+$ python3 test_cap.py
+..F
+======================================================================
+FAIL: test_words_with_apostrophes (__main__.TestCap)
+测试带撇号的情况
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "test_cap.py", line 29, in test_words_with_apostrophes
+    self.assertEqual(result, "I'm Fresh Out Of Ideas")
+AssertionError: "I'M Fresh Out Of Ideas" != "I'm Fresh Out Of Ideas"
+- I'M Fresh Out Of Ideas
+?   ^
++ I'm Fresh Out Of Ideas
+?   ^
+
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.001s
+
+FAILED (failures=1)
+$ 
+```
+
+函数把`I'm`中的`m`大写了，查看官方文档也可以看到它默认不处理撇号：
+
+> The algorithm uses a simple language-independent definition of a word as groups of consecutive letters. The definition works in many contexts but it means that apostrophes in contractions and possessives form word boundaries, which may not be the desired result:
+>
+> ```python
+> >>> "they're bill's friends from the UK".title()
+> "They'Re Bill'S Friends From The Uk"
+> ```
+
+我们应该好好读一下官方文档！
 
 
