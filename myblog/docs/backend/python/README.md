@@ -39,6 +39,7 @@
 37. [Python并发](./X_python_concurrency.html)
 38. [网络](./X_internet.html)
 39. [模块-数据输出美化模块pprint](./X_pprint.html)
+40. [成为真正的Python开发者](./X_tobepythonista.html)
 1. [Python代码检查](./X_Python_style_and_static_check.html) 
 1. [Python面试总结](./X_python_interview.html) 
 

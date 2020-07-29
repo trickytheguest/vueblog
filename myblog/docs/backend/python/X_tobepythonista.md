@@ -144,6 +144,135 @@ and opendir), and leave all pathname manipulation to os.path
 
 最好先编写独立的测试程序，在提交代码到源码控制系统之前确保通过所有测试。写测试看起来是一件很麻烦的事情，但是它们真的能帮助你更快地发现问题。尤其是回归测试（破坏之前还能正常工作的代码）。工程师们已经从惨痛的经历中领悟到一个真理：即使是很小的看起来没有任何问题的改动，也可能出问题。如果看那些优秀的Python包就会发现，它们大都有测试集。
 
+标准库中有两个测试包，unittest和doctest。
+
+首先我们介绍unittest测试包。假设我们编写了一个单词首字母转大写的模块，第一版直接使用标准字符串函数`capitalize()`，之后会看到许多意料之外的结果，把下面的代码保存为cap.py:
+
+```python
+def just_do_it(text):
+    return text.capitalize()
+```
+
+好，我们跟踪书上的示例，一步步的来做。
+
+测试就是先确定输入对应的期望输出(本例期望的输出是输入文本的首字母大写版本)，然后把输入传入需要测试的函数，并检查返回值和期望输出是否相同。期望输出被称为`断言`。因此在`unittest`中，可以使用`assert`断言开头的方法来检查返回的结果。比如下面代码中的`assertEqual`方法。
+
+把下面的代码保存为test_cap.py:
+
+```python
+import unittest
+
+import cap
+
+
+class TestCap(unittest.TestCase):
+    def setUp(self) -> None:
+        pass
+
+    def tearDown(self) -> None:
+        pass
+
+    def test_one_word(self):
+        text = 'duck'
+        result = cap.just_do_it(text)
+        self.assertEqual(result, 'Duck')
+
+    def test_multiple_words(self):
+        text = 'a veritable flock of ducks'
+        result = cap.just_do_it(text)
+        self.assertEqual(result, 'A Veritable Flock Of Ducks')
+
+
+if __name__ == '__main__':
+    unittest.main()
+
+```
+
+查看文件内容：
+
+```sh
+$ cat cap.py 
+def just_do_it(text):
+    return text.capitalize()%                                                                                                                                             $ cat test_cap.py 
+import unittest
+
+import cap
+
+
+class TestCap(unittest.TestCase):
+    def setUp(self) -> None:
+        pass
+
+    def tearDown(self) -> None:
+        pass
+
+    def test_one_word(self):
+        text = 'duck'
+        result = cap.just_do_it(text)
+        self.assertEqual(result, 'Duck')
+
+    def test_multiple_words(self):
+        text = 'a veritable flock of ducks'
+        result = cap.just_do_it(text)
+        self.assertEqual(result, 'A Veritable Flock Of Ducks')
+
+
+if __name__ == '__main__':
+    unittest.main()
+```
+
+`setUp()`和`tearDown()`方法是在每个测试方法执行之前/后执行的函数，它们通常用来分配和回收测试需要的外部资源，比如数据库连接或者一些测试数据。在本例中，我们的测试方法已经足够进行测试，因此不需要再定义`setUp()`和`tearDown()`，但是放一个空方法也没有关系，我们测试的核心是函数`test_one_word()`和`test_multiple_words()`,它们会运行我们定义的`just_do_it()`函数，传入不同的输出并检查返回值是否和期望输出一样！
+
+我们运行一下脚本，它会调用那两个测试方法：
+
+```sh
+$ python3 test_cap.py
+F.
+======================================================================
+FAIL: test_multiple_words (__main__.TestCap)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "test_cap.py", line 21, in test_multiple_words
+    self.assertEqual(result, 'A Veritable Flock Of Ducks')
+AssertionError: 'A veritable flock of ducks' != 'A Veritable Flock Of Ducks'
+- A veritable flock of ducks
+?   ^         ^     ^  ^
++ A Veritable Flock Of Ducks
+?   ^         ^     ^  ^
+
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.001s
+
+FAILED (failures=1)
+$ 
+```
+
+看起来第一个测试`test_one_word`通过了，但是第二个`test_multiple_words`失败了。上箭头(^)指出了字符串不相同的地方！
+
+为什么多个单词会失败？可以阅读字符串的capitalize函数文档来寻找线索，它只会把第一个单词的第一个字母转换成大定，或许我们应该先阅读文档。
+
+```python
+$ ipython
+Python 3.6.8 (v3.6.8:3c6b436a57, Dec 24 2018, 02:10:22)
+Type 'copyright', 'credits' or 'license' for more information
+IPython 7.13.0 -- An enhanced Interactive Python. Type '?' for help.
+
+>>> str1='duck'
+
+>>> str1.capitalize?
+Docstring:
+S.capitalize() -> str
+
+Return a capitalized version of S, i.e. make the first character
+have upper case and the rest lower case.
+Type:      builtin_function_or_method
+
+>>>
+```
+
+为了修复这个问题，我们需要改进代码！
+
 
 
 
