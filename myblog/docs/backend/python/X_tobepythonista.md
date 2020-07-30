@@ -375,4 +375,142 @@ $
 
 我们应该好好读一下官方文档！
 
+在标准库`string`文档[https://docs.python.org/3/library/string.html#string.capwords](https://docs.python.org/3/library/string.html#string.capwords)的底部有另一个函数，一个名为`capwords()`的辅助函数：
+
+> string.`capwords`(*s*, *sep=None*)
+>
+> Split the argument into words using [`str.split()`](https://docs.python.org/3/library/stdtypes.html#str.split), capitalize each word using [`str.capitalize()`](https://docs.python.org/3/library/stdtypes.html#str.capitalize), and join the capitalized words using [`str.join()`](https://docs.python.org/3/library/stdtypes.html#str.join). If the optional second argument *sep* is absent or `None`, runs of whitespace characters are replaced by a single space and leading and trailing whitespace are removed, otherwise *sep* is used to split and join the words.
+
+```python
+$ ipython
+Python 3.6.8 (v3.6.8:3c6b436a57, Dec 24 2018, 02:10:22)
+Type 'copyright', 'credits' or 'license' for more information
+IPython 7.13.0 -- An enhanced Interactive Python. Type '?' for help.
+
+>>> import string
+
+>>> string.capwords?
+Signature: string.capwords(s, sep=None)
+Docstring:
+capwords(s [,sep]) -> string
+
+Split the argument into words using split, capitalize each
+word using capitalize, and join the capitalized words using
+join.  If the optional second argument sep is absent or None,
+runs of whitespace characters are replaced by a single space
+and leading and trailing whitespace are removed, otherwise
+sep is used to split and join the words.
+File:      /Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/string.py
+Type:      function
+
+>>> string.capwords("I'm lilei")
+"I'm Lilei"
+```
+
+初步测试发现使用这个函数好像是对的！
+
+我们试试这个，将cap.py文件修改一下：
+
+```python
+from string import capwords
+def just_do_it(text):
+    # return text.capitalize()
+    # return text.title()
+    return capwords(text)
+
+```
+
+然后我们再运行一下测试：
+
+```sh
+$ python3 test_cap.py
+...
+----------------------------------------------------------------------
+Ran 3 tests in 0.000s
+
+OK
+$ 
+```
+
+终于3个测试都通过了！但是，这个时候还是有问题，我们向`test_cap.py`中再增加一个测试：
+
+```python
+import unittest
+
+import cap
+
+
+class TestCap(unittest.TestCase):
+    def setUp(self) -> None:
+        pass
+
+    def tearDown(self) -> None:
+        pass
+
+    def test_one_word(self):
+        """测试单个单词的情况"""
+        text = 'duck'
+        result = cap.just_do_it(text)
+        self.assertEqual(result, 'Duck')
+
+    def test_multiple_words(self):
+        """测试多个单词的情况"""
+        text = 'a veritable flock of ducks'
+        result = cap.just_do_it(text)
+        self.assertEqual(result, 'A Veritable Flock Of Ducks')
+
+    def test_words_with_apostrophes(self):
+        """测试带撇号的情况"""
+        text = "I'm fresh out of ideas"
+        result = cap.just_do_it(text)
+        self.assertEqual(result, "I'm Fresh Out Of Ideas")
+
+    def test_words_with_quotes(self):
+        """测试带引号的情况"""
+        text = "\"You're despicable,\" said Daffy Duck"
+        result = cap.just_do_it(text)
+        self.assertEqual(result, "\"You're Despicable,\" Said Daffy Duck")
+
+
+if __name__ == '__main__':
+    unittest.main()
+
+```
+
+此时再测试：
+
+```sh
+$ python3 test_cap.py
+...F
+======================================================================
+FAIL: test_words_with_quotes (__main__.TestCap)
+测试带引号的情况
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "test_cap.py", line 35, in test_words_with_quotes
+    self.assertEqual(result, "\"You're Despicable,\" Said Daffy Duck")
+AssertionError: '"you\'re Despicable," Said Daffy Duck' != '"You\'re Despicable," Said Daffy Duck'
+- "you're Despicable," Said Daffy Duck
+?  ^
++ "You're Despicable," Said Daffy Duck
+?  ^
+
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.001s
+
+FAILED (failures=1)
+$ 
+```
+
+可以看到第一个双引号并没有被目前为止最好用的函数`capwords`正常处理。它试着把`"`转成大写，并把其他内容转成小写`You're`，此外，字符串中其余部分应该保持不变。
+
+做测试的人可以发现实些边界条件，但是开发者在面对自己的代码时通常有盲区！
+
+`unittest`提供了数量不多但非常有用的断言，你可以用它们检查值、确保类能够匹配、判断是否触发错误，等等！
+
+
+
+
+
 
