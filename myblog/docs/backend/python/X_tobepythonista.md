@@ -511,6 +511,110 @@ $
 
 
 
+### 使用`doctest`进行代码测试
 
+我们也可以使用标准库中的`doctest`进行代码测试，可参考[https://docs.python.org/3/library/doctest.html](https://docs.python.org/3/library/doctest.html)。
+
+使用这个包可以将测试写到文档字符串中，也可以起到文档的作用。它看起来有点像交互式解释器，字符`>>>`后面是一个函数调用，下一行是执行结果。你可以在交互式解释器中运行测试并把结果粘贴到测试文件中。
+
+我们修改一下`cap.py`文件(暂时不考虑带引号的情况)。
+
+修改后的`cap.py`内容如下：
+
+```python
+from string import capwords
+
+
+def just_do_it(text):
+    """
+    >>> just_do_it('duck')
+    'Duck'
+    >>> just_do_it('a veritable flock of ducks')
+    'A Veritable Flock Of Ducks'
+    >>> just_do_it("I'm fresh out of ideas")
+    "I'm Fresh Out Of Ideas"
+    """
+    return capwords(text)
+
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
+
+```
+
+运行时，如果测试全部通过不会产生任何输出：
+
+```sh
+$ python3 cap.py  
+```
+
+加上冗余选项(`-v`)，会输出比较详细的测试结果：
+
+```sh
+$ python3 cap.py -v
+Trying:
+    just_do_it('duck')
+Expecting:
+    'Duck'
+ok
+Trying:
+    just_do_it('a veritable flock of ducks')
+Expecting:
+    'A Veritable Flock Of Ducks'
+ok
+Trying:
+    just_do_it("I'm fresh out of ideas")
+Expecting:
+    "I'm Fresh Out Of Ideas"
+ok
+1 items had no tests:
+    __main__
+1 items passed all tests:
+   3 tests in __main__.just_do_it
+3 tests in 2 items.
+3 passed and 0 failed.
+Test passed.
+$ 
+```
+
+如果我们将第一个测试中的`'Duck'`写错，看看输出会怎样，如`'Duck'`改成`'DUCK'`。
+
+```sh
+$ python3 cap.py -v
+Trying:
+    just_do_it('duck')
+Expecting:
+    'DUCK'
+**********************************************************************
+File "cap.py", line 6, in __main__.just_do_it
+Failed example:
+    just_do_it('duck')
+Expected:
+    'DUCK'
+Got:
+    'Duck'
+Trying:
+    just_do_it('a veritable flock of ducks')
+Expecting:
+    'A Veritable Flock Of Ducks'
+ok
+Trying:
+    just_do_it("I'm fresh out of ideas")
+Expecting:
+    "I'm Fresh Out Of Ideas"
+ok
+1 items had no tests:
+    __main__
+**********************************************************************
+1 items had failures:
+   1 of   3 in __main__.just_do_it
+3 tests in 2 items.
+2 passed and 1 failed.
+***Test Failed*** 1 failures.
+$ 
+```
+
+此时可以看到测试失败！
 
 
