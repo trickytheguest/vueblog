@@ -138,7 +138,7 @@ and opendir), and leave all pathname manipulation to os.path
 
 这部分主要是代码风格检查和静态检查等。
 
-### 使用unittest进行代码测试
+### 使用`unittest`进行代码测试
 
 我们已经通过了代码风格检查，下面该真正地测试程序逻辑了！
 
@@ -617,4 +617,236 @@ $
 
 此时可以看到测试失败！
 
+### 使用`nose`进行测试
+
+也可以使用第三方包`nose`进行代码测试。安装包：
+
+```sh
+$ pip install nose
+Looking in indexes: http://mirrors.aliyun.com/pypi/simple/
+Collecting nose
+  Downloading http://mirrors.aliyun.com/pypi/packages/15/d8/dd071918c040f50fa1cf80da16423af51ff8ce4a0f2399b7bf8de45ac3d9/nose-1.3.7-py3-none-any.whl (154 kB)
+     |████████████████████████████████| 154 kB 4.2 MB/s
+Installing collected packages: nose
+Successfully installed nose-1.3.7
+```
+
+参考 [https://nose.readthedocs.io/en/latest/](https://nose.readthedocs.io/en/latest/)
+
+
+
+我们修改一下之前的`test_cap.py`并保存为`test_cap_nose.py`:
+
+```python
+from nose.tools import eq_
+
+import cap
+
+
+def test_one_word():
+    """测试单个单词的情况"""
+    text = 'duck'
+    result = cap.just_do_it(text)
+    eq_(result, 'Duck')
+
+
+def test_multiple_words():
+    """测试多个单词的情况"""
+    text = 'a veritable flock of ducks'
+    result = cap.just_do_it(text)
+    eq_(result, 'A Veritable Flock Of Ducks')
+
+
+def test_words_with_apostrophes():
+    """测试带撇号的情况"""
+    text = "I'm fresh out of ideas"
+    result = cap.just_do_it(text)
+    eq_(result, "I'm Fresh Out Of Ideas")
+
+
+def test_words_with_quotes():
+    """测试带引号的情况"""
+    text = "\"You're despicable,\" said Daffy Duck"
+    result = cap.just_do_it(text)
+    eq_(result, "\"You're Despicable,\" Said Daffy Duck")
+
+```
+
+运行测试：
+
+```sh
+$ nosetests --version
+nosetests version 1.3.7
+$ nosetests test_cap_nose.py 
+...F
+======================================================================
+FAIL: 测试带引号的情况
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/nose/case.py", line 198, in runTest
+    self.test(*self.arg)
+  File "test_cap_nose.py", line 31, in test_words_with_quotes
+    eq_(result, "\"You're Despicable,\" Said Daffy Duck")
+AssertionError: '"you\'re Despicable," Said Daffy Duck' != '"You\'re Despicable," Said Daffy Duck'
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.002s
+
+FAILED (failures=1)
+$ 
+```
+
+这和我们使用`unitest`进行测试得到的错误是一样的！
+
+但是在`nose`官网我们可以看到`nose`很久没有人维护了：
+
+> Nose has been in maintenance mode for the past several years and will likely cease without a new person/team to take over maintainership. New projects should consider using [Nose2](https://github.com/nose-devs/nose2), [py.test](http://pytest.org/), or just plain unittest/unittest2.
+
+新的项目推荐使用 `nose2`、 `pytest`等进行代码测试。
+
+我们看一下`nose2`。
+
+官方文档链接 [https://docs.nose2.io/en/latest/](https://docs.nose2.io/en/latest/)。
+
+> `nose2` is the successor to `nose`.
+>
+> It’s `unittest` with plugins.
+>
+> `nose2` is a new project and does not support all of the features of `nose`. See [differences](https://nose2.readthedocs.io/en/latest/differences.html) for a thorough rundown.
+>
+> nose2’s purpose is to extend `unittest` to make testing nicer and easier to understand.
+>
+> ## nose2 vs pytest
+>
+> `nose2` may or may not be a good fit for your project.
+>
+> If you are new to python testing, we encourage you to also consider [pytest](http://pytest.readthedocs.io/en/latest/), a popular testing framework.
+
+
+
+`nose2`继承自`nose`，但是又与`nose`不完全相同，`nose2`是`unittest`单元测试模块的插件，能够扩展单元测试，使测试更好更容易理解。
+
+`nose2`有可能适合或不适合你的项目。如果你不熟悉python测试，建议考虑使用`pytest`测试框架。
+
+我们安装一下`nose2`包：
+
+```sh
+$ pip install nose2
+Looking in indexes: http://mirrors.aliyun.com/pypi/simple/
+Collecting nose2
+  Downloading http://mirrors.aliyun.com/pypi/packages/b9/ad/27561695e863f5df064f1715864afb3ebe723a6e19e875eca85570e0a7cd/nose2-0.9.2-py2.py3-none-any.whl (137 kB)
+     |████████████████████████████████| 137 kB 1.2 MB/s
+Requirement already satisfied: six>=1.7 in /Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages (from nose2) (1.14.0)
+Requirement already satisfied: coverage>=4.4.1 in /Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages (from nose2) (5.0.4)
+Installing collected packages: nose2
+Successfully installed nose2-0.9.2
+
+$ nose2 --help
+usage: nose2 [-s START_DIR] [-t TOP_LEVEL_DIRECTORY] [--config [CONFIG]]
+             [--no-user-config] [--no-plugins] [--plugin PLUGINS]
+             [--exclude-plugin EXCLUDE_PLUGINS] [--verbosity VERBOSITY]
+             [--verbose] [--quiet] [--log-level LOG_LEVEL] [-B]
+             [--coverage PATH] [--coverage-report TYPE]
+             [--coverage-config FILE] [-C] [-D] [-F] [--log-capture]
+             [--pretty-assert] [-h]
+             [testNames [testNames ...]]
+
+positional arguments:
+  testNames
+
+optional arguments:
+  -s START_DIR, --start-dir START_DIR
+                        Directory to start discovery ('.' default)
+  -t TOP_LEVEL_DIRECTORY, --top-level-directory TOP_LEVEL_DIRECTORY, --project-directory TOP_LEVEL_DIRECTORY
+                        Top level directory of project (defaults to start dir)
+  --config [CONFIG], -c [CONFIG]
+                        Config files to load, if they exist. ('unittest.cfg'
+                        and 'nose2.cfg' in start directory default)
+  --no-user-config      Do not load user config files
+  --no-plugins          Do not load any plugins. Warning: nose2 does not do
+                        anything if no plugins are loaded
+  --plugin PLUGINS      Load this plugin module.
+  --exclude-plugin EXCLUDE_PLUGINS
+                        Do not load this plugin module
+  --verbosity VERBOSITY
+                        Set starting verbosity level (int). Applies before -v
+                        and -q
+  --verbose, -v         Print test case names and statuses. Use multiple '-v's
+                        for higher verbosity.
+  --quiet, -q           Reduce verbosity. Multiple '-q's result in lower
+                        verbosity.
+  --log-level LOG_LEVEL
+                        Set logging level for message logged to console.
+  -h, --help            Show this help message and exit
+
+plugin arguments:
+  Command-line arguments added by plugins:
+
+  -B, --output-buffer   Enable output buffer
+  --coverage PATH       Measure coverage for filesystem path (multi-allowed)
+  --coverage-report TYPE
+                        Generate selected reports, available types: term,
+                        term-missing, annotate, html, xml (multi-allowed)
+  --coverage-config FILE
+                        Config file for coverage, default: .coveragerc
+  -C, --with-coverage   Turn on coverage reporting
+  -D, --debugger        Enter pdb on test fail or error
+  -F, --fail-fast       Stop the test run after the first error or failure
+  --log-capture         Enable log capture
+  --pretty-assert       Add pretty output for "assert" statements
+$
+```
+
+看官方示例，`nose2`可以直接对`unittest`编写的单元测试进行测试：
+
+```sh
+$ nose2 -v
+test_multiple_words (test_cap.TestCap)
+测试多个单词的情况 ... ok
+test_one_word (test_cap.TestCap)
+测试单个单词的情况 ... ok
+test_words_with_apostrophes (test_cap.TestCap)
+测试带撇号的情况 ... ok
+test_words_with_quotes (test_cap.TestCap)
+测试带引号的情况 ... FAIL
+test_cap_nose.transplant_class.<locals>.C (test_multiple_words)
+测试多个单词的情况 ... ok
+test_cap_nose.transplant_class.<locals>.C (test_one_word)
+测试单个单词的情况 ... ok
+test_cap_nose.transplant_class.<locals>.C (test_words_with_apostrophes)
+测试带撇号的情况 ... ok
+test_cap_nose.transplant_class.<locals>.C (test_words_with_quotes)
+测试带引号的情况 ... FAIL
+
+======================================================================
+FAIL: test_words_with_quotes (test_cap.TestCap)
+测试带引号的情况
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "test_cap.py", line 35, in test_words_with_quotes
+    self.assertEqual(result, "\"You're Despicable,\" Said Daffy Duck")
+AssertionError: '"you\'re Despicable," Said Daffy Duck' != '"You\'re Despicable," Said Daffy Duck'
+- "you're Despicable," Said Daffy Duck
+?  ^
++ "You're Despicable," Said Daffy Duck
+?  ^
+
+
+======================================================================
+FAIL: test_cap_nose.transplant_class.<locals>.C (test_words_with_quotes)
+测试带引号的情况
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "test_cap_nose.py", line 31, in test_words_with_quotes
+    eq_(result, "\"You're Despicable,\" Said Daffy Duck")
+AssertionError: '"you\'re Despicable," Said Daffy Duck' != '"You\'re Despicable," Said Daffy Duck'
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.001s
+
+FAILED (failures=2)
+$ 
+```
+
+可以看到`nose2`直接运行了我们前面编写的两个测试文件。并且显示出了异常的位置。
 
