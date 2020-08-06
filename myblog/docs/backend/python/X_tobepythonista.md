@@ -716,7 +716,7 @@ $
 >
 > nose2’s purpose is to extend `unittest` to make testing nicer and easier to understand.
 >
-> ## nose2 vs pytest
+> nose2 vs pytest
 >
 > `nose2` may or may not be a good fit for your project.
 >
