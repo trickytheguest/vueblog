@@ -850,3 +850,112 @@ $
 
 可以看到`nose2`直接运行了我们前面编写的两个测试文件。并且显示出了异常的位置。
 
+
+
+### 使用`pytest`测试代码
+
+`pytest`框架使编写小型测试变得容易，并且可以扩展以支持应用程序和库的复杂功能测试。
+
+`pytest`官方文档 [https://docs.pytest.org/en/latest/](https://docs.pytest.org/en/latest/)。
+
+安装包：
+
+```sh
+$ pip install pytest
+Looking in indexes: http://mirrors.aliyun.com/pypi/simple/
+Requirement already satisfied: pytest in /Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages (5.4.1)
+Requirement already satisfied: more-itertools>=4.0.0 in /Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages (from pytest) (8.2.0)
+Requirement already satisfied: packaging in /Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages (from pytest) (20.3)
+Requirement already satisfied: attrs>=17.4.0 in /Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages (from pytest) (19.3.0)
+Requirement already satisfied: py>=1.5.0 in /Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages (from pytest) (1.8.1)
+Requirement already satisfied: pluggy<1.0,>=0.12 in /Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages (from pytest) (0.13.1)
+Requirement already satisfied: importlib-metadata>=0.12; python_version < "3.8" in /Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages (from pytest) (1.5.2)
+Requirement already satisfied: wcwidth in /Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages (from pytest) (0.1.8)
+Requirement already satisfied: six in /Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages (from packaging->pytest) (1.14.0)
+Requirement already satisfied: pyparsing>=2.0.2 in /Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages (from packaging->pytest) (2.4.6)
+Requirement already satisfied: zipp>=0.5 in /Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages (from importlib-metadata>=0.12; python_version < "3.8"->pytest) (3.1.0)
+$
+```
+
+如果你安装后，使用`pytest --version`查看版本，如果不是最新版本，可以在pypi网站 [https://pypi.org/project/pytest/#files](https://pypi.org/project/pytest/#files)  上面下载最新的版本的源代码进行安装。
+
+查看`pytest`版本：
+
+```sh
+$ pytest --version
+pytest 6.0.1
+```
+
+我们编写`pytest`的测试代码`test_cap_pytest.py`:
+
+```python
+import cap
+
+
+def test_one_word():
+    """测试单个单词的情况"""
+    text = 'duck'
+    result = cap.just_do_it(text)
+    assert result == 'Duck'
+
+
+def test_multiple_words():
+    """测试多个单词的情况"""
+    text = 'a veritable flock of ducks'
+    result = cap.just_do_it(text)
+    assert result == 'A Veritable Flock Of Ducks'
+
+
+def test_words_with_apostrophes():
+    """测试带撇号的情况"""
+    text = "I'm fresh out of ideas"
+    result = cap.just_do_it(text)
+    assert result == "I'm Fresh Out Of Ideas"
+
+
+def test_words_with_quotes():
+    """测试带引号的情况"""
+    text = "\"You're despicable,\" said Daffy Duck"
+    result = cap.just_do_it(text)
+    assert result == "\"You're Despicable,\" Said Daffy Duck"
+
+```
+
+然后我们运行测试：
+
+```sh
+$ pytest test_cap_pytest.py 
+/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/pytest-6.0.1-py3.6.egg/_pytest/compat.py:340: PytestDeprecationWarning: The TerminalReporter.writer attribute is deprecated, use TerminalReporter._tw instead at your own risk.
+See https://docs.pytest.org/en/stable/deprecations.html#terminalreporter-writer for more information.
+  return getattr(object, name, default)
+=============================== test session starts ===============================
+platform darwin -- Python 3.6.8, pytest-6.0.1, py-1.9.0, pluggy-0.13.1
+rootdir: ~
+plugins: xonsh-0.9.15
+collected 4 items                                                                 
+
+test_cap_pytest.py ...F                                                     [100%]
+
+==================================== FAILURES =====================================
+_____________________________ test_words_with_quotes ______________________________
+
+    def test_words_with_quotes():
+        """测试带引号的情况"""
+        text = "\"You're despicable,\" said Daffy Duck"
+        result = cap.just_do_it(text)
+>       assert result == "\"You're Despicable,\" Said Daffy Duck"
+E       assert '"you\'re Des...id Daffy Duck' == '"You\'re Des...id Daffy Duck'
+E         - "You're Despicable," Said Daffy Duck
+E         ?  ^
+E         + "you're Despicable," Said Daffy Duck
+E         ?  ^
+
+test_cap_pytest.py:29: AssertionError
+============================= short test summary info =============================
+FAILED test_cap_pytest.py::test_words_with_quotes - assert '"you\'re Des...id Da...
+=========================== 1 failed, 3 passed in 0.13s ===========================
+$
+```
+
+可以看到`pytest`只需要使用`assert`断言来进行测试即可。更详细的例子请参考官方文档。
+
