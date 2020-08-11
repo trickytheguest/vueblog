@@ -1006,3 +1006,89 @@ IPython 7.13.0 -- An enhanced Interactive Python. Type '?' for help.
 - 使用`logging`模块( [https://docs.python.org/3.6/library/logging.html](https://docs.python.org/3.6/library/logging.html) )保存日志到文件中，查看日志调试。
 
 一般来说，编写简单代码时就用`print`足够了，但如果是在生产环境下的代码，建议使用`logging`模块保存日志到文件，便于异常时调试。
+
+## 使用pdb调试代码
+
+上面的技能很有用，但仍然无法代替真正的调试器。大多数IDE都带有调试器，有各种各样的特性和用户界面（PyCharm非常不错，你可以试一下！）。这里，我们介绍标准的Python调试器`pdb`，参考 [https://docs.python.org/3/library/pdb.html](https://docs.python.org/3/library/pdb.html)
+
+`pdb`是Python Debugger。
+
+
+
+我们简单的使用一下`pdb`模块来调试代码。
+
+```python
+$ ipython
+Python 3.6.8 (v3.6.8:3c6b436a57, Dec 24 2018, 02:10:22)
+Type 'copyright', 'credits' or 'license' for more information
+IPython 7.13.0 -- An enhanced Interactive Python. Type '?' for help.
+
+# 定义一个函数，打印某个未定义的变量
+>>> def test():
+...     print(i)
+...
+
+>>> import pdb
+
+# 调试代码
+>>> pdb.run('')
+> <string>(1)<module>()
+(Pdb) test()
+*** NameError: name 'i' is not defined
+(Pdb) ?
+
+Documented commands (type help <topic>):
+========================================
+EOF    c          d        h         list      q        rv       undisplay
+a      cl         debug    help      ll        quit     s        unt
+alias  clear      disable  ignore    longlist  r        source   until
+args   commands   display  interact  n         restart  step     up
+b      condition  down     j         next      return   tbreak   w
+break  cont       enable   jump      p         retval   u        whatis
+bt     continue   exit     l         pp        run      unalias  where
+
+Miscellaneous help topics:
+==========================
+exec  pdb
+
+(Pdb)
+
+# 获取帮助信息
+(Pdb) help s
+s(tep)
+        Execute the current line, stop at the first possible occasion
+        (either in a function that is called or in the current
+        function).
+(Pdb) help n
+n(ext)
+        Continue execution until the next line in the current function
+        is reached or it returns.
+(Pdb)
+(Pdb) help b
+b(reak) [ ([filename:]lineno | function) [, condition] ]
+        Without argument, list all breaks.
+
+        With a line number argument, set a break at this line in the
+        current file.  With a function name, set a break at the first
+        executable line of that function.  If a second argument is
+        present, it is a string specifying an expression which must
+        evaluate to true before the breakpoint is honored.
+
+        The line number may be prefixed with a filename and a colon,
+        to specify a breakpoint in another file (probably one that
+        hasn't been loaded yet).  The file is searched for on
+        sys.path; the .py suffix may be omitted.
+(Pdb) exit
+>>>                                                  
+```
+
+可以看到调试时就可以知道变量`i`是未定义的。
+
+- `s`是单步执行，会进入到函数内部并继续单步执行。
+- `n`也可以单步执行，但不会进入函数，如果遇到一个函数，`n`会执行整个函数并前进到下一行代码。
+- 不确定问题在哪时使用`s`，确定问题不在函数中时使用`n`，函数很长时尤其有用。
+- `b`可以在指定行设置断点。
+- `c`继续。
+
+
+
