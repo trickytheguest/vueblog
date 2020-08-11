@@ -957,5 +957,52 @@ FAILED test_cap_pytest.py::test_words_with_quotes - assert '"you\'re Des...id Da
 $
 ```
 
-可以看到`pytest`只需要使用`assert`断言来进行测试即可。更详细的例子请参考官方文档。
+可以看到`pytest`只需要使用`assert`断言来进行测试即可。更详细的例子请参考官方文档 [https://docs.pytest.org/en/latest/](https://docs.pytest.org/en/latest/)。
 
+
+
+## 持续集成
+
+当你的团队每天会产生很多代码时，就需要在出现改动时进行自动测试。你可以让源码控制系统，在提交代码时进行自动化的测试。这样每个人都知道是谁破坏了构建并消失在叫饭的人群中。
+
+你可以了解一下以下系统：
+
+- Jenkins [https://www.jenkins.io/](https://www.jenkins.io/)  Jenkins是一个开源软件项目，是基于Java开发的一种持续集成工具，用于监控持续重复的工作，旨在提供一个开放易用的软件平台，使软件的持续集成变成可能。
+- Travis-ci [https://travis-ci.org/](https://travis-ci.org/) Travis CI 是目前新兴的开源持续集成构建项目，它与jenkins，GO的很明显的区别在于采用yaml格式，简洁清新独树一帜。目前大多数的github项目都已经移入到Travis CI的构建队列中，据说Travis CI每天运行超过4000次完整构建。对开源项目是免费的！
+
+
+
+## 调试Python代码
+
+> 调试的难度是写代码的两倍。以此类推，如果你绞尽脑汁编写巧妙的代码，那你一定无法调试它。   ——Brian Kernighan
+
+测试在先，测试越完善，之后需要修复的bug越少。不过，bug总是无法避免的，发现bug就要去修复它。之前就说过，Python中最简单的调试方法就是打印字符串。`var()`是非常有用的一个函数，可以提取本地变量的值，包括函数参数。
+
+```python
+$ ipython
+Python 3.6.8 (v3.6.8:3c6b436a57, Dec 24 2018, 02:10:22)
+Type 'copyright', 'credits' or 'license' for more information
+IPython 7.13.0 -- An enhanced Interactive Python. Type '?' for help.
+
+>>> def func(*args, **kwargs):
+...     print(vars())
+...
+
+>>> func(1, 2, 3)
+{'kwargs': {}, 'args': (1, 2, 3)}
+
+>>> func(['a', 'b', 'argh'])
+{'kwargs': {}, 'args': (['a', 'b', 'argh'],)}
+
+>>> func(['a', 'b', 'c'], key='test')
+{'kwargs': {'key': 'test'}, 'args': (['a', 'b', 'c'],)}
+```
+
+书中也提到使用装饰器来调试代码，但感觉有点麻烦。
+
+我常用的调试方法包括：
+
+- 使用`print`打印变量。
+- 使用`logging`模块( [https://docs.python.org/3.6/library/logging.html](https://docs.python.org/3.6/library/logging.html) )保存日志到文件中，查看日志调试。
+
+一般来说，编写简单代码时就用`print`足够了，但如果是在生产环境下的代码，建议使用`logging`模块保存日志到文件，便于异常时调试。
