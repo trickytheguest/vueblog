@@ -1090,5 +1090,43 @@ b(reak) [ ([filename:]lineno | function) [, condition] ]
 - `b`可以在指定行设置断点。
 - `c`继续。
 
+此处仅简单的使用一下`pdb`，详细可了解官方文档 [https://docs.python.org/3/library/pdb.html](https://docs.python.org/3/library/pdb.html) 。
+
+## 记录错误日志
+
+有时候，你需要使用比`print()`更高端的工具来记录日志。日志通常是系统中的一个文件，用于持续记录信息。信息中通常会包含很多有用的内容，比如时间戳或者运行程序的用户的名字。通常来说，日志每天会被放置(重命名)并压缩，这样它们就不会占用太多磁盘空间。如果程序出错，你可以查看对应的日志文件来了解发生了什么。异常信息非常重要，因为它们会告诉你出错的行数和原因。
+
+使用标准库`logging`模块来记录日志，参考 [https://docs.python.org/3/library/logging.html](https://docs.python.org/3/library/logging.html) 。
+
+下面是`logging`模块的简单使用。
+
+```python
+$ ipython
+Python 3.6.8 (v3.6.8:3c6b436a57, Dec 24 2018, 02:10:22)
+Type 'copyright', 'credits' or 'license' for more information
+IPython 7.13.0 -- An enhanced Interactive Python. Type '?' for help.
+
+>>> import logging as logger
+
+>>> logger.debug('testing')
+
+>>> logger.info('info')
+
+>>> logger.warning('Booming')
+WARNING:root:Booming
+
+>>> logger.error('Error')
+ERROR:root:Error
+
+>>> logger.critical('Critical')
+CRITICAL:root:Critical
+
+>>>
+```
+
+具体使用可参考官方文档 [https://docs.python.org/3/library/logging.html](https://docs.python.org/3/library/logging.html) 。
+
+或者参考 [Python logging模块-记录错误日志](./X_logging.html)。
+
 
 
