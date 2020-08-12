@@ -1124,6 +1124,38 @@ CRITICAL:root:Critical
 >>>
 ```
 
+将日志保存到文件中：
+
+```python
+$ ipython
+Python 3.6.8 (v3.6.8:3c6b436a57, Dec 24 2018, 02:10:22)
+Type 'copyright', 'credits' or 'license' for more information
+IPython 7.13.0 -- An enhanced Interactive Python. Type '?' for help.
+
+>>> import logging
+
+>>> logging.basicConfig(level='INFO', filename='log.txt')
+
+>>> logger = logging.getLogger('mylog')
+
+>>> logger.debug('debug log')
+
+>>> logger.info('info log')
+
+>>> logger.warning('warning log')
+```
+
+查看文件`log.txt`内容：
+
+```sh
+$ cat log.txt
+DEBUG:mylog:debug log
+INFO:mylog:info log
+WARNING:mylog:warning log
+```
+
+
+
 具体使用可参考官方文档 [https://docs.python.org/3/library/logging.html](https://docs.python.org/3/library/logging.html) 。
 
 或者参考 [Python logging模块-记录错误日志](./X_logging.html)。
