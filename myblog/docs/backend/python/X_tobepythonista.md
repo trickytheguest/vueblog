@@ -1171,4 +1171,77 @@ WARNING:mylog:warning log
 可以使用`time`模块或`timeit`模块来测试你的代码运行的时间。
 
 - 使用`time`模块时，在代码运行前获取一下时间戳，然后再运行你的代码，然后再次获取时间戳，最后用两个时间戳相减就获取到你的代码运行时间了。
-- 使用`timeit`模块更简单，其中的`timeit`函数会运行你的测试代码count次，并打印结果。具体可参考 [日期和时间模块-`timeit`程序运行时间统计模块](./X_time_and_date_module_timeit.html)
+
+我们把代码保存到`time1.py`中，注意，不要保存到`time.py`文件中。
+
+```python
+# filename: time1.py
+
+from time import time
+
+before = time()
+num = 5
+num *= 2
+after = time()
+print(after - before)
+```
+
+然后多次运行它：
+
+```sh
+$ python3 time1.py 
+9.5367431640625e-07
+$ python3 time1.py
+1.1920928955078125e-06
+$ python3 time1.py
+1.1920928955078125e-06
+$ python3 time1.py
+1.1920928955078125e-06
+$ python3 time1.py
+9.5367431640625e-07
+$ python3 time1.py
+1.1920928955078125e-06
+$ python3 time1.py
+1.1920928955078125e-06
+$ python3 time1.py
+7.152557373046875e-07
+$ 
+```
+
+可以看到运行时间很短。
+
+- 使用`timeit`模块更简单，其中的`timeit`函数会运行你的测试代码count次，并打印结果。具体可参考 [日期和时间模块-`timeit`程序运行时间统计模块](./X_time_and_date_module_timeit.html)， `timeit()`的调用形式为`timeit(code, number)`。
+
+```python
+# filename: timeit1.py
+
+from timeit import timeit
+
+print(timeit('num = 5; num *=2', number=1))
+```
+
+现在我们运行`timeit1.py`:
+
+```sh
+$ python3 timeit1.py
+1.5389960026368499e-06
+$ python3 timeit1.py
+8.919887477532029e-07
+$ python3 timeit1.py
+9.880022844299674e-07
+$ python3 timeit1.py
+9.450013749301434e-07
+$ python3 timeit1.py
+1.1269876267760992e-06
+$ python3 timeit1.py
+8.680071914568543e-07
+```
+
+
+
+
+
+### 算法和数据结构
+
+Python之禅提到，应该有一种，最好只有一种，明显的解决办法。不幸的是，有时候并没有那么明显，你需要比较各种方案。举例来说，如果要构建一个列表，使用`for`循环好还是列表解析好？我们如何定义更好？是更快、更容易理解、占用内存更好还是更具Python风格？
+
