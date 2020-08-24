@@ -1300,5 +1300,7 @@ NumPy是Python的一个数学库，它是用C语言编写的，运行速度很�
 - NumPy官网 [https://numpy.org/](https://numpy.org/)
 - NumPy官方文档 [https://numpy.org/doc/stable/](https://numpy.org/doc/stable/)
 
+为了提高性能并且方便使用，Python的很多代码和标准库都是用C写成并用Python进行封装。这些钩子可以直接在你的程序中使用，如果你熟悉C和Python并且真的想提高程序性能，可以写一个C扩展，这样做难度很大但是效果很好。
+
 
 
