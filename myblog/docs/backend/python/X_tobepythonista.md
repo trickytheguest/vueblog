@@ -1284,3 +1284,21 @@ make_list_2 takes 0.04438292399936472 seconds
 可以看到列表解析至少比用`append()`添加元素快两倍。
 
 - 通常来说，列表解析要比手动添加快，可以使用这个方法来加速你的代码。
+
+### Cython、NumPy和C扩展
+
+如果你已经尽了最大的努力仍然无法达到想要的速度，还有一些方法可以选择。
+
+Cpython混合了Python和C，它的设计目的是把带有性能注释的Python代码翻译成C代码。这些注释非常简单，比如声明一些变量，函数参数或者函数返回值的类型。对于科学上的数字运算循环来说，添加这些注释之后会让程序快很多，速度能达到之前的1000倍。可以在Cpython wiki查看文档和示例。
+
+- Cython官网 [https://cython.org/](https://cython.org/)
+- Cython官方文档 [https://cython.readthedocs.io/en/latest/](https://cython.readthedocs.io/en/latest/)
+- Cython wiki [https://github.com/cython/cython/wiki](https://github.com/cython/cython/wiki)
+
+NumPy是Python的一个数学库，它是用C语言编写的，运行速度很快。
+
+- NumPy官网 [https://numpy.org/](https://numpy.org/)
+- NumPy官方文档 [https://numpy.org/doc/stable/](https://numpy.org/doc/stable/)
+
+
+
