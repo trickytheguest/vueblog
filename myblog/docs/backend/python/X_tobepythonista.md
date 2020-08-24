@@ -1245,3 +1245,42 @@ $ python3 timeit1.py
 
 Python之禅提到，应该有一种，最好只有一种，明显的解决办法。不幸的是，有时候并没有那么明显，你需要比较各种方案。举例来说，如果要构建一个列表，使用`for`循环好还是列表解析好？我们如何定义更好？是更快、更容易理解、占用内存更好还是更具Python风格？
 
+我们在下面的示例中，使用不同的方式构建列表，比较速度、可读性和Python风格。
+
+
+
+`time_lists.py`源码如下：
+
+```python
+# filename: time_lists.py
+
+from timeit import timeit
+
+
+def make_list_1():
+    result = []
+    for value in range(1000):
+        result.append(value)
+    return result
+
+
+def make_list_2():
+    result = [value for value in range(1000)]
+    return result
+
+
+print('make_list_1 takes', timeit(make_list_1, number=1000), 'seconds')
+print('make_list_2 takes', timeit(make_list_2, number=1000), 'seconds')
+```
+
+代码中我们创建一个列表，向列表中添加1000个元素，使用`timeit`分别调用1000次。我们运行一下程序：
+
+```sh
+$ python3 time_lists.py
+make_list_1 takes 0.10264219999953639 seconds
+make_list_2 takes 0.04438292399936472 seconds
+```
+
+可以看到列表解析至少比用`append()`添加元素快两倍。
+
+- 通常来说，列表解析要比手动添加快，可以使用这个方法来加速你的代码。
