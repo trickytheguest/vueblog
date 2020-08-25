@@ -1328,3 +1328,70 @@ PyPy是一个新出现的Python解释器，实现了许多Java中的加速技术
 - `Subversion`
 
 两个版本控制系统都有很多命令，此处忽略不提。
+
+
+
+## Python的艺术
+
+人们会在不同的场合、不同的领域借助Python进行一些探索。
+
+### 2D图形
+
+几乎所有的计算机编程语言或多或少都会被应用到图形处理中。出于效率考虑，大多都会使用C或C++编写平台软件，也会用Python来扩展其功能。
+
+标准库中有图形相关的库并不多：
+
+- imghdr, 这个模块用于检测图片文件的文件格式。
+- colorsys， 这个模块用于在不同的颜色系统间进行转换。 
+
+为了在Python中对图片进行更高级的处理，我们需要安装一些第三方包。
+
+#### PIL和Pillow
+
+PIL是Python 图片库(Python Image Library)，并不属于Python的标准库，无法使用pip安装。有人创建了一个友好的项目分支Pillow,其向后兼容PIL,并且文档更加规范。
+
+- Pillow官网地址 [https://python-pillow.org/](https://python-pillow.org/)
+
+- Pillow Pypi [https://pypi.org/project/Pillow/](https://pypi.org/project/Pillow/)
+- Pillow官方文档 [https://pillow.readthedocs.io/en/stable/](https://pillow.readthedocs.io/en/stable/)
+
+安装：
+
+```sh
+$ pip install pillow
+Looking in indexes: http://mirrors.aliyun.com/pypi/simple/
+Collecting pillow
+  Downloading http://mirrors.aliyun.com/pypi/packages/04/8f/c42f534b73680f501858a8c7171705a55c7347c86419b74fa585370c8306/Pillow-7.2.0-cp36-cp36m-macosx_10_10_x86_64.whl (2.2 MB)
+     |████████████████████████████████| 2.2 MB 8.6 MB/s 
+Installing collected packages: pillow
+Successfully installed pillow-7.2.0
+```
+
+
+
+简单的使用：
+
+```sh
+$ ipython
+Python 3.6.8 (v3.6.8:3c6b436a57, Dec 24 2018, 02:10:22) 
+Type 'copyright', 'credits' or 'license' for more information
+IPython 7.13.0 -- An enhanced Interactive Python. Type '?' for help.
+
+>>> from PIL import Image                                                       
+
+>>> img = Image.open('image.png')                                            
+
+>>> img.format                                                                  
+'JPEG'
+
+>>> img.size                                                                    
+(408, 612)
+
+>>> img.mode                                                                    
+'RGB'
+```
+
+可以参考官方文档查看更多示例。
+
+
+
