@@ -1393,5 +1393,62 @@ IPython 7.13.0 -- An enhanced Interactive Python. Type '?' for help.
 
 可以参考官方文档查看更多示例。
 
+### 图形用户界面
+
+GUI是图形用户界面，虽然包括图形这个词，但它的重点更在于用户界面(展示数据用的小控件、输入的方法、菜单、按钮以及包含所有这些的窗口等)上。Tkinter是内置的图形用户界面库，它的功能不多，但可以在所有平台上创建符合接近原生界面的窗口和控件。
+
+- GUI编程FAQ页面 [https://docs.python.org/3/faq/gui.html](https://docs.python.org/3/faq/gui.html)
+- GUI Programming in Python [https://wiki.python.org/moin/GuiProgramming](https://wiki.python.org/moin/GuiProgramming)
+
+
+
+下面是一个极简的Tkinter程序，它可以在新建窗口中显示图片：
+
+```ipython
+$ ipython
+Python 3.6.8 (v3.6.8:3c6b436a57, Dec 24 2018, 02:10:22)
+Type 'copyright', 'credits' or 'license' for more information
+IPython 7.13.0 -- An enhanced Interactive Python. Type '?' for help.
+
+>>> import tkinter
+
+>>> from PIL import Image, ImageTk
+
+>>> main = tkinter.Tk()
+
+>>> img = Image.open('image.jpg')
+
+>>> tkimg = ImageTk.PhotoImage(img)
+
+>>> tkinter.Label(main, image=tkimg).pack()
+
+>>> main.mainloop()
+```
+
+想要关闭窗口的话只需要点击图片上方的关闭按钮或者关闭Python解释器即可。
+
+
+
+#### Qt
+
+Qt是一款专业级GUI及应用工具包。Qt有两个主要的Python库版本，PySide(免费)和PyQt（开发的代码必须要开源）。
+
+
+
+Pyside2支持Qt5,Pyside不支持Qt5,因此需要支持Qt5以上版本的话，需要使用`pip install PySide2`来安装Pyside2.
+
+- Pyside2 pypi [https://pypi.org/project/PySide2/](https://pypi.org/project/PySide2/)
+- Qt for python 文档 [https://doc.qt.io/qtforpython/](https://doc.qt.io/qtforpython/)
+
+
+
+
+
+
+
+
+
+
+
 
 
