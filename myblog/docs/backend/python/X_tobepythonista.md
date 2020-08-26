@@ -1431,7 +1431,7 @@ IPython 7.13.0 -- An enhanced Interactive Python. Type '?' for help.
 
 #### Qt
 
-Qt是一款专业级GUI及应用工具包。Qt有两个主要的Python库版本，PySide(免费)和PyQt（开发的代码必须要开源）。
+Qt是一款专业级GUI及应用工具包。Qt有两个主要的Python库版本，PySide(免费)和PyQt（开发的代码必须要开源，商用的话需要买许可license）。
 
 
 
