@@ -1442,7 +1442,91 @@ Pyside2支持Qt5,Pyside不支持Qt5,因此需要支持Qt5以上版本的话，�
 
 
 
+### 3D图形与动画
 
+如果你喜欢探索Python,喜欢3D、动画、多媒体以及游戏的话，应该试试Panda3D，它开源免费。
+
+- Panda3D网站 [https://www.panda3d.org/](https://www.panda3d.org/)
+- Panda3d pypi [https://pypi.org/project/Panda3D/](https://pypi.org/project/Panda3D/)
+- 文档 [https://docs.panda3d.org/1.10/python/index](https://docs.panda3d.org/1.10/python/index)
+
+- 安装方法 `pip install Panda3D`
+
+简单使用，使用Panda3d加载草木风景：
+
+```python
+from direct.showbase.ShowBase import ShowBase
+
+
+class MyApp(ShowBase):
+
+    def __init__(self):
+        ShowBase.__init__(self)
+
+        # Load the environment model.
+        self.scene = self.loader.loadModel("models/environment")
+        # Reparent the model to render.
+        self.scene.reparentTo(self.render)
+        # Apply scale and position transforms on the model.
+        self.scene.setScale(0.25, 0.25, 0.25)
+        self.scene.setPos(-8, 42, 0)
+
+
+app = MyApp()
+app.run()
+```
+
+运行程序会显示出风景3d图。
+
+
+
+使用下面的程序，可以看到大熊猫在草地上原地行走：
+
+```python
+from math import pi, sin, cos
+
+from direct.showbase.ShowBase import ShowBase
+from direct.task import Task
+from direct.actor.Actor import Actor
+
+
+class MyApp(ShowBase):
+    def __init__(self):
+        ShowBase.__init__(self)
+
+        # Load the environment model.
+        self.scene = self.loader.loadModel("models/environment")
+        # Reparent the model to render.
+        self.scene.reparentTo(self.render)
+        # Apply scale and position transforms on the model.
+        self.scene.setScale(0.25, 0.25, 0.25)
+        self.scene.setPos(-8, 42, 0)
+
+        # Add the spinCameraTask procedure to the task manager.
+        self.taskMgr.add(self.spinCameraTask, "SpinCameraTask")
+
+        # Load and transform the panda actor.
+        self.pandaActor = Actor("models/panda-model",
+                                {"walk": "models/panda-walk4"})
+        self.pandaActor.setScale(0.005, 0.005, 0.005)
+        self.pandaActor.reparentTo(self.render)
+        # Loop its animation.
+        self.pandaActor.loop("walk")
+
+    # Define a procedure to move the camera.
+    def spinCameraTask(self, task):
+        angleDegrees = task.time * 6.0
+        angleRadians = angleDegrees * (pi / 180.0)
+        self.camera.setPos(20 * sin(angleRadians), -20 * cos(angleRadians), 3)
+        self.camera.setHpr(angleDegrees, 0, 0)
+        return Task.cont
+
+
+app = MyApp()
+app.run()
+```
+
+更多请参考官方示例。
 
 
 
