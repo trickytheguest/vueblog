@@ -1534,6 +1534,81 @@ app.run()
 
 Python是目前绘制平面图、曲线图以及进行数据可视化的最佳解决方法。它在科学研究中尤其受到欢迎。
 
+#### matplotlib
+
+Matplotlib是一个综合库，用于在Python中创建静态、动画和交互式可视化。
+
+- 官网 [https://matplotlib.org/](https://matplotlib.org/)
+- 官方文档 [https://matplotlib.org/users/index.html](https://matplotlib.org/users/index.html)
+- matplotlib运行在服务器端。
+
+安装：
+
+```sh
+$ pip install matplotlib
+Looking in indexes: http://mirrors.aliyun.com/pypi/simple/
+Collecting matplotlib
+  Downloading http://mirrors.aliyun.com/pypi/packages/bc/05/38de828456fe962885c2577d5519fcec50f8e1537a3b58839eccff34eb38/matplotlib-3.3.1-cp36-cp36m-macosx_10_9_x86_64.whl (8.5 MB)
+     |████████████████████████████████| 8.5 MB 6.6 MB/s
+Collecting cycler>=0.10
+  Downloading http://mirrors.aliyun.com/pypi/packages/f7/d2/e07d3ebb2bd7af696440ce7e754c59dd546ffe1bbe732c8ab68b9c834e61/cycler-0.10.0-py2.py3-none-any.whl (6.5 kB)
+Requirement already satisfied: pyparsing!=2.0.4,!=2.1.2,!=2.1.6,>=2.0.3 in /Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages (from matplotlib) (2.4.6)
+Requirement already satisfied: python-dateutil>=2.1 in /Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages (from matplotlib) (2.8.1)
+Collecting kiwisolver>=1.0.1
+  Downloading http://mirrors.aliyun.com/pypi/packages/06/b2/f7e88efd6323df9ae604f1ff35c629f266d4f424f2a244a7e1d5560c5d96/kiwisolver-1.2.0-cp36-cp36m-macosx_10_9_x86_64.whl (60 kB)
+     |████████████████████████████████| 60 kB 6.4 MB/s
+Collecting certifi>=2020.06.20
+  Downloading http://mirrors.aliyun.com/pypi/packages/5e/c4/6c4fe722df5343c33226f0b4e0bb042e4dc13483228b4718baf286f86d87/certifi-2020.6.20-py2.py3-none-any.whl (156 kB)
+     |████████████████████████████████| 156 kB 11.6 MB/s
+Requirement already satisfied: pillow>=6.2.0 in /Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages (from matplotlib) (7.2.0)
+Collecting numpy>=1.15
+  Downloading http://mirrors.aliyun.com/pypi/packages/28/be/b354ebde8ae4e46972cb9ee6ac6e7c178adffcc6d52e5e20b1b9077be056/numpy-1.19.1-cp36-cp36m-macosx_10_9_x86_64.whl (15.3 MB)
+     |████████████████████████████████| 15.3 MB 11.9 MB/s
+Requirement already satisfied: six in /Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages (from cycler>=0.10->matplotlib) (1.14.0)
+Installing collected packages: cycler, kiwisolver, certifi, numpy, matplotlib
+  Attempting uninstall: certifi
+    Found existing installation: certifi 2020.4.5.1
+    Uninstalling certifi-2020.4.5.1:
+      Successfully uninstalled certifi-2020.4.5.1
+Successfully installed certifi-2020.6.20 cycler-0.10.0 kiwisolver-1.2.0 matplotlib-3.3.1 numpy-1.19.1
+$
+```
+
+示例，可以参考官方文档 [https://matplotlib.org/tutorials/introductory/usage.html#usage-guide](https://matplotlib.org/tutorials/introductory/usage.html#usage-guide)
+
+#### bokeh
+
+bokeh能有效地将python与JavaScript结合起来。它致力于大数据集的快速可视化。
+
+- 官网 [https://bokeh.org/](https://bokeh.org/)
+- 官方文档 [https://docs.bokeh.org/en/latest/docs/user_guide/quickstart.html#userguide-quickstart](https://docs.bokeh.org/en/latest/docs/user_guide/quickstart.html#userguide-quickstart)
+- bokeh主要在浏览器上运行，它可以充分利用最近客户端能力的提升。
+- 安装`pip install bokeh`。
+
+```python
+from bokeh.plotting import figure, output_file, show
+
+# prepare some data
+x = [1, 2, 3, 4, 5]
+y = [6, 7, 2, 4, 5]
+
+# output to static HTML file
+output_file("lines.html")
+
+# create a new plot with a title and axis labels
+p = figure(title="simple line example", x_axis_label='x', y_axis_label='y')
+
+# add a line renderer with legend and line thickness
+p.line(x, y, legend_label="Temp.", line_width=2)
+
+# show the results
+show(p)
+```
+
+当你运行以上代码，将会自动打开浏览器，并访问`lines.html`页面，页面中有绘制的图像。
+
+更多请参考官方示例。
+
 
 
 
