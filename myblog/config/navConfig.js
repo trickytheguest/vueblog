@@ -125,6 +125,10 @@ module.exports = [{
                 link: '/about/blog/'
             },
             {
+                text: '软考',
+                link: '/about/softexam/'
+            },
+            {
                 text: '好用的工具',
                 link: '/about/tools/'
             },
