@@ -1404,7 +1404,7 @@ GUI是图形用户界面，虽然包括图形这个词，但它的重点更在�
 
 下面是一个极简的Tkinter程序，它可以在新建窗口中显示图片：
 
-```ipython
+```python
 $ ipython
 Python 3.6.8 (v3.6.8:3c6b436a57, Dec 24 2018, 02:10:22)
 Type 'copyright', 'credits' or 'license' for more information
