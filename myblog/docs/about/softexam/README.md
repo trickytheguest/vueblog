@@ -450,7 +450,7 @@ int main(int argc, const char * argv[]) {
 
 所以X = 112K * 16bit / (28 * 16K) = 4 bit
 
-   
+因此，示例中第1题选B， 第2题选A。   
 
 注意 8bit = 1b (字节)。
 
