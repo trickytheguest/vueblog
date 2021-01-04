@@ -2,20 +2,15 @@
 
 [[toc]]
 
-- 注：实验环境Manjaro发行版和Windows 10系统。
+- 注：实验环境MacOS系统。
 
-Manjaro系统：
-
-```sh
-$ uname -r
-4.19.28-1-MANJARO
-```
-
-Windows 10系统：
+MacOS系统：
 
 ```sh
-$ uname -a
-MSYS_NT-10.0 LAPTOP-8OESE8K5 2.5.0(0.295/5/3) 2016-03-31 18:47 x86_64 Msys  
+[mzh@MacBookPro ~ ]$ sw_vers
+ProductName:	Mac OS X
+ProductVersion:	10.15.5
+BuildVersion:	19F101
 ```
 
 - 学习一门新程序设计语言的唯一途径就是使用它编写程序。
@@ -60,7 +55,9 @@ Hello,world
 
 - 一个C语言程序，无论其大小如何，都是由**函数**和**变量**组成的。
 - 每个程序都从`main`函数的起点开始执行，每个程序必须在某个位置包含一个`main`函数。
-- 函数之间进行数据交换的一种方法是调用函数向被调用函数提供参数列表。
+- 函数之间进行数据交换的一种方法是调用函数向被调用函数提供参数列表。函数名后面的圆括号`()`将参数包裹起来，括号中没有内容时表示没有参数。函数体由`{}`花括号包裹起来。
+- `main`函数通常会调用其他函数来帮助完成某些工作，被调用的函数可以是程序设计人员自己编写的，也可以来自于函数库。
+- `#include <stdio.h>`用于告诉编译器在本程序中包含标准输入、输出库的信息。
 - **printf**函数用于打印输出。**printf**永远不会自动换行。
 - 用双引号括起来的字符序列称为**字符串**或**字符常量**。
 - **\n**转义字符表示换行。
@@ -90,9 +87,9 @@ int main()
     int fahr, cels;  // 声明变量
     int lower, upper, step;  // 声明变量
 
-    lower = 0;
-    upper = 300;
-    step = 20;
+    lower = 0;  // 温度的下限
+    upper = 300;  // 温度的上限
+    step = 20;  // 步长
 
     fahr = lower;
     while (fahr <= upper)
@@ -130,6 +127,22 @@ $ ./fahrenheit2celsius.out
 - 注释：包含在`/*`和`*/`之间的字符序列将被编译器忽略。注释可以自由地运用在程序中，使得程序更易于理解。也可以使用`//`来表示单行注释。
 - 所有变量必须先声明后使用。声明通常放在函数起始处，在任何可执行语句之前。声明用于说明变量的属性，它由一个类型名和一个变量名组成。
 - 赋值语句：类似`lower = 0`这样使用等号对变量进行赋值。
+
+### alias重命名设置
+
+为了快速编译出out文件，设置一下`alias`重命名。在`~/.zshrc`中添加以下内容：
+
+```sh
+alias cc='compile_c'
+function compile_c()
+{
+    filename=$1
+    outfile=$( echo "$filename"|sed 's/\.c$/\.out/g' )
+    clang $filename -o $outfile
+}
+```
+
+使用`source ~/.zshrc`重新加载配置后，即可以使用`cc helloworld.c`命令自动生成`helloworld.out`文件，不用手动指定输出文件！
 
 ### `while`语句
 
@@ -197,6 +210,65 @@ $ ./fahrenheit2celsius.out
 - 使用浮点算术运算代替整型算术运算，控制输出精度。
 - 如果浮点常量取值是整型值，在书写时最好为它加上一个显示的小数点，这样可以强调其是浮点性质，便于阅读。
 - 可以使用`printf`另外单独打印标题。
+- 注意，整数除法时会执行舍位，结果中的任何小数部分都会被舍弃。如果在程序中直接使用`5/9`结果得到的将是0，就时结果就是不正确的，使用`5.0/9.0`的形式使用浮点数与浮点数相除的方式不会执行舍位。
+
+```c
+$ cat fahrenheit2celsius.c
+/**
+*@file fahrenheit2celsius.c
+*@brief 打印华氏温度与摄氏温度对照表
+*@author Zhaohui Mei<mzh.whut@gmail.com>
+*@date 2019-07-24
+*@return 0
+*/
+
+#include <stdio.h>
+
+int main()
+{
+    float fahr, cels;  // 声明变量
+    int lower, upper, step;  // 声明变量
+
+    lower = 0;  // 温度的下限
+    upper = 300;  // 温度的上限
+    step = 20;  // 步长
+
+    printf("  F      C\n");
+    fahr = lower;
+    while (fahr <= upper)
+    {
+        cels = 5 / 9  * (fahr - 32);
+        printf("%3.0f %6.1f\n", fahr, cels); // 华氏温度取三位字符宽，不带小数点和小数部分，摄氏温度取六位字符宽，且小数点后面取1位小数
+        fahr = fahr + step;
+    }
+    return 0;
+}
+```
+
+编译后运行结果如下：
+
+```sh
+$ ./fahrenheit2celsius.out
+  F      C
+  0   -0.0
+ 20   -0.0
+ 40    0.0
+ 60    0.0
+ 80    0.0
+100    0.0
+120    0.0
+140    0.0
+160    0.0
+180    0.0
+200    0.0
+220    0.0
+240    0.0
+260    0.0
+280    0.0
+300    0.0
+```
+
+可以看到使用`5 / 9`这种方式得到的结果是异常的。
 
 ### `for`语句
 
