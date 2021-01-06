@@ -393,6 +393,8 @@ $ ./fahrenheit2celsius_for.out
 
 ### `#define`定义符号常量
 
+- 幻数：把直接使用的常数叫做幻数。应尽量避免使用幻数。因为当常量需要改变时，要修改所有使用它的代码。
+
 - 在程序中使用300或20等类似的`幻数`不是一个好习惯。它们几乎无法向以后阅读该程序的人提供什么信息，而且使程序的修改变得更加困难。处理幻数的一种方法就是赋予它们有意义的名字。
 - `#define`指令可以把符号名(或称为符号常量)定义为一个特定的字符串，语法格式如下：
 
@@ -469,7 +471,7 @@ $ ./fahrenheit2celsius_for_define.out
 - 文本流是由多行字符构成的字符序列，而每行字符则是由0个或多个字符组成，行末是一个换行符。
 - 标准库负责使每个输入/输出流都 能够遵守这一模型。
 - 标准库提供了一次读/写一个字符的函数，其中最简单的是`getchar()`,`putchar()`两个函数。
-- `getchar()`每次从文本流中读入下一个输入字符，并将其作为结果值返回。
+- `getchar()`每次从文本流中读入下一个输入字符（这个字符通常是通过键盘输入的），并将其作为结果值返回。
 - `putchar(c)`将打印变量c的内容，通常是显示在屏幕上。
 
 在不了解其他输入/输出知识的情况下，可以使用`getchar()`,`putchar()`函数编写出数量惊人的有用代码。
@@ -495,7 +497,7 @@ int main()
     int c;
 
     c = getchar();
-    while(c != EOF)
+    while (c != EOF)
     {
         putchar(c);
         c = getchar();
@@ -521,8 +523,10 @@ c
 
 - Linux中，在新的一行的开头，按下Ctrl-D，就代表EOF（如果在一行的中间按下Ctrl-D，则表示输出"标准输入"的缓存区，所以这时必须按两次Ctrl-D）。参考[EOF是什么？](http://www.ruanyifeng.com/blog/2011/11/eof.html "EOF是什么？")。
 - Windows中，在新的一行的开头，按下Ctrl-Z就代表EOF。
+- Mac中，按control + D键结束。
 - 字符在键盘，屏幕或其他任何地方无论以什么形式表现，它在机器内部都是以位模式存储的。`char`类型专门用于存储这种字符型数据，当然任何整型(`int`)也可以用于存储字符型数据，出于某些潜在的重要原因，在此使用`int`类型。
 - `EOF`表示文件结束，End of file。定义在头文件`stdio.h`中 ，定义如下` #define EOF (-1)`。
+- 可以将赋值语句(如`c = getchar()`)作为更大的表达式的一部分出现，就可以形成复杂语句(如下面的` while ((c = getchar()) != EOF)`)。
 
 
 
@@ -550,6 +554,45 @@ int main()
     return 0;
 }
 ```
+
+虽然使用上面的复杂语句使得`getchar()`只在程序中出现了次，使程序看起来更加紧凑，使程序更易阅读。但不宜过多地使用这种类型的复杂语句，这样会导致编写的程序可能很难理解。
+
+注意上面的复杂语句中，`c = getchar()`外侧的左右括号不能省略，如果省略后将使程序语意发生变化，因为`!=`优先级高于`=`，这样会导致先会将获取到的字符与`EOF`比较，将比较的结果返回给c。
+
+#### 打印EOF的值
+
+练习1-7 编写一个打印EOF值和程序。
+
+```sh
+$ cat print_EOF.c
+/*
+ *      Filename: print_EOF.c
+ *        Author: Zhaohui Mei<mzh.whut@gmail.com>
+ *   Description: 打印EOF的值
+ *   Create Time: 2021-01-06 21:49:41
+ * Last Modified: 2021-01-06 22:15:43
+ */
+
+#include<stdio.h>
+
+int main()
+{
+    printf("%d\n", EOF);
+    return 0;
+}
+```
+
+编译并运行：
+
+```sh
+ cc print_EOF.c
+ $ ./print_EOF.out
+-1
+```
+
+可以看到`EOF`的值是`-1`。
+
+
 
 #### 字符统计
 
@@ -593,6 +636,78 @@ d
 ```
 
 由于输入字符a/b/c/d后都按了一次Enter回车键，所以每行相当于输入了两个字符，一共输入了8个字符。
+
+注，在Mac上面运行稍有不同：
+
+```sh
+$ ./countchar.out
+1
+2D
+$ ./countchar.out
+12
+3D
+$ ./countchar.out
+1234567
+8D
+$ ./countchar.out
+123456
+78
+10
+$ ./countchar.out
+123456789012
+13
+```
+
+可以看到当字符数小于10时，数字后多了一个`D`字符。
+
+我们可以使用双精度浮点数`double`处理更大的数字。使用`for`循环语句来处理统计字符：
+
+```sh
+$ cat countchar_2.c
+/*
+ *      Filename: countchar_2.c
+ *        Author: Zhaohui Mei<mzh.whut@gmail.com>
+ *   Description: 统计输入的字符数版本2
+ *   Create Time: 2021-01-06 22:37:04
+ * Last Modified: 2021-01-07 07:32:10
+ */
+
+#include<stdio.h>
+
+int main()
+{
+    double nc; // 双精度浮点数
+    for (nc = 0; getchar() != EOF; ++nc)
+        ;
+    printf("%.0f\n", nc);
+}
+```
+
+编译后运行：
+
+```sh
+$ cc countchar_2.c
+$ ./countchar_2.out
+abcd
+5D
+$ ./countchar_2.out
+1
+2
+3
+4
+8D
+$ ./countchar_2.out
+12345
+67890
+12
+$ ./countchar_2.out
+0D
+```
+
+注意，在该程序中，`for`循环语句的循环体是空的，这是因为所有工作都在测试(条件)部分与增加步长部分完成了。当用户未输入任何值时，直接按退出，此时输出结果为0。
+
+- C语言语法规则要求`for`循环语句必须有一个循环体，因此用单独的分号代替。
+- 单独的分号称为空语句。
 
 #### 行统计
 
