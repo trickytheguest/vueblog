@@ -129,6 +129,10 @@ module.exports = [{
                 link: '/about/softexam/'
             },
             {
+                text: '面试',
+                link: '/about/interview/'
+            },
+            {
                 text: '好用的工具',
                 link: '/about/tools/'
             },
