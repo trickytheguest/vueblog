@@ -43,4 +43,4 @@
 41. [Python logging模块-记录错误日志](./X_logging.html)
 1. [Python代码检查](./X_Python_style_and_static_check.html) 
 1. [Python面试总结](./X_python_interview.html) 
-
+1. [Python Cookbook小菜一碟](./X_python_cookbook.html)

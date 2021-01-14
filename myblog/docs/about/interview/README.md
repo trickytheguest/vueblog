@@ -36,9 +36,8 @@
 - init程序。
 
   - 内核挂载rootfs后，就会运行第一个程序`/sbin/init`，之后控制权交给`init`程序。
-- 有的系统已经使用`systemd`代替`init`文件。
-  
-- `init`程序会根据配置文件(如`/etc/inittab`)产生PID为1的进程。
+  - 有的系统已经使用`systemd`代替`init`文件。
+  - `init`程序会根据配置文件(如`/etc/inittab`)产生PID为1的进程。
   
 - Runlevel。
 
@@ -60,11 +59,9 @@
 
   
 
-  
-
-
-
 ## 虚拟机与容器的区别？
+
+
 
 ## CPU过高如何排查？
 
