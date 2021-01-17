@@ -777,7 +777,7 @@ int main()
     c = getchar(); // 读取字符
     while (c != EOF)  // 不是文件结尾符时
     {
-        if (c == ' ')  // 如果读取到的字符时空格
+        if (c == ' ')  // 如果读取到的字符是空格
         {
             putchar(c); // 先将空格打印出来
             // 然后循环读取后面的字符，如果字符是空格，不打印
@@ -886,10 +886,15 @@ int main()
         {
             state = OUT;
         }
-        else if (state == OUT )
+        else // 是普通字符时
         {
-            state = IN;
-            ++nw;  /* 单词数增1 */
+            // 只有当状态不是是单词时，才需要追加一次
+            // 如果已经是单词状态则不用重复计数
+            if (state == OUT)
+            {
+                state = IN;
+                ++nw;  /* 单词数增1 */
+            }
         }
     }
     printf("%d %d %d\n", nl, nw, nc);
@@ -903,7 +908,7 @@ int main()
 ```sh
 $ cc count_words.c -o count_words.out
 $ ./count_words.out < count_words.c
-43 124 1076
+47 131 1281
 ```
 
 注：第1章后面讲的数组、函数、参数--传值调用、字符数组、外部变量与作用域，相对较难，后续补充。
