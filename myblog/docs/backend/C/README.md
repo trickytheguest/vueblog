@@ -911,6 +911,122 @@ $ ./count_words.out < count_words.c
 47 131 1281
 ```
 
+#### 每行一个单词的形式打印输出
+
+练习1-12，编写一个程序，以每行一个单词的形式打印其输入。
+
+```c
+$ cat print_words.c
+/*
+ *      Filename: print_words.c
+ *        Author: Zhaohui Mei<mzh.whut@gmail.com>
+ *   Description: 每行打印一个单词
+ *   Create Time: 2021-01-17 21:44:40
+ * Last Modified: 2021-01-17 23:01:09
+ */
+
+#include <stdio.h>
+
+#define IN 1
+#define OUT 0
+
+int main()
+{
+    int c, state;
+    while ((c=getchar()) != EOF)
+    {
+        if (c == ' ' || c == '\t' || c == '\n')
+        {
+            if (state == IN){
+                printf("\n");
+            }
+            state = OUT;
+        }
+        else
+        {
+            state = IN;
+            printf("%c", c);
+        }
+    }
+}
+```
+
+编译并运行：
+
+```sh
+$ cc print_words.c
+$ ./print_words.out
+the first line!
+the
+first
+line!
+the second line!
+the
+second
+line!
+```
+
+### 数组的使用
+
+编写一个程序，来统计各个数字、空白符（包括空格符、制表符及换行符）以及所有其他字符出现的次数。
+
+所有的输入字符可以分为12类。可以使用一个数组存放各个数字出现的次数。这样比独立使用10个变量更方便。
+
+下面是该程序的一个版本。
+
+```c
+$ cat number_white_other.c
+/*
+ *      Filename: number_white_other.c
+ *        Author: Zhaohui Mei<mzh.whut@gmail.com>
+ *   Description: 统计数字、空白符以及其他字符的个数
+ *   Create Time: 2021-01-18 20:41:19
+ * Last Modified: 2021-01-18 20:49:03
+ */
+
+#include <stdio.h>
+
+int main()
+{
+    int c, i, nwhite, nother;
+    int ndigit[10];
+
+    nwhite = nother = 0;
+    for (i = 0; i < 10; ++i)
+        ndigit[i] = 0;
+
+    while ((c=getchar()) != EOF)
+        if (c >= '0' && c <= '9')
+            ++ndigit[c-'0'];
+        else if (c == ' ' || c == '\n' || c == '\t')
+            ++nwhite;
+        else
+            ++nother;
+
+    printf("digits =");
+
+    for (i = 0; i < 10; ++i)
+        printf(" %d", ndigit[i]);
+    printf(", white space = %d, other = %d\n", nwhite, nother);
+
+    return 0;
+}
+
+$
+```
+
+编译并运行：
+
+```sh
+$ cc number_white_other.c
+$ ./number_white_other.out
+ab 1 2 3 4 5 66 77 888 9999 0000 cdefg
+digits = 4 1 1 1 1 1 2 2 3 4, white space = 12, other = 7
+$
+```
+
+
+
 注：第1章后面讲的数组、函数、参数--传值调用、字符数组、外部变量与作用域，相对较难，后续补充。
 
 ## 第2章 类型、运算符与表达式
