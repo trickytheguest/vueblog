@@ -1025,6 +1025,73 @@ digits = 4 1 1 1 1 1 2 2 3 4, white space = 12, other = 7
 $
 ```
 
+#### 绘制输入中单词长度的直方图
+
+练习1-13，待补。
+
+#### 绘制输入中各个字符出现频度的直方图
+
+练习1-14，待补。
+
+
+
+### 函数
+
+- 函数为计算的封装提供了一种简便的方法。
+- 使用设计正确的函数，程序员无须考虑功能是如何实现的。只需要知道它具有哪些功能就可以。
+- `printf`、`getchar`、`putchar`等函数都是函数库中提供的函数。
+- 函数定义可以任意次序出现在一个源文件或多个源文件中，但同一个函数不能分割在多个文件中。
+- 函数定义中圆括号内列表中出现的变量称为`形式参数`，把函数调用中与形式参数对应的值称为`实际参数`。
+
+编写一个计算整数m的n次幂函数。下面的示例中，是将`power`函数和`main`函数存放在一个文件中。
+
+```c
+$ cat power.c
+/*
+ *      Filename: power.c
+ *        Author: Zhaohui Mei<mzh.whut@gmail.com>
+ *   Description: 计算m的n次幂
+ *   Create Time: 2021-01-19 21:07:19
+ * Last Modified: 2021-01-19 21:11:17
+ */
+
+#include <stdio.h>
+
+int power(int m, int n);
+
+int power(int base, int n)
+{
+    int i, p;
+    p = 1;
+    for (i=1;i<=n;i++)
+    {
+        p = p * base;
+    }
+    return p;
+}
+
+int main()
+{
+    printf("power(2, 3) = %d\n", power(2, 3));
+    printf("power(-2, 3) = %d\n", power(-2, 3));
+    return 0;
+}
+
+```
+
+编译并运行：
+
+```sh
+$ cc power.c
+$ ./power.out
+power(2, 3) = 8
+power(-2, 3) = -8
+```
+
+第12行的`int power(int m, int n)'`是函数声明，声明参数的类型、名字以及该函数返回结果的类型。
+
+`power`函数所使用参数名字只对`power`函数内部有效，对其他任何函数都是不可见的。其他函数可以使用与之相同的参数名字而不会引起冲突。
+
 
 
 注：第1章后面讲的数组、函数、参数--传值调用、字符数组、外部变量与作用域，相对较难，后续补充。
