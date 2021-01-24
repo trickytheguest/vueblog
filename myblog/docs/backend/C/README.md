@@ -1092,11 +1092,60 @@ power(2, 3) = 8
 power(-2, 3) = -8
 ```
 
-第12行的`int power(int m, int n)'`是函数声明，声明参数的类型、名字以及该函数返回结果的类型。
+第12行的`int power(int m, int n)`是函数声明，声明参数的类型、名字以及该函数返回结果的类型。
 
 `power`函数所使用参数名字只对`power`函数内部有效，对其他任何函数都是不可见的。其他函数可以使用与之相同的参数名字而不会引起冲突。`power`函数计算所得的结果通过`return`语句返回给`main`函数。
 
+### 参数-传值调用
 
+- C语言中所有函数参数都是通过值传递的。也就是说，传递给被调用函数的参数值存放在临时变量中，而不是存放在原来的变量中。
+- C语言中，被调用函数不能直接修改主调用函数中变量的值，而只能修改其私有的临时副本的值。
+
+下面我们改写`power`函数，通过将参数`n`作为临时变量，`power`函数内部对n的任何操作不会影响到调用函数中n的原始参数值。
+
+```c
+$ cat power1.c
+/*
+ *      Filename: power1.c
+ *        Author: Zhaohui Mei<mzh.whut@gmail.com>
+ *   Description: 计算m的n次幂
+ *   Create Time: 2021-01-19 21:07:19
+ * Last Modified: 2021-01-24 15:56:30
+ */
+
+#include <stdio.h>
+
+int power(int m, int n);
+
+int power(int base, int n)
+{
+    int p;
+    for (p = 1; n > 0; --n)
+    {
+        p = p * base;
+    }
+    return p;
+}
+
+int main()
+{
+    printf("power(2, 3) = %d\n", power(2, 3));
+    printf("power(-2, 3) = %d\n", power(-2, 3));
+    return 0;
+}
+
+```
+
+编译并运行：
+
+```sh
+$ cc power1.c
+$ ./power1.out
+power(2, 3) = 8
+power(-2, 3) = -8
+```
+
+可以看到运行的结果与之间的程序运行的结果是一样的。
 
 注：第1章后面讲的数组、函数、参数--传值调用、字符数组、外部变量与作用域，相对较难，后续补充。
 
