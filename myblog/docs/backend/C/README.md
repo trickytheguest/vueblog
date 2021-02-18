@@ -1215,7 +1215,9 @@ graph LR;
 ![c_data_type](/img/c_data_type.png)
 
 - 此处仅说明基本类型， `short`、`int`、`long`、`float`、`double`、`char`这六个关键字代表C语言里面的六种基本数据类型。
+- `int`通常代表特定机器中整数的自然长度。
 - 字符类型`char`占用1个字节，可以存放本地字符集中的一个字符。
+- 类型限定符`signed`和`unsigned`可以用于限定`char`类型或任何整型。
 - 各种类型的存储大小与系统位数有关，但目前通用的以64位系统为主。
 - 可以使用`sizeof`获取类型的长度，表达式`sizeof(type)`得到对象或类型的存储字节大小。
 
