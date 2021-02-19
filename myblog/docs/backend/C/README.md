@@ -1280,6 +1280,43 @@ double占用的内存大小是8
 
 可以看到`long`长整型在Linux系统和Windows系统上面存在差异。
 
+在MacOS上编译运行时异常，提示`warning: format specifies type 'int' but the argument has type 'unsigned long' [-Wformat]`,将代码中的`%d`标识符替换成`%lu`，后运行。
+
+```c
+$ cat base_data_type.c
+/**
+*@file base_data_type.c
+*@brief 基本数据类型
+*@author Zhaohui Mei<mzh.whut@gmail.com>
+*@date 2019-10-20
+*@return 0
+*/
+
+#include <stdio.h>
+#include <limits.h>
+
+int main()
+{
+    printf("char占用的内存大小是%lu\n", sizeof(char));
+    printf("short占用的内存大小是%lu\n", sizeof(short));
+    printf("int占用的内存大小是%lu\n", sizeof(int));
+    printf("long占用的内存大小是%lu\n", sizeof(long));
+    printf("float占用的内存大小是%lu\n", sizeof(float));
+    printf("double占用的内存大小是%lu\n", sizeof(double));
+    return 0;
+}
+$ cc base_data_type.c
+$ ./base_data_type.out
+char占用的内存大小是1
+short占用的内存大小是2
+int占用的内存大小是4
+long占用的内存大小是8
+float占用的内存大小是4
+double占用的内存大小是8
+```
+
+
+
 ### 常量
 
 - 类似于1 2 3 4 的整数常量属于`int`类型。
