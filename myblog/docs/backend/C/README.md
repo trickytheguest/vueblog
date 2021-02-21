@@ -1225,7 +1225,7 @@ graph LR;
 
 - `unsigned`无符号类型的数总是正数或0。不应将负数赋值给一个无符号类型的变量或常量。
 
-- 在符号数和无符号数逻辑运算时，默认会将有符号数看成无符号数进行运算！返回无符号数的结果。
+- 在符号数和无符号数逻辑运算时，默认会将有符号数看成无符号数进行运算！返回无符号数（`unsigned`）的结果。
 
 - 各种类型的存储大小与系统位数有关，但目前通用的以64位系统为主。
 
@@ -1468,28 +1468,29 @@ $
 - 无符号常量以字母u或U结尾，后缀ul或UL表明是`unsigned long`类型。
 - 前缀为0的整型常量表示它是八进制形式。十进制31可以写成八进制形式037。
 - 前缀为0x或0X的整型常量表示它是十六进制形式。十进制31可以写成十六进制形式0x1f或0X1F。
-- 一个字符常量是一个整数，书写时将一个字符括在单引号中，如'x'。字符在机器字符集中的数值就是字符常量的值。
-- 某些字符可以通过转义字符序列(例如：换行符\n)表示为字符和字符串常量。
+- 使用后缀`L`表示`long`类型，使用后缀`U`表示`unsigned`无符号类型，如`0XFUL`是一个`unsigned long`类型（无符号长整型）的常量，其值等于十进制数15。
+- 一个字符常量是一个整数，书写时将一个字符括在单引号中，如`'x'`。字符在机器字符集中的数值就是字符常量的值。
+- 某些字符可以通过转义字符序列(例如：换行符`\n`)表示为字符和字符串常量。
 - 转义字符序列看起来像两个字符，但只表示一个字符。
 - 可以使用'\ooo'表示任意的字节大小的位模式，其中ooo代表1~3个八进制数字(0~7)。
 - 也可以使用'\xhh'表示任意的字节大小的位模式，其中hh代表1个或多个十六进制数字(0~9,a~f,A~F)。
 
 下表是ANSI C语言中的全部转义字符序列：
 
-| 转义字符 | ASCII码值(十进制)   |          意义                        |
-| -------- | :------------------ | :----------------------------------: |
-| \\a      | 007                 | 响铃符(BEL)                          |
-| \\b      | 008                 | 退格符(BS)，将当前位置移到前一列     |
-| \\f      | 012                 | 换页符(FF)，将当前位置移到下页开头   |
-| \\n      | 010                 | 换行符(LF)，将当前位置移到下一行开头 |
-| \\r      | 013                 | 回车符(CR) ，将当前位置移到本行开头  |
-| \\t      | 009                 | 水平制表符(HT)                       |
-| \\v      | 011                 | 垂直制表符(VT)                       |
-| \\\\     | 092                 | 反斜杠                               |
-| \\\'     | 039                 | 单引号                               |
-| \\\"     | 034                 | 双引号                               |
-| \ooo     | -                   | 八进制                               |
-| \xhh     | -                   | 十六进制                             |
+| 转义字符 | ASCII码值(十进制) |                 意义                 |
+| -------- | :---------------- | :----------------------------------: |
+| \\a      | 007               |             响铃符(BEL)              |
+| \\b      | 008               |   退格符(BS)，将当前位置移到前一列   |
+| \\f      | 012               |  换页符(FF)，将当前位置移到下页开头  |
+| \\n      | 010               | 换行符(LF)，将当前位置移到下一行开头 |
+| \\r      | 013               | 回车符(CR) ，将当前位置移到本行开头  |
+| \\t      | 009               |            水平制表符(HT)            |
+| \\v      | 011               |            垂直制表符(VT)            |
+| \\\\     | 092               |                反斜杠                |
+| \\\'     | 039               |                单引号                |
+| \\\"     | 034               |                双引号                |
+| \ooo     | -                 |                八进制                |
+| \xhh     | -                 |               十六进制               |
 
 - 字符常量'\0'表示值为0的字符，也就是空字符(null)。
 - 通常用'\0'的形式代替0，以强调某些表达式的字符属性，但其数字值为0。
@@ -1505,12 +1506,70 @@ char line[MAXLINE+1];
 int days[31+28+LEAP+31+30+31+30+31+31+30+31+30+31];
 ```
 
+测试常量的转化输出。
+
+```c
+$ cat test_constant.c
+/*
+ *      Filename: test_constant.c
+ *        Author: Zhaohui Mei<mzh.whut@gmail.com>
+ *   Description: 测试常量的使用
+ *   Create Time: 2021-02-22 06:39:47
+ * Last Modified: 2021-02-22 06:50:21
+ */
+
+#include <stdio.h>
+
+#define NUM 31
+
+int main(void)
+{
+    printf("NUM = %d\n", NUM);
+    printf("进行转换，无前缀输出:\n");
+    // 8进制输出
+    printf("Output with Octal number system. NUM = %o\n", NUM);
+    // 16进制输出
+    printf("Output with Hexadecimal number system. NUM = %x\n", NUM);
+    printf("Output with Hexadecimal number system. NUM = %X\n", NUM);
+
+    printf("进行转换，有前缀输出:\n");
+    // 8进制输出
+    printf("Output with Octal number system. NUM = %#o\n", NUM);
+    // 16进制输出
+    printf("Output with Hexadecimal number system. NUM = %#x\n", NUM);
+    printf("Output with Hexadecimal number system. NUM = %#X\n", NUM);
+    return 0;
+}
+```
+
+编译并运行：
+
+```sh
+$ cc test_constant.c
+$ ./test_constant.out
+NUM = 31
+进行转换，无前缀输出:
+Output with Octal number system. NUM = 37
+Output with Hexadecimal number system. NUM = 1f
+Output with Hexadecimal number system. NUM = 1F
+进行转换，有前缀输出:
+Output with Octal number system. NUM = 037
+Output with Hexadecimal number system. NUM = 0x1f
+Output with Hexadecimal number system. NUM = 0X1F
+$
+```
+
+可以看到使用`%#o`可以将常量按8进制带前缀0输出，而使用`%#x`或`%#X`可以将常量按16进制带前缀0x或0X输出。
+
+
+
 #### 字符串常量
 
 - 字符串常量也叫做字符串字面值。
 - 字符串常量是用双引号括起来的0个或多个字符组成的字符序列。例如"I am a string"。
 - 空字符串常量""。
 - 双引号不是字符串的一部分，它只用于限定字符串。
+- 在字符串中使用`\"`表示双引号字符。
 - 编译时可以将多个字符串常量连接起来，例如： "hello," " world"与"hello, world"等价。
 - 字符串常量的连接为将较长的字符串分散在若干个源文件行中提供了支持。
 - 从技术角度看，字符串常量就是字符数组。
@@ -1523,7 +1582,7 @@ int days[31+28+LEAP+31+30+31+30+31+31+30+31+30+31];
 获取字符串的长度:
 
 ```c
-$cat base_data_type.c
+$cat count_string_length.c
 /**
 *@file count_string_length.c
 *@brief count string length
@@ -1533,7 +1592,8 @@ $cat base_data_type.c
 */
 
 #include <stdio.h>
-
+#include <string.h>
+  
 // my_strlen函数返回a的长度
 int my_strlen(char a[])
 {
@@ -1546,18 +1606,20 @@ int my_strlen(char a[])
 int main()
 {
     char string[] = "Hello World";
-    printf("\"Hello World\"字符串的长度为%d", my_strlen(string));
+    printf("\"Hello World\"字符串的长度为%d\n", my_strlen(string));
+    printf("通过标准库函数strlen获取\"Hello World\"字符串的长度为%lu\n", strlen(string));
     return 0;
 }
 ```
 
-在Windows 10系统上面编译运行：
+编译并运行：
 
 ```sh
 $ cc count_string_length.c -o count_string_length.out  
                                                        
 $ count_string_length.out                              
-"Hello World"字符串的长度为11                          
+"Hello World"字符串的长度为11
+通过标准库函数strlen获取"Hello World"字符串的长度为11
 ```
 
 - 字符常量与仅包含一个字符的字符串有差别的。
