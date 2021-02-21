@@ -1187,6 +1187,7 @@ power(-2, 3) = -8
 - 变量名使用使用小写字母(lower_case_with_underline)，符号常量名全部使用大写字母(UPPER_CASE_WITH_UNDERLINE)。
 - 名称要能够尽可能从字面上表达变量的用途。
 - 局部变量一般使用较短的变量名，外部变量使用较长的名字。
+- 变量在使用前，需要先声明，并初始化。未初始化的变量在使用时，如果变量i未初始化，会提示`Variable 'i' is uninitialized when used here`异常。
 
 ### 数据类型及长度
 
@@ -1215,11 +1216,22 @@ graph LR;
 ![c_data_type](/img/c_data_type.png)
 
 - 此处仅说明基本类型， `short`、`int`、`long`、`float`、`double`、`char`这六个关键字代表C语言里面的六种基本数据类型。
-- `int`通常代表特定机器中整数的自然长度。
+
+- `int`通常代表特定机器中整数的自然长度。默认是带符号`signed`的。
+
 - 字符类型`char`占用1个字节，可以存放本地字符集中的一个字符。
+
 - 类型限定符`signed`和`unsigned`可以用于限定`char`类型或任何整型。
+
+- `unsigned`无符号类型的数总是正数或0。不应将负数赋值给一个无符号类型的变量或常量。
+
+- 在符号数和无符号数逻辑运算时，默认会将有符号数看成无符号数进行运算！返回无符号数的结果。
+
 - 各种类型的存储大小与系统位数有关，但目前通用的以64位系统为主。
+
 - 可以使用`sizeof`获取类型的长度，表达式`sizeof(type)`得到对象或类型的存储字节大小。
+
+  
 
 使用下面的代码获取`short`、`int`、`long`、`float`、`double`、`char`基本数据类型在Linux和Windows 10系统中的长度：
 
@@ -1315,9 +1327,140 @@ float占用的内存大小是4
 double占用的内存大小是8
 ```
 
+我们先来通过打印`<limits.h>`头文件中定义的最小最大值看一下`char`、`short`、`int`、`long`类型的最小最大值。
+
+```c
+$ cat min_max_value.c
+/*
+ *      Filename: min_max_value.c
+ *        Author: Zhaohui Mei<mzh.whut@gmail.com>
+ *   Description: 带符号和不带符号位最大最小值
+ *   Create Time: 2021-02-21 18:44:26
+ * Last Modified: 2021-02-21 19:25:41
+ */
+
+#include <stdio.h>
+#include <limits.h>
+
+int main(void)
+{
+    printf("有符号最小最大值:\n");
+    printf("CHAR_MIN = %d\n", CHAR_MIN);
+    printf("CHAR_MAX = %d\n", CHAR_MAX);
+    printf("SHRT_MIN = %d\n", SHRT_MIN);
+    printf("SHRT_MAX = %d\n", SHRT_MAX);
+    printf("INT_MIN = %d\n", INT_MIN);
+    printf("INT_MAX = %d\n", INT_MAX);
+    printf("LONG_MIN = %ld\n", LONG_MIN);
+    printf("LONG_MAX = %ld\n", LONG_MAX);
+
+    printf("无符号最小最大值:\n");
+    printf("UCHAR_MAX = %u\n", UCHAR_MAX);
+    printf("USHRT_MAX = %u\n", USHRT_MAX);
+    printf("UINT_MAX = %u\n", UINT_MAX);
+    printf("ULONG_MAX = %lu\n", ULONG_MAX);
+
+    return 0;
+}
+```
+
+编译并运行:
+
+```sh
+$ cc min_max_value.c
+$ ./min_max_value.out
+有符号最小最大值:
+CHAR_MIN = -128
+CHAR_MAX = 127
+SHRT_MIN = -32768
+SHRT_MAX = 32767
+INT_MIN = -2147483648
+INT_MAX = 2147483647
+LONG_MIN = -9223372036854775808
+LONG_MAX = 9223372036854775807
+无符号最小最大值:
+UCHAR_MAX = 255
+USHRT_MAX = 65535
+UINT_MAX = 4294967295
+ULONG_MAX = 18446744073709551615
+```
 
 
-### 常量
+
+我们测试一下`int`类型默认是无符号还是有符号的。
+
+```c
+$ cat test_default_signed.c
+/*
+ *      Filename: test_default_signed.c
+ *        Author: Zhaohui Mei<mzh.whut@gmail.com>
+ *   Description: 测试默认是无符号还是有符号
+ *   Create Time: 2021-02-20 06:45:35
+ * Last Modified: 2021-02-21 19:18:20
+ */
+
+#include <stdio.h>
+
+int main(void)
+{
+    unsigned int a = -1;
+    int b = -1;
+    printf("unsigned int a = %d\n", a);
+    printf("unsigned int with %%d sign a = %d\n", a);
+    printf("unsigned int with %%u sign a = %u\n", a);
+    printf("default int b = %d\n", b);
+    printf("default int with %%d sign b = %d\n", b);
+    printf("default int with %%u sign b = %u\n", b);
+    printf("a + b = %d\n", a+b);
+    printf("a - b = %d\n", a-b);
+    printf("a * b = %d\n", a*b);
+    printf("a / b = %d\n", a/b);
+
+    if (a > b)
+        printf("a > b\n");
+    else
+        printf("a < b\n");
+
+    return 0;
+}
+```
+
+编译并运行：
+
+```sh
+$ cc test_default_signed.c
+$ ./test_default_signed.out
+unsigned int a = -1
+unsigned int with %d sign a = -1
+unsigned int with %u sign a = 4294967295
+default int b = -1
+default int with %d sign b = -1
+default int with %u sign b = 4294967295
+a + b = -2
+a - b = 0
+a * b = 1
+a / b = 1
+a < b
+$
+```
+
+可以看到将负数`-1`赋值给无符号整数`a`，如果按无符号数输出的话，输出值是`4294967295`，是一个特别大的数据，为`2^32 - 1`，2的32次方后再减去1。这与我们预期的不一样，其实不应该将负数赋值给无符号整数类型的。`printf`在处理过程中，会先将传给函数的值进行转换。
+
+通过`int b = -1;`的定义并输出，可以看到以`%d`标识 以十进制形式输出带符号整数 输出的结果为`-1`，与我们期望的一样，而以`%u`  以十进制形式输出无符号整数 输出的结果是`4294967295`，与实际值不符。
+
+因此我们可以看到`int`默认情况下是带符号`signed`的。
+
+而最后`a < b`的原因是：
+
+无符号整数`a = -1`，此时会将`-1`对应的原码看作是正数，其对应的原码为`1000 0000  0000 0000  0000 0000  0000 0001`,正数时，对应的补码和原码相同。`int b = -1`是有符号整型，需要转换成补码然后计算，补码就是`1111 1111  1111 1111  1111 1111  1111 1111`，这时对这两个补码比较，就可以看到`a < b`。
+
+
+
+
+
+
+
+###   常量
 
 - 类似于1 2 3 4 的整数常量属于`int`类型。
 - `long`长整型类型的常量以字母l或L结尾。
