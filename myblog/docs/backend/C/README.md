@@ -1688,10 +1688,11 @@ DAY枚举常量1 2 3 7 8 9 10
 
 ### 声明
 
-- 所有变量都必须先声明后使用。
+- 所有变量都必须先声明后使用。如果使用了未声明的变量`i`，在编译时会提示异常`error: use of undeclared identifier 'i'`。
 - 一个声明指定一种变量类型，后面所带的变量表可以包含一个或多个该类型的变量。
 - 建议一个声明只声明一个变量，这样便于向声明语句中添加注释，也便于以后修改。
 - 在声明的同时可以对变量进行初始化。
+- 在声明中，如果变量名的后面紧跟一个等号以及一个表达式，该表达式就充当对变量进行初始化的初始化表达式。如`int limit = MAXLINE + 1;`。
 - 使用`auto`关键字声明自动变量，使用`static`关键字声明静态变量。
 - `auto`自动变量在函数结束后，会自动释放自动变量的存储空间。
 - `static`自动变量在函数结束后，**不会**自动释放自动变量的存储空间。函数中的局部变量的值在函数调用结束后不消失而保留原值，即其占用的存储空间不释放，在下一次调用函数时，该变量已有值，就是上一次函数调用结束时的值。
@@ -1699,37 +1700,39 @@ DAY枚举常量1 2 3 7 8 9 10
 - 默认情况下，外部变量与静态变量将被初始化为0。
 - 任何变量的声明都可以使用`const`限定符限定，该限定符指定变量的值不能被修改。
 - 用`const`限定符限定数组时，数组中所有元素的值都不能被修改。
+- `const`限定符也可配合数组参数使用，它表明函数不能修改数组元素的值，如`int strlen(const char[]);`,如果试图修改`const`限定符限定的值，其结果取决于具体的实现。
 
 下面看一个自动变量和静态变量的例子：
 
 ```c
 $ cat test_auto_static.c                                
-/**                                                     
-*@file test_auto_static                                 
-*@brief  测试auto自动变量和static静态变量               
-*@author Zhaohui Mei<mzh.whut@gmail.com>                
-*@date 2019-10-21                                       
-*@return 0                                              
-*/                                                      
+/*
+ *      Filename: test_auto_static.c
+ *        Author: Zhaohui Mei<mzh.whut@gmail.com>
+ *   Description: 测试auto自动变量和static静态变量 
+ *   Create Time: 2021-02-23 06:18:06
+ * Last Modified: 2021-02-23 06:49:02
+ */
                                                         
 #include <stdio.h>                                      
                                                         
 void test()                                             
 {                                                       
-    auto int a = 0;                                     
-    static int b = 3;                                   
+    auto int a = 0; // 定义自动变量                                    
+    static int b = 3;  // 定义静态变量                                  
     a++;                                                
     b++;                                                
     printf("a: %d\n", a);                               
     printf("b: %d\n", b);                               
 }                                                       
                                                         
-int main()                                              
+int main(void)                                              
 {                                                       
     for(int i = 0; i < 3; i++)                          
     {                                                   
         test();                                         
-    }                                                   
+    }        
+
     return 0;                                           
 }                                                       
 ```
@@ -1739,7 +1742,7 @@ int main()
 ```sh
 $ cc test_auto_static.c -o test_auto_static.out
 
-$ test_auto_static.out
+$ ./test_auto_static.out
 a: 1
 b: 4
 a: 1
@@ -1749,6 +1752,92 @@ b: 6
 ```
 
 可以看出，每次调用test()函数时，自动变量都会重新初始化为1，而静态变量第一次调用时初始化为3，使用"b++"增加后变成4，第一次调用结束后，静态变量b的值保留在内存空间中，并没有释放，第二次调用test()函数时，并不会再次执行初始化工作，而是直接使用上一次调用保留的值4，所以第二次打印出5。
+
+尝试修改`const`限定的变量：
+
+```c
+$ cat use_static_const.c
+/*
+ *      Filename: use_static_const.c
+ *        Author: Zhaohui Mei<mzh.whut@gmail.com>
+ *   Description: 使用static静态变量和const常量限定符
+ *   Create Time: 2021-02-23 06:52:08
+ * Last Modified: 2021-02-23 06:57:41
+ */
+
+#include <stdio.h>
+
+int main(void)
+{
+    static int a = 1;
+    const int b = -1;
+    printf("static int a = %d\n", a);
+    printf("const int b = %d\n", b);
+    a++;
+    b++;
+    printf("static int a = %d\n", a);
+    printf("const int b = %d\n", b);
+
+    return 0;
+}
+```
+
+尝试编译，则会有以下异常：
+
+```sh
+$ cc use_static_const.c
+use_static_const.c:18:6: error: cannot assign to variable 'b' with const-qualified type 'const int'
+    b++;
+    ~^
+use_static_const.c:14:15: note: variable 'b' declared const here
+    const int b = -1;
+    ~~~~~~~~~~^~~~~~
+1 error generated.
+```
+
+将第19行注释掉：
+
+```c
+$ cat use_static_const.c
+/*
+ *      Filename: use_static_const.c
+ *        Author: Zhaohui Mei<mzh.whut@gmail.com>
+ *   Description: 使用static静态变量和const常量限定符
+ *   Create Time: 2021-02-23 06:52:08
+ * Last Modified: 2021-02-23 06:57:41
+ */
+
+#include <stdio.h>
+
+int main(void)
+{
+    static int a = 1;
+    const int b = -1;
+    printf("static int a = %d\n", a);
+    printf("const int b = %d\n", b);
+    a++;
+    // b++; // 当尝试修改常量b的值时，编译时提示异常`error: cannot assign to variable 'b' with const-qualified type 'const int'``
+    printf("static int a = %d\n", a);
+    printf("const int b = %d\n", b);
+
+    return 0;
+}
+```
+
+再编译运行：
+
+```sh
+$ cc use_static_const.c
+$ ./use_static_const.out
+static int a = 1
+const int b = -1
+static int a = 2
+const int b = -1
+```
+
+可以正常编译，说明`const`限定的变量不能修改其值！
+
+
 
 ### 运算符
 
