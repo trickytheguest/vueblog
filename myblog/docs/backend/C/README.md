@@ -1628,31 +1628,26 @@ $ count_string_length.out
 
 #### 枚举常量
 
-- 枚举常量是另一种类型的常量，枚举是一个常量整型值的列表。
-- 例如： `enum boolean { YES, NO };`
-  
+- 枚举常量是另一种类型的常量，枚举是一个常量整型值的列表。当其中元素值不是整数时，会提示异常`error: expression is not an integer constant expression`。
+- 例如： `enum boolean { YES, NO };` ，注意最后的分号。
 - 在没有显式说明的情况下，enum枚举类型的第一个枚举名的值为0，第二个为1，第三个为2，以此类推。
-
 - enum枚举类型如果只指定了部分枚举名的值，那么未指定值的枚举名的值将依着最后一个指定值向后递增。
-
 - 不同枚举中的名字必须互不相同，同一个枚举中不同的名字可以具有相同的值。
-
 - 枚举类型不连续时，无法遍历。
-
 - 枚举元素可以直接使用。
-
 - 每个枚举元素可以作为一个整型的宏定义。
+- 当有多个常量需要定义时，使用`enum`枚举常量比`#define`宏定义常量更方便。
 
 看如下示例：
 ```c
 $ cat use_enum.c
-/**
-*@file use_enum.c
-*@brief  使用enum枚举类型 
-*@author Zhaohui Mei<mzh.whut@gmail.com>
-*@date 2019-10-21
-*@return 0
-*/
+/*
+ *      Filename: use_enum.c
+ *        Author: Zhaohui Mei<mzh.whut@gmail.com>
+ *   Description: 使用enum枚举类型
+ *   Create Time: 2021-02-23 06:18:06
+ * Last Modified: 2021-02-23 06:19:02
+ */
 
 #include <stdio.h>
 
