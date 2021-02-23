@@ -1699,6 +1699,8 @@ DAY枚举常量1 2 3 7 8 9 10
 - 在函数中定义局部变量时，如果没有被声明为其他类型的变量都是自动变量。默认可以不写`auto`。
 - 默认情况下，外部变量与静态变量将被初始化为0。
 - 任何变量的声明都可以使用`const`限定符限定，该限定符指定变量的值不能被修改。
+- 使用`const`声明常量时需要在一个语句中完成，语法格式如`const type VARIABLE = value;`
+- 把常量定义为大写字母形式，是一个很好的编程习惯。
 - 用`const`限定符限定数组时，数组中所有元素的值都不能被修改。
 - `const`限定符也可配合数组参数使用，它表明函数不能修改数组元素的值，如`int strlen(const char[]);`,如果试图修改`const`限定符限定的值，其结果取决于具体的实现。
 
@@ -1795,6 +1797,8 @@ use_static_const.c:14:15: note: variable 'b' declared const here
 1 error generated.
 ```
 
+异常翻译成中文意思是`无法为常量限定类型为“const int”的变量“b”赋值`。
+
 将第19行注释掉：
 
 ```c
@@ -1836,6 +1840,95 @@ const int b = -1
 ```
 
 可以正常编译，说明`const`限定的变量不能修改其值！
+
+
+
+我们再看一下使用`const`限定符来限定变量，能否声明后再赋值，还是要在声明时就赋值。
+
+```c
+$ cat use_const_define.c
+/*
+ *      Filename: use_const_define.c
+ *        Author: Zhaohui Mei<mzh.whut@gmail.com>
+ *   Description: 使用const定义常量
+ *   Create Time: 2021-02-24 06:23:24
+ * Last Modified: 2021-02-24 06:30:50
+ */
+
+#include <stdio.h>
+
+int main(void)
+{
+    const double PI;
+    PI = 3.1415;
+    // printf的%f说明符的确既可以输出float型又可以输出double型。
+    // 根据"默认参数提升"规则（在printf这样的函数的可变参数列表中 ，不论作用域内有没有原型，都适用这一规则）
+    // float型会被提升为double型。因此printf()只会看到双精度数。
+    printf("PI = %.4f\n", PI);  // 使用%f控制符输出double双精度型
+
+    return 0;
+}
+```
+
+示例中，我们先声明`const double PI;`，然后再赋值`PI = 3.1415`，然后编译：
+
+```sh
+$ cc use_const_define.c
+use_const_define.c:14:8: error: cannot assign to variable 'PI' with const-qualified type 'const double'
+    PI = 3.1415;
+    ~~ ^
+use_const_define.c:13:18: note: variable 'PI' declared const here
+    const double PI;
+    ~~~~~~~~~~~~~^~
+1 error generated.
+```
+
+可以发现编译异常，同样提示`无法为常量限定类型为“const int”的变量“PI”赋值`。也就是说使用`const`限定符时需要一次声明并赋值，在一个语句内完成。我们修改一下代码：
+
+```c
+$ cat use_const_define.c
+/*
+ *      Filename: use_const_define.c
+ *        Author: Zhaohui Mei<mzh.whut@gmail.com>
+ *   Description: 使用const定义常量
+ *   Create Time: 2021-02-24 06:23:24
+ * Last Modified: 2021-02-24 06:37:41
+ */
+
+#include <stdio.h>
+
+int main(void)
+{
+    // const double PI;
+    // PI = 3.1415;
+    // 上述分开声明和赋值编译异常。
+
+    const double PI = 3.1415;
+    // printf的%f说明符的确既可以输出float型又可以输出double型。
+    // 根据"默认参数提升"规则（在printf这样的函数的可变参数列表中 ，不论作用域内有没有原型，都适用这一规则）
+    // float型会被提升为double型。因此printf()只会看到双精度数。
+    printf("PI = %.4f\n", PI);  // 使用%f控制符输出double双精度型
+
+    return 0;
+}
+```
+
+重新编译：
+```sh
+$ cc use_const_define.c
+$
+```
+
+可以发现没有编译异常，没有报错。运行：
+
+```sh
+$ ./use_const_define.out
+PI = 3.1415
+$
+```
+
+
+
 
 
 
@@ -1917,7 +2010,7 @@ int main()
 
 编译并执行:
 
-```sh
+​```sh
 $ cc print_list_content.c -o print_list_content.out
 $ print_list_content.out                                               
      0      1      2      3      4      5      6      7      8      9  
