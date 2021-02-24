@@ -1623,8 +1623,155 @@ $ count_string_length.out
 ```
 
 - 字符常量与仅包含一个字符的字符串有差别的。
-
 - 'x'和"x"是不同的，'x'是一个整数，其值是字线x在机器字符集中对应的数值；"x"是一个包含一个字符(即字母x)以及一个结尾符'\0'的字符数组。
+
+编写字符串英文大小写转换的程序。
+
+大写转小写：
+
+```c
+$ cat lower.c
+/*
+ *      Filename: lower.c
+ *        Author: Zhaohui Mei<mzh.whut@gmail.com>
+ *   Description: 字符串中字符大写转小写
+ *   Create Time: 2021-02-25 06:32:03
+ * Last Modified: 2021-02-25 07:32:27
+ */
+#include <stdio.h>
+
+
+#define MAX 1000 // 最多支持1000个字符
+
+int lower(char s[])
+{
+    int c = 0;
+
+    while (s[c] != '\0')
+    {
+        if (s[c] >= 'A' && s[c] <= 'Z')
+        {
+            s[c] = s[c] - 'A' + 'a';
+            printf("%c", s[c]);
+        }
+        else
+        {
+            printf("%c", s[c]);
+        }
+
+        c++;
+    }
+
+    printf("\n");
+
+    return 0;
+}
+
+int main(void)
+{
+    char str[MAX];
+    scanf("%s", str);
+    lower(str);
+
+    return 0;
+}
+
+```
+
+编译并运行：
+
+```sh
+$ gcc lower.c -o lower
+$ echo "ABC123def中文GHI"|lower
+abc123def中文ghi
+$ echo $?
+0
+```
+
+可以看到能够正常从管道中获取`echo`命令输出的字符，并正常转换成小写了。
+
+
+
+再看一下小写转大写的代码：
+
+```c
+$ cat upper.c
+/*
+ *      Filename: lower.c
+ *        Author: Zhaohui Mei<mzh.whut@gmail.com>
+ *   Description: 字符串中字符小写转大写
+ *   Create Time: 2021-02-25 06:32:03
+ * Last Modified: 2021-02-25 07:35:48
+ */
+#include <stdio.h>
+
+
+#define MAX 1000 // 最多支持1000个字符
+
+int upper(char s[])
+{
+    int c = 0;
+
+    while (s[c] != '\0')
+    {
+        if (s[c] >= 'a' && s[c] <= 'z')
+        {
+            s[c] = s[c] - 'a' + 'A';
+            printf("%c", s[c]);
+        }
+        else
+        {
+            printf("%c", s[c]);
+        }
+
+        c++;
+    }
+
+    printf("\n");
+
+    return 0;
+}
+
+int main(void)
+{
+    char str[MAX];
+    scanf("%s", str);
+    upper(str);
+
+    return 0;
+}
+
+```
+
+编译并运行：
+
+```sh
+$ gcc upper.c -o upper
+$ echo "ABC123def中文GHI"|upper
+ABC123DEF中文GHI
+$ echo $?
+0
+```
+
+尝试将upper和lower命令连用试一下。
+
+```sh
+$ echo "ABC123def中文GHI"|lower|upper
+ABC123DEF中文GHI
+$ echo "ABC123def中文GHI"|upper|lower
+abc123def中文ghi
+```
+
+可以看到`lower`命令和`upper`命令能正常使用，就像linux自带的命令一样！
+
+注意：
+
+- 此处我们能直接执行`lower`和`upper`命令是因为将`.`加入到`PATH`环境变量中了，使用`export PATH=.:$PATH`添加。
+- 此处使用`gcc`命令编译并生成可执行文件时，没有用`cc`快捷命令，因为`cc`快捷命令默认会生成`.out`后缀。
+
+
+
+
 
 #### 枚举常量
 
