@@ -1686,6 +1686,104 @@ DAY枚举常量1 2 3 7 8 9 10
 - 枚举类型为建立常量值与名字之间的关联提供了一种便利的方式。
 - 相对于`#define`语句来说，枚举类型的优势在于常量值可以自动生成。
 
+
+
+枚举元素不能重名，下面测试这种异常。
+
+```c
+$ cat enum_item_duplicate.c
+/*
+ *      Filename: enum_item_duplicate.c
+ *        Author: Zhaohui Mei<mzh.whut@gmail.com>
+ *   Description: 测试enum定义的元素出现重复问题
+ *   Create Time: 2021-02-24 21:29:54
+ * Last Modified: 2021-02-24 21:35:26
+ */
+#include <stdio.h>
+
+int main(void)
+{
+    enum boolean {NO, YES};
+    enum yesno {NO, YES};
+
+    printf("YES = %d\n", YES);
+    printf("NO = %d\n", NO);
+
+    return 0;
+}
+
+```
+
+尝试编译：
+
+```sh
+$ cc enum_item_duplicate.c
+enum_item_duplicate.c:13:17: error: redefinition of enumerator 'NO'
+    enum yesno {NO, YES};
+                ^
+enum_item_duplicate.c:12:19: note: previous definition is here
+    enum boolean {NO, YES};
+                  ^
+enum_item_duplicate.c:13:21: error: redefinition of enumerator 'YES'
+    enum yesno {NO, YES};
+                    ^
+enum_item_duplicate.c:12:23: note: previous definition is here
+    enum boolean {NO, YES};
+                      ^
+2 errors generated.
+```
+
+可以看到，我们在`boolean`和`yesno`枚举类型都中都定义了枚举常量`YES`和`NO`，编译程序发现有重复定义。提示`error: redefinition of enumerator '***'`异常，表示`错误：重新定义枚举数“NO”`。因此我们不能重复定义相同的枚举元素。
+
+我们修改一下源码。
+
+```c
+$ cat enum_item_duplicate.c
+/*
+ *      Filename: enum_item_duplicate.c
+ *        Author: Zhaohui Mei<mzh.whut@gmail.com>
+ *   Description: 测试enum定义的元素出现重复问题
+ *   Create Time: 2021-02-24 21:29:54
+ * Last Modified: 2021-02-24 21:48:29
+ */
+#include <stdio.h>
+
+int main(void)
+{
+    enum boolean {NO, YES};
+    enum Boolean {FALSE, TRUE};
+
+    printf("YES = %d\n", YES);
+    printf("NO = %d\n", NO);
+    printf("FALSE = %d\n", FALSE);
+    printf("TRUE = %d\n", TRUE);
+
+    return 0;
+}
+
+```
+
+尝试编译：
+
+```sh
+$ cc enum_item_duplicate.c
+$
+```
+
+并没有报异常，说明代码没有问题。我们定义的枚举名为`boolean`和`Boolean`的两个枚举类似，因为大小写不同，认为是两个枚举名。编译没有问题。运行程序：
+
+```sh
+$ ./enum_item_duplicate.out
+YES = 1
+NO = 0
+FALSE = 0
+TRUE = 1
+```
+
+可以正常打印枚举常量元素的值。
+
+
+
 ### 声明
 
 - 所有变量都必须先声明后使用。如果使用了未声明的变量`i`，在编译时会提示异常`error: use of undeclared identifier 'i'`。
