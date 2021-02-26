@@ -2183,7 +2183,7 @@ $
 - 算术运算符`+`加、`-`减、`*`乘、`/`除、`%`取模、`++`自增、`--`自减。
 - 整数除法会截断结果中的小数部分，仅保留整数部分。
 - 取模`x % y`表示x除以y后的余数值，当x能整除y时， `x % y = 0`。
-- 取模运算符不能应用于`float`或`double`类型。
+- 取模运算符不能应用于`float`或`double`类型。否则的话编译时会提示异常`invalid operands to binary expression ('float' and 'int') `或`invalid operands to binary expression ('double' and 'int')`或`invalid operands to binary expression ('float' and 'double'`，即`二进制表达式的操作数无效`。
 - 如果x=2，则x++自增表示x变量增加1，则x++后x的值为3；x--自减表示x变量减1，则x--后x的值为1。
 - `y=x++`与`y=++x`存在差异，前者是先将x赋值给y，然后x再自增1；后者是x先自增1，再将x赋值给y。如x初始为2，则`y=x++`后y=2, x=3; 而`y=++x`后y=3, x=3。
 - 自增与自减运算符只能作用于变量，不能作用于表达式。表达式`(i+j)++`是非法的。
@@ -2205,6 +2205,138 @@ $
 - `^`按位异或(Xor)，同则为0，不同则为1，即`1^1=0`、`1^0=1`、`0^1=1`、`0^0=0`。
 - 移位操作符`<<`左移、`>>`右移分别用于将运算的左操作数左移与右移，移动的位数则由右操作数指定(右操作数的值必须是非负数)。
 - `+=`运算符称为赋值运算符，如`i += 2`等价于 `i = i + 2`。
+
+二元运算符的简单使用：
+
+```c
+$ cat use_operators.c
+/*
+ *      Filename: use_operators.c
+ *        Author: Zhaohui Mei<mzh.whut@gmail.com>
+ *   Description: 运算符的使用
+ *   Create Time: 2021-02-27 06:43:09
+ * Last Modified: 2021-02-27 06:49:26
+ */
+
+#include <stdio.h>
+
+int main(void)
+{
+    signed int a = 22;
+    signed int b = 4;
+
+    printf("signed int a = %d\n", a);
+    printf("signed int b = %d\n", b);
+
+    printf("%d + %d = %d\n", a, b, a + b);
+    printf("%d - %d = %d\n", a, b, a - b);
+    printf("%d * %d = %d\n", a, b, a * b);
+    printf("%d / %d = %d\n", a, b, a / b);
+    printf("%d %% %d = %d\n", a, b, a % b);
+
+    return 0;
+}
+
+```
+
+编译并运行：
+
+```sh
+$ cc use_operators.c
+$ ./use_operators.out
+signed int a = 22
+signed int b = 4
+22 + 4 = 26
+22 - 4 = 18
+22 * 4 = 88
+22 / 4 = 5
+22 % 4 = 2
+```
+
+
+
+判断用户输入的年份是否是闰年。
+
+```c
+$ cat is_leap.c
+/*
+ *      Filename: is_leap.c
+ *        Author: Zhaohui Mei<mzh.whut@gmail.com>
+ *   Description: 判断用户输入的年份是否是闰年
+ *   Create Time: 2021-02-27 07:01:43
+ * Last Modified: 2021-02-27 07:30:54
+ */
+
+#include <stdio.h>
+
+/* 判断给定的年份是否是闰年。 */
+int is_leap(const int year)
+{
+    /* 如果某年的年份能被4整除但不能被100整除，或者该年份能被400整除，则该年份是闰年*/
+    if ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0))
+        return 0;
+    return 1;
+}
+
+int main(void)
+{
+    int year;
+    int return_value;
+    printf("请输入年份整数值(1-9999):\n");
+    scanf("%d", &year); // 读取用户输入的年份值，注意，此处并没有对用户输入进行有效性校验
+
+    return_value = is_leap(year); // 判断是否是闰年，返回值是0时是闰年
+    if (return_value == 0)
+    {
+        printf("您输入的年份是:%d,该年是闰年\n", year);
+        return 0;
+    }
+    printf("您输入的年份是:%d,该年不是闰年\n", year);
+    return 1;
+}
+
+```
+
+编译并运行：
+
+```sh
+$ cc is_leap.c
+$ is_leap.out
+请输入年份整数值(1-9999):
+1
+您输入的年份是:1,该年不是闰年
+$ echo $?
+1
+$ is_leap.out
+请输入年份整数值(1-9999):
+1000
+您输入的年份是:1000,该年不是闰年
+$ echo $?
+1
+$ is_leap.out
+请输入年份整数值(1-9999):
+2000
+您输入的年份是:2000,该年是闰年
+$ echo $?
+0
+$ is_leap.out
+请输入年份整数值(1-9999):
+2020
+您输入的年份是:2020,该年是闰年
+$ echo $?
+0
+$ is_leap.out
+请输入年份整数值(1-9999):
+2021
+您输入的年份是:2021,该年不是闰年
+$ echo $?
+1
+$
+```
+
+
+
+
 
 ### 条件表达式
 
@@ -2255,7 +2387,7 @@ int main()
 
 编译并执行:
 
-​```sh
+```sh
 $ cc print_list_content.c -o print_list_content.out
 $ print_list_content.out                                               
      0      1      2      3      4      5      6      7      8      9  
