@@ -2205,9 +2205,10 @@ $
 - `|`按位或(Or)，有1则为1，即`1|1=1`、`1|0=1`、`0|1=1`、`0|0=0`。
 - `^`按位异或(Xor)，同则为0，不同则为1，即`1^1=0`、`1^0=1`、`0^1=1`、`0^0=0`。
 - 移位操作符`<<`左移、`>>`右移分别用于将运算的左操作数左移与右移，移动的位数则由右操作数指定(右操作数的值必须是非负数)。
+- 一元运算符`~`用于求整数的二进制反码，即将操作数中各二进制位上的1变成0，0变成1。
 - `+=`运算符称为赋值运算符，如`i += 2`等价于 `i = i + 2`。
 
-二元运算符的简单使用：
+#### 二元运算符的简单使用
 
 ```c
 $ cat use_operators.c
@@ -2256,7 +2257,7 @@ signed int b = 4
 
 
 
-判断用户输入的年份是否是闰年。
+#### 判断用户输入的年份是否是闰年
 
 ```c
 $ cat is_leap.c
@@ -2332,6 +2333,237 @@ $ is_leap.out
 您输入的年份是:2021,该年不是闰年
 $ echo $?
 1
+$
+```
+
+
+
+#### 统计整数对应的二进制数中1的个数
+
+`bit_count`函数用于统计期整型参数的值为1的二进制位的个数。
+
+```c
+$ cat bit_count.c
+/*
+ *      Filename: bit_count.c
+ *        Author: Zhaohui Mei<mzh.whut@gmail.com>
+ *   Description: 统计x中值为1的二进制位数
+ *   Create Time: 2021-02-28 16:18:42
+ * Last Modified: 2021-02-28 16:45:44
+ */
+#include <stdio.h>
+
+int bitcount(unsigned x)
+{
+    int b;
+
+    for (b=0; x != 0; x >>= 1)  // 注意，此处是先将x传输到循环体中后，再将x右移1位用于下次循环
+    {
+        // printf("x = %d\n", x);
+        if (x & 01)
+            b++;
+    }
+    return b;
+}
+
+int main(void)
+{
+    unsigned int num;
+    printf("请输入一个无符号整数:\n");
+    scanf("%d", &num);
+
+    printf("%d对应的二进制数中1的个数为:%d\n", num, bitcount(num));
+
+    return 0;
+
+}
+
+```
+
+编译并运行：
+
+```sh
+$ cc bit_count.c
+$ bit_count.out
+请输入一个无符号整数:
+1
+1对应的二进制数中1的个数为:1
+$ bit_count.out
+请输入一个无符号整数:
+2
+2对应的二进制数中1的个数为:1
+$ bit_count.out
+请输入一个无符号整数:
+3
+3对应的二进制数中1的个数为:2
+$ bit_count.out
+请输入一个无符号整数:
+4
+4对应的二进制数中1的个数为:1
+$ bit_count.out
+请输入一个无符号整数:
+5
+5对应的二进制数中1的个数为:2
+$ bit_count.out
+请输入一个无符号整数:
+10
+10对应的二进制数中1的个数为:2
+$ bit_count.out
+请输入一个无符号整数:
+100
+100对应的二进制数中1的个数为:3
+$ bit_count.out
+请输入一个无符号整数:
+1000
+1000对应的二进制数中1的个数为:6
+```
+
+#### 不同形式输出二进制数
+
+```c
+$ cat print_bin.c
+/*
+ *      Filename: print_bin.c
+ *        Author: Zhaohui Mei<mzh.whut@gmail.com>
+ *   Description: 输出整数的二进制位
+ *   Create Time: 2021-02-28 16:52:01
+ * Last Modified: 2021-02-28 22:34:03
+ *     Reference: http://www.srcmini.com/1099.html
+ */
+
+#include <stdio.h>
+
+int print_bin(unsigned int num);
+int print_bin_with_space(unsigned int num);
+int print_simple_bin(unsigned int num);
+
+/* 完全位二进制数格式输出 */
+int print_bin(unsigned int num)
+{
+    int bit = sizeof(int) * 8;
+    int i;
+
+    for (i = bit -1; i >=0 ; i--)
+    {
+        int bin = (num & (1 << i)) >> i;
+        printf("%d", bin);
+    }
+    printf("\n");
+
+    return 0;
+}
+
+
+/* 完全位二进制数格式输出,输出时从低位到高位，每8位中间加一个空格隔开 */
+int print_bin_with_space(unsigned int num)
+{
+    int bit = sizeof(int) * 8;
+    int i;
+
+    for (i = bit -1; i >=0 ; i--)
+    {
+        int bin = (num & (1 << i)) >> i;
+        if ((i+1) % 8 == 1)
+            printf("%d ", bin);
+        else
+            printf("%d", bin);
+    }
+    printf("\n");
+
+    return 0;
+}
+
+/* 去掉完全位前面的无效的0后的二进制数格式输出 */
+int print_simple_bin(unsigned int num)
+{
+    int bit = sizeof(int) * 8;
+    int i;
+    int status = 0;
+
+    for (i = bit -1; i >=0 ; i--)
+    {
+        int bin = (num & (1 << i)) >> i;
+        if (bin == 1)
+            status = 1;
+        if (status == 1)
+            printf("%d", bin);
+    }
+    printf("\n");
+
+    return 0;
+}
+
+int main(void)
+{
+    unsigned int n;
+    printf("请输入一个无符号十进制数:\n");
+    scanf("%d", &n);
+    printf("十进制整数n = %d\n", n);
+    printf("以完全位二进制格式输出:\n");
+    print_bin(n);
+    printf("以带空格的完全位二进制格式输出:\n");
+    print_bin_with_space(n);
+    printf("以去掉前面无效0二进制格式输出:\n");
+    print_simple_bin(n);
+
+    return 0;
+}
+
+```
+
+编译并运行：
+
+```sh
+$ print_bin.out
+请输入一个无符号十进制数:
+1
+十进制整数n = 1
+以完全位二进制格式输出:
+00000000000000000000000000000001
+以带空格的完全位二进制格式输出:
+00000000 00000000 00000000 00000001
+以去掉前面无效0二进制格式输出:
+1
+$ print_bin.out
+请输入一个无符号十进制数:
+2
+十进制整数n = 2
+以完全位二进制格式输出:
+00000000000000000000000000000010
+以带空格的完全位二进制格式输出:
+00000000 00000000 00000000 00000010
+以去掉前面无效0二进制格式输出:
+10
+$ print_bin.out
+请输入一个无符号十进制数:
+10
+十进制整数n = 10
+以完全位二进制格式输出:
+00000000000000000000000000001010
+以带空格的完全位二进制格式输出:
+00000000 00000000 00000000 00001010
+以去掉前面无效0二进制格式输出:
+1010
+$ print_bin.out
+请输入一个无符号十进制数:
+100
+十进制整数n = 100
+以完全位二进制格式输出:
+00000000000000000000000001100100
+以带空格的完全位二进制格式输出:
+00000000 00000000 00000000 01100100
+以去掉前面无效0二进制格式输出:
+1100100
+$ print_bin.out
+请输入一个无符号十进制数:
+1000
+十进制整数n = 1000
+以完全位二进制格式输出:
+00000000000000000000001111101000
+以带空格的完全位二进制格式输出:
+00000000 00000000 00000011 11101000
+以去掉前面无效0二进制格式输出:
+1111101000
 $
 ```
 
