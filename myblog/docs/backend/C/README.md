@@ -2343,25 +2343,42 @@ $
 `bit_count`函数用于统计期整型参数的值为1的二进制位的个数。
 
 ```c
-$ cat bit_count.c
+$ $ cat bit_count.c
 /*
  *      Filename: bit_count.c
  *        Author: Zhaohui Mei<mzh.whut@gmail.com>
  *   Description: 统计x中值为1的二进制位数
  *   Create Time: 2021-02-28 16:18:42
- * Last Modified: 2021-02-28 16:45:44
+ * Last Modified: 2021-03-02 06:42:08
  */
 #include <stdio.h>
 
-int bitcount(unsigned x)
+int bit_count(unsigned x);
+int bit_count_with_and(unsigned x);
+
+/* 使用移位的方法来计算二进制位中1的个数 */
+int bit_count(unsigned x)
 {
     int b;
 
     for (b=0; x != 0; x >>= 1)  // 注意，此处是先将x传输到循环体中后，再将x右移1位用于下次循环
     {
-        // printf("x = %d\n", x);
+        printf("x = %d\n", x);
         if (x & 01)
             b++;
+    }
+    return b;
+}
+
+/* 使用x&=(x-1)表达式来移除x中最右边值为1的一个二进制位 */
+int bit_count_with_and(unsigned x)
+{
+    int b = 0;
+    while (x)
+    {
+        printf("x = %d\n", x);
+        b++;
+        x &= (x -1);
     }
     return b;
 }
@@ -2372,12 +2389,14 @@ int main(void)
     printf("请输入一个无符号整数:\n");
     scanf("%d", &num);
 
-    printf("%d对应的二进制数中1的个数为:%d\n", num, bitcount(num));
+    printf("通过bit_count函数求值\n");
+    printf("%d对应的二进制数中1的个数为:%d\n", num, bit_count(num));
+    printf("通过bit_count_with_and函数求值\n");
+    printf("%d对应的二进制数中1的个数为:%d\n", num, bit_count_with_and(num));
 
     return 0;
 
 }
-
 ```
 
 编译并运行：
@@ -2387,36 +2406,113 @@ $ cc bit_count.c
 $ bit_count.out
 请输入一个无符号整数:
 1
+通过bit_count函数求值
+x = 1
+1对应的二进制数中1的个数为:1
+通过bit_count_with_and函数求值
+x = 1
 1对应的二进制数中1的个数为:1
 $ bit_count.out
 请输入一个无符号整数:
 2
+通过bit_count函数求值
+x = 2
+x = 1
+2对应的二进制数中1的个数为:1
+通过bit_count_with_and函数求值
+x = 2
 2对应的二进制数中1的个数为:1
 $ bit_count.out
 请输入一个无符号整数:
 3
+通过bit_count函数求值
+x = 3
+x = 1
+3对应的二进制数中1的个数为:2
+通过bit_count_with_and函数求值
+x = 3
+x = 2
 3对应的二进制数中1的个数为:2
 $ bit_count.out
 请输入一个无符号整数:
 4
+通过bit_count函数求值
+x = 4
+x = 2
+x = 1
+4对应的二进制数中1的个数为:1
+通过bit_count_with_and函数求值
+x = 4
 4对应的二进制数中1的个数为:1
 $ bit_count.out
 请输入一个无符号整数:
 5
+通过bit_count函数求值
+x = 5
+x = 2
+x = 1
+5对应的二进制数中1的个数为:2
+通过bit_count_with_and函数求值
+x = 5
+x = 4
 5对应的二进制数中1的个数为:2
 $ bit_count.out
 请输入一个无符号整数:
 10
+通过bit_count函数求值
+x = 10
+x = 5
+x = 2
+x = 1
+10对应的二进制数中1的个数为:2
+通过bit_count_with_and函数求值
+x = 10
+x = 8
 10对应的二进制数中1的个数为:2
 $ bit_count.out
 请输入一个无符号整数:
 100
+通过bit_count函数求值
+x = 100
+x = 50
+x = 25
+x = 12
+x = 6
+x = 3
+x = 1
+100对应的二进制数中1的个数为:3
+通过bit_count_with_and函数求值
+x = 100
+x = 96
+x = 64
 100对应的二进制数中1的个数为:3
 $ bit_count.out
 请输入一个无符号整数:
 1000
+通过bit_count函数求值
+x = 1000
+x = 500
+x = 250
+x = 125
+x = 62
+x = 31
+x = 15
+x = 7
+x = 3
+x = 1
 1000对应的二进制数中1的个数为:6
+通过bit_count_with_and函数求值
+x = 1000
+x = 992
+x = 960
+x = 896
+x = 768
+x = 512
+1000对应的二进制数中1的个数为:6
+$
 ```
+
+可以看到，通过`bit_count_with_and`函数求二进制数中1的个数比使用`bit_count`函数求值输出x的次数少一些。
 
 #### 不同形式输出二进制数
 
