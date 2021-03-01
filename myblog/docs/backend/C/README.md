@@ -2667,10 +2667,10 @@ $
 
 
 
-### 条件表达式
+### 条件表达式-三目运算符?:
 
 - 条件表达式(使用三元运算符`?:`)提供了另外一种方法编写判断程序代码段。
-- `expr1 ? expr2 : expr3`,首先计算条件表达式中`expr1`，如果其值不等于0(为真)，则将`expr2`的值作为条件表达式的值，否则(也是`expr1`为假时)将`expr3`的值作为条件表达式的值。`expr2`和`expr3`只有一个表达式被计算。
+- `expr1 ? expr2 : expr3`,首先计算条件表达式中`expr1`，如果其值不等于0(为真)，则将`expr2`的值作为条件表达式的值，否则(也就是`expr1`为假时)将`expr3`的值作为条件表达式的值。`expr2`和`expr3`只有一个表达式被计算。
 - 示例：`z = (a > b) ? a : b; // z=max(a, b)`。
 - 条件表达式的第一个表达式两边的圆括号并不是必需的。但建议使用圆括号，这样可以使表达式的条件部分更易于阅读。
 
@@ -2678,13 +2678,13 @@ $
 
 ```c
 $ cat print_list_content.c
-/**
-*@file print_list_content.c
-*@brief print the content of the list
-*@author Zhaohui Mei<mzh.whut@gmail.com>
-*@date 2019-11-07
-*@return 0
-*/
+/*
+ *      Filename: print_list_content.c
+ *        Author: Zhaohui Mei<mzh.whut@gmail.com>
+ *   Description: 打印数组元素
+ *   Create Time: 2021-03-02 07:29:49
+ * Last Modified: 2021-03-02 07:49:36
+ */
 
 #include <stdio.h>
 
@@ -2698,20 +2698,20 @@ int print_list_content(int num)
     for (int i=0; i<num; i++)
     {
         list[i] = i;
-    }
-    for (int i=0; i<num; i++)
-    {
         printf("%6d%c", list[i], (i%10==9 || i==num-1) ? '\n' : ' ');
     }
+
     return 0;
 }
 
 // 主函数
-int main()
+int main(void)
 {
     print_list_content(100);
+
     return 0;
 }
+
 ```
 
 编译并执行:
