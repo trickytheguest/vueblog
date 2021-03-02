@@ -2733,6 +2733,67 @@ $ print_list_content.out
 
 可以看出每行打印出10个元素，每列之间使用空格隔开，每行用一个换行符结束。
 
+
+
+使用条件表达式打印乘法口决表。
+
+```c
+$ cat print_multiplication_table.c
+/*
+ *      Filename: print_multiplication_table.c
+ *        Author: Zhaohui Mei<mzh.whut@gmail.com>
+ *   Description: 打印乘法口决表
+ *   Create Time: 2021-03-02 19:36:30
+ * Last Modified: 2021-03-02 21:20:24
+ */
+#include <stdio.h>
+
+int print_multiplication_table(void)
+{
+    int i; // 行
+    int j; // 列
+    for (i = 1; i <=9; i++)
+    {
+        for (j = 1; j <= 9; j++)
+        {
+            if (i >= j)
+                printf("%d x %d = %-2d%s", j, i, i*j, (i == j) ? "\n" : "    "); // 两列之前空四格
+        }
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    printf("乘法口决表:\n");
+    print_multiplication_table();
+
+    return 0;
+}
+```
+
+编译并运行：
+
+```sh
+$ cc print_multiplication_table.c
+$ print_multiplication_table.out
+乘法口决表:
+1 x 1 = 1
+1 x 2 = 2     2 x 2 = 4
+1 x 3 = 3     2 x 3 = 6     3 x 3 = 9
+1 x 4 = 4     2 x 4 = 8     3 x 4 = 12    4 x 4 = 16
+1 x 5 = 5     2 x 5 = 10    3 x 5 = 15    4 x 5 = 20    5 x 5 = 25
+1 x 6 = 6     2 x 6 = 12    3 x 6 = 18    4 x 6 = 24    5 x 6 = 30    6 x 6 = 36
+1 x 7 = 7     2 x 7 = 14    3 x 7 = 21    4 x 7 = 28    5 x 7 = 35    6 x 7 = 42    7 x 7 = 49
+1 x 8 = 8     2 x 8 = 16    3 x 8 = 24    4 x 8 = 32    5 x 8 = 40    6 x 8 = 48    7 x 8 = 56    8 x 8 = 64
+1 x 9 = 9     2 x 9 = 18    3 x 9 = 27    4 x 9 = 36    5 x 9 = 45    6 x 9 = 54    7 x 9 = 63    8 x 9 = 72    9 x 9 = 81
+```
+
+可以看到正常打印出乘法口决表了。
+
+
+
 下面的程序是将大写字符串参数转换成小写字符串输出：
 
 ```c
