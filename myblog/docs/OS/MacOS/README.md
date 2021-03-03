@@ -82,7 +82,7 @@ Alfred具有很多功能，可以参考[Alfred 究竟好用在哪里？](https:/
 下载地址：[https://www.alfredapp.com/](https://www.alfredapp.com/)
 
 默认使用「Cmd + Space」打开Alfred，可以自定义为双击⌘键快速唤醒Alfred。
- 
+
 下面列出部分功能：
 
 1. 搜索应用，快速打开应用,直接输入应用名称即可。
@@ -781,9 +781,263 @@ $ echo $?
 
 说明已经正常关闭了SSH服务。
 
+## Xcode 中配置 clang-format 格式化 C++ 代码
+
+参考
+
+- https://www.cnblogs.com/Wayou/p/xcode_clang_setup.html
+- https://clang.llvm.org/docs/ClangFormatStyleOptions.html
+- https://llvm.org/docs/CodingStandards.html
+
+需要创建配置文件`~/.clang-format`，最后的配置内容如下：
+
+```yaml
+$ cat .clang-format
+# Filename: .clang-format
+# 参考地址：https://clang.llvm.org/docs/ClangFormatStyleOptions.html
+# xcode 配置设置：
+# Xcode 中配置 clang-format 格式化 C++ 代码
+# https://www.cnblogs.com/Wayou/p/xcode_clang_setup.html
+
+# 语言
+Language: Cpp
+# 编码样式风格，可取值LLVM, Google, Chromium, Mozilla, WebKit
+# BasedOnStyle: Google
+BasedOnStyle: LLVM
+# 缩进宽度
+IndentWidth: 4
+# 列数
+ColumnLimit: 100
+# 对齐
+# 开括号(开圆括号、开尖括号、开方括号)后的对齐: Align, DontAlign, AlwaysBreak(总是在开括号后换行)
+AlignAfterOpenBracket: Align
+# 连续赋值时，对齐所有等号
+AlignConsecutiveAssignments: true
+# 在转义换行符中对齐反斜杠, Right,Left,DontAlign
+AlignEscapedNewlines: Left
+# 在大括号前换行: Attach(始终将大括号附加到周围的上下文), Linux(除函数、命名空间和类定义，与Attach类似),
+#   Mozilla(除枚举、函数、记录定义，与Attach类似), Stroustrup(除函数定义、catch、else，与Attach类似),
+#   Allman(总是在大括号前换行), GNU(总是在大括号前换行，并对于控制语句的大括号增加额外的缩进), WebKit(在函数前换行), Custom
+#   注：这里认为语句块也属于函数
+BreakBeforeBraces: Linux
+# 最大空行数
+MaxEmptyLinesToKeep: 4
+# 注释对齐
+AlignTrailingComments: true
+# 括号后面加空格
+SpaceAfterCStyleCast: true
+# 赋值运算符前加空格
+SpaceBeforeAssignmentOperators: true
+# 行尾的注意，在//前面加空格
+SpacesBeforeTrailingComments: 4
+# 允许短的if语句保持在同一行,为true时，`if (a) return; `可放在一行
+AllowShortIfStatementsOnASingleLine: false
+# 在三元运算符前换行
+BreakBeforeTernaryOperators: true
+# 允许重排注释
+ReflowComments: true
+# 在空的小括号中加一个空格
+SpaceInEmptyParentheses: true
+```
 
 
 
+## vim与clang-format集成
 
+参考：
 
+- https://clang.llvm.org/docs/ClangFormat.html#vim-integration
+
+![](/img/Snipaste_2021-03-03_21-55-23.png)
+
+在上一节配置好`.clang-format`配置文件后，此处直接对vim进行配置。
+
+第一步，查看`clang-format.py`在哪里。
+
+```sh
+$ sudo find / -name 'clang-format.py‘
+/usr/local/Cellar/clang-format/2019-05-14/share/clang/clang-format.py
+```
+
+查找到了`clang-format.py`路径后。对以下内容进行替换：
+
+```
+map <C-K> :pyf <path-to-this-file>/clang-format.py<cr>
+imap <C-K> <c-o>:pyf <path-to-this-file>/clang-format.py<cr>
+```
+
+替换其中的`<path-to-this-file>/clang-format.py`，替换后的内容为：
+
+```
+map <C-K> :pyf /usr/local/Cellar/clang-format/2019-05-14/share/clang/clang-format.py<cr>
+imap <C-K> <c-o>:pyf /usr/local/Cellar/clang-format/2019-05-14/share/clang/clang-format.py<cr>
+```
+
+以上是设置vim快捷键。
+
+- normal模式下，ctrl+k将格式化一行代码
+-  visual模式下，ctrl+k将格式化选中代码
+
+- insert模式下，ctrl+k将格式化一行代码
+
+再对以下内容进行替换，当vim保存文件时，自动格式化：
+
+```sh
+function! Formatonsave()
+  let l:formatdiff = 1
+  pyf ~/llvm/tools/clang/tools/clang-format/clang-format.py
+endfunction
+autocmd BufWritePre *.h,*.cc,*.cpp call Formatonsave()
+```
+
+将第3行`pyf ~/llvm/tools/clang/tools/clang-format/clang-format.py`替换成`pyf /usr/local/Cellar/clang-format/2019-05-14/share/clang/clang-format.py`,并且在第5行中，增加`.c`文件的支持，在`*.cpp`后面增加`,*.c`。
+
+最后替换后的内容为：
+
+```sh
+function! Formatonsave()
+  let l:formatdiff = 1
+  pyf /usr/local/Cellar/clang-format/2019-05-14/share/clang/clang-format.py
+endfunction
+autocmd BufWritePre *.h,*.cc,*.cpp,*.c call Formatonsave()
+```
+
+然后将以上两段内容加到`~/.vimrc`配置文件的中。
+
+```sh
+$ tail ~/.vimrc
+"注释，normal模式下，ctrl+k将格式化一行代码
+"注释，visual模式下，ctrl+k将格式化选中代码
+"注释，insert模式下，ctrl+k将格式化一行代码
+map <C-K> :pyf /usr/local/Cellar/clang-format/2019-05-14/share/clang/clang-format.py<cr>
+imap <C-K> <c-o>:pyf /usr/local/Cellar/clang-format/2019-05-14/share/clang/clang-format.py<cr>
+function! Formatonsave()
+  let l:formatdiff = 1
+  pyf /usr/local/Cellar/clang-format/2019-05-14/share/clang/clang-format.py
+endfunction
+autocmd BufWritePre *.h,*.cc,*.cpp,*.c call Formatonsave()
+```
+
+我最新的`.vimrc`配置好下：
+
+```sh
+$ cat .vimrc
+set hlsearch
+set backspace=2
+set autoindent
+set ruler
+set showmode
+set nu
+set bg=dark
+set ts=4
+set softtabstop=4
+set shiftwidth=4
+set fileencodings=utf-8,gbk,gb18030,gk2312
+syntax on
+set showcmd
+set clipboard+=unnamed
+set cursorline
+set confirm
+set autoindent
+set cindent
+set expandtab
+set laststatus=2
+" Allow saving of files as sudo when I forgot to start vim using sudo.
+" cmap w!! w !sudo tee > /dev/null %
+cmap w!! w !sudo sh -c "cat > %"
+"SET Comment START
+
+autocmd BufNewFile *.c,*.py,*.go,*.sh exec ":call SetComment()" |normal 10Go
+
+func SetComment()
+    if expand("%:e") == 'c'
+        call setline(1, "/*")
+        call append(1, ' *      Filename: '.expand("%"))
+        call append(2, ' *        Author: Zhaohui Mei<mzh.whut@gmail.com>')
+        call append(3, ' *   Description:      ')
+        call append(4, ' *   Create Time: '.strftime("%Y-%m-%d %H:%M:%S"))
+        call append(5, ' * Last Modified: '.strftime("%Y-%m-%d %H:%M:%S"))
+        call append(6, ' */')
+        call append(7, '')
+        call append(8, '')
+        call append(9, '')
+        call append(10, '')
+    elseif expand("%:e") == 'go'
+        call setline(1, "/*")
+        call append(1, ' *      Filename: '.expand("%"))
+        call append(2, ' *        Author: Zhaohui Mei<mzh.whut@gmail.com>')
+        call append(3, ' *   Description:      ')
+        call append(4, ' *   Create Time: '.strftime("%Y-%m-%d %H:%M:%S"))
+        call append(5, ' * Last Modified: '.strftime("%Y-%m-%d %H:%M:%S"))
+        call append(6, ' */')
+        call append(7, 'package main')
+        call append(8, '')
+        call append(9, 'import "fmt"')
+        call append(10, '')
+        call append(11, 'func main() {')
+        call append(12, '    fmt.Println("vim-go")')
+        call append(13, '}')
+   elseif expand("%:e") == 'py'
+        call setline(1, '#!/usr/bin/python3')
+        call append(1, '"""')
+        call append(2, '#      Filename: '.expand("%"))
+        call append(3, '#        Author: Zhaohui Mei<mzh.whut@gmail.com>')
+        call append(4, '#   Description:      ')
+        call append(5, '#   Create Time: '.strftime("%Y-%m-%d %H:%M:%S"))
+        call append(6, '# Last Modified: '.strftime("%Y-%m-%d %H:%M:%S"))
+        call append(7, '"""')
+        call append(8, '')
+        call append(9, '')
+        call append(10, '')
+    elseif expand("%:e") == 'sh'
+        call setline(1, '#!/bin/bash')
+        call append(1, '##################################################')
+        call append(2, '#      Filename: '.expand("%"))
+        call append(3, '#        Author: Zhaohui Mei<mzh.whut@gmail.com>')
+        call append(4, '#   Description:      ')
+        call append(5, '#   Create Time: '.strftime("%Y-%m-%d %H:%M:%S"))
+        call append(6, '# Last Modified: '.strftime("%Y-%m-%d %H:%M:%S"))
+        call append(7, '##################################################')
+        call append(8, '')
+        call append(9, '')
+        call append(10, '')
+        endif
+endfunc
+map <F2> :call SetComment()<CR>:10<CR>o
+
+"SET Comment END
+
+"SET Last Modified Time START
+func DataInsert()
+    if expand("%:e") == 'c' || expand("%:e") == 'go'
+        call cursor(6, 1)
+        if search ('Last Modified') != 0
+            let line = line('.')
+            call setline(line, ' * Last Modified: '.strftime("%Y-%m-%d %H:%M:%S"))
+        endif
+    elseif expand("%:e") == 'py' || expand("%:e") == 'sh'
+        call cursor(7, 1)
+        if search ('Last Modified') != 0
+            let line = line('.')
+            call setline(line, '# Last Modified: '.strftime("%Y-%m-%d %H:%M:%S"))
+        endif
+    endif
+endfunc
+autocmd FileWritePre,BufWritePre *.c,*.py,*.go,*.sh ks|call DataInsert() |'s
+"SET Last Modified Time END
+
+"" refer:https://blog.csdn.net/qq844352155/article/details/50513072
+" c代码格式化配置
+"normal模式下，ctrl+k将格式化一行代码
+"visual模式下，ctrl+k将格式化选中代码
+"insert模式下，ctrl+k将格式化一行代码
+map <C-K> :pyf /usr/local/Cellar/clang-format/2019-05-14/share/clang/clang-format.py<cr>
+imap <C-K> <c-o>:pyf /usr/local/Cellar/clang-format/2019-05-14/share/clang/clang-format.py<cr>
+function! Formatonsave()
+  let l:formatdiff = 1
+  pyf /usr/local/Cellar/clang-format/2019-05-14/share/clang/clang-format.py
+endfunction
+autocmd BufWritePre *.h,*.cc,*.cpp,*.c call Formatonsave()
+[mzh@MacBookPro ~ ]$
+```
 
