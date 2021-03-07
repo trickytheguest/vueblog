@@ -1041,3 +1041,234 @@ autocmd BufWritePre *.h,*.cc,*.cpp,*.c call Formatonsave()
 [mzh@MacBookPro ~ ]$
 ```
 
+参考上面的自动格式化C程序的代码，以及自动插入备注信息等的代码。我们可以知道`autocmd`可以做一些事情。
+
+上面自动格式化时，并没有对`return`语句进行格式化，我想在`return`语句前插入一个空格。
+
+
+
+可以这样修改`.vimrc`文件：
+
+```sh
+"在return前面自动插入一个空行
+function AddOneLineBeforeReturn()
+    " 获取最后一行行号
+    let l = line("$")
+    " 执行替换命令
+    " 注意此处 exe表示要执行命令。
+    " \"1,\".'. 表示从第1行到最后一行
+    " 后面的替换命令与自己在vim执行替换动作一样的
+    exe "1,".l."s/;\\r *return \-*[0-9]*;$/\r&/g"
+endfunction
+" 将整个缓冲区写入文件时，调用以上函数
+autocmd BufWritePre *.cpp,*.c call AddOneLineBeforeReturn()
+```
+
+这个时候，保证c或cpp文件时，每次都会在`return`语句前面加一个空行。并没有判断是否原来有空格，需要优化一下。
+
+没有找到合适的方法进行判断`return`前面是否有空行。准备学习一下`vimscript`脚本语言的编写。
+
+
+
+下面是我优化后的`.vimrc`配置文件：
+
+```sh
+" 以英文双引号开头的是注释信息
+" Filename: .vimrc
+" 在vim中输入:echo $MYVIMRC 命令可以知道文件存放位置
+" :echom 会将打印的信息保存起来,可通过:messages命令查看到输出的消息
+" :echo 会打印信息，但不保存
+" :help echo 获取命令echo的帮助信息
+
+" 基本设置 {
+    " 忽略大小写检索
+    set ignorecase
+    " 设置高亮搜索匹配
+    set hlsearch
+    set backspace=2
+    set autoindent
+    " 在右下角显示当前行号和列号
+    set ruler
+    " 在左下角显示当前VIM模式
+    set showmode
+    " 在状态栏显示正在输入的命令
+    set showcmd
+    " 显示行号
+    set number
+    set bg=dark
+    " 设置tab宽度，与ts等效
+    set tabstop=4
+    " 当tabstop=8时，输入一次tab会显示4个空格
+    " 再输入一次tab时，vim会删除前面的4个空格，并插入一个tab字符
+    set softtabstop=4
+    " 自动缩进时，缩进长度为4
+    set shiftwidth=4
+    " 在插入模式下自动将tab替换成tabstop对应的空格
+    set expandtab
+    set fileencodings=utf-8,gbk,gb18030,gk2312
+    " 语法高亮
+    syntax on
+    set clipboard+=unnamed
+    " 显示当前光标所在行的横线
+    set cursorline
+    " 显示当前光标所在列的竖线
+    set cursorcolumn
+    " 文件未保存时进行提示
+    set confirm
+    set autoindent
+    set cindent 
+    " 总是显示状态栏
+    set laststatus=2
+
+"  }
+
+" 设置键映射前缀
+" 设置-减号为前缀
+" 注意此处定义时变量名是mapleader，而引用时是<leader>
+let mapleader = "-"
+
+" 映射 {
+    " Allow saving of files as sudo when I forgot to start vim using sudo.
+    " cmap w!! w !sudo tee > /dev/null %
+    " cmap w!! w !sudo sh -c "cat > %"
+    cnoremap w!! w !sudo tee % > /dev/null
+
+    " 在浏览器中打开URL
+    " 使用:call open() 命令打开url
+    function! OpenURL()
+        " 获取当前行的内容
+        let line = getline('.')
+        " 使用浏览器打开URL，注意firefox浏览器地址路径前的感叹号需要保留
+        exec "!/Applications/Firefox.app/Contents/MacOS/firefox ".line
+    endfunction
+    " 普通模式下,设置快捷键，通过按url则会通过浏览器打开相应的URL地址
+    map url :call OpenURL()<cr>
+
+    " 插入模式下，按jj快捷键输入ESC退出键
+    imap jj <esc>
+    
+    " 按F2插入文件注释信息
+    map <F2> :call SetComment()<CR>:10<CR>o
+
+    " 设置进入粘贴模式快捷键F10
+    map <F10> :set paste<CR>
+    
+    " 编辑我的.vimrc配置文件
+    nnoremap <leader>ev :vsplit $MYVIMRC<cr>
+
+    " 重新加载.vimrc配置文件
+    nnoremap <leader>sv :source $MYVIMRC<cr>
+
+"  }
+
+
+" 文件头注释 { 
+    "SET Comment START
+    autocmd BufNewFile *.c,*.py,*.go,*.sh exec ":call SetComment()" |normal 10Go
+
+    func SetComment()
+        if expand("%:e") == 'c'
+            call setline(1, "/*")
+            call append(1, ' *      Filename: '.expand("%"))
+            call append(2, ' *        Author: Zhaohui Mei<mzh.whut@gmail.com>')
+            call append(3, ' *   Description:      ')
+            call append(4, ' *   Create Time: '.strftime("%Y-%m-%d %H:%M:%S"))
+            call append(5, ' * Last Modified: '.strftime("%Y-%m-%d %H:%M:%S"))
+            call append(6, ' */')
+            call append(7, '')
+            call append(8, '')
+            call append(9, '')
+            call append(10, '')
+        elseif expand("%:e") == 'go'
+            call setline(1, "/*")
+            call append(1, ' *      Filename: '.expand("%"))
+            call append(2, ' *        Author: Zhaohui Mei<mzh.whut@gmail.com>')
+            call append(3, ' *   Description:      ')
+            call append(4, ' *   Create Time: '.strftime("%Y-%m-%d %H:%M:%S"))
+            call append(5, ' * Last Modified: '.strftime("%Y-%m-%d %H:%M:%S"))
+            call append(6, ' */')
+            call append(7, 'package main')
+            call append(8, '')
+            call append(9, 'import "fmt"')
+            call append(10, '')
+            call append(11, 'func main() {')
+            call append(12, '    fmt.Println("vim-go")')
+            call append(13, '}')
+       elseif expand("%:e") == 'py'
+            call setline(1, '#!/usr/bin/python3')
+            call append(1, '"""')
+            call append(2, '#      Filename: '.expand("%"))
+            call append(3, '#        Author: Zhaohui Mei<mzh.whut@gmail.com>')
+            call append(4, '#   Description:      ')
+            call append(5, '#   Create Time: '.strftime("%Y-%m-%d %H:%M:%S"))
+            call append(6, '# Last Modified: '.strftime("%Y-%m-%d %H:%M:%S"))
+            call append(7, '"""')
+            call append(8, '')
+            call append(9, '')
+            call append(10, '')
+        elseif expand("%:e") == 'sh'
+            call setline(1, '#!/bin/bash')
+            call append(1, '##################################################')
+            call append(2, '#      Filename: '.expand("%"))
+            call append(3, '#        Author: Zhaohui Mei<mzh.whut@gmail.com>')
+            call append(4, '#   Description:      ')
+            call append(5, '#   Create Time: '.strftime("%Y-%m-%d %H:%M:%S"))
+            call append(6, '# Last Modified: '.strftime("%Y-%m-%d %H:%M:%S"))
+            call append(7, '##################################################')
+            call append(8, '')
+            call append(9, '')
+            call append(10, '')
+            endif
+    endfunc
+    "SET Comment END
+" 文件头注释 }
+
+
+    "SET Last Modified Time START
+    func DataInsert()
+        if expand("%:e") == 'c' || expand("%:e") == 'go'
+            call cursor(6, 1)
+            if search ('Last Modified') != 0
+                let line = line('.')
+                call setline(line, ' * Last Modified: '.strftime("%Y-%m-%d %H:%M:%S"))
+            endif
+        elseif expand("%:e") == 'py' || expand("%:e") == 'sh'
+            call cursor(7, 1)
+            if search ('Last Modified') != 0
+                let line = line('.')
+                call setline(line, '# Last Modified: '.strftime("%Y-%m-%d %H:%M:%S"))
+            endif
+        endif
+    endfunc
+    autocmd FileWritePre,BufWritePre *.c,*.py,*.go,*.sh ks|call DataInsert() |'s
+    "SET Last Modified Time END
+
+    " refer:https://blog.csdn.net/qq844352155/article/details/50513072
+"  }
+
+" 代码格式化 {
+    " c代码格式化配置
+    "normal模式下，ctrl+k将格式化一行代码
+    "visual模式下，ctrl+k将格式化选中代码
+    "insert模式下，ctrl+k将格式化一行代码
+    map <C-K> :pyf /usr/local/Cellar/clang-format/2019-05-14/share/clang/clang-format.py<cr>
+    imap <C-K> <c-o>:pyf /usr/local/Cellar/clang-format/2019-05-14/share/clang/clang-format.py<cr>
+    function! Formatonsave()
+      let l:formatdiff = 1
+      pyf /usr/local/Cellar/clang-format/2019-05-14/share/clang/clang-format.py
+    endfunction
+    autocmd BufWritePre *.h,*.cc,*.cpp,*.c call Formatonsave()
+"  }
+
+
+
+
+" 参考 VIM自动加载
+" https://yianwillis.github.io/vimcdoc/doc/quickref.html#option-list
+" https://www.w3cschool.cn/vim/xenarozt.html
+" 检查不同文件类型，设置不同的tab宽度
+autocmd FileType c set tabstop=4
+autocmd FileType html set tabstop=2
+autocmd FileType html set softtabstop=2 |set tabstop=2 |set shiftwidth=2
+```
+
