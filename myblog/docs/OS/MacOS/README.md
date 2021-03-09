@@ -1073,6 +1073,7 @@ autocmd BufWritePre *.cpp,*.c call AddOneLineBeforeReturn()
 下面是我优化后的`.vimrc`配置文件：
 
 ```sh
+
 " 以英文双引号开头的是注释信息
 " Filename: .vimrc
 " 在vim中输入:echo $MYVIMRC 命令可以知道文件存放位置
@@ -1080,14 +1081,31 @@ autocmd BufWritePre *.cpp,*.c call AddOneLineBeforeReturn()
 " :echo 会打印信息，但不保存
 " :help echo 获取命令echo的帮助信息
 
+" 参考:
+" 1. VIM学习笔记 http://yyq123.github.io/learn-vim/learn-vi-00-00-TOC.html
+" 2. Vimscript编程参考 https://www.w3cschool.cn/vim/nckx1pu0.html
+" 3. vim-config https://github.com/PegasusWang/vim-config
+" 4. 新手如何学习vimrc配置 https://zhuanlan.zhihu.com/p/50242838
 " 基本设置 {
     " 忽略大小写检索
     set ignorecase
     " 设置高亮搜索匹配
     set hlsearch
+    " 边输入边搜索(实时搜索)
+    set incsearch
+    " 设置退格方式
+    " indent 允许在自动缩进上退格
+    " eol 允许在换行符上退格
+    " start 允许在插入开始的位置上退格
+    " 2 同 ":set backspace=indent,eol,start"
     set backspace=2
+    " 开启新行时,从当前行复制缩进距离,即自动缩进
     set autoindent
-    " 在右下角显示当前行号和列号
+    " 实现C程序的缩进
+    set cindent 
+    " 在vim执行命令行时，使用tab键自动补充
+    set wildmenu
+    " 标尺，在右下角显示当前行号和列号,逗号分隔
     set ruler
     " 在左下角显示当前VIM模式
     set showmode
@@ -1095,7 +1113,8 @@ autocmd BufWritePre *.cpp,*.c call AddOneLineBeforeReturn()
     set showcmd
     " 显示行号
     set number
-    set bg=dark
+    " bg, 使用深色背景上看起来舒服的颜色,也可以设置为light
+    set background=dark
     " 设置tab宽度，与ts等效
     set tabstop=4
     " 当tabstop=8时，输入一次tab会显示4个空格
@@ -1105,20 +1124,26 @@ autocmd BufWritePre *.cpp,*.c call AddOneLineBeforeReturn()
     set shiftwidth=4
     " 在插入模式下自动将tab替换成tabstop对应的空格
     set expandtab
+    " 旧文件可用的字符集
     set fileencodings=utf-8,gbk,gb18030,gk2312
+    " 设置VIM内部使用的字符编码
+    set encoding=utf-8
+    " 启动文件类型检查
+    filetype on
     " 语法高亮
     syntax on
-    set clipboard+=unnamed
     " 显示当前光标所在行的横线
     set cursorline
     " 显示当前光标所在列的竖线
     set cursorcolumn
     " 文件未保存时进行提示
     set confirm
-    set autoindent
-    set cindent 
     " 总是显示状态栏
     set laststatus=2
+    " 如果文件改动，则自动把内容写回文件
+    set autowrite
+    " 如果发现文件在VIM之外被修改，则自动载入
+    set autoread
 
 "  }
 
@@ -1152,6 +1177,12 @@ let mapleader = "-"
 
     " 设置进入粘贴模式快捷键F10
     map <F10> :set paste<CR>
+
+    " 通过按9跳转到行末尾，0默认跳转到行首
+    map 9 $
+
+    " ctrl + A 选中文本所有内容
+    map <silent> <C-A> gg v G$
     
     " 编辑我的.vimrc配置文件
     nnoremap <leader>ev :vsplit $MYVIMRC<cr>
@@ -1270,5 +1301,23 @@ let mapleader = "-"
 autocmd FileType c set tabstop=4
 autocmd FileType html set tabstop=2
 autocmd FileType html set softtabstop=2 |set tabstop=2 |set shiftwidth=2
-```
 
+"在return前面自动插入一个空行
+function AddOneLineBeforeReturn()
+    " 获取最后一行行号
+    let l = line("$")
+    for linenum in range(1,l)
+        let match = search(' *return ', 'W', n_num)
+        let n_num = linenum + 1
+        call cursor(n_num, 1)
+        let match = search(' *return ', 'W', n_num)
+        if match != 0
+            call cursor(linenum, 1)
+            call append(linenum, '')
+        endif
+
+    endfor
+endfunction
+" 将整个缓冲区写入文件时，调用以上函数
+autocmd BufWritePre *.cpp,*.c call AddOneLineBeforeReturn()
+```
