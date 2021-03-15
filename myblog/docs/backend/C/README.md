@@ -3264,6 +3264,65 @@ $ my_atoi.out
 - 未对字符串中字符进行全面判断，如是否存在特殊字符、字母等。
 - 如果在数字后面仍存在空格，转换后的数据会异常。
 
+
+
+下面是希尔排序算法的实现。
+
+```c
+$ cat shellsort.c
+/*
+ *      Filename: shellsort.c
+ *        Author: Zhaohui Mei<mzh.whut@gmail.com>
+ *   Description: Shell希尔排序算法
+ *   Create Time: 2021-03-16 07:03:45
+ * Last Modified: 2021-03-16 07:30:13
+ */
+
+#include <stdio.h>
+
+/* shellsort函数，按递增顺序对v[0]...v[n-1]进行排序 */
+void shellsort(int v[], int n)
+{
+    int gap, i, j, temp;
+    for (gap = n / 2; gap > 0; gap /= 2)
+        for (i = gap; i < n; i++)
+            for (j = i - gap; j >= 0 && v[j] > v[j + gap]; j -= gap) {
+                temp       = v[j];
+                v[j]       = v[j + gap];
+                v[j + gap] = temp;
+            }
+}
+
+int main(void)
+{
+    int v[] = {49, 38, 65, 97, 76, 13, 27, 49, 55, 4};
+    int n   = 10;
+    shellsort(v, n);
+    for (int i = 0; i < 10; i++)
+        printf("%2d  ", v[i]);
+    printf("\n");
+
+    return 0;
+}
+
+$
+```
+
+编译并运行：
+
+```sh
+$ cc shellsort.c
+$ ./shellsort.out
+ 4  13  27  38  49  49  55  65  76  97
+$
+```
+
+可见排序结果与 https://baike.baidu.com/item/%E5%B8%8C%E5%B0%94%E6%8E%92%E5%BA%8F 中的示例相同。
+
+
+
+
+
 ### `do-while`循环语句
 
 - `do-while`循环语句语法 `do {循环体} while (表达式);` 。
