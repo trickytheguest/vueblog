@@ -940,6 +940,100 @@ Syntax OK
 
 至此，网站的SSL证书配置完成。
 
+## 证书过期设置
+
+证书过期时，使用Chrome浏览器访问网站时，会提示以下异常。
+
+![err_cert_date_invalid.png](/img/err_cert_date_invalid.png)
+
+应在腾讯的SSL证书界面进行重新签发。地址 https://console.cloud.tencent.com/ssl
+
+点击证书的重颁发，让腾讯公司进行重新签发。
+
+![Snipaste_2021-03-15_21-34-41.png](/img/Snipaste_2021-03-15_21-34-41.png)
+
+重新签发成功后，可以点击下载超链接下载新颁发的证书。并将证书上传到服务器上。
+
+可参考 [Apache 服务器 SSL 证书安装部署](https://cloud.tencent.com/document/product/400/35243)重新设置conf文件。
+
+注意，有可能你重启后证书并没有生效。此时，可以更新一下原来证书所在路径。
+
+如原来的配置文件如下：
+
+```shell
+[root@hellogitlab conf.d]# cat vueblog.conf
+<VirtualHost 0.0.0.0:443>
+    DocumentRoot "/var/www/html/vueblog"
+    #填写证书名称
+    ServerName hellogitlab.com
+    #启用 SSL 功能
+    SSLEngine on
+    #证书文件的路径
+    SSLCertificateFile "/etc/httpd/conf.d/2_hellogitlab.com.crt"
+    #私钥文件的路径
+    SSLCertificateKeyFile "/etc/httpd/conf.d/3_hellogitlab.com.key"
+    #证书链文件的路径
+    SSLCertificateChainFile "/etc/httpd/conf.d/1_root_bundle.crt"
+</VirtualHost>
+```
+
+这时更新时，可以将证书路径换一下，如`/etc/httpd/ssl`。
+
+新的配置文件内容如下：
+
+```shell
+[root@hellogitlab ~]$ ls /etc/httpd/ssl
+1_root_bundle.crt  2_hellogitlab.com.crt  3_hellogitlab.com.key
+[root@hellogitlab ~]# cat /etc/httpd/conf.d/vueblog.conf
+<VirtualHost 0.0.0.0:443>
+    DocumentRoot "/var/www/html/vueblog"
+    #填写证书名称
+    ServerName hellogitlab.com
+    #启用 SSL 功能
+    SSLEngine on
+    #证书文件的路径
+    SSLCertificateFile "/etc/httpd/ssl/2_hellogitlab.com.crt"
+    #私钥文件的路径
+    SSLCertificateKeyFile "/etc/httpd/ssl/3_hellogitlab.com.key"
+    #证书链文件的路径
+    SSLCertificateChainFile "/etc/httpd/ssl/1_root_bundle.crt"
+</VirtualHost>
+```
+
+检查配置是否正确，然后重启服务：
+```sh
+[root@hellogitlab ~]$ httpd -t
+Syntax OK
+[root@hellogitlab ~]$ systemctl restart httpd
+[root@hellogitlab ~]$ systemctl status httpd
+● httpd.service - The Apache HTTP Server
+   Loaded: loaded (/usr/lib/systemd/system/httpd.service; enabled; vendor preset: disabled)
+   Active: active (running) since 一 2021-03-15 21:44:52 CST; 9s ago
+     Docs: man:httpd(8)
+           man:apachectl(8)
+  Process: 10254 ExecStop=/bin/kill -WINCH ${MAINPID} (code=exited, status=0/SUCCESS)
+  Process: 29432 ExecReload=/usr/sbin/httpd $OPTIONS -k graceful (code=exited, status=0/SUCCESS)
+ Main PID: 10260 (httpd)
+   Status: "Total requests: 0; Current requests/sec: 0; Current traffic:   0 B/sec"
+   CGroup: /system.slice/httpd.service
+           ├─10260 /usr/sbin/httpd -DFOREGROUND
+           ├─10261 /usr/sbin/httpd -DFOREGROUND
+           ├─10262 /usr/sbin/httpd -DFOREGROUND
+           ├─10263 /usr/sbin/httpd -DFOREGROUND
+           ├─10264 /usr/sbin/httpd -DFOREGROUND
+           └─10265 /usr/sbin/httpd -DFOREGROUND
+[root@hellogitlab ~]$
+```
+
+此时再重启浏览器并登陆网站，可以看到连接是安全的，并且网站过期时间已经更新了。
+
+![Snipaste_2021-03-15_21-49-31.png](/img/Snipaste_2021-03-15_21-49-31.png)
+
+![Snipaste_2021-03-15_21-48-13.png](/img/Snipaste_2021-03-15_21-48-13.png)
+
+说明更新成功！
+
+
 
 ## 手动部署项目
 

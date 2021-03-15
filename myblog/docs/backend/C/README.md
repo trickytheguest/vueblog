@@ -2902,8 +2902,10 @@ n = (j > i) && (i > 1)
 - 在`x=0`、`i++`、`printf(...)`这样的表达式之后加上一个分号(`;`)，它们就变成了语句。
 - 分号是语句结束符。
 - 用一组花括号`{}`把一组声明和语句括在一起就构成了一个复合语句(也叫做程序块)。
+- 右花括号`}`用于结束程序块，其后不需要分号。
 - 条件判断语句`if (表达式1)`、`else if (表达式2`、`else`，`else if (表达式2`、`else`部分是可选的。
-- 建议在有`if`语句嵌套的情况下使用花括号。
+- 非0表示真。0表示假。
+- 建议在有`if`语句嵌套的情况下使用花括号。使用花括号强制实现正确的匹配关系。在没有大括号进行强制实现匹配关系时，`else`总是与最近的前一个没有`else`配置的`if`进行匹配。
 
 ### `if`条件判断语句
 
@@ -2911,13 +2913,13 @@ n = (j > i) && (i > 1)
 
 ```c
 $ cat half_interval_search.c
-/**
-*@file half_interval_search.c
-*@brief half-interval search 折半搜索/二分搜索，查找已经排序的数组v中是否存在某个特定的值x
-*@author Zhaohui Mei<mzh.whut@gmail.com>
-*@date 2019-11-09
-*@return 0
-*/
+/*
+ *      Filename: half_interval_search.c
+ *        Author: Zhaohui Mei<mzh.whut@gmail.com>
+ *   Description: half-interval search 折半搜索/二分搜索，查找已经排序的数组v中是否存在某个特定的值x
+ *   Create Time: 2021-03-06 21:45:05
+ * Last Modified: 2021-03-07 06:36:27
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -2928,39 +2930,36 @@ int binsearch(int x, int v[], int n);
 // 函数定义
 int binsearch(int x, int v[], int n)
 {
-    int low = 0;
-    int high = n -1;
-    int mid = 0;
-    while (low <= high)
-    {
-        mid = (low + high)/2;
-        if (x < v[mid])
-        {
+    int low  = 0;
+    int high = n - 1;
+    int mid  = 0;
+    while (low <= high) {
+        mid = (low + high) / 2;
+        if (x < v[mid]) {
             high = mid - 1;
-        }
-        else if (x > v[mid])
-        {
+            // printf("high = %d\n", high);
+        } else if (x > v[mid]) {
             low = mid + 1;
-        }
-        else
-        {
-            return mid; // 找到了匹配的值，返回匹配值的序号
+            // printf("low = %d\n", low);
+        } else {
+            return mid;    // 找到了匹配的值，返回匹配值的序号
         }
     }
-    return -1;  // 没有匹配的值
+    return -1;    // 没有匹配的值
 }
 
 // 主函数
 int main(int argc, char *argv[])
-{   
-    int x = atoi(argv[1]);  // atoi()把字符串转换为一个int整型
-    int v[] = {1, 2, 3, 4, 5, 6};
-    int n = 6;
+{
+    int x      = atoi(argv[1]);    // atoi()把字符串转换为一个int整型
+    int v[]    = {1, 2, 3, 4, 5, 6};
+    int n      = 6;
     int result = 0;
-    result = binsearch(x, v, n);
-    printf("Result:%d", result);
+    result     = binsearch(x, v, n);
+    printf("Result:%d\n", result);
     return 0;
 }
+
 ```
 
 编译后执行：
@@ -3005,13 +3004,13 @@ Result:-1
 
 ```c
 $ cat count_digit_and_space.c
-/**
-*@file count_digit_and_space.c
-*@brief 使用switch语句统计各个数字、空白字符及其他所有字符出现的次数
-*@author Zhaohui Mei<mzh.whut@gmail.com>
-*@date 2019-11-10
-*@return 0
-*/
+/*
+ *      Filename: count_digit_and_space.c
+ *        Author: Zhaohui Mei<mzh.whut@gmail.com>
+ *   Description: 使用switch语句统计各个数字、空白字符及其他所有字符出现的次数
+ *   Create Time: 2021-03-07 06:38:58
+ * Last Modified: 2021-03-07 06:43:38
+ */
 
 #include <stdio.h>
 
@@ -3022,42 +3021,45 @@ int count_digit_space(void);
 // 函数定义
 int count_digit_space(void)
 {
-    int c, i, nwhite, nother, ndigit[10];
-    
+    int c;             // 存储读取到的数据
+    int i;             // 序号
+    int nwhite;        // 空白字符数量
+    int nother;        // 其他字符数量
+    int ndigit[10];    // 数字数量
+
     nwhite = nother = 0;
-    for (i = 0; i<10; i++)
-       ndigit[i] = 0;
-    while ((c = getchar()) != EOF)
-    {
+    for (i = 0; i < 10; i++)
+        ndigit[i] = 0;
+    while ((c = getchar( )) != EOF) {
         switch (c) {
-            case '0':
-            case '1':
-            case '2':
-            case '3':
-            case '4':
-            case '5':
-            case '6':
-            case '7':
-            case '8':
-            case '9':
-                printf("case %c\n", c);
-                ndigit[c - '0']++;
-                break;
-            case ' ':
-            case '\t':
-            case '\n':
-                printf("case space/tab/new_line\n");
-                nwhite++;
-                break;
-            default:
-                printf("case default\n");
-                nother++;
-                break;
-       }
+        case '0':
+        case '1':
+        case '2':
+        case '3':
+        case '4':
+        case '5':
+        case '6':
+        case '7':
+        case '8':
+        case '9':
+            printf("case %c\n", c);
+            ndigit[c - '0']++;
+            break;
+        case ' ':
+        case '\t':
+        case '\n':
+            printf("case space/tab/new_line\n");
+            nwhite++;
+            break;
+        default:
+            printf("case default\n");
+            nother++;
+            break;
+        }
     }
-   
+
     printf("digits =");
-    for (i=0; i<10; i++){
+    for (i = 0; i < 10; i++) {
         printf(" %d", ndigit[i]);
     }
     printf(", white space = %d, other = %d\n", nwhite, nother);
@@ -3067,18 +3069,18 @@ int count_digit_space(void)
 // 主函数
 int main(int argc, char *argv[])
 {
-    count_digit_space();
+    count_digit_space( );
+  
     return 0;
 }
+
 ```
 
 编译后执行：
 
 ```sh
 $ cc count_digit_and_space.c -o count_digit_and_space.out
-
-$ count_digit_and_space.out
-abcd0123123123456456789 efg
+$ echo "abcd0123123123456456789 efg"|count_digit_and_space.out
 case default
 case default
 case default
@@ -3107,11 +3109,10 @@ case default
 case default
 case default
 case space/tab/new_line
-^Z
 digits = 1 3 3 3 2 2 2 1 1 1, white space = 2, other = 7
 ```
 
-按Ctrl-Z结束输入，可以看到统计结果中：
+可以看到统计结果中：
 
 - 0出现1次；1、2、3都出现了3次，4、5、6都出现了2次，7、8、9出现了1次，面空格出了2次，一次是"789 e"，另一次是"efg\n"处的换行符，而其他字符，包括前面的"abcd"以及最后的"efg"，所以一共是7次。
 - 多个`case`可以共用一个语句序列。
