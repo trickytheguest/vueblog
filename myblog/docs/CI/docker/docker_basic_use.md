@@ -10,7 +10,7 @@
 
 ## 查看docker版本信息
 
-```shell
+```sh
 $ docker version
 Client: Docker Engine - Community
  Version:           19.03.5
@@ -65,7 +65,7 @@ Server: Docker Engine - Community
 
 添加完成后，点击「Apple & Restart」应用并重启后，再看看docker的镜像信息：
 
-```shell
+```sh
 $ docker info                                                                                                                                                                 [21:35:47]
 Client:
  Debug Mode: false
@@ -131,7 +131,7 @@ Server:
 :::tip 提示
 你也可以直接修改docker的配置文件，配置文件位置为`~/.docker/daemon.json `。
 
-```shell
+```sh
 $ cat ~/.docker/daemon.json
 {"debug":true,"experimental":false,"registry-mirrors":["https://docker.mirrors.ustc.edu.cn","https://hub-mirror.c.163.com","http://f1361db2.m.daocloud.io"]}
 ```
@@ -143,7 +143,7 @@ $ cat ~/.docker/daemon.json
 
 ## 搜索docker镜像
 
-```shell
+```sh
 # 搜索镜像时的帮助信息
 $ docker search --help
 
@@ -166,7 +166,7 @@ hello-world         Hello World! (an example of minimal Dockeriz…   1139      
 
 ## 下载docker镜像
 
-```shell
+```sh
 $ docker pull hello-world
 Using default tag: latest
 latest: Pulling from library/hello-world
@@ -178,7 +178,7 @@ docker.io/library/hello-world:latest
 
 ## 查看docker镜像信息
 
-```shell
+```sh
 $ docker images
 REPOSITORY             TAG                 IMAGE ID            CREATED             SIZE
 hello-world            latest              fce289e99eb9        14 months ago       1.84kB
@@ -186,7 +186,7 @@ hello-world            latest              fce289e99eb9        14 months ago    
 
 ## 查看docker容器信息
 
-```shell
+```sh
 $ docker ps -a
 CONTAINER ID        IMAGE                  COMMAND             CREATED             STATUS                      PORTS               NAMES
 c8f5724b95f0        hello-world            "/hello"            2 minutes ago       Exited (0) 2 minutes ago                        great_goodall
@@ -195,7 +195,7 @@ c8f5724b95f0        hello-world            "/hello"            2 minutes ago    
 
 ## 运行docker容器
 
-```shell
+```sh
 $ docker run hello-world
 
 Hello from Docker!
@@ -222,7 +222,7 @@ For more examples and ideas, visit:
 
 按以上步骤，我们可以下载meizhaohui/meicentos镜像，下载完成后，查看镜像信息如下：
 
-```shell
+```sh
 $  docker images
 REPOSITORY             TAG                 IMAGE ID            CREATED             SIZE
 meizhaohui/meicentos   latest              e64cd9abd46d        10 months ago       710MB
@@ -231,7 +231,7 @@ hello-world            latest              fce289e99eb9        14 months ago    
 
 ## 停止docker容器
 
-```shell
+```sh
 # docker stop 容器ID
 $ docker stop c8f5724b95f0
 c8f5724b95f0
@@ -239,7 +239,7 @@ c8f5724b95f0
 
 ## 删除docker容器
 
-```shell
+```sh
 # docker rm 容器ID
 $ docker rm 6861c0c9dc73
 6861c0c9dc73
@@ -247,7 +247,7 @@ $ docker rm 6861c0c9dc73
 
 ## 查看所有的docker容器
 
-```shell
+```sh
 $ docker ps -a
 CONTAINER ID        IMAGE                  COMMAND             CREATED             STATUS                     PORTS               NAMES
 21ad63cdd8fb        meizhaohui/meicentos   "/bin/bash"         9 minutes ago       Exited (0) 8 minutes ago                       pensive_mclaren
@@ -258,7 +258,7 @@ CONTAINER ID        IMAGE                  COMMAND             CREATED          
 
 若要删除镜像，先要停止并删除容器
 
-```shell
+```sh
 $ docker rmi --help
 
 Usage:	docker rmi [OPTIONS] IMAGE [IMAGE...]
@@ -293,7 +293,7 @@ docker的运行主要使用`docker run`命令运行，但有很多参数。
 
 - 查看`docker run`的帮助信息
 
-```shell
+```sh
 $ docker run --help
 
 Usage:	docker run [OPTIONS] IMAGE [COMMAND] [ARG...]
@@ -399,7 +399,7 @@ Options:
 
 常用参数解释：
 
-```shell
+```sh
 -d: 后台运行容器，并返回容器ID；
 -a stdin: 指定标准输入输出内容类型，可选 STDIN/STDOUT/STDERR 三项；
 -i: 以交互模式运行容器，通常与 -t 同时使用；
@@ -413,7 +413,7 @@ Options:
 
 - 使用docker镜像nginx:latest以后台模式启动一个容器,并将容器命名为mynginx
 
-```shell
+```sh
 $ docker run --name mynginx -d nginx:latest
 7b8234a6fd41ee7176f18f7d6d6c772ad3709a50d39006f4dff9f38d6575a922
 $ docker ps
@@ -423,7 +423,7 @@ CONTAINER ID        IMAGE               COMMAND                  CREATED        
 
 - 使用镜像nginx:latest以交互模式启动一个容器,在容器内执行/bin/bash命令
 
-```shell
+```sh
 $ docker run --name mynginx1 -it nginx:latest /bin/bash
 root@4f898710186c:/# whoami
 root
@@ -433,7 +433,7 @@ bin  boot  dev	etc  home  lib	lib64  media  mnt  opt	proc  root  run  sbin  srv 
 
 此时保持mynginx1容器交互容器不退出，在另外一个终端查看docker运行情况：
 
-```shell
+```sh
 $ docker ps 
 CONTAINER ID        IMAGE               COMMAND                  CREATED              STATUS              PORTS               NAMES
 4f898710186c        nginx:latest        "/bin/bash"              About a minute ago   Up About a minute   80/tcp              mynginx1
@@ -442,7 +442,7 @@ CONTAINER ID        IMAGE               COMMAND                  CREATED        
 
 退出mynginx1容器，再查看docker运行情况：
 
-```shell
+```sh
 root@4f898710186c:/# exit
 exit
 $ docker ps
@@ -454,7 +454,7 @@ CONTAINER ID        IMAGE               COMMAND                  CREATED        
 
 ## 将容器中80端口映射到本机的8088端口
 
-```shell
+```sh
 $ docker run --name mynginx2 -p 8088:80 -d nginx:latest
 e424323f60c0fa5d42fd785a718509e9afe57247c47765fbd644d12595198b30
 $ docker ps
@@ -470,7 +470,7 @@ e424323f60c0        nginx:latest        "nginx -g 'daemon of…"   11 seconds ag
 
 `docker attach container`：附加到运行容器中。不推荐使用，经常会卡住。
 
-```shell
+```sh
 # docker exec -it  容器ID /bin/bash
 docker exec -it 7b82 /bin/bash
 $ docker exec -it 7b82 /bin/bash
@@ -496,7 +496,7 @@ nginx version: nginx/1.17.8
 
 ## 将docker容器目录挂载到本地目录
 
-```shell
+```sh
 $ mkdir -p ~/mydocker/local_nginx
 # 将容器中的/test_folder目录挂载到本机的~/mydocker/local_nginx目录下
 $ docker run --name mynginx3 -p 8090:80 -v  ~/mydocker/local_nginx:/test_folder -d nginx:latest
@@ -546,7 +546,7 @@ root@26533089c5e9:/test_folder# echo 'test1' > test1/test1.txt
 
 - 查看docker容器信息
 
-```shell
+```sh
 $ cd ~/mydocker/local_nginx
 $ $ tree
 .
@@ -576,7 +576,7 @@ drwxr-xr-x  4 meizhaohui  staff   128B  3  3 19:10 ..
 
 对本地文件进行更新，看一下在容器中是否可以同步过来。
 
-```shell
+```sh
 meizhaohui@MacBook:/Users/meizhaohui/mydocker/local_nginx $ echo 'd' >> abc.txt 
 meizhaohui@MacBook:/Users/meizhaohui/mydocker/local_nginx $ echo 'test' >> test1/test1.txt
 meizhaohui@MacBook:/Users/meizhaohui/mydocker/local_nginx $ cp -rf test1 test2
@@ -589,7 +589,7 @@ drwxr-xr-x  3 meizhaohui  staff    96B  3  3 19:15 test2
 
 检查容器，发现同步更新了：
 
-```shell
+```sh
 root@26533089c5e9:/test_folder# ls
 abc.txt  test1	test2
 root@26533089c5e9:/test_folder# cat abc.txt
@@ -605,7 +605,7 @@ test
 
 再次测试挂载：
 
-```shell
+```sh
 $ ls
 local_nginx
 $ docker run --name mynginx4 -p 8091:80 -v  ~/mydocker/local_nginx1:/ -d nginx:latest
@@ -629,7 +629,7 @@ drwxr-xr-x   2 meizhaohui  staff    64B  3  3 19:18 local_nginx1
 
 - 查看docker容器挂载点
 
-```shell
+```sh
 $  docker inspect 662c6|jq ".[0].HostConfig.Binds"
 [
   "/Users/meizhaohui/mydocker/local_nginx1:/home"
@@ -639,7 +639,7 @@ $
 
 - 启动停止运行的docker容器
 
-```shell
+```sh
 $ docker ps -a
 CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS                         PORTS                  NAMES
 662c6d004576        nginx:latest        "nginx -g 'daemon of…"   35 minutes ago      Up 35 minutes                  0.0.0.0:8091->80/tcp   mynginx4
@@ -664,7 +664,7 @@ $
 
 - 停止所有的docker容器
 
-```shell
+```sh
 $ docker ps -aq
 662c6d004576
 26533089c5e9
@@ -683,7 +683,7 @@ CONTAINER ID        IMAGE               COMMAND             CREATED             
 
 - 删除所有的docker容器
 
-```shell
+```sh
 $ docker rm $(docker ps -aq)
 662c6d004576
 26533089c5e9
@@ -699,7 +699,7 @@ CONTAINER ID        IMAGE               COMMAND             CREATED             
 特别说明：**Docker容器后台运行,就必须有一个前台进程.
 容器运行的命令如果不是那些一直挂起的命令（比如运行top，tail），就是会自动退出的**
 
-```shell
+```sh
 $ docker run --name mycentos -d meizhaohui/meicentos:latest ping 0.0.0.0
 ae9e7499e89532f99e6cb7fdf0834ecfbf21bcf1b2526ee0af104a03088f0517
 $ docker ps
@@ -718,13 +718,13 @@ root        26     6  0 20:25 pts/0    00:00:00 grep --color=auto ping
 
 我们 Centos7容器中查看httpd的状态，会提示异常：
 
-```shell
+```sh
 [root@ae9e7499e895 ~]# systemctl status httpd
 Failed to get D-Bus connection: Operation not permitted
 ```
 如果要是用`systemctl`管理服务就要加上参数 `--privileged` 来增加权，并且不能使用默认的`bash`，换成`init`，命令如下:
 
-```shell
+```sh
 # 删除原来的容器
  docker stop ae9e7499e895
 ae9e7499e895
@@ -757,7 +757,7 @@ $ docker exec -it a1f530 /bin/bash
 
 - 在容器中安装php7.2环境
 
-```shell
+```sh
 [root@a1f530aec186 ~]# yum install epel-release -y
 Loaded plugins: fastestmirror, ovl
 Loading mirror speeds from cached hostfile
@@ -1120,7 +1120,7 @@ Zend OPcache
 ```
 - 安装php xdebug模式
 
-```shell
+```sh
 [root@a1f530aec186 ~]# yum install pecl -y
 [root@a1f530aec186 ~]# pecl install xdebug
 WARNING: channel "pecl.php.net" has updated its protocols, use "pecl channel-update pecl.php.net" to update
@@ -1184,7 +1184,7 @@ Xdebug
 
 - php-fpm开机自启
 
-```shell
+```sh
 [root@a1f530aec186 ~]# systemctl enable php-fpm
 Created symlink from /etc/systemd/system/multi-user.target.wants/php-fpm.service to /usr/lib/systemd/system/php-fpm.service.
 [root@a1f530aec186 ~]# systemctl start php-fpm
@@ -1228,7 +1228,7 @@ tcp6       0      0 :::22                   :::*                    LISTEN      
  
  - 添加subversion yum源
  
-```shell
+```sh
 cat > /etc/yum.repos.d/wandisco-svn.repo << EOF
 [WandiscoSVN]
 name=Wandisco SVN Repo
@@ -1256,7 +1256,7 @@ gpgcheck=0
 ```
 - 安装
 
-```shell
+```sh
 [root@a1f530aec186 ~]# yum install subversion-1.11.0-1 mod_dav_svn-1.11.0-1 -y
 Loaded plugins: fastestmirror, ovl
 Loading mirror speeds from cached hostfile
@@ -1323,7 +1323,7 @@ Complete!
 
 - 查看SVN版本信息
 
-```shell
+```sh
 [root@a1f530aec186 ~]# svn --version
 svn, version 1.11.0 (r1845130)
    compiled Nov  1 2018, 12:32:40 on x86_64-redhat-linux-gnu
@@ -1358,7 +1358,7 @@ svn            svnadmin       svndumpfilter  svnfsfs        svnlook        svnrd
 
 - 创建SVN测试数据
 
-```shell
+```sh
 # 创建密码文件，并设置admin账号和密码
 [root@a1f530aec186 ~]# htpasswd -c -b /home/svn/passwd admin admin
 Adding password for user admin
@@ -1473,7 +1473,7 @@ Syntax OK
 
 - 创建SVN测试数据
 
-```shell
+```sh
 # 创建SVN根目录
 [root@a1f530aec186 ~]# SVN_REPO_HOME="/home/svn/svnrepos"
 [root@a1f530aec186 ~]# mkdir -p $SVN_REPO_HOME
@@ -1509,7 +1509,7 @@ drwxr-xr-x 3 apache apache 4.0K Mar  4 01:11 svnrepos
 
 - 创建SVN服务
 
-```shell
+```sh
 # 添加服务
 cat > /usr/lib/systemd/system/svnserve.service << EOF
 [Unit]
@@ -1548,7 +1548,7 @@ EOF
 
 - 重启服务
 
-```shell
+```sh
 systemctl daemon-reload
 systemctl enable svnserve
 systemctl start svnserve
@@ -1609,7 +1609,7 @@ Mar 04 01:16:21 a1f530aec186 systemd[1]: Started The Apache HTTP Server.
 
 - 打包提交
 
-```shell
+```sh
 # 查看正在运行的容器
  $ docker ps 
 CONTAINER ID        IMAGE                         COMMAND             CREATED             STATUS              PORTS               NAMES
@@ -1661,7 +1661,7 @@ latest: digest: sha256:818acbee0a4144a9febdddde4a4a18f827bcf3cd6348c97d3a215070f
 
 $ docker run --name centos_php_svn --privileged -p 8080:80 -p 9001:9001  -d meizhaohui/centos_php_svn:latest
 
-```shell
+```sh
 # 下载最新镜像
 meizhaohui@MacBook:/Users/meizhaohui $ docker pull meizhaohui/centos_php_svn
 Using default tag: latest

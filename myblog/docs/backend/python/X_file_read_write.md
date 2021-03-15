@@ -606,7 +606,7 @@ In [28]: with open('other.csv','wt') as fout:
 
 查看other.csv文件的内容:
 
-```shell
+```sh
 [meizhaohui@localhost ~]$ cat other.csv
 id,username,age,country
 1001,Stephen Curry,30,USA
@@ -654,7 +654,7 @@ Out[32]: <csv.DictWriter at 0x7fd4798bd668>
 
 查看other.csv文件的内容:
 
-```shell
+```sh
 meizhaohui@localhost ~]$ cat other.csv
 id,username
 1001,Stephen Curry
@@ -688,7 +688,7 @@ Out[35]: <csv.DictWriter at 0x7fd479b064a8>
 
 查看other.csv文件的内容:
 
-```shell
+```sh
 [meizhaohui@localhost ~]$ cat other.csv 
 id,username,age,country,number
 1001,Stephen Curry,30,USA,
@@ -722,7 +722,7 @@ Out[38]: <csv.DictWriter at 0x7fd479ad9240>
 
 查看other.csv文件的内容:
 
-```shell
+```sh
 [meizhaohui@localhost ~]$ cat other.csv
 id,username,age,country,number
 1001,Stephen Curry,30,USA,autoinsert
@@ -753,7 +753,7 @@ In [40]: with open('format.csv', 'wt') as fout:
 
 查看format.csv文件内容:
 
-```shell
+```sh
 [meizhaohui@localhost ~]$ cat format.csv
 id username age country
 1001 |Stephen Curry| 30 USA
@@ -773,7 +773,7 @@ In [41]: with open('format.csv', 'wt') as fout:
 
 查看format.csv文件内容:
 
-```shell
+```sh
 [meizhaohui@localhost ~]$ cat format.csv
 id username age country
 1001 "Stephen Curry" 30 USA
@@ -811,7 +811,7 @@ In [42]: with open('format.csv', 'wt') as fout:
 
 查看format.csv文件内容:
 
-```shell
+```sh
 [meizhaohui@localhost ~]$ cat format.csv 
 "id"|"username"|"age"|"country"
 "1001"|"Stephen Curry"|"30"|"USA"
@@ -837,7 +837,7 @@ In [45]: with open('format.csv', 'wt') as fout:
 
 查看format.csv文件内容:
 
-```shell
+```sh
 [meizhaohui@localhost ~]$ cat format.csv 
 "a"|"b"|"c"|1|2
 ","|""""|"|"|"line2"

@@ -15,12 +15,12 @@
 命令行参数说明：
 #### 安装
 
-```shell
+```sh
 $ pip install pylint
 ```
 
 #### 检查
-```shell
+```sh
 $ pylint ./bluelog|nl
      1	************* Module bluelog
      2	bluelog/__init__.py:59:0: C0301: Line too long (130/100) (line-too-long)
@@ -189,7 +189,7 @@ $ pip install flake8
 ```
 #### 检查
 
-```shell
+```sh
 $ flake8 ./bluelog|nl
      1	./bluelog/emails.py:55:80: E501 line too long (90 > 79 characters)
      2	./bluelog/__init__.py:27:1: F401 'bluelog.models.Post' imported but unused
@@ -263,7 +263,7 @@ $ flake8 ./bluelog  --max-complexity=5|nl
 
 #### 安装
 
-```shell
+```sh
 $ npm install -g pyright
 $ $ pyright --help
 Usage: pyright [options] files...
@@ -283,7 +283,7 @@ Usage: pyright [options] files...
 ```
 
 #### 检查
-```shell
+```sh
 $ pyright ./bluelog|nl
      1	typingsPath ~/Documents/GitHub/bluelog/typings is not a valid directory.
      2	Searching for source files

@@ -13,44 +13,44 @@ CentOS上的安装方法
 --------------------
 - 下载安装文件
 
-```shell    
+```sh    
 [root@localhost ~/download]# wget https://www.python.org/ftp/python/3.6.2/Python-3.6.2.tgz
 ```
 
 - 解压
 
-```shell
+```sh
 [root@localhost ~/download]# tar -zxvf Python-3.6.2.tgz 
 ```  
  
 - 安装readline-devel解决方向键、Backspace键出现特殊符号
 
-```shell
+```sh
 [root@localhost ~/download]# yum install readline-devel -y
 ```
 
 - 检测你的安装平台的目标特征
 
-```shell
+```sh
 [root@localhost ~/download]# cd Python-3.6.2
 [root@localhost ~/download/Python-3.6.2]# ./configure 
 ```
 
 - 安装
 
-```shell
+```sh
 [root@localhost ~/download/Python-3.6.2]# make
 ```
    
 - 编译
 
-```shell
+```sh
 [root@localhost ~/download/Python-3.6.2]# make install
 ```
     
 - 查看python3的版本
 
-```shell
+```sh
 [root@localhost ~/download/Python-3.6.2]# python -V
 Python 2.6.6
 [root@localhost ~/download/Python-3.6.2]# python3 -V
@@ -61,7 +61,7 @@ Python 3.6.2
 
 - 启动
 
-```shell   
+```sh   
 [root@localhost ~/download/Python-3.6.2]# python3
 Python 3.6.2 (default, Jun  8 2018, 22:28:47) 
 [GCC 4.4.7 20120313 (Red Hat 4.4.7-18)] on linux
@@ -78,7 +78,7 @@ Type "help", "copyright", "credits" or "license" for more information.
 
 - 安装
 
-```shell
+```sh
 [root@localhost ~]# pip3 install virtualenv
 Collecting virtualenv
   Downloading https://files.pythonhosted.org/packages/b6/30/96a02b2287098b23b875bc8c2f58071c35d2efe84f747b64d523721dc2b5/virtualenv-16.0.0-py2.py3-none-any.whl (1.9MB)
@@ -95,14 +95,14 @@ Successfully installed virtualenv-16.0.0
 
 - 创建virtual虚拟环境目录
 
-```shell
+```sh
 $ mkdir venv
 $ ls
 blogs_home  download  venv
 ```
 - 创建virtual虚拟运行环境
 
-```shell
+```sh
 $ virtualenv venv
 Using base prefix '/usr/local'
 New python executable in /cloud/blogsystem/venv/bin/python3.6
@@ -112,7 +112,7 @@ Installing setuptools, pip, wheel...done.
 
 - 如果加上参数--no-site-packages，已经安装到系统Python环境中的所有第三方包都不会复制过来，会生成一个不带任何第三方包的“干净”的Python运行环境。
 
-```shell
+```sh
 $ virtualenv --no-site-package env
 Using base prefix '/usr/local'
 New python executable in /cloud/blogsystem/env1/bin/python3.6
@@ -122,7 +122,7 @@ Installing setuptools, pip, wheel...done.
     
 - 激活virtual虚拟运行环境venv
 
-```shell
+```sh
 $ source venv/bin/activate 
 (venv) $ 
 ```    
@@ -130,7 +130,7 @@ $ source venv/bin/activate
 
 - 在虚拟环境venv下安装包
 
-```shell
+```sh
 (venv) $ pip list
 Package    Version
 ---------- -------
@@ -156,7 +156,7 @@ wheel      0.31.1
 
 - 导出虚拟环境venv下的所有包到requirements.txt文件
 
-```shell
+```sh
 (venv) $ pip freeze > requirements.txt
 (venv) $ ls
 blogs_home  download  requirements.txt  venv
@@ -166,7 +166,7 @@ PyMySQL==0.8.1
 
 - 在虚拟环境venv下卸载包
 
-```shell
+```sh
 (venv) $ pip uninstall pymysql
 Uninstalling PyMySQL-0.8.1:
   Would remove:
@@ -184,14 +184,14 @@ wheel      0.31.1
 
 - 退出虚拟环境venv
 
-```shell
+```sh
 (venv) $ deactivate 
 $ 
 ```
     
 - 删除虚拟环境venv，直接删除venv文件夹即可
 
-```shell
+```sh
 $ ls
 blogs_home  download  requirements.txt  venv
 $ rm -rf venv/
@@ -201,7 +201,7 @@ blogs_home  download  requirements.txt
 
 - 通过requirements.txt在虚拟环境中安装包
 
-```shell
+```sh
 $ virtualenv venv
 Using base prefix '/usr/local'
 New python executable in /cloud/blogsystem/venv/bin/python3.6
@@ -237,7 +237,7 @@ wheel      0.31.1
 
 更改默认配置`~/.pip/pip.conf`，一般这个文件需要自己创建
 
-```shell
+```sh
 $ mkdir ~/.pip
 $ vim ~/.pip/pip.conf
 ```
@@ -282,7 +282,7 @@ trusted-host = mirrors.aliyun.com
 
 使用`pip`进行安装,可以发现`pip`已经替换成的阿里云源:
 
-```shell
+```sh
 [root@localhost ~]# pip install virtualenvwrapper
 Looking in indexes: http://mirrors.aliyun.com/pypi/simple/
 Collecting virtualenvwrapper
@@ -298,13 +298,13 @@ Successfully installed virtualenvwrapper-4.8.2
 
 - 创建虚拟目录
 
-```shell
+```sh
 [root@localhost ~]# mkdir virtual_env
 ```
 
 - 在`~/.bashrc`中末尾添加配置信息，并保存
 
-```shell
+```sh
 export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
 export WORKON_HOME=/root/virtual_env
 source /usr/local/bin/virtualenvwrapper.sh 
@@ -312,7 +312,7 @@ source /usr/local/bin/virtualenvwrapper.sh
 
 - 使配置信息的修改生效
 
-```shell
+```sh
 [root@localhost ~]# source ~/.bashrc
 ```
 
@@ -320,7 +320,7 @@ source /usr/local/bin/virtualenvwrapper.sh
 
 使用`pip`进行安装,可以发现`pip`源已经替换成的阿里云源:
 
-```shell
+```sh
 > pip install virtualenvwrapper-win
 Looking in indexes: http://mirrors.aliyun.com/pypi/simple/
 Collecting virtualenvwrapper-win
@@ -349,7 +349,7 @@ Successfully installed virtualenvwrapper-win-1.2.5
 
 - linux环境`virtualenvwrapper`获取帮助
 
-```shell
+```sh
 [root@localhost ~]# virtualenvwrapper
 
 virtualenvwrapper is a set of extensions to Ian Bicking's virtualenv
@@ -403,7 +403,7 @@ Commands available:
 
 - windows环境virtualenvwrapper获取帮助
 
-```shell
+```sh
 D:\data> virtualenvwrapper
 
  virtualenvwrapper is a set of extensions to Ian Bicking's virtualenv
@@ -458,7 +458,7 @@ virtualenvwrapper常用命令:
 
 - 虚拟环境的使用示例
 
-```shell
+```sh
 D:\data>workon
 
 Pass a name to activate one of the following virtualenvs:
@@ -515,7 +515,7 @@ D:\data>
 
 - 安装ipython和jupyter
 
-```shell
+```sh
 [root@localhost ~]# pip install ipython jupyter
 Looking in indexes: https://mirrors.aliyun.com/pypi/simple/
 Collecting ipython
@@ -621,7 +621,7 @@ Successfully installed MarkupSafe-1.1.1 Send2Trash-1.5.0 attrs-19.1.0 bleach-3.1
 
 - 使用ipython
 
-```shell
+```sh
 [root@localhost ~]# ipython
 Python 3.6.8 (default, May  2 2019, 20:40:44) 
 Type 'copyright', 'credits' or 'license' for more information
@@ -638,7 +638,7 @@ In [3]: quit
     
 - ipython设置经典`>>>`提示符
 
-```shell
+```sh
 # 创建IPython的自定义配置文件
 [root@localhost ~]# ipython profile create
 [ProfileCreate] Generating default config file: '/root/.ipython/profile_default/ipython_config.py'
@@ -652,7 +652,7 @@ c.TerminalInteractiveShell.prompts_class = 'IPython.terminal.prompts.ClassicProm
 
 - 再次打开ipython
 
-```shell
+```sh
 [root@localhost ~]# ipython
 Python 3.6.8 (default, May  2 2019, 20:40:44)
 Type 'copyright', 'credits' or 'license' for more information
@@ -673,7 +673,7 @@ IPython 7.7.0 -- An enhanced Interactive Python. Type '?' for help.
 
 - Jupyter的配置
 
-```shell
+```sh
 # 生成一个notebook配置文件
 [root@localhost ~]# jupyter notebook --generate-config
 Writing default config to: /root/.jupyter/jupyter_notebook_config.py
@@ -766,7 +766,7 @@ jupyter_notebook_config.json  jupyter_notebook_config.py  migrated  mycert.pem  
 
 - 服务器防火墙放行8888端口
 
-```shell
+```sh
 [root@localhost ~]# firewall-cmd --permanent --add-port=8888/tcp
 success
 [root@localhost ~]# firewall-cmd --reload
@@ -777,7 +777,7 @@ success
 
 - 重新启动jupyter notebook
 
-```shell
+```sh
 [root@localhost ~]# jupyter notebook > jupyter.log 2>&1 &    
 [1] 12174
 [root@localhost ~]# ps -ef|grep jupyter
@@ -790,7 +790,7 @@ root     12179  7909  0 17:19 pts/0    00:00:00 grep --color=auto jupyter
 ::: tip 说明
 因为我是在虚拟机中配置的jupyter notebook，并设置了ip和域名的对应关系：
 
-```shell
+```sh
 [root@localhost ~]# cat /etc/hosts|grep hellolinux.com
 127.0.0.1 hellolinux.com
 [root@localhost ~]# ip a show|grep 192|awk -F'[ /]+' '{print $3}'
@@ -799,7 +799,7 @@ root     12179  7909  0 17:19 pts/0    00:00:00 grep --color=auto jupyter
 
 在远程客户端也配置了相应的域名解析对应关系:
 
-```shell
+```sh
 > type C:\Windows\System32\drivers\etc\hosts|findstr hellolinux.com
 192.168.56.103 hellolinux.com
 ```

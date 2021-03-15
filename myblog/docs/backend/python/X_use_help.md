@@ -275,7 +275,7 @@ DESCRIPTION
 
 安装ipython:
 
-```shell
+```sh
 $ pip install ipython
 ```
 

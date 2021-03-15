@@ -31,7 +31,7 @@ VuePress支持使用Yarn和npm来安装，Node.js版本需要>=8才可以。
 
 
 - 安装node.js
-```shell
+```sh
 [root@hellogitlab ~]# curl --silent --location https://rpm.nodesource.com/setup_8.x | bash -
 
 ## Installing the NodeSource Node.js 8.x LTS Carbon repo...
@@ -110,7 +110,7 @@ Complete!
 ```
 
 - 查看node.js版本信息
-```shell
+```sh
 [root@hellogitlab ~]# node --version
 v8.17.0
 [root@hellogitlab ~]# node -v
@@ -118,13 +118,13 @@ v8.17.0
 ```
 
 - 添加yarn的yum源
-```shell
+```sh
 [root@hellogitlab ~]# curl --silent --location https://dl.yarnpkg.com/rpm/yarn.repo | tee /etc/yum.repos.d/yarn.repo
 ```
 
 - 安装yarn
 
-```shell
+```sh
 [root@hellogitlab ~]# yum install yarn -y 
 Loaded plugins: fastestmirror, langpacks
 Repository epel is listed more than once in the configuration
@@ -164,7 +164,7 @@ Complete!
 ```
 
 - 查看yarn的版本信息
-```shell
+```sh
 [root@hellogitlab ~]# yarn --version
 1.21.1
 [root@hellogitlab ~]# yarn -v
@@ -176,7 +176,7 @@ Complete!
 #### 安装VuePress
 
 我们使用``yarn``工具安装VuePress。
-```shell
+```sh
 [root@hellogitlab ~]# yarn global add vuepress
 yarn global v1.21.1
 [1/4] Resolving packages...
@@ -193,7 +193,7 @@ Done in 15.16s.
 ```
 
 - 查看vuepress命令是否可用
-```shell
+```sh
 [root@hellogitlab ~]# whereis vuepress
 vuepress: /usr/local/bin/vuepress
 [root@hellogitlab ~]# vuepress
@@ -203,7 +203,7 @@ lrwxrwxrwx 1 root root 55 Dec 29 12:48 /usr/local/bin/vuepress -> ../share/.conf
 ```
 
 - 添加软链接
-```shell
+```sh
 [root@hellogitlab ~]# ln -s /usr/local/bin/vuepress /usr/bin/vuepress
 [root@hellogitlab ~]# vuepress --help
 vuepress v1.2.0
@@ -231,7 +231,7 @@ vuepress: /usr/bin/vuepress /usr/local/bin/vuepress
 ```
 
 - 查看vuepress的版本信息
-```shell
+```sh
 [root@hellogitlab ~]# vuepress -v
 vuepress/1.2.0 linux-x64 node-v8.17.0
 ```
@@ -240,14 +240,14 @@ vuepress/1.2.0 linux-x64 node-v8.17.0
 #### 创建项目目录
 
 创建目录``myblog``
-```shell
+```sh
 [root@hellogitlab ~]# mkdir myblog && cd myblog
 [root@hellogitlab myblog]# 
 [root@hellogitlab myblog]# pwd
 /root/myblog
 ```
 #### 初始化项目
-```shell
+```sh
 [root@hellogitlab myblog]# yarn init -y
 yarn init v1.21.1
 warning The yes flag has been set. This will automatically answer yes to all questions, which may have security implications.
@@ -270,7 +270,7 @@ dr-xr-x---. 15 root root 4.0K Dec 29 13:00 ..
 #### 新建docs文件夹
 docs文件夹作为项目文档根目录，主要放置Markdown类型的文章和.vuepress文件夹。
 
-```shell
+```sh
 [root@hellogitlab myblog]# mkdir docs
 [root@hellogitlab myblog]# ls -lah
 total 16K
@@ -283,7 +283,7 @@ drwxr-xr-x   2 root root 4.0K Dec 29 13:02 docs
 VuePress中有两个命令，``vuepress dev docs``命令运行本地服务，通过访问http://localhost:8080即可预览网站，``vuepress build docs``命令用来生成静态文件，默认情况下，放置在docs/.vuepress/dist目录中，当然你也可以在docs/.vuepress/config.js中的dest字段来修改默认存放目录。
 
 在package.json中添加以下内容
-```shell
+```sh
 {
   "scripts": {
     "docs:dev": "vuepress dev docs",
@@ -293,7 +293,7 @@ VuePress中有两个命令，``vuepress dev docs``命令运行本地服务，通
 ```
 
 添加后，内容如下:
-```shell
+```sh
 [root@hellogitlab myblog]# cat package.json 
 {
   "name": "myblog",
@@ -353,7 +353,7 @@ success [13:20:14] Build 89b3ca finished in 162 ms! ( http://localhost:8081/ )
 - 使用``yarn docs:build``命令生成静态文件。
 - 默认情况下，文件将会被生成在 .vuepress/dist，当然，你也可以通过 .vuepress/config.js 中的 dest 字段来修改，生成的文件可以部署到任意的静态文件服务器上。
 
-```shell
+```sh
 [root@hellogitlab myblog]# yarn docs:build
 yarn run v1.21.1
 $ vuepress build docs
@@ -386,7 +386,7 @@ Done in 12.14s.
 #### 创建config.js
 进入到.vuepress目录中，然后创建config.js，config.js是VuePress必要的配置文件，它导出y一个javascript对象。
 
-```shell
+```sh
 [root@hellogitlab myblog]# cd docs/
 [root@hellogitlab docs]# ls
 README.md
@@ -407,7 +407,7 @@ module.exports = {
 #### 创建public文件夹
 进入到.vuepress目录中，然后创建public文件夹，此文件夹主要放静态资源文件，例如favicons和PWA的图标。
 
-```shell
+```sh
 [root@hellogitlab .vuepress]# mkdir -p public/{img,css} 
 [root@hellogitlab .vuepress]# ll
 total 12
@@ -420,7 +420,7 @@ css  img
 
 img存放图片，css存放样式文件。此时，项目的结构差不多就出来了。
 
-```shell
+```sh
 myblog
 ├─── docs
 │   ├── README.md
@@ -534,7 +534,7 @@ module.exports = {
 
 准备博文或关于页面的基础数据，在docs目录下面新建python,golang,web,about等文件夹，并在各文件夹下面创建README.md文件。
 
-```shell
+```sh
 [root@hellogitlab docs]# mkdir -p ./{python,golang,web,about}
 [root@hellogitlab docs]# echo "# Python Docs" > python/README.md
 [root@hellogitlab docs]# echo "# Golang Docs" > golang/README.md
@@ -567,7 +567,7 @@ module.exports = {
 
 侧边栏设置示例:
 
-```shell
+```sh
 [root@hellogitlab docs]# cat .vuepress/config.js
 module.exports = {
     title: '个人主页',
@@ -638,7 +638,7 @@ module.exports = {
 - ``sidebarDepth``嵌套的标题链接深度，默认的深度为1。
 
 准备侧边栏的基础数据：
-```shell
+```sh
 [root@hellogitlab docs]# echo "# python1" > python/python1.md
 [root@hellogitlab docs]# echo "# python2" > python/python2.md
 [root@hellogitlab docs]# echo "# python3" > python/python3.md
@@ -652,7 +652,7 @@ module.exports = {
 ```
 
 运行项目：
-```shell
+```sh
 [root@hellogitlab docs]# yarn docs:dev
 yarn run v1.21.1
 $ vuepress dev docs

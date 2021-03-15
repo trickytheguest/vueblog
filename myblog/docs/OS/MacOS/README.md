@@ -138,13 +138,13 @@ Shuttle是一款快捷操作管理软件，你可以通过自定义命令，将�
 
 显示隐藏文件
 
-```shell
+```sh
 $ defaults write com.apple.finder AppleShowAllFiles -boolean true;killall Finder
 ```
 
 隐藏文件
 
-```shell
+```sh
 $ defaults write com.apple.finder AppleShowAllFiles -boolean false;killall Finder
 ```
 
@@ -164,13 +164,13 @@ $ defaults write com.apple.finder AppleShowAllFiles -boolean false;killall Finde
 
 - 禁用Creative Cloud自启
 
-```shell
+```sh
 $ launchctl unload -w /Library/LaunchAgents/com.adobe.AdobeCreativeCloud.plist
 ```
 
 - 恢复
 
-```shell
+```sh
 $ launchctl load -w /Library/LaunchAgents/com.adobe.AdobeCreativeCloud.plist
 ```
 
@@ -181,25 +181,25 @@ $ launchctl load -w /Library/LaunchAgents/com.adobe.AdobeCreativeCloud.plist
 
 - 卸载
 
-```shell
+```sh
 $ ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall)"
 ```
 
 - 重装
 
-```shell
+```sh
 $ ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 ```
 
 - 更新
 
-```shell
+```sh
 $ brew update
 ```
 
 - 更换科大镜像源
 
-```shell
+```sh
 # 第一步：替换brew.git
 $ cd "$(brew --repo)"
 $ git remote -v
@@ -223,7 +223,7 @@ $ git clone git://mirrors.ustc.edu.cn/homebrew-cask.git /usr/local/Homebrew/Libr
 
 - 更新
 
-```shell
+```sh
 $ brew update
 ```
 
@@ -235,19 +235,19 @@ $ brew update
 
 - 执行更新brew命令
 
-```shell
+```sh
 brew update
 ```
 
 - 搜索
 
-```shell
+```sh
 brew search 服务名称
 ```
 
 - 安装
 
-```shell
+```sh
 brew install 服务名称
 ```
 
@@ -258,7 +258,7 @@ brew install 服务名称
 `oh-my-zsh`源码地址：[https://github.com/ohmyzsh/ohmyzsh](https://github.com/ohmyzsh/ohmyzsh)
 安装：
 
-```shell
+```sh
 $ sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 ```
 
@@ -272,7 +272,7 @@ $ sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/t
 
 `Powerline Fonts`字体安装参考[https://github.com/powerline/fonts](https://github.com/powerline/fonts)
 
-```shell
+```sh
 # 下载
 ➜  ~ git clone https://github.com/powerline/fonts.git --depth=1
 Cloning into 'fonts'...
@@ -304,7 +304,7 @@ Powerline fonts installed to /Users/mzh/Library/Fonts
 ![oh_my_zsh_random_theme](/img/oh_my_zsh_random_theme.png)
 
 重新加载配置
-```shell
+```sh
 $ source ~/.zshrc
 ```
 
@@ -338,7 +338,7 @@ plugins=(
 ```
 
 ### 设置常用命令假名
-```shell
+```sh
 alias cd1='cd ..'
 alias cd2='cd ../..'
 alias cd3='cd ../../..'
@@ -386,7 +386,7 @@ alias runblog='pushd ~/Documents/GitHub/vueblog/myblog && yarn docs:dev'
 
 ### 安装
 
-```shell
+```sh
 # MacOS
 $ brew install httpie
 
@@ -407,14 +407,14 @@ $ pacman -S httpie
 
 - 查看版本信息
 
-```shell
+```sh
 $ http --version                                                                                                                                                              
 2.0.0
 ```
 
 - 查看帮助信息
 
-```shell
+```sh
 $ http --help|head -n 15                                                                                                                                                      
 usage: http [--json] [--form] [--compress] [--pretty {all,colors,format,none}]
             [--style STYLE] [--print WHAT] [--headers] [--body] [--verbose]
@@ -441,7 +441,7 @@ HTTPie - a CLI, cURL-like tool for humans. <https://httpie.org>
 
 你可以尝试执行以下两个命令，查看他们的区别，你得到的显示结果与官网的示例结果会有部分差异。
 
-```shell
+```sh
 # 使用curl发送请求
 $ curl -i -X PUT httpbin.org/put -H Content-Type:application/json -d '{"hello": "world"}'
  
@@ -453,7 +453,7 @@ $ http PUT httpbin.org/bin hello=world
 
 参考：[http://httpbin.org/](http://httpbin.org/)
 
-```shell
+```sh
 # 启动httpbin容器，并把容器中端口80映射到宿主机的80端口，启动后在后台运行
 $ docker run -p 80:80 --name httpbin  -d kennethreitz/httpbin                                                                                                                 
 722e3a9c5338ad335a99d5b1d5882156367a1b9cad7cd13ece331dcafbd0e772
@@ -472,7 +472,7 @@ CONTAINER ID        IMAGE                  COMMAND                  CREATED     
 
 - 发送GET请求
 
-```shell
+```sh
 $ http localhost/get
 $ http GET localhost/get
 $ http http://localhost/get
@@ -484,7 +484,7 @@ $ http :/get
 
 - 发送POST请求
 
-```shell
+```sh
 $ $ http POST :/post name='http ie'           
 HTTP/1.1 200 OK
 Access-Control-Allow-Credentials: true
@@ -523,7 +523,7 @@ Server: gunicorn/19.9.0
 
 - 发送PUT请求
 
-```shell
+```sh
 $ http PUT :/put X-API-Token:123 name=John                                                                                                                   [23:17:17]
 HTTP/1.1 200 OK
 Access-Control-Allow-Credentials: true
@@ -561,7 +561,7 @@ Server: gunicorn/19.9.0
 
 如从github上面下载用户图像：
 
-```shell
+```sh
 $ http --download https://avatars0.githubusercontent.com/u/18098773\?s\=40\&u\=399293cf8c7a5843e96204c625a85a8eddd3bc00\&v\=4
 HTTP/1.1 200 OK
 Accept-Ranges: bytes

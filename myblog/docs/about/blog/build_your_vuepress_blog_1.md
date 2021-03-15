@@ -220,7 +220,7 @@ leancloud中显示如下:
 
 ### 安装``vuepress-plugin-comment``插件
 
-```shell
+```sh
 yarn add vuepress-plugin-comment -D
 ```
 
@@ -405,7 +405,7 @@ secureinfo.js
 ```
 
 检查git查看忽略文件：
-```shell
+```sh
 $ git check-ignore -v config\secureinfo.js
 .gitignore:107:secureinfo.js    "config\\secureinfo.js"
 
@@ -416,7 +416,7 @@ $ git check-ignore -v config\secureinfo.js.txt
 
 同时，也可以使用``git status``命令来查看这两个文件是否被提交：
 
-```shell
+```sh
 $ git status config\secureinfo.js
 On branch master
 Your branch is up-to-date with 'origin/master'.
@@ -715,7 +715,7 @@ module.exports = {
 
 - 安装
 
-```shell
+```sh
 $ yarn add vuepress-plugin-auto-sidebar -D
 $ # npm i vuepress-plugin-auto-sidebar -D
 
@@ -745,7 +745,7 @@ $ echo $?
 
 在config目录下的`pluginConfig.js`中引入插件，引入后内容如下：
 
-```shell
+```sh
 $ cat pluginConfig.js
 const secureConf = require('./secureinfo.js');
 module.exports = {
@@ -767,7 +767,7 @@ module.exports = {
 - 移除`docs/.vuepress/config.js`配置的sidebar设置
 
 注释或删除第3行和第30行的`sidebarConf`和`sidebar`设置。
-```shell
+```sh
  cat .vuepress/config.js
 const pluginConf = require('../../config/pluginConfig.js');
 const navConf = require('../../config/navConfig.js');
@@ -866,7 +866,7 @@ Algolia DocSearch会发送一封使用邮件，里面有`apiKey`和`indexName`�
 
 我的配置文件内容如下：
 
-```shell
+```sh
 [root@hellogitlab conf.d]# cat vueblog.conf
 <VirtualHost 0.0.0.0:443>
     DocumentRoot "/var/www/html/vueblog"
@@ -889,7 +889,7 @@ Algolia DocSearch会发送一封使用邮件，里面有`apiKey`和`indexName`�
 
 可以参考腾讯的指导手册上面，自动跳转所有非443端口的链接：
 
-```shell
+```sh
 [root@hellogitlab conf.d]# cat http2https.conf
 <Directory "/var/www/html"> 
 # 新增
@@ -903,7 +903,7 @@ RewriteRule ^(.*)?$ https://%{SERVER_NAME}%{REQUEST_URI} [L,R]
 
 如果仅跳转80端口的请求到443端口，可以按如下方式配置：
 
-```shell {5}
+```sh {5}
 [root@hellogitlab conf.d]# cat http2https.conf
 <Directory "/var/www/html"> 
 # 新增
@@ -917,7 +917,7 @@ RewriteRule ^(.*)?$ https://%{SERVER_NAME}%{REQUEST_URI} [L,R]
 
 使用`httpd -t`检查配置是否正确：
 
-```shell
+```sh
 [root@hellogitlab conf.d]# httpd -t
 Syntax OK
 ```
@@ -926,7 +926,7 @@ Syntax OK
 
 ### 重启htttpd服务器
 
-```shell
+```sh
 [root@hellogitlab conf.d]# systemctl restart httpd
 ```
 
@@ -960,7 +960,7 @@ Syntax OK
 
 如原来的配置文件如下：
 
-```shell
+```sh
 [root@hellogitlab conf.d]# cat vueblog.conf
 <VirtualHost 0.0.0.0:443>
     DocumentRoot "/var/www/html/vueblog"
@@ -981,7 +981,7 @@ Syntax OK
 
 新的配置文件内容如下：
 
-```shell
+```sh
 [root@hellogitlab ~]$ ls /etc/httpd/ssl
 1_root_bundle.crt  2_hellogitlab.com.crt  3_hellogitlab.com.key
 [root@hellogitlab ~]# cat /etc/httpd/conf.d/vueblog.conf
@@ -1042,7 +1042,7 @@ Syntax OK
 由于国内下载GitHub代码太慢，借助码云进行一次中转，在码云上面创建一个相同的仓库[https://gitee.com/meizhaohui/vueblog](https://gitee.com/meizhaohui/vueblog)。
 ### 克隆代码
 
-```shell
+```sh
 [root@hellogitlab ~]# git clone https://gitee.com/meizhaohui/vueblog.git
 正克隆到 'mayun'...
 remote: Enumerating objects: 411, done.
@@ -1055,12 +1055,12 @@ remote: Total 411 (delta 163), reused 411 (delta 163)
 可以看到国内下载码云上面的代码非常的快。
 
 ### 更新代码
-```shell
+```sh
 [root@hellogitlab ~]# pushd vueblog && git pull
 ```
 
 ### 安装插件
-```shell
+```sh
 [root@hellogitlab vueblog]# cd myblog
 [root@hellogitlab myblog]# yarn add vuepress-plugin-comment -D
 [root@hellogitlab myblog]# yarn add vuepress-plugin-auto-sidebar -D
@@ -1068,7 +1068,7 @@ remote: Total 411 (delta 163), reused 411 (delta 163)
 
 ### 修改配置文件`config/secureinfo.js`
 把'your_id'和'your_key'改成自己的。
-```shell
+```sh
 [root@hellogitlab myblog]# cat config/secureinfo.js
 module.exports = {
     leancloud_appId: 'your_id',
@@ -1077,7 +1077,7 @@ module.exports = {
 ```
 
 ### 尝试本地运行
-```shell
+```sh
 [root@hellogitlab myblog]# yarn docs:dev
 yarn run v1.21.1
 $ vuepress dev docs
@@ -1112,7 +1112,7 @@ success [00:22:42] Build c7597a finished in 190 ms! ( http://localhost:82/ )
 ### 构建目标文件
 
 开始构建目标文件。
-```shell
+```sh
 [root@hellogitlab myblog]# yarn docs:build
 yarn run v1.21.1
 $ vuepress build docs
@@ -1141,13 +1141,13 @@ Done in 33.20s
 ```
 
 ### 复制目标文件到`/var/www/html/vueblog/`目录下
-```shell
+```sh
 [root@hellogitlab myblog]# unalias cp 
 [root@hellogitlab myblog]# cp -rf docs/.vueblog/dist/* /var/www/html/vueblog/
 ```
 
 ### 重启httpd服务
-```shell
+```sh
 [root@hellogitlab myblog]# systemctl restart httpd && systemctl status httpd
 ● httpd.service - The Apache HTTP Server
    Loaded: loaded (/usr/lib/systemd/system/httpd.service; enabled; vendor preset: disabled)
@@ -1180,14 +1180,14 @@ Done in 33.20s
 
 参考： [GitHub仓库快速导入Gitee及同步更新](https://gitee.com/help/articles/4284#article-header0)
 - 查看远程库列表
-```shell
+```sh
 $ git remote -v
 origin	https://github.com/meizhaohui/vueblog.git (fetch)
 origin	https://github.com/meizhaohui/vueblog.git (push)
 ```
 
 - 将码云远程库添加到远程库列表中
-```shell
+```sh
 $ git remote add gitee git@gitee.com:meizhaohui/vueblog.git
 $ git remote -v
 gitee	git@gitee.com:meizhaohui/vueblog.git (fetch)
@@ -1197,14 +1197,14 @@ origin	https://github.com/meizhaohui/vueblog.git (push)
 ```
 
 - 从 GitHub 上拉取最新代码到本地
-```shell
+```sh
 $ git pull origin master
 Already up to date.
 ```
 
 - 推送本地最新代码到 Gitee 上
 
-```shell
+```sh
 $ git pull origin master
 The authenticity of host 'gitee.com (212.64.62.174)' can't be established.
 ECDSA key fingerprint is SHA256:FQGC9Kn/eye1W8icdBgrQp+KkGYoFgbVr17bmjey0Wc.
@@ -1216,7 +1216,7 @@ Everything up-to-date
 
 - 提交最新的修改到GitHub和码云上
 
-```shell
+```sh
 $ git status
 On branch master
 Your branch is up to date with 'origin/master'.
@@ -1283,7 +1283,7 @@ Travis CI在自动部署的时候，需要push内容到仓库的某个分支，�
 
 ### 安装travis
 
-```shell
+```sh
 # 检查依赖，需要Ruby 2.0以上版本
 $ ruby -v
 ruby 2.7.0p0 (2019-12-25 revision 647ee6f091) [x86_64-darwin19]
@@ -1343,7 +1343,7 @@ run `/usr/local/bin//travis help COMMAND` for more infos
 
 ### 切换到项目目录再登陆
 
-```shell
+```sh
 # 可以通过用户名密码登陆
 $ travis login
 We need your GitHub login to identify you.
@@ -1387,7 +1387,7 @@ Successfully logged out!
 
 ### 加密关键信息
 
-```shell
+```sh
 travis encrypt DEPLOY_USER =  "meizhaohui" --add
 travis encrypt DEPLOY_PASSWORD = "mzh6" --add
 travis encrypt DEPLOY_DOMAIN = "hellogitlab.com" --add

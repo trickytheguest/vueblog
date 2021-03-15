@@ -2402,7 +2402,7 @@ linux下安装Memcached 参见[https://www.runoob.com/memcached/window-install-m
 
 查看memcached的帮助信息:
 
-```shell
+```sh
 [root@localhost ~]# memcached -h
 memcached 1.4.15
 -p <num>      TCP port number to listen on (default: 11211)
@@ -2466,7 +2466,7 @@ memcached 1.4.15
 
 启动memcached:
 
-```shell
+```sh
 [root@localhost ~]# memcached -u root -p 11211 -m 64m -d
 ```
 
@@ -2480,7 +2480,7 @@ memcached 1.4.15
 
 安装telnet工具:
 
-```shell
+```sh
 [root@localhost ~]# yum install telnet-server telnet -y
 ```
 
@@ -2488,7 +2488,7 @@ memcached 1.4.15
 
 连接memcached服务:
 
-```shell
+```sh
 [root@localhost ~]# telnet 127.0.0.1 11211
 Trying 127.0.0.1...
 Connected to 127.0.0.1.
@@ -2499,7 +2499,7 @@ Escape character is '^]'.
 
 或者HOST使用localhost也可以:
 
-```shell
+```sh
 [root@localhost ~]# telnet localhost 11211
 Trying ::1...
 Connected to localhost.
@@ -2515,7 +2515,7 @@ Escape character is '^]'.
 
 语法如下:
 
-```shell
+```sh
 set key flags exptime bytes [noreply] 
 value 
 
@@ -2870,7 +2870,7 @@ value: 键值 key-value 结构中的 value，存储的值，始终位于第二�
 
 首先在server端防火墙放行11211端口:
 
-```shell
+```sh
 [root@server ~]# firewall-cmd --list-all
 public (active)
   target: default
@@ -2908,7 +2908,7 @@ public (active)
 
 在server端使用telnet连接memcached服务器，并设置一个firstkey键，值为"hello,memcached":
 
-```shell
+```sh
 [root@server ~]# telnet localhost 11211
 Trying ::1...
 Connected to localhost.
@@ -2924,7 +2924,7 @@ END
 
 在node1节点使用telnet连接memcached服务器，并获取firstkey键值:
 
-```shell
+```sh
 [root@node1 ~]# telnet 192.168.56.11 11211
 Trying 192.168.56.11...
 Connected to 192.168.56.11.
@@ -2937,7 +2937,7 @@ END
 
 在node2节点使用telnet连接memcached服务器，并获取firstkey键值:
 
-```shell
+```sh
 [root@node2 ~]# telnet 192.168.56.11 11211
 Trying 192.168.56.11...
 Connected to 192.168.56.11.
@@ -2954,7 +2954,7 @@ END
 
 先在node1节点上面追加:
 
-```shell
+```sh
 append firstkey 0 900 1
 !
 STORED
@@ -2987,7 +2987,7 @@ END
 
 在server端使用telnet连接memcached服务器，并设置一个firstkey键，值为"Hello"，设置secondkey键，值为"hi":
 
-```shell
+```sh
 [root@server ~]# telnet localhost 11211
 Trying ::1...
 Connected to localhost.
@@ -3010,7 +3010,7 @@ END
 
 在node1节点使用telnet连接memcached服务器，并获取firstkey键和secondkey键的cas值:
 
-```shell
+```sh
 [root@node1 ~]# telnet 192.168.56.11 11211
 Trying 192.168.56.11...
 Connected to 192.168.56.11.
@@ -3025,7 +3025,7 @@ END
 
 在node2节点使用telnet连接memcached服务器，并获取firstkey键和secondkey键的cas值:
 
-```shell
+```sh
 [root@node2 ~]# telnet 192.168.56.11 11211
 Trying 192.168.56.11...
 Connected to 192.168.56.11.
@@ -3082,7 +3082,7 @@ END
 
 仍然在node2上面操作，返回`ERROR`或`NOT_FOUND`的情况:
 
-```shell
+```sh
 cas thirdkey 0 3600 5     <-- 说明: 语法错误，未指定CAS版本号，返回"ERROR"
 ERROR
 cas thirdkey 0 3600 5 25   <-- 说明: thirdkey不存在，找不到CAS版本号是25的thirdkey，返回"NOT_FOUND"
@@ -3330,7 +3330,7 @@ stats
 ```
 获取统计信息:
 
-```shell
+```sh
 [root@server ~]# telnet localhost 11211
 Trying ::1...
 Connected to localhost.
@@ -3451,7 +3451,7 @@ END
 
 安装`python-memcached`包:
 
-```shell
+```sh
 [root@server ~]# pip install python-memcached
 Looking in indexes: https://mirrors.aliyun.com/pypi/simple/
 Collecting python-memcached
@@ -3664,7 +3664,7 @@ Process finished with exit code 0
 
 在三个节点上面查看键值对信息:
 
-```shell
+```sh
 node1  '192.168.56.11:11211':
 gets num0 num1 num2 num3 num4 num5 num6 num7 num8 num9 num10 num11 num12 num13 num14 num15 num16 num17 num18 num19 num20 num21 num22 num23 num24 num25 num26 num27 num28 num29
 VALUE num1 2 1 283
@@ -3694,7 +3694,7 @@ END
 
 可以发现在node1上存储了11个键值对
 
-```shell
+```sh
 node2  '192.168.56.12:11211':
 gets num0 num1 num2 num3 num4 num5 num6 num7 num8 num9 num10 num11 num12 num13 num14 num15 num16 num17 num18 num19 num20 num21 num22 num23 num24 num25 num26 num27 num28 num29
 VALUE num7 2 2 130
@@ -3714,7 +3714,7 @@ END
 
 可以发现在node2上存储了6个键值对
 
-```shell
+```sh
 node3  '192.168.56.13:11211'
 gets num0 num1 num2 num3 num4 num5 num6 num7 num8 num9 num10 num11 num12 num13 num14 num15 num16 num17 num18 num19 num20 num21 num22 num23 num24 num25 num26 num27 num28 num29
 VALUE num0 2 1 142
@@ -3787,7 +3787,7 @@ if __name__ == '__main__':
 
 在三个节点上面查看键值对信息:
 
-```shell
+```sh
 node1  '192.168.56.11:11211':
 gets num0 num1 num2 num3 num4 num5 num6 num7 num8 num9 num10 num11 num12 num13 num14 num15 num16 num17 num18 num19 num20 num21 num22 num23 num24 num25 num26 num27 num28 num29
 VALUE num1 2 1 305
@@ -3833,7 +3833,7 @@ END
 
 可以发现在node1上存储了19个键值对
 
-```shell
+```sh
 node2  '192.168.56.12:11211':
 gets num0 num1 num2 num3 num4 num5 num6 num7 num8 num9 num10 num11 num12 num13 num14 num15 num16 num17 num18 num19 num20 num21 num22 num23 num24 num25 num26 num27 num28 num29
 VALUE num0 2 1 142
@@ -3851,7 +3851,7 @@ END
 
 可以发现在node2上存储了5个键值对
 
-```shell
+```sh
 node3  '192.168.56.13:11211':
 gets num0 num1 num2 num3 num4 num5 num6 num7 num8 num9 num10 num11 num12 num13 num14 num15 num16 num17 num18 num19 num20 num21 num22 num23 num24 num25 num26 num27 num28 num29
 VALUE num5 2 2 168
@@ -3891,7 +3891,7 @@ END
 
 下载:
 
-```shell
+```sh
 [root@server ~]# wget http://download.redis.io/redis-stable.tar.gz
 --2019-06-18 22:20:19--  http://download.redis.io/redis-stable.tar.gz
 Resolving download.redis.io (download.redis.io)... 109.74.203.151
@@ -3907,18 +3907,18 @@ Saving to: ‘redis-stable.tar.gz.1’
 
 解压:
 
-```shell
+```sh
 [root@server ~]# tar -zxvf redis-stable.tar.gz
 ```
 
 切换目录:
 
-```shell
+```sh
 [root@server ~]# cd redis-stable
 ```
 
 编译:
-```shell
+```sh
 [root@server redis-stable]# make
 [root@server redis-stable]# echo $?
 0
@@ -3926,7 +3926,7 @@ Saving to: ‘redis-stable.tar.gz.1’
 
 安装:
 
-```shell
+```sh
 [root@server redis-stable]# make install
 [root@server redis-stable]# echo $?
 0
@@ -3936,7 +3936,7 @@ Saving to: ‘redis-stable.tar.gz.1’
 
 检查redis命令:
 
-```shell
+```sh
 [root@server redis-stable]# redis- 连按两次tab
 redis-benchmark  redis-check-aof  redis-check-rdb  redis-cli        redis-sentinel   redis-server  
 [root@server redis-stable]# whereis redis-server 
@@ -3963,7 +3963,7 @@ lrwxrwxrwx. 1 root root   12 Jun 18 22:28 /usr/local/bin/redis-sentinel -> redis
 
 最简单的启动Redis的方式是直接运行redis-server命令:
 
-```shell
+```sh
 [root@server ~]# redis-server 
 17608:C 18 Jun 2019 22:38:37.232 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
 17608:C 18 Jun 2019 22:38:37.232 # Redis version=5.0.5, bits=64, commit=00000000, modified=0, pid=17608, just started
@@ -4001,7 +4001,7 @@ lrwxrwxrwx. 1 root root   12 Jun 18 22:28 /usr/local/bin/redis-sentinel -> redis
 
 在SecureCRT克隆一个Redis-server的新的窗口，并使用redis-cli命令与Redis通信，简单的运行 ``ping`` 看是否能ping通:
 
-```shell
+```sh
 [root@server ~]# redis-cli ping
 PONG
 [root@server ~]# 
@@ -4015,7 +4015,7 @@ PONG
 
 查看`redis-cli`帮助信息:
 
-```shell
+```sh
 127.0.0.1:6379> help
 redis-cli 5.0.5
 To get help about Redis commands type:
@@ -4032,7 +4032,7 @@ Set your preferences in ~/.redisclirc
 
 关闭远程的Redis服务器:
 
-```shell
+```sh
 127.0.0.1:6379> help shutdown
 
   SHUTDOWN [NOSAVE|SAVE]
@@ -4047,7 +4047,7 @@ not connected> quit
 
 在Redis服务器端的前台可以看到打印的消息如下:
 
-```shell
+```sh
 17608:M 18 Jun 2019 22:51:39.238 # User requested shutdown...
 17608:M 18 Jun 2019 22:51:39.238 * Saving the final RDB snapshot before exiting.
 17608:M 18 Jun 2019 22:51:39.576 * DB saved on disk
@@ -4065,7 +4065,7 @@ not connected> quit
 
 将源文件中的`redis.conf`复制到`/etc`目录下:
 
-```shell
+```sh
 [root@server ~]# cp ~/redis-stable/redis.conf /etc/redis.conf
 [root@server ~]# ls -lah /etc/redis.conf 
 -rw-r--r--. 1 root root 61K Jun 18 22:57 /etc/redis.conf
@@ -4075,7 +4075,7 @@ not connected> quit
 
 修改配置文件，将`daemonize no`修改为`daemonize yes`:
 
-```shell
+```sh
 [root@server ~]# sed -i '136s/daemonize no/daemonize yes/g' /etc/redis.conf 
 [root@server ~]# cat -n /etc/redis.conf|sed -n '134,136p'
    134  # By default Redis does not run as a daemon. Use 'yes' if you need it.
@@ -4086,7 +4086,7 @@ not connected> quit
 
 启动Redis时指定配置文件:
 
-```shell
+```sh
 [root@server ~]# redis-server /etc/redis.conf
 17750:C 18 Jun 2019 23:03:37.223 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
 17750:C 18 Jun 2019 23:03:37.223 # Redis version=5.0.5, bits=64, commit=00000000, modified=0, pid=17750, just started
@@ -4117,7 +4117,7 @@ root     17766 13228  0 23:07 pts/0    00:00:00 grep --color=auto redis
 
 我们配置一下`/usr/lib/systemd/system/redis.service`，其内容如下:
 
-```shell
+```sh
 [root@server ~]# cat /usr/lib/systemd/system/redis.service
 [Unit]
 Description=Redis Server Manager
@@ -4143,7 +4143,7 @@ WantedBy=multi-user.target
 
 配置一下 ``/etc/redis.conf`` 设置一下 ``logfile`` 目录，并且创建目录 ``/var/log/redis/`` :
 
-```shell
+```sh
 [root@server ~]# cat -n /etc/redis.conf|sed -n '168,172p'
    168  # Specify the log file name. Also the empty string can be used to force
    169  # Redis to log on the standard output. Note that if you use standard
@@ -4155,13 +4155,13 @@ WantedBy=multi-user.target
 
 重新启动systemctl:
 
-```shell
+```sh
 [root@server ~]# systemctl daemon-reload
 ```
 
 测试Redis的启动、查看状态、停止、重启等:
 
-```shell
+```sh
 [root@server ~]# systemctl daemon-reload
 # 说明：启动Redis服务
 [root@server ~]# systemctl start redis
@@ -4237,14 +4237,14 @@ root     13956 13280  0 22:16 pts/0    00:00:00 grep --color=auto redis
 
 将Redis服务加入开机启动:
 
-```shell
+```sh
 [root@server ~]# systemctl enable redis
 Created symlink from /etc/systemd/system/multi-user.target.wants/redis.service to /usr/lib/systemd/system/redis.service.
 ```
 
 是否开机自启:
 
-```shell
+```sh
 [root@server ~]# systemctl is-enabled redis
 enabled
 ```
@@ -4254,14 +4254,14 @@ enabled
 
 创建Redis缓存文件目录 ``/var/redis-data`` :
 
-```shell
+```sh
 [root@server ~]# mkdir -p /var/redis-data
 [root@server ~]# ls -lah /var/redis-data/
 ```
 
 下面介绍几个比较重要的配置:
 
-```shell
+```sh
 # 设置客户端连接时的超时时间，单位为秒。当客户端在这段时间内没有发出任何指令，那么关闭该连接
 # Close the connection after a client is idle for N seconds (0 to disable)
 timeout 300
@@ -4383,7 +4383,7 @@ maxclients 128
 
 测试Redis是否保存数据到磁盘，先重启一下Redis服务，再写入数据:
 
-```shell
+```sh
 [root@server ~]# systemctl restart redis
 [root@server ~]# redis-cli 
 127.0.0.1:6379> ping
@@ -4400,7 +4400,7 @@ OK
 
 查看 ``/var/redis-data/`` 目录，发现已经写入数据:
 
-```shell
+```sh
 [root@server ~]# ls -lah /var/redis-data/
 total 8.0K
 drwxr-xr-x.  2 root root   22 Jun 19 23:27 .
@@ -4410,7 +4410,7 @@ drwxr-xr-x. 21 root root 4.0K Jun 19 22:36 ..
 
 为了让远程能够访问Redis服务器，可以防火墙开放`6379`端口:
 
-```shell
+```sh
 [root@server ~]# firewall-cmd --permanent --add-port=6379/tcp
 success
 [root@server ~]# firewall-cmd --reload
@@ -4483,7 +4483,7 @@ ConnectionError: Error 10061 connecting to 192.168.56.103:6379. 由于目标计�
 
 由于Redis增加了 ``protected-mode`` 保护机制，并且通过 ``bind 127.0.0.1`` 来限制了ip访问，默认为`127.0.0.1`, 查看 ``/ect/redis.conf`` 配置文件内容:
 
-```shell
+```sh
 66 # IF YOU ARE SURE YOU WANT YOUR INSTANCE TO LISTEN TO ALL THE INTERFACES
 67 # JUST COMMENT THE FOLLOWING LINE.
 68 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -4504,7 +4504,7 @@ ConnectionError: Error 10061 connecting to 192.168.56.103:6379. 由于目标计�
 
 为了保证Redis服务器的安全，我们给远程访问设置一个访问密码，通过`requirepass`设置，建议设置一个非常强壮的密码，我这边测试，使用密码`123456`:
 
-```shell
+```sh
 [root@hellolinux ~]# cp /etc/redis.conf /etc/redis.conf.bak
 [root@hellolinux ~]# sed -i 's/^# requirepass foobared/requirepass 123456/g' /etc/redis.conf
 [root@hellolinux ~]# sed -i 's/^bind 127.0.0.1/#bind 127.0.0.1/g' /etc/redis.conf
@@ -4524,7 +4524,7 @@ ConnectionError: Error 10061 connecting to 192.168.56.103:6379. 由于目标计�
 
 重启Redis服务:
 
-```shell
+```sh
 [root@hellolinux ~]# systemctl restart redis
 [root@hellolinux ~]# systemctl status redis
 ● redis.service - Redis Server Manager
@@ -4977,7 +4977,7 @@ Type:      method
 
 可以看出插入数据的前后相对 ``refvalue`` 就是列表的前后顺序，我们在Redis服务器上面也可以看到列表数据:
 
-```shell
+```sh
 [root@hellolinux ~]# redis-cli -a 123456 2>/dev/null
 127.0.0.1:6379> ping
 PONG
@@ -5018,7 +5018,7 @@ True
 
 此时在Redis服务器上面也可以通过 ``LRANGE`` 看到列表数据:
 
-```shell
+```sh
 127.0.0.1:6379> LRANGE rlist 0 -1
 1) "three"
 2) "lset"
@@ -5060,7 +5060,7 @@ b'after_2'
 
 此时在Redis服务器上面也可以通过 ``LINDEX`` 看到列表数据:
 
-```shell
+```sh
 127.0.0.1:6379> LINDEX rlist 1
 "lset"
 127.0.0.1:6379> LINDEX rlist 0
@@ -5089,7 +5089,7 @@ Type:      method
 
 此时在Redis服务器上面也可以通过 ``LLEN`` 看到列表的长度:
 
-```shell
+```sh
 127.0.0.1:6379> LLEN rlist
 (integer) 5
 ```
@@ -5114,7 +5114,7 @@ b'three'
 
 此时在Redis服务器上面查看数据，可以发现头部的第一个元素"three"已经被弹出，即删除掉了:
 
-```shell
+```sh
 127.0.0.1:6379> LRANGE rlist 0 -1
 1) "lset"
 2) "two"

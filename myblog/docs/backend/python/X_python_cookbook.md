@@ -26,7 +26,7 @@ Type "help", "copyright", "credits" or "license" for more information.
 
 下面的统计成绩平均分的方法，去掉第一个值和最后一个值，并求值就用了这种方法。
 
-```python3
+```python
 >>> def drop_first_last(grades):
 ...     first, *middle, last = grades
 ...     return sum(middle)/len(middle)
