@@ -126,3 +126,9 @@ $ tmux ls  # 查看当前存在的会话
 deploy: 1 windows (created Wed Mar 17 06:53:20 2021)
 ```
 
+ 
+
+
+
+
+

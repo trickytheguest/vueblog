@@ -1452,8 +1452,56 @@ travis网站上面也可以看到构建过程：
 
 
 
-
 ## 增加文章
+
+增加各种文章。
+
+
+
+## 自动部署项目
+
+编写自动部署脚本:
+
+```sh
+
+##################################################
+#      Filename: auto_deploy.sh
+#        Author: Zhaohui Mei<mzh.whut@gmail.com>
+#   Description: 自动检查git远程仓库是否有更新，有更新则自动部署
+#   Create Time: 2021-03-17 07:26:10
+# Last Modified: 2021-03-17 07:28:13
+##################################################
+a
+function auto_deploy(){
+    pushd ~/vueblog && pwd
+    current=$( git log --pretty=oneline -n 1|head )
+    git pull
+    new=$( git log --pretty=oneline -n 1|head )
+    if [[ "${current}" != "${new}" ]]; then
+        echo "远程仓库有更新，开始自动部署"
+        sh deploy.sh && echo "自动部署完成！"
+    else
+        echo "远程仓库没有更新，不进行自动部署"
+    fi
+    popd
+}
+
+auto_deploy
+
+[root@hellogitlab ~]#
+```
+
+再配置一个定时任务：
+
+```sh
+*/30 * * * * sh ~/auto_deploy.sh >> ~/auto_deploy.log
+```
+
+这样自动部署项目的工作就完成了！
+
+
+
+
 
 参考：
 
