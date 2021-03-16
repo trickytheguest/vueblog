@@ -87,4 +87,42 @@ putty官网介绍`PuTTY: a free SSH and Telnet client`即是一个免费的SSH�
 
 官网地址[https://www.chiark.greenend.org.uk/~sgtatham/putty/](https://www.chiark.greenend.org.uk/~sgtatham/putty/)
 
+## 10. 终端利用工具tmux
+
+Tmux工具可以使SSH连接会话与窗口解绑，通过tmux工具可以使窗口关闭时，会话仍然不终止。下次连接时可以继续该会话。
+
+详细可参考 阮一峰的网络日志 Tmux 使用教程http://www.ruanyifeng.com/blog/2019/10/tmux.html 
+
+其常用命令如下：
+
+- `tmux` 启动一个tmux窗口。此时按`ctrl+b d`或输入命令`tmux detach`将当前会话与窗口分离。
+- `tmux ls`可以查看所有会话。
+- `tmux attach -t ID/NAME`或`tmux a -t ID/NAME`通过会话id或name名称接入会话。
+- `tmux kill-session -t ID/NAME`通过指定会话id或name名称来杀死会话。
+- `tmux new -s session_name`创建会话时指定会话名称。
+- `tmux rename-session -t ID/NAME new-name`或`tmux rename -t ID/NAME new-name`重命名会话名称。
+
+使用示例：
+
+```sh
+$ tmux   # 启动一个会话，并按快捷键ctrl + b  d 分离会话与窗口
+[detached (from session 0)]
+$ tmux ls  # 查看当前存在的会话
+0: 1 windows (created Wed Mar 17 06:45:51 2021)
+$ tmux a -t 0  # 重新连接到会话，进入到会话中
+[detached (from session 0)]
+$ tmux rename -t 0 test  # 将ID为0的会话重命名为test
+$ tmux ls  # 列出当前存在的会话，可以看到会话名称已经变成test了，但会话的创建时间并没有更新
+test: 1 windows (created Wed Mar 17 06:45:51 2021)
+$ tmux a -t test  # 接入到test会话
+[detached (from session test)]
+$ tmux new -s deploy  # 创建一个名称为deploy的会话
+[detached (from session deploy)]
+$ tmux ls  # 查看当前存在的会话
+deploy: 1 windows (created Wed Mar 17 06:53:20 2021)
+test: 1 windows (created Wed Mar 17 06:45:51 2021)
+$ tmux kill-session -t test  # 杀死test会话
+$ tmux ls  # 查看当前存在的会话
+deploy: 1 windows (created Wed Mar 17 06:53:20 2021)
+```
 
