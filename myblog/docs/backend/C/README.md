@@ -2207,6 +2207,7 @@ $
 - 移位操作符`<<`左移、`>>`右移分别用于将运算的左操作数左移与右移，移动的位数则由右操作数指定(右操作数的值必须是非负数)。
 - 一元运算符`~`用于求整数的二进制反码，即将操作数中各二进制位上的1变成0，0变成1。
 - `+=`运算符称为赋值运算符，如`i += 2`等价于 `i = i + 2`。
+- 逗号运算符`,`是C语言中优先级最低的运算符。在`for`循环中经常用到它。被逗号分隔的一对表达式半按照从左到右的顺序进行求值。
 
 #### 二元运算符的简单使用
 
@@ -3297,7 +3298,12 @@ int main(void)
 {
     int v[] = {49, 38, 65, 97, 76, 13, 27, 49, 55, 4};
     int n   = 10;
+    printf("排序前数据:\n");
+    for (int i = 0; i < 10; i++)
+        printf("%2d  ", v[i]);
+    printf("\n");
     shellsort(v, n);
+    printf("排序后数据:\n");
     for (int i = 0; i < 10; i++)
         printf("%2d  ", v[i]);
     printf("\n");
@@ -3312,14 +3318,72 @@ $
 
 ```sh
 $ cc shellsort.c
-$ ./shellsort.out
+$ shellsort.out
+排序前数据:
+49  38  65  97  76  13  27  49  55   4
+排序后数据:
  4  13  27  38  49  49  55  65  76  97
-$
 ```
 
 可见排序结果与 https://baike.baidu.com/item/%E5%B8%8C%E5%B0%94%E6%8E%92%E5%BA%8F 中的示例相同。
 
 
+
+
+
+使用`for`循环结合`,`逗号运算符来对字符串元素进行反转。
+
+```c
+$ cat string_reverse.c
+/*
+ *      Filename: string_reverse.c
+ *        Author: Zhaohui Mei<mzh.whut@gmail.com>
+ *   Description: 反转字符串中各字符的位置
+ *   Create Time: 2021-03-16 20:04:15
+ * Last Modified: 2021-03-16 22:25:36
+ */
+
+#include <stdio.h>
+#include <string.h>
+
+int reverse(char s[])
+{
+    int c;    // 存储字符串单个字符
+    int i;    // 存储从前到后操作元素的序号
+    int j;    // 存储从后到前操作元素的序号
+
+    for (i = 0, j = strlen(s) - 1; i < j; i++, j--)
+        c = s[i], s[i] = s[j], s[j] = c;
+
+    return 0;
+}
+
+// 主函数，argc表示参数个数，argv存储各参数值
+int main(int argc, char *argv[])
+{
+    int i;    // 参数索引号
+    for (i = 1; i < argc; i++) {
+        reverse(argv[i]);
+        printf("%s\n", argv[i]);
+    }
+
+    return 0;
+}
+```
+
+编译并运行：
+
+```sh
+$ cc string_reverse.c
+$ string_reverse.out 123456 abcdefg ABCD
+654321
+gfedcba
+DCBA
+$ string_reverse.out "123456 abcdefg ABCD"
+DCBA gfedcba 654321
+```
+
+可以看到各参数能够正常反转了！
 
 
 
