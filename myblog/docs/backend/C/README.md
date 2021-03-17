@@ -3385,6 +3385,176 @@ DCBA gfedcba 654321
 
 可以看到各参数能够正常反转了！
 
+练习3-3，编写函数expand(s1,s2)，对字符串速记符号进行扩展。
+
+编写函数 expand(s1, s2)，将字符串s1 中类似于a-z 一类的速记符号在字符串s2中扩展为等价的完整列表abc…xyz。该函数可以处理大小写字母和数字。
+参考：https://www.freesion.com/article/18621066663/
+在原始代码的基础上进行了重构，并增加了判断。
+原始代码：
+```c
+#include<stdio.h>
+
+void expand(char s1[],char s2[]);
+
+int main(){
+    char s1[20]="-a-f0-9S-X--";
+    char s2[100]="";
+    expand(s1,s2);
+    for(int i=0;s2[i]!='\0';++i){
+        printf("%c",s2[i]);
+    }
+    return 0;
+}
+
+void expand(char s1[],char s2[]){
+    int i;
+    int j=0;
+    for(i=0;s1[i]!='\0';++i){
+        if(s1[i]=='-'){
+            if(i==0){
+                s2[j++]='-';
+            }else if(s1[i-1]>='a'&&s1[i-1]<='z'&&s1[i+1]>='a'&&s1[i+1]<='z'){
+                for(char k=s1[i-1]+1;k<s1[i+1];++k){
+                    s2[j++]=k;
+                }
+            }else if(s1[i-1]>='A'&&s1[i-1]<='Z'&&s1[i+1]>='A'&&s1[i+1]<='Z'){
+                for(char k=s1[i-1]+1;k<s1[i+1];++k){
+                    s2[j++]=k;
+                }
+            }else if(s1[i-1]>='0'&&s1[i-1]<='9'&&s1[i+1]>='0'&&s1[i+1]<='9'){
+                for(char k=s1[i-1]+1;k<s1[i+1];++k){
+                    s2[j++]=k;
+                }
+            }else{
+                s2[j++]='-';
+            }
+        }else{
+            s2[j++]=s1[i];
+        }
+    }
+    s2[j]='\0';
+}
+```
+
+优化后的代码：
+
+```c
+$ cat string_expand.c
+/*
+ *      Filename: string_expand.c
+ *        Author: Zhaohui Mei<mzh.whut@gmail.com>
+ *   Description: 对字符串速记符-进行扩展
+ *   Create Time: 2021-03-17 22:33:14
+ * Last Modified: 2021-03-17 23:46:59
+ */
+
+#include <stdio.h>
+#include <string.h>
+
+#define MAX 100    // 定义最长字符数
+
+// 扩展函数
+void expand(char s1[], char s2[]);
+// 打印输出数组
+int print_array(char s[]);
+int is_lower(char c);
+int is_upper(char c);
+int is_number(char c);
+
+int main(int argc, char *argv[])
+{
+    int i;    // 参数索引号
+    for (i = 1; i < argc; i++) {
+        // char s1[MAX] = "a-f1-8A-M -a-z a-b-c";
+        char s1[MAX];
+        strcpy(s1, argv[i]);    // string.h头文件中定义的函数，将参数值赋值给字符数组
+        char s2[100] = "";
+        expand(s1, s2);
+        print_array(s2);
+    }
+
+    return 0;
+}
+
+int print_array(char s[])
+{
+    for (int i = 0; s[i] != '\0'; ++i) {
+        printf("%c", s[i]);
+    }
+    printf("\n");
+
+    return 0;
+}
+
+int is_lower(char c)
+{
+    if (c >= 'a' && c <= 'z')
+        return 1;
+    return 0;
+}
+
+int is_upper(char c)
+{
+    if (c >= 'A' && c <= 'Z')
+        return 1;
+    return 0;
+}
+
+int is_number(char c)
+{
+    if (c >= '0' && c <= '9')
+        return 1;
+    return 0;
+}
+
+void expand(char s1[], char s2[])
+{
+    int i;
+    int j = 0;
+    for (i = 0; s1[i] != '\0'; ++i) {
+        if (s1[i] == '-') {
+            if (i == 0) {
+                s2[j++] = '-';
+            } else if (((is_lower(s1[i - 1]) && is_lower(s1[i + 1])) ||
+                        (is_upper(s1[i - 1]) && is_upper(s1[i + 1])) ||
+                        (is_number(s1[i - 1]) && is_number(s1[i + 1]))) &&
+                       s1[i - 1] < s1[i + 1]) {
+                for (char k = s1[i - 1] + 1; k < s1[i + 1]; ++k) {
+                    s2[j++] = k;
+                }
+            } else {
+                s2[j++] = '-';
+            }
+        } else {
+            s2[j++] = s1[i];
+        }
+    }
+
+    s2[j] = '\0';
+}
+
+```
+
+编译并运行：
+
+```sh
+$ cc string_expand.c
+$ string_expand.out "-a-f0-9S-X--"
+-abcdef0123456789STUVWX--
+$ string_expand.out 'a-z z-a 0-9 9-6'
+abcdefghijklmnopqrstuvwxyz z-a 0123456789 9-6
+$ string_expand.out 'a-f' "0-8" "A-E"
+abcdef
+012345678
+ABCDE
+$ string_expand.out 'a-b-c' '-a-z' 'a-'
+abc
+-abcdefghijklmnopqrstuvwxyz
+a-
+```
+
+原始代码中，如果存在逆序的话，会将中间的标记符给删除掉。
+
 
 
 ### `do-while`循环语句
