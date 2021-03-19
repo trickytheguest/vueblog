@@ -3560,9 +3560,96 @@ a-
 ### `do-while`循环语句
 
 - `do-while`循环语句语法 `do {循环体} while (表达式);` 。
-- `do-while`循环语句首先执行循环体中的语句，然后再求while后面的表达式的值。
+- `do-while`循环语句首先执行循环体中的语句，然后再求`while`后面的表达式的值。
 - 如果表达式的值为真，则再次执行循环体；当圆括号中的条件测试为假时，循环结束。
 - `do-while`循环语句比`while`循环语句和`for`循环语句用得少得多。
+
+
+
+下面是使用`do-while`语句将数字转换成字符串。
+
+```c
+$ cat int_to_ascii.c
+/*
+ *      Filename: int_to_ascii.c
+ *        Author: Zhaohui Mei<mzh.whut@gmail.com>
+ *   Description: 数字转字符串
+ *   Create Time: 2021-03-19 06:57:29
+ * Last Modified: 2021-03-19 20:47:04
+ */
+
+#include <stdio.h>
+#include <string.h>
+
+/* 将字符串反转 */
+int reverse(char s[]);
+/* itoa函数，将数字转换为字符串并保存到s中 */
+// int itoa(int n, char s[]);
+void my_itoa(int n, char s[]);
+// 打印输出数组
+int print_array(char s[]);
+
+int main(int argc, char *argv[])
+{
+    int num  = -12345;
+    char s[] = "";
+    my_itoa(num, s);
+    print_array(s);
+
+    return 0;
+}
+
+int reverse(char s[])
+{
+    int c;    // 存储字符串单个字符
+    int i;    // 存储从前到后操作元素的序号
+    int j;    // 存储从后到前操作元素的序号
+
+    for (i = 0, j = strlen(s) - 1; i < j; i++, j--)
+        c = s[i], s[i] = s[j], s[j] = c;
+
+    return 0;
+}
+
+void my_itoa(int n, char s[])
+{
+    int i;       // 记录数组索引号
+    int sign;    // 记录符号位，是正数还是负数
+
+    if ((sign = n) < 0)    // 将n原始值赋值给sign
+        n = -n;            // 如果传入参数n是负数，则先将其转换成正数
+    i = 0;
+    do {                          /* 以反序生成数字 */
+        s[i++] = n % 10 + '0';    // 将最后一位数字放在数组s[i]元素中
+    } while ((n /= 10) > 0);      // 移除最后一位数字
+
+    if (sign < 0)
+        s[i++] = '-';
+    s[i] = '\0';
+
+    reverse(s);
+}
+
+int print_array(char s[])
+{
+    for (int i = 0; s[i] != '\0'; ++i) {
+        printf("%c", s[i]);
+    }
+    printf("\n");
+
+    return 0;
+}
+
+```
+编译并运行：
+```sh
+ cc int_to_ascii.c
+$ int_to_ascii.out
+-12345
+```
+
+
+
 
 ### `break`跳出循环语句
 
