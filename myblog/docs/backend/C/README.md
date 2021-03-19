@@ -3648,7 +3648,7 @@ $ int_to_ascii.out
 -12345
 ```
 
-
+此处可以看到正常输出是`-12345`，该字符串是由`print_array`函数输出的。说明正常的输出了数组字符串数字内容。
 
 
 ### `break`跳出循环语句
@@ -3707,5 +3707,84 @@ $ my_trim.o
 ```
 
 上述代码不知为何`printf("%s")`并没有显示字符串最后的空格。
+
+
+
+上面代码是以前写的，下面是更新后的代码。
+
+```c
+$ cat string_trim.c
+/*
+ *      Filename: string_trim.c
+ *        Author: Zhaohui Mei<mzh.whut@gmail.com>
+ *   Description: 移除字符串后面的空白字符
+ *   Create Time: 2021-03-19 21:48:16
+ * Last Modified: 2021-03-19 21:59:12
+ */
+#include <stdio.h>
+#include <string.h>
+
+#define MAX 1000    // 定义最长字符串
+
+/* trim函数，删除字符串尾部的空白符、制表符与换行符 */
+int trim(char s[])
+{
+    int n;
+
+    for (n = (int) strlen(s) - 1; n >= 0; n--) {
+        // 如果s[n]不是whitespace符,就跑出循环
+        if (s[n] != ' ' && s[n] != '\t' && s[n] != '\n')
+            break;
+    }
+    s[n + 1] = '\0';  // 将非whitespace符下一位标记为结束符
+
+    return n;
+}
+
+int print_array(char s[])
+{
+    for (int i = 0; s[i] != '\0'; ++i) {
+        printf("%c", s[i]);
+    }
+    printf("\n");
+
+    return 0;
+}
+
+int main(int argc, char *argv[])
+{
+    int i; // 记录参数序号
+    for (i=1; i<argc; i++)
+    {
+        char s[MAX];
+        strcpy(s, argv[i]);    // string.h头文件中定义的函数，将参数值赋值给字符数组
+        trim(s);
+        print_array(s);
+    }
+
+    return 0;
+}
+
+```
+
+编译并运行：
+
+```sh
+$ cc string_trim.c
+$ string_trim.out "abc     "
+abc
+$ string_trim.out "abc     "|wc -c
+       4
+$ echo 'abc'|wc
+       1       1       4
+$ string_trim.out $(echo -e "abc \n\n\t")
+abc
+$ string_trim.out $(echo -e "abc \n\n\t")|wc -c
+       4
+$ echo -e "abc \n\n\t"|wc -c
+       8
+```
+
+可以看出，程序已经将字符串结尾的whitespace符移除掉了！
 
 
