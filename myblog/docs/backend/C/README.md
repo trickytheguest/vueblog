@@ -3655,6 +3655,8 @@ $ int_to_ascii.out
 
 - 不通过循环头部或尾总的条件测试而跳出循环，有时是很方便的，`break`语句可用于从`for`、`while`、`do-while`等循环中提前退出。
 - `break`语句能使程序从`switch`语句或最内层循环中立即跳出。
+- `break`语句跳出当前循环。只能读一层。
+- `continue`语句只用于循环语句。用于使`for`、`while`或`do-while`语句开始下一次循环的执行。
 
 下面的示例移除字符串的最后的空白字符。
 
@@ -3786,5 +3788,79 @@ $ echo -e "abc \n\n\t"|wc -c
 ```
 
 可以看出，程序已经将字符串结尾的whitespace符移除掉了！
+
+### `goto`语句
+
+`goto`语句可以通过标记跳转到对应的位置。使用`goto`语句的程序段比不使用`goto`语句的程序段要难以理解和维护。建议尽可能不用`goto`语句。
+
+下面的示例会导致死循环的问题。
+
+```c
+$ cat test_goto.c
+/*
+ *      Filename: test_goto.c
+ *        Author: Zhaohui Mei<mzh.whut@gmail.com>
+ *   Description: 测试goto语句
+ *   Create Time: 2021-03-19 22:54:43
+ * Last Modified: 2021-03-19 22:56:07
+ */
+
+#include <stdio.h>
+
+/* 测试goto语句 */
+int test_goto(void)
+{
+    int i = 0;
+    goto begin;
+begin:
+    if (i == 1) {
+        i = 0;
+        printf("i = %d\n", i);
+    } else
+        goto end;
+
+end:
+    i = 1;
+    printf("i = %d\n", i);
+    goto begin;
+
+
+    return 0;
+}
+
+int main( )
+{
+    test_goto( );
+
+    return 0;
+}
+
+```
+
+编译并运行：
+
+```sh
+$ cc test_goto.c
+# 此处使用head截取输出的前10行，如果不用head的话，程序会无限循环下去，按ctrl+c取消
+$ test_goto.out|head
+i = 1
+i = 0
+i = 1
+i = 0
+i = 1
+i = 0
+i = 1
+i = 0
+i = 1
+i = 0
+```
+
+此时，可以看到，程序不停的输出`i = 0`或`i = 1`，不断循环。这就导致了一个死循环问题。
+
+
+
+所以尽量不要使用`goto`语句。
+
+
 
 
