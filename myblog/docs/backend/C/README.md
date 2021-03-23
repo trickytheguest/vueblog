@@ -3879,9 +3879,133 @@ i = 0
 
 - 一个程序可以保存在一个或多个源文件中。各个文件可以单独编译，并可以与库中已编译过的函数一起加载。
 
-- 如果函数参数声明得当，程序中以自动地进行适当的强制类型转换。
+- 如果函数参数声明得当，程序可以自动地进行适当的强制类型转换。
 
-  
+- 函数定义中的各构成部分都可以省略，最简单的函数如`dummy() {}`，该函数不执行任何操作也不返回任何值。
+
+- 如果函数定义中省略了返回值类型，则默认为`int`类型。
+
+- 程序可以看成是变量定义和函数定义的集合。
+
+- 函数之间的通信可以通过参数、函数返回值以及外部变量进行。
+
+- 函数在源文件中出现的次序可以是任意的。只要保证每一个函数不被分离到多个文件中，源程序就可以分成多个文件。
+
+- 使用`return`语句提供返回值。`return`语句后面可以跟任何表达式，如`return 表达式;`，在必要时，表达式将被转换为函数的返回值类型。表达式两边通常加一对圆括号，此处的括号是可选的。表达式是可选的。当`return`后面没有表达式时，函数将不向调用者返回值。
+
+- 调用函数可以忽略返回值。
+
+- 当被调用函数执行到最后的右花括号而结束执行时，控制权会返回给调用者。
+
+- 要避免函数在一个地方有返回值，在另外一个地方没有返回值的情况出现。
+
+下面的程序是模拟`grep`命令打印出包含指定模式的行打印出来。程序主要包含：`get_line`实现读取行。`strindex`实现判断行中是否包含指定的模式。
+
+示例代码如下:
+
+```c
+$ cat my_grep.c
+/*
+ *      Filename: my_grep.c
+ *        Author: Zhaohui Mei<mzh.whut@gmail.com>
+ *   Description: grep匹配模式
+ *   Create Time: 2021-03-24 06:51:23
+ * Last Modified: 2021-03-24 07:14:38
+ */
+
+#include <stdio.h>
+#include <string.h>
+
+#define MAXLINE 1000 /* 最大输入行长度 */
+
+int get_line(char line[], int max);
+int strindex(char source[], char searchchfor[]);
+
+// char pattern[] = "ould";  /* 待查找的模式 */
+
+int main(int argc, char *argv[])
+{
+    char pattern[MAXLINE] = "";    // 存储用户输入的模式
+    strcpy(pattern, argv[1]);    // string.h头文件中定义的函数，将参数值赋值给字符数组
+
+    char line[MAXLINE];
+    int found = 0;
+    while (get_line(line, MAXLINE) > 0)
+        if (strindex(line, pattern) >= 0) {
+            printf("%s", line);
+            found++;
+        }
+
+    return found;
+}
+
+/* 将行保存到s中，并返回该行的长度 */
+int get_line(char s[], int lim)
+{
+    int c, i;
+    i = 0;
+    while (--lim > 0 && (c = getchar( )) != EOF && c != '\n')
+        s[i++] = c;
+    if (c == '\n')
+        s[i++] = c;
+    s[i] = '\0';
+
+    return i;
+}
+
+
+/* 返回t在s中的位置，若未找到则返回-1 */
+int strindex(char s[], char t[])
+{
+    int i, j, k;
+    for (i = 0; s[i] != '\0'; i++) {
+        for (j = i, k = 0; t[k] != '\0' && s[j] == t[k]; j++, k++)
+            ;
+        if (k > 0 && t[k] == '\0')
+            return i;
+    }
+
+    return -1;
+}
+
+```
+
+编译并运行：
+
+```sh
+$ cc my_grep.c
+$ cat my_grep.c|grep 'grep'
+ *      Filename: my_grep.c
+ *   Description: grep匹配模式
+$ echo $?
+0
+$ cat my_grep.c|my_grep.out 'grep'
+ *      Filename: my_grep.c
+ *   Description: grep匹配模式
+$ echo $?
+2
+$ cat my_grep.c|grep 'for'
+int strindex(char source[], char searchchfor[]);
+    for (i = 0; s[i] != '\0'; i++) {
+        for (j = i, k = 0; t[k] != '\0' && s[j] == t[k]; j++, k++)
+$ echo $?
+0
+$ cat my_grep.c|my_grep.out 'for'
+int strindex(char source[], char searchchfor[]);
+    for (i = 0; s[i] != '\0'; i++) {
+        for (j = i, k = 0; t[k] != '\0' && s[j] == t[k]; j++, k++)
+$ echo $?
+3
+```
+
+![](/img/Snipaste_2021-03-24_07-24-20.png)
+
+可以看到，`my_grep.out`程序可以执行`grep`类似的功能，打印出匹配的行。
+
+此处需要注意，函数`get_line`不要写成`getline`，这样会与`stdio.h`库中的`ssize_t getline(char ** __restrict __linep, size_t * __restrict __linecapp, FILE * __restrict __stream) __OSX_AVAILABLE_STARTING(__MAC_10_7, __IPHONE_4_3);`函数冲突。
+
+
+
 
 
 
