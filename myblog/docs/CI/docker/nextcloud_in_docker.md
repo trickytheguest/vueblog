@@ -202,3 +202,21 @@ public
 
 - 现在网站使用的`http`方式传输，需要更新为`https`方式传输。
 - 配置数据库。
+
+
+
+## 5. 安装nginx
+
+直接使用命令`yum install nginx -y`即可。
+
+ ```sh
+[root@hellogitlab ~]# yum install nginx -y
+ ```
+
+查看ngInx版本信息：
+
+```sh
+[root@hellogitlab ~]# nginx -v
+nginx version: nginx/1.16.1
+```
+

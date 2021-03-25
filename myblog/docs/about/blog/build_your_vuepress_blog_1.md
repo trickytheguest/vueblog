@@ -934,6 +934,10 @@ Syntax OK
 
 访问[http://hellogitlab.ocm/](http://hellogitlab.ocm/)看能否自动跳转到[https://hellogitlab.ocm/](https://hellogitlab.ocm/)，发现可以正常跳转，说明配置正确。
 
+
+
+说明：我的证书DNS解析是在腾讯云DNS解析 DNSPod中设置的。链接地址：https://console.cloud.tencent.com/cns
+
 在URL点可以查看网站SSL的具体信息：
 
 ![tencent_ssl_info_detail](/img/tencent_ssl_info_detail.png)
