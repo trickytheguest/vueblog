@@ -173,7 +173,7 @@ public
   interfaces:
   sources:
   services: ssh dhcpv6-client
-  ports: 10086/tcp 80/tcp 3690/tcp 443/tcp 8080/tcp
+  ports: 22/tcp 80/tcp 3690/tcp 443/tcp 8080/tcp
   protocols:
   masquerade: no
   forward-ports:
@@ -203,9 +203,50 @@ public
 - 现在网站使用的`http`方式传输，需要更新为`https`方式传输。
 - 配置数据库。
 
+## 5. 配置域名解析并申请证书
+
+在腾讯DNS解析界面增加一条新的域名解析：
+
+![](/img/Snipaste_2021-03-26_00-33-12.png)
+
+等待一段时间后，使用`ping`命令来测试子域名是否解析成功：
+
+```sh
+[mzh@MacBookPro ~ ]$ ping nextcloud.hellogitlab.com -c 3
+PING nextcloud.hellogitlab.com (106.54.98.83): 56 data bytes
+64 bytes from 106.54.98.83: icmp_seq=0 ttl=51 time=25.004 ms
+64 bytes from 106.54.98.83: icmp_seq=1 ttl=51 time=25.221 ms
+64 bytes from 106.54.98.83: icmp_seq=2 ttl=51 time=25.848 ms
+
+--- nextcloud.hellogitlab.com ping statistics ---
+3 packets transmitted, 3 packets received, 0.0% packet loss
+round-trip min/avg/max/stddev = 25.004/25.358/25.848/0.358 ms
+```
+
+可以看到，能够正常`ping`通，说明解析正常。
 
 
-## 5. 安装nginx
+
+再在腾讯云SSL证书界面 [https://console.cloud.tencent.com/ssl](https://console.cloud.tencent.com/ssl) 为新的域名`nextcloud.hellogitlab.com`申请一个免费证书。
+
+证书申请成功后，过一会腾讯云就会颁发证书成功，并在域名解析中添加一条TXT记录。我们下载证书文件，并解压。
+
+将解压后的Nginx文件夹中的两个文件上传到服务器端。
+
+![](/img/Snipaste_2021-03-26_00-39-52.png)
+
+文件上传后，存放在`/etc/pki/nginx`目录下：
+
+```sh
+[root@hellogitlab ~]# ls -lh /etc/pki/nginx/
+总用量 8.0K
+-rw-r--r-- 1 root root 3.7K 3月  26 00:25 1_nextcloud.hellogitlab.com_bundle.crt
+-rw-r--r-- 1 root root 1.7K 3月  26 00:25 2_nextcloud.hellogitlab.com.key
+```
+
+
+
+## 6. 安装nginx
 
 直接使用命令`yum install nginx -y`即可。
 
@@ -220,3 +261,304 @@ public
 nginx version: nginx/1.16.1
 ```
 
+配置`nginx.conf`文件，为了不与我们的博客系统冲突，我们使用`444`端口作为`nextcloud.hellogitlab.com`域名的https使用的端口。
+
+配置如下：
+
+```sh
+[root@hellogitlab ~]# cd /etc/nginx
+[root@hellogitlab nginx]# pwd
+/etc/nginx
+[root@hellogitlab nginx]# cp nginx.conf nginx.conf.bak
+[root@hellogitlab nginx]# cat nginx.conf
+# For more information on configuration, see:
+#   * Official English Documentation: http://nginx.org/en/docs/
+#   * Official Russian Documentation: http://nginx.org/ru/docs/
+
+user nginx;
+worker_processes auto;
+error_log /var/log/nginx/error.log;
+pid /run/nginx.pid;
+
+# Load dynamic modules. See /usr/share/doc/nginx/README.dynamic.
+include /usr/share/nginx/modules/*.conf;
+
+events {
+    worker_connections 1024;
+}
+
+http {
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
+
+    access_log  /var/log/nginx/access.log  main;
+
+    sendfile            on;
+    tcp_nopush          on;
+    tcp_nodelay         on;
+    keepalive_timeout   65;
+    types_hash_max_size 2048;
+
+    include             /etc/nginx/mime.types;
+    default_type        application/octet-stream;
+
+    # Load modular configuration files from the /etc/nginx/conf.d directory.
+    # See http://nginx.org/en/docs/ngx_core_module.html#include
+    # for more information.
+    include /etc/nginx/conf.d/*.conf;
+
+#     server {
+#         listen       80 default_server;
+#         listen       [::]:80 default_server;
+#         server_name  _;
+#         root         /usr/share/nginx/html;
+#
+#         # Load configuration files for the default server block.
+#         include /etc/nginx/default.d/*.conf;
+#
+#         location / {
+#         }
+#
+#         error_page 404 /404.html;
+#         location = /404.html {
+#         }
+#
+#         error_page 500 502 503 504 /50x.html;
+#         location = /50x.html {
+#         }
+#     }
+
+# Settings for a TLS enabled server.
+#
+#    server {
+#        listen       443 ssl http2 default_server;
+#        listen       [::]:443 ssl http2 default_server;
+#        server_name  _;
+#        root         /usr/share/nginx/html;
+#
+#        ssl_certificate "/etc/pki/nginx/server.crt";
+#        ssl_certificate_key "/etc/pki/nginx/private/server.key";
+#        ssl_session_cache shared:SSL:1m;
+#        ssl_session_timeout  10m;
+#        ssl_ciphers HIGH:!aNULL:!MD5;
+#        ssl_prefer_server_ciphers on;
+#
+#        # Load configuration files for the default server block.
+#        include /etc/nginx/default.d/*.conf;
+#
+#        location / {
+#        }
+#
+#        error_page 404 /404.html;
+#        location = /404.html {
+#        }
+#
+#        error_page 500 502 503 504 /50x.html;
+#        location = /50x.html {
+#        }
+#    }
+
+
+	server {
+	  listen 444 ssl http2;
+	  listen [::]:444 ssl http2;
+	  server_name nextcloud.hellogitlab.com;
+
+    ssl_certificate "/etc/pki/nginx/1_nextcloud.hellogitlab.com_bundle.crt";
+    ssl_certificate_key "/etc/pki/nginx/2_nextcloud.hellogitlab.com.key";
+	  client_max_body_size 10G;
+
+	  add_header Strict-Transport-Security "max-age=63072000; includeSubdomains; preload";
+
+	  location = /.well-known/carddav {
+	      return 301 $scheme://$host:$server_port/remote.php/dav;
+	  }
+	  location = /.well-known/caldav {
+	      return 301 $scheme://$host:$server_port/remote.php/dav;
+	  }
+
+	  location / {
+	      proxy_redirect off;
+	      proxy_pass http://127.0.0.1:8080;
+	      proxy_set_header Host $http_host;
+	  }
+	  location = /.htaccess {
+	      return 404;
+	  }
+	}
+
+}
+[root@hellogitlab nginx]#
+```
+
+最终配置的`nginx.conf`如上上所。注意其中:
+
+```
+ssl_certificate "/etc/pki/nginx/1_nextcloud.hellogitlab.com_bundle.crt";
+ssl_certificate_key "/etc/pki/nginx/2_nextcloud.hellogitlab.com.key";
+```
+
+这两行证书的路径要与上一步上传到服务器端的路径保证一致。
+
+另外，`proxy_pass http://127.0.0.1:8080;` 这一行是对8080端口数据进行转发，转发到上面定义444端口上来。
+
+测试配置有效性：
+
+```sh
+[root@hellogitlab ~]# nginx -t
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+[root@hellogitlab ~]# systemctl start nginx && systemctl status nginx
+● nginx.service - The nginx HTTP and reverse proxy server
+   Loaded: loaded (/usr/lib/systemd/system/nginx.service; disabled; vendor preset: disabled)
+   Active: active (running) since 五 2021-03-26 01:16:00 CST; 5ms ago
+  Process: 21321 ExecStart=/usr/sbin/nginx (code=exited, status=0/SUCCESS)
+  Process: 21318 ExecStartPre=/usr/sbin/nginx -t (code=exited, status=0/SUCCESS)
+  Process: 21316 ExecStartPre=/usr/bin/rm -f /run/nginx.pid (code=exited, status=0/SUCCESS)
+ Main PID: 21323 (nginx)
+    Tasks: 3
+   Memory: 3.3M
+   CGroup: /system.slice/nginx.service
+           ├─21323 nginx: master process /usr/sbin/nginx
+           ├─21324 nginx: worker process
+           └─21325 nginx: worker process
+
+3月 26 01:16:00 hellogitlab.com systemd[1]: Starting The nginx HTTP and reverse proxy server...
+3月 26 01:16:00 hellogitlab.com nginx[21318]: nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+3月 26 01:16:00 hellogitlab.com nginx[21318]: nginx: configuration file /etc/nginx/nginx.conf test is successful
+3月 26 01:16:00 hellogitlab.com systemd[1]: Started The nginx HTTP and reverse proxy server.
+[root@hellogitlab ~]# systemctl start httpd && systemctl status httpd
+● httpd.service - The Apache HTTP Server
+   Loaded: loaded (/usr/lib/systemd/system/httpd.service; enabled; vendor preset: disabled)
+   Active: active (running) since 五 2021-03-26 01:08:14 CST; 8min ago
+     Docs: man:httpd(8)
+           man:apachectl(8)
+  Process: 17810 ExecStop=/bin/kill -WINCH ${MAINPID} (code=exited, status=0/SUCCESS)
+ Main PID: 19857 (httpd)
+   Status: "Total requests: 0; Current requests/sec: 0; Current traffic:   0 B/sec"
+    Tasks: 6
+   Memory: 28.0M
+   CGroup: /system.slice/httpd.service
+           ├─19857 /usr/sbin/httpd -DFOREGROUND
+           ├─19858 /usr/sbin/httpd -DFOREGROUND
+           ├─19859 /usr/sbin/httpd -DFOREGROUND
+           ├─19860 /usr/sbin/httpd -DFOREGROUND
+           ├─19861 /usr/sbin/httpd -DFOREGROUND
+           └─19862 /usr/sbin/httpd -DFOREGROUND
+
+3月 26 01:08:14 hellogitlab.com systemd[1]: Starting The Apache HTTP Server...
+3月 26 01:08:14 hellogitlab.com systemd[1]: Started The Apache HTTP Server.
+[root@hellogitlab ~]#
+```
+
+可以看到`httpd`和`nginx`服务都正常启动。
+
+```sh
+[root@hellogitlab ~]# netstat -tunlp|grep httpd
+tcp6       0      0 :::80                   :::*                    LISTEN      19857/httpd
+tcp6       0      0 :::81                   :::*                    LISTEN      19857/httpd
+tcp6       0      0 :::443                  :::*                    LISTEN      19857/httpd
+[root@hellogitlab ~]# netstat -tunlp|grep nginx
+tcp        0      0 0.0.0.0:444             0.0.0.0:*               LISTEN      21323/nginx: master
+tcp6       0      0 :::444                  :::*                    LISTEN      21323/nginx: master
+```
+
+
+
+防火墙放行`444`端口，并关闭`8080`端口。
+
+```sh
+# 删除不放行的端口
+[root@hellogitlab ~]# firewall-cmd --zone=public --remove-port=8080/tcp --permanent
+success
+
+# 放行444端口
+[root@hellogitlab ~]# firewall-cmd --zone=public --add-port=444/tcp --permanent
+success
+[root@hellogitlab ~]# firewall-cmd --reload
+success
+[root@hellogitlab ~]# firewall-cmd --list-all
+public
+  target: default
+  icmp-block-inversion: no
+  interfaces:
+  sources:
+  services: ssh dhcpv6-client
+  ports: 22/tcp 80/tcp 3690/tcp 443/tcp 444/tcp
+  protocols:
+  masquerade: no
+  forward-ports:
+  source-ports:
+  icmp-blocks:
+  rich rules:
+```
+
+## 7. 配置nextcloud config.php文件
+
+```sh
+[root@hellogitlab ~]# docker ps
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                  NAMES
+89a04170593a        nextcloud           "/entrypoint.sh ap..."   27 hours ago        Up About an hour    0.0.0.0:8080->80/tcp   nextcloud
+[root@hellogitlab ~]# dkin 89a
+root@89a04170593a:/var/www/html# ls
+3rdparty  COPYING  config	core	  custom_apps  index.html  lib	ocm-provider  ocs-provider  remote.php	robots.txt  themes
+AUTHORS   apps	   console.php	cron.php  data	       index.php   occ	ocs	      public.php    resources	status.php  version.php
+root@89a04170593a:/var/www/html# cat config/config.php
+<?php
+$CONFIG = array (
+  'htaccess.RewriteBase' => '/',
+  'memcache.local' => '\\OC\\Memcache\\APCu',
+  'apps_paths' =>
+  array (
+    0 =>
+    array (
+      'path' => '/var/www/html/apps',
+      'url' => '/apps',
+      'writable' => false,
+    ),
+    1 =>
+    array (
+      'path' => '/var/www/html/custom_apps',
+      'url' => '/custom_apps',
+      'writable' => true,
+    ),
+  ),
+  'instanceid' => 'ocju4a79attj',
+  'passwordsalt' => 'GWAjOCz7FLEXJdYtSJHpSb6U9TrMhy',
+  'secret' => 'dON/2F9auxtvAT8IMYlcEuYZGyV2RTxC/MbXcSdtNlKyPzWz',
+  'trusted_domains' =>
+  array (
+    0 => 'hellogitlab.com:8080',
+    1 => 'nextcloud.hellogitlab.com',
+  ),
+  'datadirectory' => '/var/www/html/data',
+  'dbtype' => 'sqlite3',
+  'version' => '20.0.5.2',
+  'overwrite.cli.url' => 'http://hellogitlab.com:8080',
+  'installed' => true,
+  'overwriteprotocol' => 'https',
+);
+root@89a04170593a:/var/www/html# exit
+```
+
+注意，34行加上`1 => 'nextcloud.hellogitlab.com',`对自己的域名进行授信。41行`'overwriteprotocol' => 'https',设置自动跳转。
+
+重启nextcloud容器:
+
+```sh
+[root@hellogitlab ~]# docker restart nextcloud
+nextcloud
+[root@hellogitlab ~]# docker ps
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                  NAMES
+89a04170593a        nextcloud           "/entrypoint.sh ap..."   27 hours ago        Up 3 seconds        0.0.0.0:8080->80/tcp   nextcloud
+[root@hellogitlab ~]#
+```
+
+
+
+在浏览器中访问新的域名：
+
+![](/img/Snipaste_2021-03-26_01-22-04.png)
+
+![](/img/Snipaste_2021-03-26_01-30-33.png)
