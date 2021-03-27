@@ -202,6 +202,7 @@ public
 
 - 现在网站使用的`http`方式传输，需要更新为`https`方式传输。
 - 配置数据库。
+- 增加redis缓存。
 
 ## 5. 配置域名解析并申请证书
 
@@ -562,3 +563,136 @@ CONTAINER ID        IMAGE               COMMAND                  CREATED        
 ![](/img/Snipaste_2021-03-26_01-22-04.png)
 
 ![](/img/Snipaste_2021-03-26_01-30-33.png)
+
+
+
+
+
+## 8. 邮件通知配置
+
+使用`postmaster`账号登陆企业邮箱，创建一个企业邮箱的通知账号用户`notice@hellogitlab.com`，然后在nextcloud设置`个人信息`中配置自己的`电子邮箱`，然后在管理`基本设置`界面，设置一下`电子邮件服务器`，按下图方式设置：
+
+![](/img/Snipaste_2021-03-27_15-23-30.png)
+
+设置完成后，点击`发送电子邮件`按钮，查看一下自己的邮箱中是否会收到测试邮件通知,过一会儿收到邮件通知：
+
+![](/img/电子邮件设置测试.png)
+
+说明邮件通知配置成功！
+
+## 9. 更新国内源
+
+nextcloud使用的是`debian buster`系统，我们更新其为国内源，方便安装程序。我们使用腾讯云。
+
+```sh
+root@89a04170593a:/var/www/html/# cd /etc/apt/
+# 备份原始的源
+root@89a04170593a:/etc/apt# cp sources.list sources.list.bak
+root@89a04170593a:/etc/apt# ls
+apt.conf.d  auth.conf.d  preferences.d	sources.list  sources.list.bak	sources.list.d	trusted.gpg.d
+# 将腾讯云镜像信息写入到文件
+root@89a04170593a:/etc/apt# cat > sources.list << EOF
+> deb http://mirrors.cloud.tencent.com/debian/ buster main non-free contrib
+> deb http://mirrors.cloud.tencent.com/debian-security buster/updates main
+> deb http://mirrors.cloud.tencent.com/debian/ buster-updates main non-free contrib
+> deb http://mirrors.cloud.tencent.com/debian/ buster-backports main non-free contrib
+>
+> deb-src http://mirrors.cloud.tencent.com/debian-security buster/updates main
+> deb-src http://mirrors.cloud.tencent.com/debian/ buster main non-free contrib
+> deb-src http://mirrors.cloud.tencent.com/debian/ buster-updates main non-free contrib
+> deb-src http://mirrors.cloud.tencent.com/debian/ buster-backports main non-free contrib
+> EOF
+
+#更新一下源
+root@89a04170593a:/etc/apt# apt update
+Hit:1 http://mirrors.cloud.tencent.com/debian buster InRelease
+Hit:2 http://mirrors.cloud.tencent.com/debian-security buster/updates InRelease
+Hit:3 http://mirrors.cloud.tencent.com/debian buster-updates InRelease
+Hit:4 http://mirrors.cloud.tencent.com/debian buster-backports InRelease
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+17 packages can be upgraded. Run 'apt list --upgradable' to see them.
+root@89a04170593a:/etc/apt#
+```
+
+
+
+## 10. 设置缩略图
+
+使用时会发现，Nextcloud 上传的视频不能生成缩略图。其实 Nextcloud 本身支持生成视频缩略图，需要安装 ffmpeg 并修改配置：
+
+```sh
+root@89a04170593a:~# apt install ffmpeg -y
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+Suggested packages:
+  ffmpeg-doc
+The following NEW packages will be installed:
+  ffmpeg
+0 upgraded, 1 newly installed, 0 to remove and 17 not upgraded.
+Need to get 1434 kB of archives.
+After this operation, 2007 kB of additional disk space will be used.
+Get:1 http://mirrors.cloud.tencent.com/debian buster/main amd64 ffmpeg amd64 7:4.1.6-1~deb10u1 [1434 kB]
+Fetched 1434 kB in 0s (3385 kB/s)
+debconf: delaying package configuration, since apt-utils is not installed
+Selecting previously unselected package ffmpeg.
+(Reading database ... 18550 files and directories currently installed.)
+Preparing to unpack .../ffmpeg_7%3a4.1.6-1~deb10u1_amd64.deb ...
+Unpacking ffmpeg (7:4.1.6-1~deb10u1) ...
+Setting up ffmpeg (7:4.1.6-1~deb10u1) ...
+root@89a04170593a:~#
+```
+
+修改`/var/www/html/config/config.php`配置文件，添加：
+
+```php
+'enable_previews' => true,
+'enabledPreviewProviders' =>
+array (
+  0 => 'OC\\Preview\\Image',
+  1 => 'OC\\Preview\\Movie',
+  2 => 'OC\\Preview\\TXT',
+),
+```
+
+查看最后几行内容：
+
+```sh
+root@89a04170593a:/var/www/html/config# tail -n 8 config.php
+  'enable_previews' => true,
+  'enabledPreviewProviders' =>
+  array (
+    0 => 'OC\\Preview\\Image',
+    1 => 'OC\\Preview\\Movie',
+    2 => 'OC\\Preview\\TXT',
+ ),
+);
+```
+
+![](/img/Snipaste_2021-03-27_20-37-48.png)
+
+修改后，重启nextcloud容器：
+
+```sh
+[root@hellogitlab ~]# docker restart nextcloud
+nextcloud
+```
+
+然后再在nextcloud中可以看到视频已经的缩略图了。
+
+![](/img/Snipaste_2021-03-27_20-41-56.png)
+
+
+
+
+
+参考：
+
+- [使用docker-compose搭建Nextcloud个人云盘并开启https教程](https://blog.csdn.net/shangyexin/article/details/106306680)
+- [Centos 7.6搭建Nextcloud 17.0.0个人云盘详细教程](https://blog.csdn.net/shangyexin/article/details/102724685)
+- [企业邮箱通过SMTP程序进行发信](https://help.aliyun.com/knowledge_detail/36687.html)
+- [企业邮箱postmaster管理员账号更改密码方法](https://help.aliyun.com/document_detail/36725.html)
+- [Debian 10 Buster 国内常用镜像源](https://cloud.tencent.com/developer/article/1590080)
+- 
