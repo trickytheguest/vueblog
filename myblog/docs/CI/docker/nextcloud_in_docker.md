@@ -1087,7 +1087,7 @@ ecef03de2237        redis:latest        "docker-entrypoint..."   41 seconds ago 
 
 ```sh
 [root@hellogitlab ~]# yum install redis -y
-[meizhaohui@hellogitlab ~]$ redis-cli -p 6378 -a "securePassword"
+[meizhaohui@hellogitlab ~]$ redis-cli -p 6378 -a "securepassword"
 127.0.0.1:6378> get a
 "b"
 127.0.0.1:6378> set b c
@@ -1098,6 +1098,62 @@ OK
 ```
 
 说明能够正常写入数据到redis中。
+
+
+
+配置nextcloud的缓存，参考官方指导：
+
+![](/img/Snipaste_2021-03-29_01-42-08.png)
+
+配置`config.php`文件：
+
+```sh
+root@89a04170593a:/var/www/html/config# head -n 12 config.php
+<?php
+$CONFIG = array (
+  'htaccess.RewriteBase' => '/',
+  'memcache.local' => '\\OC\\Memcache\\APCu',
+  'memcache.distributed' => '\OC\Memcache\Redis',
+  'redis' => [
+     'host'     => 'hellogitlab.com',
+     'port'     => 6378,
+     'password' => 'securepassword',
+     'timeout'  => 1.5,
+  ],
+  'apps_paths' =>
+root@89a04170593a:/var/www/html/config#
+```
+
+配置后重启nextcloud容器，然后打开nextcloud浏览器。
+
+
+
+在后台检查一下redis是否增加了新的key值：
+
+```sh
+[meizhaohui@hellogitlab ~]$ redis-cli -p 6378 -a "securepassword" -h hellogitlab.com
+hellogitlab.com:6378> ls
+(error) ERR unknown command `ls`, with args beginning with:
+hellogitlab.com:6378> get a
+"b"
+hellogitlab.com:6378> gets
+(error) ERR unknown command `gets`, with args beginning with:
+hellogitlab.com:6378> keys
+(error) ERR wrong number of arguments for 'keys' command
+hellogitlab.com:6378> keys *
+ 1) "f944948d6e25ff6be26d865176a21c4a/imagePath-ad10a4b5e8c0338e5a79b03b164af307-settings-favicon.ico"
+ 2) "f944948d6e25ff6be26d865176a21c4a/imagePath-ad10a4b5e8c0338e5a79b03b164af307-core-background.png"
+ 3) "f944948d6e25ff6be26d865176a21c4a/imagePath-ad10a4b5e8c0338e5a79b03b164af307-settings-password.svg"
+ 4) "f944948d6e25ff6be26d865176a21c4a/imagePath-ad10a4b5e8c0338e5a79b03b164af307-dashboard-favicon-mask.svg"
+ 5) "f944948d6e25ff6be26d865176a21c4a/SCSS-deps-ad10a4b5e8c0338e5a79b03b164af307notifications-0577-ad10-styles.css.deps"
+ 6) "f944948d6e25ff6be26d865176a21c4a/imagePath-ad10a4b5e8c0338e5a79b03b164af307-serverinfo-app-dark.svg"
+ 7) "b"
+....省略
+```
+
+可以看到，已经生成了非常多的缓存数据了。说明配置成功了！
+
+可以明显感觉到网站速度变快了！
 
 
 
@@ -1126,4 +1182,6 @@ OK
 - [Docker redis](https://registry.hub.docker.com/_/redis)
 - [最详细的docker中安装并配置redis](https://truedei.blog.csdn.net/article/details/106418353?utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromBaidu-1.control&dist_request_id=&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromBaidu-1.control)
 - [Docker 自定义配置运行redis自动退出](https://blog.csdn.net/fvdfsdafdsafs/article/details/109028530)
+- [nextcloud Memory caching](https://docs.nextcloud.com/server/20/admin_manual/configuration_server/caching_configuration.html?highlight=redis#id2)
+- 
 
