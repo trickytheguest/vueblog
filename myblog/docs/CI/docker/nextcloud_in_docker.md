@@ -861,27 +861,64 @@ crontab: installing new crontab
 把自己本地的文件复制到nextcloud相应的用户目录中，nextcloud中并不会显示。我们测试一下：
 
 ```sh
-root@89a04170593a:/var/www/html/data/test/files/Documents# ls *.md
--rw-r--r-- 1 www-data www-data 1095 Mar 24 23:20 Example.md
--rw-r--r-- 1 www-data www-data  136 Mar 24 23:20 Readme.md
-root@89a04170593a:/var/www/html/data/test/files/Documents# cp Example.md addfilebymyself.md
-root@89a04170593a:/var/www/html/data/test/files/Documents# chown www-data:www-data addfilebymyself.md
-root@89a04170593a:/var/www/html/data/test/files/Documents# ls *.md
--rw-r--r-- 1 www-data www-data 1095 Mar 24 23:20 Example.md
--rw-r--r-- 1 www-data www-data  136 Mar 24 23:20 Readme.md
--rw-r--r-- 1 www-data www-data 1095 Mar 28 08:17 addfilebymyself.md
-root@89a04170593a:/var/www/html/data/test/files/Documents#
+root@89a04170593a:/var/www/html/data/meizhaohui/files/Documents# ls
+total 412
+-rw-r--r-- 1 www-data www-data   1095 Mar 24 13:54  Example.md
+-rw-r--r-- 1 www-data www-data 374008 Mar 24 13:54 'Nextcloud flyer.pdf'
+-rw-r--r-- 1 www-data www-data    196 Mar 24 14:39  Readme.md
+-rw-r--r-- 1 www-data www-data  25150 Mar 24 13:54 'Welcome to Nextcloud Hub.docx'
+-rw-r--r-- 1 www-data www-data     73 Mar 24 16:03  download_icoud.md
+drwxr-xr-x 2 www-data www-data   4096 Mar 25 22:48  test
+root@89a04170593a:/var/www/html/data/meizhaohui/files/Documents# cp Example.md addbymyself.md
+root@89a04170593a:/var/www/html/data/meizhaohui/files/Documents# chown www-data:www-data addbymyself.md
+root@89a04170593a:/var/www/html/data/meizhaohui/files/Documents# ls
+total 416
+-rw-r--r-- 1 www-data www-data   1095 Mar 24 13:54  Example.md
+-rw-r--r-- 1 www-data www-data 374008 Mar 24 13:54 'Nextcloud flyer.pdf'
+-rw-r--r-- 1 www-data www-data    196 Mar 24 14:39  Readme.md
+-rw-r--r-- 1 www-data www-data  25150 Mar 24 13:54 'Welcome to Nextcloud Hub.docx'
+-rw-r--r-- 1 www-data www-data   1095 Mar 28 13:05  addbymyself.md
+-rw-r--r-- 1 www-data www-data     73 Mar 24 16:03  download_icoud.md
+drwxr-xr-x 2 www-data www-data   4096 Mar 25 22:48  test
+root@89a04170593a:/var/www/html/data/meizhaohui/files/Documents#
 ```
 
 此时在nextcloud上面并没有显示：
 
-![](/img/Snipaste_2021-03-28_16-20-03.png)
+![](/img/Snipaste_2021-03-28_21-06-58.png)
+
+这时，我们应该更新一下数据库数据，需要手动执行以下命令(注意，是在宿主机上面执行！！)，nextcloud才会将数据添加进数据库里：
+
+```sh
+[root@hellogitlab ~]# docker exec --user www-data nextcloud php occ files:scan --all
+Starting scan for user 1 out of 2 (meizhaohui)
+Starting scan for user 2 out of 2 (test)
++---------+-------+--------------+
+| Folders | Files | Elapsed time |
++---------+-------+--------------+
+| 17      | 51    | 00:00:01     |
++---------+-------+--------------+
+[root@hellogitlab ~]#
+```
+
+此时，刷新一下nextcloud页面，可以看到，刚才手动添加的文件已经正常显示了:
+
+![](/img/Snipaste_2021-03-28_21-11-39.png)
+
+为了不每次手动添加文件时，都需要执行该命令，我们在宿主机上面也可以添加一个定时任务：
+
+```sh
+[root@hellogitlab ~]# crontab -l|tail -n 2
+# add file data to the nextcloud database
+*/5 * * * * docker exec --user www-data -i nextcloud php occ files:scan --all
+[root@hellogitlab ~]#
+```
 
 
 
 
 
-，因为数据库中没有相应的数据
+
 
 ## 定制Docker镜像，编写自己的dockerfile
 
@@ -899,3 +936,5 @@ root@89a04170593a:/var/www/html/data/test/files/Documents#
 - [基于Nextcloud打造个人工作台](https://engr-z.com/363.html)
 - [定制优化Nextcloud镜像](https://engr-z.com/278.html)
 - [NextCloud Background jobs](https://docs.nextcloud.com/server/20/admin_manual/configuration_server/background_jobs_configuration.html#background-jobs)
+- [Docker安装nextcloud以及遇到的一下问题和优化方法](https://blog.csdn.net/qq_31663099/article/details/105435087)
+- 
