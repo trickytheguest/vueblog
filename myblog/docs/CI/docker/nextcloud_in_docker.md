@@ -203,6 +203,8 @@ public
 - 现在网站使用的`http`方式传输，需要更新为`https`方式传输。
 - 配置数据库。
 - 增加redis缓存。
+- 设置视频缩略图。
+- 自制docker镜像。
 
 ## 5. 配置域名解析并申请证书
 
@@ -688,7 +690,11 @@ nextcloud
 
 ## 11. 手动下载app-以music音乐为例
 
-nextcloud有非常多好用的app,你可以在nextcloud App Store上面去看一下！
+nextcloud有非常多好用的app,你可以在nextcloud App Store上面去看一下！下面列一些好用的应用：
+
+- External sites 外部站点，可以在nextcloud中链接到外部网站。
+- passwords密码管理，自动生成密码，并管理你的密码，再也不用记一大堆密码了。可配合手机端的`Passwords`应用使用。
+- Bookmarks书签管理，可以同步不同浏览器之间的书签同步，需要安装浏览器插件应用`floccus`。可配置手机端的`nextBookmark`应用使用。
 
 在nextcloud应用界面点击`下载并启用`时，会经常下载不成功。我们通过手动下载安装app。
 
@@ -793,6 +799,92 @@ root@89a04170593a:/var/www/html/apps#
 
 点击播放按钮就可以听音乐🎵了！
 
+## 12. 优化定时任务cron
+
+使用cron去执行后台任务：在设置中将设置从ajax调整到cron，然后在宿主机建立crontab任务。
+
+![](/img/Snipaste_2021-03-28_15-51-53.png)
+
+首先在容器中查看一下`cron.php`文件路径：
+
+```sh
+root@89a04170593a:/var/www/html# ls -lah cron.php
+-rw-r--r-- 1 www-data root 5.0K Mar 24 13:40 cron.php
+root@89a04170593a:/var/www/html# pwd
+/var/www/html
+root@89a04170593a:/var/www/html# ls -lah /var/www/html/cron.php
+-rw-r--r-- 1 www-data root 5.0K Mar 24 13:40 /var/www/html/cron.php
+```
+
+尝试执行同步命令：
+
+```sh
+root@89a04170593a:/var/www/html# su www-data
+This account is currently not available.
+root@89a04170593a:/var/www/html# php -f /var/www/html/cron.php
+Console has to be executed with the user that owns the file config/config.php
+Current user id: 0
+Owner id of config.php: 33
+root@89a04170593a:/var/www/html# ls -lah config/config.php
+-rw-r----- 1 www-data www-data 1.4K Mar 27 12:32 config/config.php
+root@89a04170593a:/var/www/html# id 33
+uid=33(www-data) gid=33(www-data) groups=33(www-data)
+```
+
+发现不能以`root`账号执行，我们需要使用`www-data`用户执行。我们退出容器，在容器外执行命令：
+
+```sh
+[root@hellogitlab ~]# docker exec --user www-data -it nextcloud php -f /var/www/html/cron.php
+[root@hellogitlab ~]# echo $?
+0
+```
+
+在界面上可以看到同步成功了：
+
+![](/img/Snipaste_2021-03-28_15-58-12.png)
+
+在宿主机上面添加一个定时任务：
+
+```sh
+[root@hellogitlab ~]# crontab -e
+crontab: installing new crontab
+[root@hellogitlab ~]# crontab -l|tail -n 2
+# sync the nextcloud
+*/5 * * * * docker exec --user www-data -i nextcloud php -f /var/www/html/cron.php
+[root@hellogitlab ~]#
+```
+
+这样宿主机每5分钟就会同步执行一次。
+
+## 13. 手动添加文件到nextcloud用户目录，不显示处理
+
+把自己本地的文件复制到nextcloud相应的用户目录中，nextcloud中并不会显示。我们测试一下：
+
+```sh
+root@89a04170593a:/var/www/html/data/test/files/Documents# ls *.md
+-rw-r--r-- 1 www-data www-data 1095 Mar 24 23:20 Example.md
+-rw-r--r-- 1 www-data www-data  136 Mar 24 23:20 Readme.md
+root@89a04170593a:/var/www/html/data/test/files/Documents# cp Example.md addfilebymyself.md
+root@89a04170593a:/var/www/html/data/test/files/Documents# chown www-data:www-data addfilebymyself.md
+root@89a04170593a:/var/www/html/data/test/files/Documents# ls *.md
+-rw-r--r-- 1 www-data www-data 1095 Mar 24 23:20 Example.md
+-rw-r--r-- 1 www-data www-data  136 Mar 24 23:20 Readme.md
+-rw-r--r-- 1 www-data www-data 1095 Mar 28 08:17 addfilebymyself.md
+root@89a04170593a:/var/www/html/data/test/files/Documents#
+```
+
+此时在nextcloud上面并没有显示：
+
+![](/img/Snipaste_2021-03-28_16-20-03.png)
+
+
+
+
+
+，因为数据库中没有相应的数据
+
+## 定制Docker镜像，编写自己的dockerfile
+
 
 
 
@@ -805,3 +897,5 @@ root@89a04170593a:/var/www/html/apps#
 - [企业邮箱postmaster管理员账号更改密码方法](https://help.aliyun.com/document_detail/36725.html)
 - [Debian 10 Buster 国内常用镜像源](https://cloud.tencent.com/developer/article/1590080)
 - [基于Nextcloud打造个人工作台](https://engr-z.com/363.html)
+- [定制优化Nextcloud镜像](https://engr-z.com/278.html)
+- [NextCloud Background jobs](https://docs.nextcloud.com/server/20/admin_manual/configuration_server/background_jobs_configuration.html#background-jobs)
