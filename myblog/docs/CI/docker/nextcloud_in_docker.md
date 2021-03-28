@@ -914,7 +914,7 @@ Starting scan for user 2 out of 2 (test)
 [root@hellogitlab ~]#
 ```
 
-
+当然，定时任务可以不用配置。因为这种通过手动添加的场景相对比较少。
 
 
 
@@ -937,4 +937,5 @@ Starting scan for user 2 out of 2 (test)
 - [定制优化Nextcloud镜像](https://engr-z.com/278.html)
 - [NextCloud Background jobs](https://docs.nextcloud.com/server/20/admin_manual/configuration_server/background_jobs_configuration.html#background-jobs)
 - [Docker安装nextcloud以及遇到的一下问题和优化方法](https://blog.csdn.net/qq_31663099/article/details/105435087)
+- [MySQL与PostgreSQL哪个更好](https://www.biaodianfu.com/mysql-vs-postgresql.html)
 - 
