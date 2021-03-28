@@ -686,6 +686,115 @@ nextcloud
 
 
 
+## 11. 手动下载app-以music音乐为例
+
+nextcloud有非常多好用的app,你可以在nextcloud App Store上面去看一下！
+
+在nextcloud应用界面点击`下载并启用`时，会经常下载不成功。我们通过手动下载安装app。
+
+nextcloud App Store: [https://apps.nextcloud.com/](https://apps.nextcloud.com/)
+
+![](/img/Snipaste_2021-03-28_14-21-15.png)
+
+在右上角的搜索框输入`music`,并按回车搜索，点击进入到第一个搜索结果中：
+
+![](/img/Snipaste_2021-03-28_14-22-22.png)
+
+在Music详情页面，下方有一个`Downloads`列表，我们选择一个下载版本，右键复制链接地址：
+
+![](/img/Snipaste_2021-03-28_14-24-05.png)
+
+进入到nextcloud容器中，并切换到`apps`目录：
+
+```sh
+# 查看nextcloud容器id
+[root@hellogitlab ~]# docker ps
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                  NAMES
+89a04170593a        nextcloud           "/entrypoint.sh ap..."   3 days ago          Up 17 hours         0.0.0.0:8080->80/tcp   nextcloud
+
+# 进入到nextcloud容器命令行
+[root@hellogitlab ~]# dkin 89a0
+
+# 切换到apps目录，这个目录存放各种应用
+root@89a04170593a:/var/www/html# cd apps
+
+# 下载music应用，地址就是刚才右键复制的应用链接
+root@89a04170593a:/var/www/html/apps# wget https://github.com/owncloud/music/releases/download/v1.1.0/music_1.1.0_nc-signed.tar.gz
+Connecting to github.com (github.com)|13.250.177.223|:443... connected.
+HTTP request sent, awaiting response... 302 Found
+Location: https://github-releases.githubusercontent.com/10240326/5836f080-8cef-11eb-8abc-0719a38f7fe1?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20210328%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20210328T062758Z&X-Amz-Expires=300&X-Amz-Signature=8e74e0a52c6a5cc8f7f15aa4a0d9ba4a9b4694245547a3871286b77873b43900&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=10240326&response-content-disposition=attachment%3B%20filename%3Dmusic_1.1.0_nc-signed.tar.gz&response-content-type=application%2Foctet-stream [following]
+--2021-03-28 06:27:58--  https://github-releases.githubusercontent.com/10240326/5836f080-8cef-11eb-8abc-0719a38f7fe1?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20210328%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20210328T062758Z&X-Amz-Expires=300&X-Amz-Signature=8e74e0a52c6a5cc8f7f15aa4a0d9ba4a9b4694245547a3871286b77873b43900&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=10240326&response-content-disposition=attachment%3B%20filename%3Dmusic_1.1.0_nc-signed.tar.gz&response-content-type=application%2Foctet-stream
+Resolving github-releases.githubusercontent.com (github-releases.githubusercontent.com)... 185.199.110.154, 185.199.111.154, 185.199.108.154, ...
+Connecting to github-releases.githubusercontent.com (github-releases.githubusercontent.com)|185.199.110.154|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 1254419 (1.2M) [application/octet-stream]
+Saving to: 'music_1.1.0_nc-signed.tar.gz'
+
+music_1.1.0_nc-signed.tar.gz                   100%[=================================================================================================>]   1.20M  34.3KB/s    in 33s
+
+2021-03-28 06:28:32 (36.8 KB/s) - 'music_1.1.0_nc-signed.tar.gz' saved [1254419/1254419]
+
+root@89a04170593a:/var/www/html/apps#
+```
+
+解压：
+
+```sh
+root@89a04170593a:/var/www/html/apps# tar zxvf music_1.1.0_nc-signed.tar.gz
+music/
+music/COPYING
+music/CONTRIBUTING.md
+music/css/
+music/css/.keep
+music/js/
+music/js/.keep
+music/appinfo/
+... 以下省略
+```
+
+修改权限：
+
+```sh
+root@89a04170593a:/var/www/html/apps# chown -R www-data:root music
+root@89a04170593a:/var/www/html/apps# ls -lah music
+total 156K
+drwxr-xr-x 11 www-data root 4.0K Mar 24 19:55 .
+drwxr-xr-x 50 www-data root 4.0K Mar 28 06:29 ..
+drwxr-xr-x  3 www-data root 4.0K Mar 24 19:55 3rdparty
+-rw-r--r--  1 www-data root 2.6K Mar 24 19:55 AUTHORS.md
+-rw-r--r--  1 www-data root  49K Mar 24 19:55 CHANGELOG.md
+-rw-r--r--  1 www-data root 1.8K Mar 24 19:55 CONTRIBUTING.md
+-rw-r--r--  1 www-data root  34K Mar 24 19:55 COPYING
+-rw-r--r--  1 www-data root  15K Mar 24 19:55 README.md
+drwxr-xr-x  2 www-data root 4.0K Mar 24 20:02 appinfo
+drwxr-xr-x  2 www-data root 4.0K Mar 24 19:55 css
+drwxr-xr-x  3 www-data root 4.0K Mar 24 20:02 dist
+drwxr-xr-x  2 www-data root 4.0K Mar 24 19:55 img
+drwxr-xr-x  2 www-data root 4.0K Mar 24 19:55 js
+drwxr-xr-x  2 www-data root 4.0K Mar 24 19:55 l10n
+drwxr-xr-x 15 www-data root 4.0K Mar 24 19:55 lib
+drwxr-xr-x  3 www-data root 4.0K Mar 24 19:55 templates
+root@89a04170593a:/var/www/html/apps# ls -ld music
+drwxr-xr-x 11 www-data root 4096 Mar 24 19:55 music
+root@89a04170593a:/var/www/html/apps#
+```
+
+修改权限后，在应用界面可以看到`Music`应用：
+
+![](/img/Snipaste_2021-03-28_14-35-21.png)
+
+我们点击`启用`按钮，此时让输入`授权密码`,输入你的密码，并确认即可。
+
+
+
+上传一首歌曲到nextcloud，然后点击页面顶部的`音乐`图标，就可以打开音乐界面，可以看到刚才上传的音乐了：
+
+![](/img/Snipaste_2021-03-28_14-40-44.png)
+
+点击播放按钮就可以听音乐🎵了！
+
+
+
 
 
 参考：
@@ -695,4 +804,4 @@ nextcloud
 - [企业邮箱通过SMTP程序进行发信](https://help.aliyun.com/knowledge_detail/36687.html)
 - [企业邮箱postmaster管理员账号更改密码方法](https://help.aliyun.com/document_detail/36725.html)
 - [Debian 10 Buster 国内常用镜像源](https://cloud.tencent.com/developer/article/1590080)
-- 
+- [基于Nextcloud打造个人工作台](https://engr-z.com/363.html)
