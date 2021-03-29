@@ -1183,5 +1183,6 @@ hellogitlab.com:6378> keys *
 - [最详细的docker中安装并配置redis](https://truedei.blog.csdn.net/article/details/106418353?utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromBaidu-1.control&dist_request_id=&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromBaidu-1.control)
 - [Docker 自定义配置运行redis自动退出](https://blog.csdn.net/fvdfsdafdsafs/article/details/109028530)
 - [nextcloud Memory caching](https://docs.nextcloud.com/server/20/admin_manual/configuration_server/caching_configuration.html?highlight=redis#id2)
+- [nextcloud config PostgreSQL database](https://docs.nextcloud.com/server/20/admin_manual/configuration_database/linux_database_configuration.html#postgresql-database)
 - 
 
