@@ -127,12 +127,13 @@ tmpfs           379M     0  379M    0% /run/user/1000
 drwxr-xr-x 2 root root 4096 3月  24 20:58 /nextcloud/
 ```
 
-查看当前系统已经占用了哪些端口：
+查看当前系统已经占用了哪些端口，确定`8080`端口没有被占用。
 
-```sh
-[root@hellogitlab svn]# htpasswd -b passwd meizhaohui securepassword
-Updating password for user meizhaohui
-```
+
+
+<font color='red'>注意，下面执行创建容器时，在做目录映射时，`-v nextcloud:/var/www/html`处忘记使用结对路径，导致nextcloud数据被挂载到`/var/lib/docker/volumes`目录下的`nextcloud/_data`目录下。后面需要修改成正确的本地路径。</font>
+
+
 
 
 
@@ -1155,7 +1156,599 @@ hellogitlab.com:6378> keys *
 
 可以明显感觉到网站速度变快了！
 
+## 15. 配置正确的目录挂载
 
+由于前面的操作疏忽，挂载nextcloud目录时，使用了相对路径。我们需要将nextcloud数据存放在正确位置，修改nextcloud的目录挂载属性。我们将设置本地挂载目录为`/dockerdata/nextcloud/data`。
+
+首先创建本地挂载目录：
+
+```sh
+[root@hellogitlab ~]# mkdir -p /dockerdata/nextcloud/data
+[root@hellogitlab ~]# ls -ld /dockerdata/nextcloud/data
+drwxr-xr-x 2 root root 4096 3月  24 20:58 /dockerdata/nextcloud/data
+```
+
+为了便于后面对json字符串进行处理，我们安装一下`jq`软件：
+
+```sh
+# 安装
+[root@hellogitlab ~]# yum install jq -y
+
+# 查看jq的版本信息
+[root@hellogitlab ~]# jq --version
+jq-1.6
+
+# 查看jq命令行帮助信息
+[root@hellogitlab ~]# jq --help
+jq - commandline JSON processor [version 1.6]
+
+Usage:	jq [options] <jq filter> [file...]
+	jq [options] --args <jq filter> [strings...]
+	jq [options] --jsonargs <jq filter> [JSON_TEXTS...]
+
+jq is a tool for processing JSON inputs, applying the given filter to
+its JSON text inputs and producing the filter's results as JSON on
+standard output.
+
+The simplest filter is ., which copies jq's input to its output
+unmodified (except for formatting, but note that IEEE754 is used
+for number representation internally, with all that that implies).
+
+For more advanced filters see the jq(1) manpage ("man jq")
+and/or https://stedolan.github.io/jq
+
+Example:
+
+	$ echo '{"foo": 0}' | jq .
+	{
+		"foo": 0
+	}
+
+Some of the options include:
+  -c               compact instead of pretty-printed output;
+  -n               use `null` as the single input value;
+  -e               set the exit status code based on the output;
+  -s               read (slurp) all inputs into an array; apply filter to it;
+  -r               output raw strings, not JSON texts;
+  -R               read raw strings, not JSON texts;
+  -C               colorize JSON;
+  -M               monochrome (don't colorize JSON);
+  -S               sort keys of objects on output;
+  --tab            use tabs for indentation;
+  --arg a v        set variable $a to value <v>;
+  --argjson a v    set variable $a to JSON value <v>;
+  --slurpfile a f  set variable $a to an array of JSON texts read from <f>;
+  --rawfile a f    set variable $a to a string consisting of the contents of <f>;
+  --args           remaining arguments are string arguments, not files;
+  --jsonargs       remaining arguments are JSON arguments, not files;
+  --               terminates argument processing;
+
+Named arguments are also available as $ARGS.named[], while
+positional arguments are available as $ARGS.positional[].
+
+See the manpage for more options.
+[root@hellogitlab ~]#
+```
+
+为了便于我们快速的`docker`容器运行信息，我们可以创建一个快捷命令，在`~/.bashrc`文件中添加以下内容：
+
+```sh
+alias dkc='docker_check'
+function docker_check()
+{
+    container_name=$1
+    docker ps|head -n 1; docker ps|grep "${container_name}"
+}
+```
+
+添加完成后，查看`~/.bashrc`内容：
+
+```sh
+[root@hellogitlab ~]# tail -n 6 ~/.bashrc
+alias dkc='docker_check'
+function docker_check()
+{
+    container_name=$1
+    docker ps|head -n 1; docker ps|grep "${container_name}"
+}
+```
+
+使用命令`source ~/.bashrc`使快捷命令生效：
+
+```sh
+[root@hellogitlab ~]# source ~/.bashrc
+```
+
+然后就可以使用快捷命令查看docker单个容器的运行信息了，如我们要查看nextcloud容器的运行情况：
+
+```sh
+[root@hellogitlab ~]# dkc nextcloud
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                              NAMES
+89a04170593a        nextcloud           "/entrypoint.sh ap..."   6 days ago          Up 2 days           0.0.0.0:8080->80/tcp               nextcloud
+[root@hellogitlab ~]#
+```
+
+记住上面nextcloud容器的id号`89a04170593a`。
+
+为了修改nextcloud的目录挂载，现在我们先停止nextcloud容器。
+
+```sh
+[root@hellogitlab ~]# docker stop nextcloud
+nextcloud
+```
+
+我们先使用`docker inspect`获取容器的元数据，元数据比较多，我们使用`jq`命令过滤一下：
+
+```sh
+[root@hellogitlab ~]# docker inspect nextcloud|jq '.[0].Mounts'
+[
+  {
+    "Type": "volume",
+    "Name": "nextcloud",
+    "Source": "/var/lib/docker/volumes/nextcloud/_data",
+    "Destination": "/var/www/html",
+    "Driver": "local",
+    "Mode": "z",
+    "RW": true,
+    "Propagation": ""
+  }
+]
+[root@hellogitlab ~]# docker inspect redis-server|jq '.[0].Mounts'
+[
+  {
+    "Type": "bind",
+    "Source": "/dockerdata/redis/redis.conf",
+    "Destination": "/etc/redis/redis.conf",
+    "Mode": "",
+    "RW": true,
+    "Propagation": "rprivate"
+  },
+  {
+    "Type": "bind",
+    "Source": "/dockerdata/redis/data",
+    "Destination": "/data",
+    "Mode": "",
+    "RW": true,
+    "Propagation": "rprivate"
+  }
+]
+[root@hellogitlab ~]#
+```
+
+我们同时获取了`nextcloud`和`redis-server`两个容器的挂载信息元数据，`redis-server`的挂载使用的绝对路径，是正确的路径，我们需要参数`redis-server`的数据来配置一下`nextcloud`的挂载信息，修改后`nextcloud`的挂载信息应该是这样的:
+
+```sh
+[
+  {
+    "Type": "bind",
+    "Source": "/dockerdata/nextcloud/data",
+    "Destination": "/var/www/html",
+    "Mode": "",
+    "RW": true,
+    "Propagation": "rprivate"
+  }
+]
+```
+
+我们切换的docker容器的配置目录：
+
+```sh
+[root@hellogitlab ~]# cd /var/lib/docker/containers/
+[root@hellogitlab containers]# ls
+27a0f23540d8e23a1b86b56465d35e60c768ac822fb95b54b527996d30658a0a  89a04170593a665f114c9a1c207d64590aea68e70cb0802783f27dd22e67c921
+78b326089573d44a5f30647a16dc9e46248afc4a350cf355aa865386de6ef12b  ecef03de2237f243d031cafae5fc4870f4dee7d33aa269038fe7f180c2dfd66d
+[root@hellogitlab containers]#
+```
+
+可以看到该目录下面有多个文件夹，我们需要根据nextcloud的容器id切换到对应的目录下，前面已经确定nextcloud容器的id是`89a04170593a`，我们进入到文件夹名以该id信息开头的目录下：
+
+```sh
+root@hellogitlab containers]# cd 89a04170593a665f114c9a1c207d64590aea68e70cb0802783f27dd22e67c921/
+[root@hellogitlab 89a04170593a665f114c9a1c207d64590aea68e70cb0802783f27dd22e67c921]# ls
+checkpoints  config.v2.json  hostconfig.json  hostname  hosts  resolv.conf  resolv.conf.hash  secrets  shm
+[root@hellogitlab 89a04170593a665f114c9a1c207d64590aea68e70cb0802783f27dd22e67c921]#
+```
+
+目录下面的`config.v2.json`和`hostconfig.json`是我们需要修改的配置文件。
+
+我们查看一下配置文件信息：
+
+```sh
+# 文件原始json数据被压缩在一起，不便于查看
+[root@hellogitlab 89a04170593a665f114c9a1c207d64590aea68e70cb0802783f27dd22e67c921]# cat config.v2.json
+{"StreamConfig":{},"State":{"Running":false,"Paused":false,"Restarting":false,"OOMKilled":false,"RemovalInProgress":false,"Dead":false,"Pid":0,"ExitCode":0,"Error":"","StartedAt":"2021-03-28T17:38:01.798312241Z","FinishedAt":"2021-03-30T22:50:48.452629461Z","Health":null},"ID":"89a04170593a665f114c9a1c207d64590aea68e70cb0802783f27dd22e67c921","Created":"2021-03-24T13:42:29.385396424Z","Managed":false,"Path":"/entrypoint.sh","Args":["apache2-foreground"],"Config":{"Hostname":"89a04170593a","Domainname":"","User":"","AttachStdin":false,"AttachStdout":false,"AttachStderr":false,"ExposedPorts":{"80/tcp":{}},"Tty":false,"OpenStdin":false,"StdinOnce":false,"Env":["PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin","PHPIZE_DEPS=autoconf \t\tdpkg-dev \t\tfile \t\tg++ \t\tgcc \t\tlibc-dev \t\tmake \t\tpkg-config \t\tre2c","PHP_INI_DIR=/usr/local/etc/php","APACHE_CONFDIR=/etc/apache2","APACHE_ENVVARS=/etc/apache2/envvars","PHP_EXTRA_BUILD_DEPS=apache2-dev","PHP_EXTRA_CONFIGURE_ARGS=--with-apxs2 --disable-cgi","PHP_CFLAGS=-fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64","PHP_CPPFLAGS=-fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64","PHP_LDFLAGS=-Wl,-O1 -pie","GPG_KEYS=42670A7FE4D0441C8E4632349E4FDC074A4EF02D 5A52880781F755608BF815FC910DEB46F53EA312","PHP_VERSION=7.4.14","PHP_URL=https://www.php.net/distributions/php-7.4.14.tar.xz","PHP_ASC_URL=https://www.php.net/distributions/php-7.4.14.tar.xz.asc","PHP_SHA256=f9f3c37969fcd9006c1dbb1dd76ab53f28c698a1646fa2dde8547c3f45e02886","NEXTCLOUD_VERSION=20.0.5"],"Cmd":["apache2-foreground"],"Image":"nextcloud","Volumes":{"/var/www/html":{}},"WorkingDir":"/var/www/html","Entrypoint":["/entrypoint.sh"],"OnBuild":null,"Labels":{},"StopSignal":"SIGWINCH"},"Image":"sha256:8bb5955fb2f762817cbbcfa1dc7fb3bf5c4c3e6c215d136bdbd32c80c53afe8f","NetworkSettings":{"Bridge":"","SandboxID":"394abfb03ed8f79ffbe2205531e5ec16beafbf2cf6425bce56f4fa6f5036832a","HairpinMode":false,"LinkLocalIPv6Address":"","LinkLocalIPv6PrefixLen":0,"Networks":{"bridge":{"IPAMConfig":null,"Links":null,"Aliases":null,"NetworkID":"f563f8bf0b491badc16657015c62f8475397737843ce5478823ec50aafe2acfc","EndpointID":"","Gateway":"","IPAddress":"","IPPrefixLen":0,"IPv6Gateway":"","GlobalIPv6Address":"","GlobalIPv6PrefixLen":0,"MacAddress":"","IPAMOperational":false}},"Service":null,"Ports":null,"SandboxKey":"/var/run/docker/netns/394abfb03ed8","SecondaryIPAddresses":null,"SecondaryIPv6Addresses":null,"IsAnonymousEndpoint":false,"HasSwarmEndpoint":false},"LogPath":"","Name":"/nextcloud","Driver":"overlay2","MountLabel":"","ProcessLabel":"","RestartCount":0,"HasBeenStartedBefore":true,"HasBeenManuallyStopped":true,"MountPoints":{"/var/www/html":{"Source":"/var/lib/docker/volumes/nextcloud/_data","Destination":"/var/www/html","RW":true,"Name":"nextcloud","Driver":"local","Type":"volume","Relabel":"z","Spec":{"Type":"volume","Source":"nextcloud","Target":"/var/www/html"}}},"SecretReferences":null,"AppArmorProfile":"","HostnamePath":"/var/lib/docker/containers/89a04170593a665f114c9a1c207d64590aea68e70cb0802783f27dd22e67c921/hostname","HostsPath":"/var/lib/docker/containers/89a04170593a665f114c9a1c207d64590aea68e70cb0802783f27dd22e67c921/hosts","ShmPath":"/var/lib/docker/containers/89a04170593a665f114c9a1c207d64590aea68e70cb0802783f27dd22e67c921/shm","ResolvConfPath":"/var/lib/docker/containers/89a04170593a665f114c9a1c207d64590aea68e70cb0802783f27dd22e67c921/resolv.conf","SeccompProfile":"","NoNewPrivileges":false}
+
+# 我们使用jq美化打印输出一下
+[root@hellogitlab 89a04170593a665f114c9a1c207d64590aea68e70cb0802783f27dd22e67c921]# cat config.v2.json |jq
+{
+  "StreamConfig": {},
+  "State": {
+    "Running": false,
+    "Paused": false,
+    "Restarting": false,
+    "OOMKilled": false,
+    "RemovalInProgress": false,
+    "Dead": false,
+    "Pid": 0,
+    "ExitCode": 0,
+    "Error": "",
+    "StartedAt": "2021-03-28T17:38:01.798312241Z",
+    "FinishedAt": "2021-03-30T22:50:48.452629461Z",
+    "Health": null
+  },
+  "ID": "89a04170593a665f114c9a1c207d64590aea68e70cb0802783f27dd22e67c921",
+  "Created": "2021-03-24T13:42:29.385396424Z",
+  "Managed": false,
+  "Path": "/entrypoint.sh",
+  "Args": [
+    "apache2-foreground"
+  ],
+  "Config": {
+    "Hostname": "89a04170593a",
+    "Domainname": "",
+    "User": "",
+    "AttachStdin": false,
+    "AttachStdout": false,
+    "AttachStderr": false,
+    "ExposedPorts": {
+      "80/tcp": {}
+    },
+    "Tty": false,
+    "OpenStdin": false,
+    "StdinOnce": false,
+    "Env": [
+      "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+      "PHPIZE_DEPS=autoconf \t\tdpkg-dev \t\tfile \t\tg++ \t\tgcc \t\tlibc-dev \t\tmake \t\tpkg-config \t\tre2c",
+      "PHP_INI_DIR=/usr/local/etc/php",
+      "APACHE_CONFDIR=/etc/apache2",
+      "APACHE_ENVVARS=/etc/apache2/envvars",
+      "PHP_EXTRA_BUILD_DEPS=apache2-dev",
+      "PHP_EXTRA_CONFIGURE_ARGS=--with-apxs2 --disable-cgi",
+      "PHP_CFLAGS=-fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64",
+      "PHP_CPPFLAGS=-fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64",
+      "PHP_LDFLAGS=-Wl,-O1 -pie",
+      "GPG_KEYS=42670A7FE4D0441C8E4632349E4FDC074A4EF02D 5A52880781F755608BF815FC910DEB46F53EA312",
+      "PHP_VERSION=7.4.14",
+      "PHP_URL=https://www.php.net/distributions/php-7.4.14.tar.xz",
+      "PHP_ASC_URL=https://www.php.net/distributions/php-7.4.14.tar.xz.asc",
+      "PHP_SHA256=f9f3c37969fcd9006c1dbb1dd76ab53f28c698a1646fa2dde8547c3f45e02886",
+      "NEXTCLOUD_VERSION=20.0.5"
+    ],
+    "Cmd": [
+      "apache2-foreground"
+    ],
+    "Image": "nextcloud",
+    "Volumes": {
+      "/var/www/html": {}
+    },
+    "WorkingDir": "/var/www/html",
+    "Entrypoint": [
+      "/entrypoint.sh"
+    ],
+    "OnBuild": null,
+    "Labels": {},
+    "StopSignal": "SIGWINCH"
+  },
+  "Image": "sha256:8bb5955fb2f762817cbbcfa1dc7fb3bf5c4c3e6c215d136bdbd32c80c53afe8f",
+  "NetworkSettings": {
+    "Bridge": "",
+    "SandboxID": "394abfb03ed8f79ffbe2205531e5ec16beafbf2cf6425bce56f4fa6f5036832a",
+    "HairpinMode": false,
+    "LinkLocalIPv6Address": "",
+    "LinkLocalIPv6PrefixLen": 0,
+    "Networks": {
+      "bridge": {
+        "IPAMConfig": null,
+        "Links": null,
+        "Aliases": null,
+        "NetworkID": "f563f8bf0b491badc16657015c62f8475397737843ce5478823ec50aafe2acfc",
+        "EndpointID": "",
+        "Gateway": "",
+        "IPAddress": "",
+        "IPPrefixLen": 0,
+        "IPv6Gateway": "",
+        "GlobalIPv6Address": "",
+        "GlobalIPv6PrefixLen": 0,
+        "MacAddress": "",
+        "IPAMOperational": false
+      }
+    },
+    "Service": null,
+    "Ports": null,
+    "SandboxKey": "/var/run/docker/netns/394abfb03ed8",
+    "SecondaryIPAddresses": null,
+    "SecondaryIPv6Addresses": null,
+    "IsAnonymousEndpoint": false,
+    "HasSwarmEndpoint": false
+  },
+  "LogPath": "",
+  "Name": "/nextcloud",
+  "Driver": "overlay2",
+  "MountLabel": "",
+  "ProcessLabel": "",
+  "RestartCount": 0,
+  "HasBeenStartedBefore": true,
+  "HasBeenManuallyStopped": true,
+  "MountPoints": {
+    "/var/www/html": {
+      "Source": "/var/lib/docker/volumes/nextcloud/_data",
+      "Destination": "/var/www/html",
+      "RW": true,
+      "Name": "nextcloud",
+      "Driver": "local",
+      "Type": "volume",
+      "Relabel": "z",
+      "Spec": {
+        "Type": "volume",
+        "Source": "nextcloud",
+        "Target": "/var/www/html"
+      }
+    }
+  },
+  "SecretReferences": null,
+  "AppArmorProfile": "",
+  "HostnamePath": "/var/lib/docker/containers/89a04170593a665f114c9a1c207d64590aea68e70cb0802783f27dd22e67c921/hostname",
+  "HostsPath": "/var/lib/docker/containers/89a04170593a665f114c9a1c207d64590aea68e70cb0802783f27dd22e67c921/hosts",
+  "ShmPath": "/var/lib/docker/containers/89a04170593a665f114c9a1c207d64590aea68e70cb0802783f27dd22e67c921/shm",
+  "ResolvConfPath": "/var/lib/docker/containers/89a04170593a665f114c9a1c207d64590aea68e70cb0802783f27dd22e67c921/resolv.conf",
+  "SeccompProfile": "",
+  "NoNewPrivileges": false
+}
+
+# 同样查看一下hostconfig.json信息
+[root@hellogitlab 89a04170593a665f114c9a1c207d64590aea68e70cb0802783f27dd22e67c921]# cat hostconfig.json
+{"Binds":["nextcloud:/var/www/html"],"ContainerIDFile":"","LogConfig":{"Type":"journald","Config":{}},"NetworkMode":"default","PortBindings":{"80/tcp":[{"HostIp":"","HostPort":"8080"}]},"RestartPolicy":{"Name":"no","MaximumRetryCount":0},"AutoRemove":false,"VolumeDriver":"","VolumesFrom":null,"CapAdd":null,"CapDrop":null,"Dns":[],"DnsOptions":[],"DnsSearch":[],"ExtraHosts":null,"GroupAdd":null,"IpcMode":"","Cgroup":"","Links":[],"OomScoreAdj":0,"PidMode":"","Privileged":false,"PublishAllPorts":false,"ReadonlyRootfs":false,"SecurityOpt":null,"UTSMode":"","UsernsMode":"","ShmSize":67108864,"Runtime":"docker-runc","ConsoleSize":[0,0],"Isolation":"","CpuShares":0,"Memory":0,"NanoCpus":0,"CgroupParent":"","BlkioWeight":0,"BlkioWeightDevice":null,"BlkioDeviceReadBps":null,"BlkioDeviceWriteBps":null,"BlkioDeviceReadIOps":null,"BlkioDeviceWriteIOps":null,"CpuPeriod":0,"CpuQuota":0,"CpuRealtimePeriod":0,"CpuRealtimeRuntime":0,"CpusetCpus":"","CpusetMems":"","Devices":[],"DiskQuota":0,"KernelMemory":0,"MemoryReservation":0,"MemorySwap":0,"MemorySwappiness":-1,"OomKillDisable":false,"PidsLimit":0,"Ulimits":null,"CpuCount":0,"CpuPercent":0,"IOMaximumIOps":0,"IOMaximumBandwidth":0}
+[root@hellogitlab 89a04170593a665f114c9a1c207d64590aea68e70cb0802783f27dd22e67c921]# cat hostconfig.json |jq
+{
+  "Binds": [
+    "nextcloud:/var/www/html"
+  ],
+  "ContainerIDFile": "",
+  "LogConfig": {
+    "Type": "journald",
+    "Config": {}
+  },
+  "NetworkMode": "default",
+  "PortBindings": {
+    "80/tcp": [
+      {
+        "HostIp": "",
+        "HostPort": "8080"
+      }
+    ]
+  },
+  "RestartPolicy": {
+    "Name": "no",
+    "MaximumRetryCount": 0
+  },
+  "AutoRemove": false,
+  "VolumeDriver": "",
+  "VolumesFrom": null,
+  "CapAdd": null,
+  "CapDrop": null,
+  "Dns": [],
+  "DnsOptions": [],
+  "DnsSearch": [],
+  "ExtraHosts": null,
+  "GroupAdd": null,
+  "IpcMode": "",
+  "Cgroup": "",
+  "Links": [],
+  "OomScoreAdj": 0,
+  "PidMode": "",
+  "Privileged": false,
+  "PublishAllPorts": false,
+  "ReadonlyRootfs": false,
+  "SecurityOpt": null,
+  "UTSMode": "",
+  "UsernsMode": "",
+  "ShmSize": 67108864,
+  "Runtime": "docker-runc",
+  "ConsoleSize": [
+    0,
+    0
+  ],
+  "Isolation": "",
+  "CpuShares": 0,
+  "Memory": 0,
+  "NanoCpus": 0,
+  "CgroupParent": "",
+  "BlkioWeight": 0,
+  "BlkioWeightDevice": null,
+  "BlkioDeviceReadBps": null,
+  "BlkioDeviceWriteBps": null,
+  "BlkioDeviceReadIOps": null,
+  "BlkioDeviceWriteIOps": null,
+  "CpuPeriod": 0,
+  "CpuQuota": 0,
+  "CpuRealtimePeriod": 0,
+  "CpuRealtimeRuntime": 0,
+  "CpusetCpus": "",
+  "CpusetMems": "",
+  "Devices": [],
+  "DiskQuota": 0,
+  "KernelMemory": 0,
+  "MemoryReservation": 0,
+  "MemorySwap": 0,
+  "MemorySwappiness": -1,
+  "OomKillDisable": false,
+  "PidsLimit": 0,
+  "Ulimits": null,
+  "CpuCount": 0,
+  "CpuPercent": 0,
+  "IOMaximumIOps": 0,
+  "IOMaximumBandwidth": 0
+}
+```
+
+作为对照，我们看一下`redis-server`配置文件信息，此处只列出我们关心的内容：
+
+```sh
+[root@hellogitlab 89a04170593a665f114c9a1c207d64590aea68e70cb0802783f27dd22e67c921]# cat ../ecef03de2237f243d031cafae5fc4870f4dee7d33aa269038fe7f180c2dfd66d/config.v2.json |jq '.MountPoints'
+{
+  "/data": {
+    "Source": "/dockerdata/redis/data",
+    "Destination": "/data",
+    "RW": true,
+    "Name": "",
+    "Driver": "",
+    "Type": "bind",
+    "Propagation": "rprivate",
+    "Spec": {
+      "Type": "bind",
+      "Source": "/dockerdata/redis/data",
+      "Target": "/data"
+    }
+  },
+  "/etc/redis/redis.conf": {
+    "Source": "/dockerdata/redis/redis.conf",
+    "Destination": "/etc/redis/redis.conf",
+    "RW": true,
+    "Name": "",
+    "Driver": "",
+    "Type": "bind",
+    "Propagation": "rprivate",
+    "Spec": {
+      "Type": "bind",
+      "Source": "/dockerdata/redis/redis.conf",
+      "Target": "/etc/redis/redis.conf"
+    }
+  }
+}
+
+[root@hellogitlab 89a04170593a665f114c9a1c207d64590aea68e70cb0802783f27dd22e67c921]# cat ../ecef03de2237f243d031cafae5fc4870f4dee7d33aa269038fe7f180c2dfd66d/hostconfig.json|jq '.Binds'
+[
+  "/dockerdata/redis/redis.conf:/etc/redis/redis.conf",
+  "/dockerdata/redis/data:/data"
+]
+```
+
+为了便于修改，我们使用`jq`命令将美化的数据写入到临时文件中，然后再在临时文件中进行修改，修改完成后再写入到正式配置文件中。
+
+```sh
+# 备份原始配置文件
+[root@hellogitlab 89a04170593a665f114c9a1c207d64590aea68e70cb0802783f27dd22e67c921]# cp config.v2.json config.v2.json.bak
+[root@hellogitlab 89a04170593a665f114c9a1c207d64590aea68e70cb0802783f27dd22e67c921]# cp hostconfig.json hostconfig.json.bak
+
+# 将美化后的数据写入到临时文件中
+[root@hellogitlab 89a04170593a665f114c9a1c207d64590aea68e70cb0802783f27dd22e67c921]# cat config.v2.json|jq > new_config.v2.json
+[root@hellogitlab 89a04170593a665f114c9a1c207d64590aea68e70cb0802783f27dd22e67c921]# cat hostconfig.json|jq > new_hostconfig.json
+[root@hellogitlab 89a04170593a665f114c9a1c207d64590aea68e70cb0802783f27dd22e67c921]#
+```
+
+我们参考`redis-server`的数据对`nextcloud`容器的配置文件进行修改，我们在临时文件中进行修改。
+
+修改前，`new_config.v2.json`关于挂载点的信息：
+
+![](/img/Snipaste_2021-03-31_07-25-59.png)
+
+我们使用vim进行修改，修改后挂载点的信息如下：
+
+![](/img/Snipaste_2021-03-31_07-28-58.png)
+
+然后我们生成压缩后的配置写入到正式文件：
+
+```sh
+[root@hellogitlab 89a04170593a665f114c9a1c207d64590aea68e70cb0802783f27dd22e67c921]# cat new_config.v2.json |jq -c > config.v2.json
+[root@hellogitlab 89a04170593a665f114c9a1c207d64590aea68e70cb0802783f27dd22e67c921]#
+```
+
+同样修改一下`hostconfig.json`文件，这个只需要`Bind`处：
+
+修改前：
+
+![](/img/Snipaste_2021-03-31_07-38-53.png)
+
+修改后：
+
+![](/img/Snipaste_2021-03-31_07-39-50.png)
+
+然后我们生成压缩后的配置写入到正式文件：
+
+```sh
+[root@hellogitlab 89a04170593a665f114c9a1c207d64590aea68e70cb0802783f27dd22e67c921]# cat new_hostconfig.json |jq -c > hostconfig.json
+[root@hellogitlab 89a04170593a665f114c9a1c207d64590aea68e70cb0802783f27dd22e67c921]#
+```
+
+重启docker服务，并启动nextcloud容器：
+
+```sh
+# 重启docker服务
+[root@hellogitlab ~]# systemctl restart docker
+[root@hellogitlab ~]# systemctl status docker|head -n 3
+● docker.service - Docker Application Container Engine
+   Loaded: loaded (/usr/lib/systemd/system/docker.service; disabled; vendor preset: disabled)
+   Active: active (running) since 三 2021-03-31 07:42:01 CST; 37s ago
+[root@hellogitlab ~]#
+
+
+# 启动nextcloud容器
+[root@hellogitlab ~]# docker start nextcloud
+nextcloud
+[root@hellogitlab ~]# dkc nextcloud
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                              NAMES
+89a04170593a        nextcloud           "/entrypoint.sh ap..."   6 days ago          Up 9 seconds        0.0.0.0:8080->80/tcp               nextcloud
+[root@hellogitlab ~]#
+```
+
+查看一下nextcloud的挂载点元数据信息：
+
+```sh
+[root@hellogitlab ~]# docker inspect nextcloud |jq '.[].Mounts'
+[
+  {
+    "Type": "bind",
+    "Source": "/dockerdata/nextcloud/data",
+    "Destination": "/var/www/html",
+    "Mode": "",
+    "RW": true,
+    "Propagation": "rprivate"
+  }
+]
+[root@hellogitlab ~]#
+```
+
+可以看到，与预期的结果一样，说明配置正确！
+
+
+
+然后看一下，本地挂载点目录数据是否有了：
+
+```sh
+[root@hellogitlab ~]# ls -lah /dockerdata/nextcloud/data/
+总用量 168K
+drwxr-xr-x 14   33 root 4.0K 3月  31 07:43 .
+drwxr-xr-x  3 root root 4.0K 3月  31 07:01 ..
+drwxr-xr-x 41   33 root 4.0K 3月  31 07:43 3rdparty
+drwxr-xr-x 47   33 root 4.0K 3月  31 07:43 apps
+-rw-r--r--  1   33 root  17K 3月  31 07:43 AUTHORS
+drwxr-xr-x  2   33 root 4.0K 3月  31 07:44 config
+-rw-r--r--  1   33 root 3.9K 3月  31 07:43 console.php
+-rw-r--r--  1   33 root  34K 3月  31 07:43 COPYING
+drwxr-xr-x 22   33 root 4.0K 3月  31 07:43 core
+-rw-r--r--  1   33 root 5.0K 3月  31 07:43 cron.php
+drwxr-xr-x  2   33 root 4.0K 3月  31 07:43 custom_apps
+drwxr-xr-x  2   33 root 4.0K 3月  31 07:48 data
+-rw-r--r--  1   33 root 3.0K 3月  31 07:43 .htaccess
+-rw-r--r--  1   33 root  156 3月  31 07:43 index.html
+-rw-r--r--  1   33 root 2.9K 3月  31 07:43 index.php
+drwxr-xr-x  6   33 root 4.0K 3月  31 07:43 lib
+-rwxr-xr-x  1   33 root  283 3月  31 07:43 occ
+drwxr-xr-x  2   33 root 4.0K 3月  31 07:43 ocm-provider
+drwxr-xr-x  2   33 root 4.0K 3月  31 07:43 ocs
+drwxr-xr-x  2   33 root 4.0K 3月  31 07:43 ocs-provider
+-rw-r--r--  1   33 root 3.1K 3月  31 07:43 public.php
+-rw-r--r--  1   33 root 5.3K 3月  31 07:43 remote.php
+drwxr-xr-x  4   33 root 4.0K 3月  31 07:43 resources
+-rw-r--r--  1   33 root   26 3月  31 07:43 robots.txt
+-rw-r--r--  1   33 root 2.4K 3月  31 07:43 status.php
+drwxr-xr-x  3   33 root 4.0K 3月  31 07:43 themes
+-rw-r--r--  1   33 root  101 3月  31 07:43 .user.ini
+-rw-r--r--  1   33 root  382 3月  31 07:43 version.php
+[root@hellogitlab ~]#
+```
+
+这样可以看到，数据已经挂载过来了。说明配置正确。
 
 
 
