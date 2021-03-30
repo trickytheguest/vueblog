@@ -47,6 +47,60 @@ data
 
 
 
+为了密码安全，我们创建一个保证密码的配置文件`postgres-passwd`:
+
+```sh
+[root@hellogitlab postgresql]# echo 'POSTGRES_PASSWORD=securepasswd' > postgres-passwd
+[root@hellogitlab postgresql]# echo 'POSTGRES_USER=postgres' >> postgres-passwd
+POSTGRES_PASSWORD=securepasswd
+POSTGRES_USER=postgres
+[root@hellogitlab postgresql]# 
+```
+
+
+
+运行`postgresql`容器：
+
+```sh
+docker run --name postgres-server --restart=always -p 5432:5432 -v /dockerdata/postgresql/data:/var/lib/postgresql/data -e POSTGRES_PASSWORD_FILE=/dockerdata/postgresql/postgres_passwd -d postgres
+```
+
+使用这种方式运行容器中一直提示找不到文件：
+
+```sh
+[root@hellogitlab postgresql]# docker run --name postgres-server --restart=always -p 5432:5432 -v /dockerdata/postgresql/data:/var/lib/postgresql/data -e POSTGRES_PASSWORD_FILE=/dockerdata/postgresql/postgres_passwd -d postgres
+be7218055a40da7c58c46742286dc73ee8bcd824f1180a29d591d0b7bb1fad6d
+[root@hellogitlab postgresql]# docker logs be72
+/usr/local/bin/docker-entrypoint.sh: line 21: /dockerdata/postgresql/postgres_passwd: No such file or directory
+/usr/local/bin/docker-entrypoint.sh: line 21: /dockerdata/postgresql/postgres_passwd: No such file or directory
+/usr/local/bin/docker-entrypoint.sh: line 21: /dockerdata/postgresql/postgres_passwd: No such file or directory
+/usr/local/bin/docker-entrypoint.sh: line 21: /dockerdata/postgresql/postgres_passwd: No such file or directory
+[root@hellogitlab postgresql]#
+```
+
+我们改用直接在命令行设置密码形式运行：
+
+
+```sh
+[root@hellogitlab ~]# docker run --name postgres-server --restart=always -p 5432:5432 -v /dockerdata/postgresql/data:/var/lib/postgresql/data -e POSTGRES_PASSWORD=securepasswd -d postgres
+27a0f23540d8e23a1b86b56465d35e60c768ac822fb95b54b527996d30658a0a
+[root@hellogitlab ~]# docker ps |head -n 1; docker ps |grep postgres
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                              NAMES
+27a0f23540d8        postgres            "docker-entrypoint..."   2 minutes ago       Up 2 minutes        0.0.0.0:5432->5432/tcp             postgres-server
+```
+
+可以看到postgres-server容器运行正常！
+
+
+
+
+
+```text
+docker run --name nextcloud_test -d  -p 8081:80 -v nextcloud:/var/www/html nextcloud
+```
+
+
+
 
 
 

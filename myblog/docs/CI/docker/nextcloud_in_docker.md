@@ -1184,5 +1184,8 @@ hellogitlab.com:6378> keys *
 - [Docker 自定义配置运行redis自动退出](https://blog.csdn.net/fvdfsdafdsafs/article/details/109028530)
 - [nextcloud Memory caching](https://docs.nextcloud.com/server/20/admin_manual/configuration_server/caching_configuration.html?highlight=redis#id2)
 - [nextcloud config PostgreSQL database](https://docs.nextcloud.com/server/20/admin_manual/configuration_database/linux_database_configuration.html#postgresql-database)
+- [使用docker搭建基于Postgresql的Nextcloud](https://www.lefer.cn/posts/61092/)
+- [nextcloud Converting database type](https://docs.nextcloud.com/server/20/admin_manual/configuration_database/db_conversion.html)
+- [nextcloud 切换数据库 mysql-＞PostgreSQL(sqlite-＞mysql同理) 遇到的一些问题 Docker版](https://blog.csdn.net/qq_31663099/article/details/108171261)
 - 
 
