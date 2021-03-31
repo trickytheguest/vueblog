@@ -133,7 +133,7 @@ drwxr-xr-x 2 root root 4096 3月  24 20:58 /nextcloud/
 
 <font color='red'>注意，下面执行创建容器时，在做目录映射时，`-v nextcloud:/var/www/html`处忘记使用绝对路径，导致nextcloud数据被挂载到`/var/lib/docker/volumes`目录下的`nextcloud/_data`目录下。后面需要修改成正确的本地路径。</font>
 
-
+<table><tr><td bgcolor=#FFFF00>此处需要注意的是，后期重新挂载时，会影响你的配置数据，你设置的应用、以及上传的数据可能会丢失，所以在初次挂载时，需要特别注意，路径使用绝对路径，并选择一个合适的路径！！！</td></tr></table>
 
 
 
@@ -1750,6 +1750,8 @@ drwxr-xr-x  3   33 root 4.0K 3月  31 07:43 themes
 
 这样可以看到，数据已经挂载过来了。说明配置正确。
 
+<table><tr><td bgcolor=#FFFF00>此处需要注意的是，虽然重新挂载了，但原来设置的应用、以及上传的数据都不存在了，所以在初次挂载时，需要特别注意，路径使用绝对路径！！！</td></tr></table>
+
 
 
 ## 16. 创建postgresql数据库
@@ -1757,6 +1759,8 @@ drwxr-xr-x  3   33 root 4.0K 3月  31 07:43 themes
 此处不详细介绍，请参考我的另一章文章 [docker配置postgresql数据库](./postgresql_in_docker.md)
 
 
+
+## 17. 数据迁移
 
 
 
