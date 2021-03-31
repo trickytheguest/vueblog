@@ -131,7 +131,7 @@ drwxr-xr-x 2 root root 4096 3月  24 20:58 /nextcloud/
 
 
 
-<font color='red'>注意，下面执行创建容器时，在做目录映射时，`-v nextcloud:/var/www/html`处忘记使用结对路径，导致nextcloud数据被挂载到`/var/lib/docker/volumes`目录下的`nextcloud/_data`目录下。后面需要修改成正确的本地路径。</font>
+<font color='red'>注意，下面执行创建容器时，在做目录映射时，`-v nextcloud:/var/www/html`处忘记使用绝对路径，导致nextcloud数据被挂载到`/var/lib/docker/volumes`目录下的`nextcloud/_data`目录下。后面需要修改成正确的本地路径。</font>
 
 
 
@@ -1752,12 +1752,31 @@ drwxr-xr-x  3   33 root 4.0K 3月  31 07:43 themes
 
 
 
+## 16. 创建postgresql数据库
+
+此处不详细介绍，请参考我的另一章文章 [docker配置postgresql数据库](./postgresql_in_docker.md)
+
+
+
+
+
 
 
 ## 定制Docker镜像，编写自己的dockerfile
 
 
 
+**说明：**
+
+markdown字体标红处理方法：`<font color='red'> text </font>`
+
+效果：<font color='red'> text </font>
+
+设置背景色：`<table><tr><td bgcolor=#54FF9F>背景色的设置是按照十六进制颜色值：#54FF9F</td></tr></table>`
+
+效果：
+
+<table><tr><td bgcolor=#54FF9F>背景色的设置是按照十六进制颜色值：#54FF9F</td></tr></table>
 
 
 参考：
