@@ -1768,17 +1768,14 @@ drwxr-xr-x  3   33 root 4.0K 3月  31 07:43 themes
 
 
 
-官方文档 Converting database type https://docs.nextcloud.com/server/20/admin_manual/configuration_database/db_conversion.html 提到可以将SQLite数据库转换成性能更好的MySQL, MariaDB or PostgreSQL数据库，考虑到后期我需要搭建本地的GitLab私有仓库，而GitLab后台也是用的PostgreSQL，因此我将nextcloud的数据迁移到PostgreSQL数据库中。
+官方文档 Converting database type[https://docs.nextcloud.com/server/20/admin_manual/configuration_database/db_conversion.html ](https://docs.nextcloud.com/server/20/admin_manual/configuration_database/db_conversion.html ) 提到可以将SQLite数据库转换成性能更好的MySQL, MariaDB or PostgreSQL数据库，考虑到后期我需要搭建本地的GitLab私有仓库，而GitLab后台也是用的PostgreSQL，因此我将nextcloud的数据迁移到PostgreSQL数据库中。
 
 最好的方式是在开始运行容器时，增加`--link postgres-server:pg`方式连接到`postges-server`容器。
 
 我们尝试转换一下，看看行不行。
 
 ```
-
-
 docker exec --user www-data nextcloud php occ db:convert-type --port="5432" --password="password" --clear-schema --all-apps pgsql username hostname database
-
 
 
 docker exec --user www-data nextcloud php occ db:convert-type --port="5432" --password="securepasswd" --clear-schema --all-apps pgsql ncadmin hellogitlab.com nextcloud
@@ -1790,7 +1787,66 @@ docker exec --user www-data nextcloud php occ db:convert-type --port="5432" --pa
 
 ![](/img/Snipaste_2021-04-01_08-09-09.png)
 
+报以下异常：
+
+```sh
+
+In AbstractPostgreSQLDriver.php line 54:
+
+  An exception occurred while executing 'SELECT setval('oc_text_documents_id_
+  seq', (SELECT MAX() FROM ))':
+
+  SQLSTATE[42601]: Syntax error: 7 ERROR:  syntax error at or near ")"
+  LINE 1: ...ECT setval('oc_text_documents_id_seq', (SELECT MAX() FROM ))
+                                                                       ^
+
+
+In PDOConnection.php line 83:
+
+  SQLSTATE[42601]: Syntax error: 7 ERROR:  syntax error at or near ")"
+  LINE 1: ...ECT setval('oc_text_documents_id_seq', (SELECT MAX() FROM ))
+                                                                       ^
+
+
+In PDOConnection.php line 78:
+
+  SQLSTATE[42601]: Syntax error: 7 ERROR:  syntax error at or near ")"
+  LINE 1: ...ECT setval('oc_text_documents_id_seq', (SELECT MAX() FROM ))
+                                                                       ^
+
+
+db:convert-type [--port PORT] [--password PASSWORD] [--clear-schema] [--all-apps] [--chunk-size CHUNK-SIZE] [--] <type> <username> <hostname> <database>
+```
+
+参考：[Syntax Error on db:convert-type when converting any DB to ->PostgreSQL | NC 20](https://github.com/nextcloud/server/issues/24884)
+
+说是要禁用	text`应用，并删除`-app-apps`参数。
+
+![](/img/Snipaste_2021-04-02_06-49-54.png)
+
+我们在`已启用的应用`管理界面禁用`text`应用，并将`--all-apps`参数去掉后，再尝试一次。执行命令`docker exec --user www-data nextcloud php occ db:convert-type --port="5432" --password="securepasswd" --clear-schema pgsql ncadmin hellogitlab.com nextcloud`。
+
+```sh
+[root@hellogitlab ~]# docker exec --user www-data nextcloud php occ db:convert-type --port="5432" --password="securepasswd" --clear-schema pgsql ncadmin hellogitlab.com nextcloud
+Clearing schema in new database
+Creating schema in new database
+The following tables will not be converted:
+oc_text_documents
+oc_text_sessions
+oc_text_steps
+Please note that tables belonging to available but currently not installed apps
+can be included by specifying the --all-apps option.
+Continue with the conversion (y/n)? [n] y  # <---------备注，此处提示时，输入y确认，确认后需要等待系统处理，需要几分钟
+
+```
+
+
+
+
+
 因此，我计划重新运行容器，并在容器运行命令中加上数据库`--link`参数，然后再重新配置nextcloud环境。
+
+
 
 
 
