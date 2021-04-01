@@ -1754,15 +1754,43 @@ drwxr-xr-x  3   33 root 4.0K 3月  31 07:43 themes
 
 
 
+
+
 ## 16. 创建postgresql数据库
 
 此处不详细介绍，请参考我的另一章文章 [docker配置postgresql数据库](./postgresql_in_docker.md)
+
+在其中创建了`nextcloud`数据库，用户`ncadmin`，将授予`ncadmin`对数据库`nextcloud`的管理权限。
 
 
 
 ## 17. 数据迁移
 
 
+
+官方文档 Converting database type https://docs.nextcloud.com/server/20/admin_manual/configuration_database/db_conversion.html 提到可以将SQLite数据库转换成性能更好的MySQL, MariaDB or PostgreSQL数据库，考虑到后期我需要搭建本地的GitLab私有仓库，而GitLab后台也是用的PostgreSQL，因此我将nextcloud的数据迁移到PostgreSQL数据库中。
+
+最好的方式是在开始运行容器时，增加`--link postgres-server:pg`方式连接到`postges-server`容器。
+
+我们尝试转换一下，看看行不行。
+
+```
+
+
+docker exec --user www-data nextcloud php occ db:convert-type --port="5432" --password="password" --clear-schema --all-apps pgsql username hostname database
+
+
+
+docker exec --user www-data nextcloud php occ db:convert-type --port="5432" --password="securepasswd" --clear-schema --all-apps pgsql ncadmin hellogitlab.com nextcloud
+```
+
+执行发现转换失败：
+
+![](/img/Snipaste_2021-04-01_08-11-09.png)
+
+![](/img/Snipaste_2021-04-01_08-09-09.png)
+
+因此，我计划重新运行容器，并在容器运行命令中加上数据库`--link`参数，然后再重新配置nextcloud环境。
 
 
 
