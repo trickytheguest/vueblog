@@ -69,8 +69,9 @@ Registry Mirrors:
 
 
 
-
 ## 2. 下载nextcloud镜像
+
+参考dockerhub nextcloud官方镜像 [https://hub.docker.com/_/nextcloud/](https://hub.docker.com/_/nextcloud/) 。
 
 
 ```sh
@@ -1764,7 +1765,7 @@ drwxr-xr-x  3   33 root 4.0K 3月  31 07:43 themes
 
 
 
-## 17. 数据迁移
+## 17. 数据迁移(！迁移失败！)
 
 
 
@@ -1840,12 +1841,115 @@ Continue with the conversion (y/n)? [n] y  # <---------备注，此处提示时�
 
 ```
 
+等了好久没有反应，按`Ctrl + C`终止程序，放弃此方法！
+
+数据迁移失败！！！
+
+因此，我计划重新运行容器，~~并在容器运行命令中加上数据库`--link`参数，~~然后再重新配置nextcloud环境。
+<table><tr><td bgcolor=#FFFF00>此处需要注意的是，“docker link 过时不再用了？那容器互联、服务发现怎么办"一文中不建议使用`--link`参数，而使用`--network`参数，暂时不会，忽略此方法！</td></tr></table>
+
+我们直接通过配置环境变量来连接数据库。
 
 
 
+## 18. 通过配置环境变量文件来运行nextcloud
 
-因此，我计划重新运行容器，并在容器运行命令中加上数据库`--link`参数，然后再重新配置nextcloud环境。
 
+
+在dockerhub nextcloud官方镜像中，提到我们可以通过配置环境变量来自动配置nextcloud。
+
+![](/img/Snipaste_2021-04-02_21-20-35.png)
+
+如前面我们测试的，我们需要使用Redis作缓存、postgresql作数据库、SMTP外部邮箱配置，另外，可以在在环境变量中配置nextcloud的管理员账号和密码。
+
+我们列一下：
+
+```ini
+# 1. postgresql数据库相关
+# 数据库名
+POSTGRES_DB
+# 数据库主机名
+POSTGRES_HOST
+# 用户名
+POSTGRES_USER
+# 登陆数据库使用的密码
+POSTGRES_PASSWORD
+
+# 2. Redis缓存相关
+# 缓存主机
+REDIS_HOST
+# Redis端口号
+REDIS_HOST_PORT
+# Redis密码
+REDIS_HOST_PASSWORD
+
+# 3.外部邮箱
+# SMTP服务器地址
+SMTP_HOST
+# SMTP安全类型
+SMTP_SECURE
+# SMTP端口号
+SMTP_PORT
+# SMTP认证类型
+SMTP_AUTHTYPE
+# SMTP认证用户名
+SMTP_NAME
+# SMTP认证用户密码
+SMTP_PASSWORD
+# 邮件from地址设置
+MAIL_FROM_ADDRESS
+
+# 4. nextcloud设置
+# nextcloud管理员用户名
+NEXTCLOUD_ADMIN_USER
+# nextcloud管理员密码 
+NEXTCLOUD_ADMIN_PASSWORD
+# 可信域名
+NEXTCLOUD_TRUSTED_DOMAINS
+```
+
+这些变量差不多覆盖了我们需要设置的内容。
+
+我们尝试写一个配置文件`.nextcloud.env`，并运行centos容器，打印出环境变量;
+
+```sh
+# 查看配置文件
+[root@hellogitlab ~]# cat .nextcloud.env
+#1.postgresql数据库相关
+#数据库名
+POSTGRES_DB=nextcloud
+#数据库主机名
+POSTGRES_HOST=hellogitlab.com
+#用户名
+POSTGRES_USER=ncadmin
+#登陆数据库使用的密码
+POSTGRES_PASSWORD=password
+
+#2.Redis缓存相关
+#缓存主机
+REDIS_HOST=hellogitlab.com
+#Redis端口号
+REDIS_HOST_PORT=6378
+#Redis密码
+REDIS_HOST_PASSWORD=password
+
+[root@hellogitlab ~]# 
+# 通过运行容器命令查看环境变量
+[root@hellogitlab ~]# docker run --env-file=.nextcloud.env centos env
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+HOSTNAME=96772aeee751
+POSTGRES_DB=nextcloud
+POSTGRES_HOST=hellogitlab.com
+POSTGRES_USER=ncadmin
+POSTGRES_PASSWORD=password
+REDIS_HOST=hellogitlab.com
+REDIS_HOST_PORT=6378
+REDIS_HOST_PASSWORD=password
+HOME=/root
+[root@hellogitlab nextcloud]#
+```
+
+可以看到能够正常获取环境变量。
 
 
 
@@ -1887,5 +1991,5 @@ markdown字体标红处理方法：`<font color='red'> text </font>`
 - [使用docker搭建基于Postgresql的Nextcloud](https://www.lefer.cn/posts/61092/)
 - [nextcloud Converting database type](https://docs.nextcloud.com/server/20/admin_manual/configuration_database/db_conversion.html)
 - [nextcloud 切换数据库 mysql-＞PostgreSQL(sqlite-＞mysql同理) 遇到的一些问题 Docker版](https://blog.csdn.net/qq_31663099/article/details/108171261)
-- 
+- [[docker link 过时不再用了？那容器互联、服务发现怎么办？](https://www.cnblogs.com/YatHo/p/7866018.html)
 
