@@ -180,3 +180,31 @@ OK
 
 说明能够正常写入数据到redis中。
 
+
+
+查询所有key:
+
+```sh
+127.0.0.1:6378> keys *
+  1) "f944948d6e25ff6be26d865176a21c4a/imagePath-ad10a4b5e8c0338e5a79b03b164af307-integration_gitlab-app.svg"
+  2) "b57a02f0af280eb6ce504c367c12e078/imagePath-ad10a4b5e8c0338e5a79b03b164af307-dashboard-favicon.ico"
+  3) "b57a02f0af280eb6ce504c367c12e078/imagePath-ad10a4b5e8c0338e5a79b03b164af307-core-desktopapp.svg"
+  4) "b57a02f0af280eb6ce504c367c12e078/imagePath-ad10a4b5e8c0338e5a79b03b164af307-settings-favicon.ico"
+  5) "f944948d6e25ff6be26d865176a21c4a/imagePath-ad10a4b5e8c0338e5a79b03b164af307-passwords-favicon.ico"
+  6) "f944948d6e25ff6be26d865176a21c4a/imagePath-ad10a4b5e8c0338e5a79b03b164af307-user_status-app.svg"
+  7) "f944948d6e25ff6be26d865176a21c4a/imagePath-ad10a4b5e8c0338e5a79b03b164af307-privacy-app-dark.svg"
+  8) "PHPREDIS_SESSION:06e5ea25cde5b68c2c6d0a5953ed981e"
+  9) "PHPREDIS_SESSION:6c4158267fae83bf947def98c6e394ef"
+```
+
+使用`flushdb`删除所有key:
+
+```sh
+127.0.0.1:6378> flushdb
+OK
+127.0.0.1:6378> keys *
+(empty list or set)
+```
+
+
+
