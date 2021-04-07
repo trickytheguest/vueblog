@@ -588,6 +588,20 @@ CONTAINER ID        IMAGE               COMMAND                  CREATED        
 
 nextcloud使用的是`debian buster`系统，我们更新其为国内源，方便安装程序。我们使用腾讯云。
 
+```
+deb http://mirrors.cloud.tencent.com/debian/ buster main non-free contrib
+deb http://mirrors.cloud.tencent.com/debian-security buster/updates main
+deb http://mirrors.cloud.tencent.com/debian/ buster-updates main non-free contrib
+deb http://mirrors.cloud.tencent.com/debian/ buster-backports main non-free contrib
+
+deb-src http://mirrors.cloud.tencent.com/debian-security buster/updates main
+deb-src http://mirrors.cloud.tencent.com/debian/ buster main non-free contrib
+deb-src http://mirrors.cloud.tencent.com/debian/ buster-updates main non-free contrib
+deb-src http://mirrors.cloud.tencent.com/debian/ buster-backports main non-free contrib
+```
+
+执行以下命令：
+
 ```sh
 root@89a04170593a:/var/www/html/# cd /etc/apt/
 # 备份原始的源
@@ -1934,7 +1948,7 @@ REDIS_HOST_PORT=6378
 REDIS_HOST_PASSWORD=password
 
 [root@hellogitlab ~]# 
-# 通过运行容器命令查看环境变量
+# 通过运行centos容器命令查看环境变量
 [root@hellogitlab ~]# docker run --env-file=.nextcloud.env centos env
 PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 HOSTNAME=96772aeee751
@@ -1950,6 +1964,140 @@ HOME=/root
 ```
 
 可以看到能够正常获取环境变量。
+
+
+
+相应的，我们也可以通过这种方式为nextcloud提供环境变量。
+
+我们先进入到Postgresql中删除之前迁移失败时生成的nextcloud数据表，并重新授权。
+
+删除数据库：
+```sh
+[root@hellogitlab ~]# psql -Uadmin -dtestdb -h localhost
+用户 admin 的口令：
+psql (9.2.24, 服务器 13.1 (Debian 13.1-1.pgdg100+1))
+警告：psql 版本9.2， 服务器版本13.0.
+一些psql功能可能无法工作.
+输入 "help" 来获取帮助信息.
+
+testdb=#
+testdb=# DROP DATABASE nextcloud;
+DROP DATABASE
+```
+
+再重新创建数据库，并授权：
+
+```sh
+# 创建数据库
+testdb=# CREATE DATABASE nextcloud;
+CREATE DATABASE
+
+# 授权
+testdb=# GRANT ALL PRIVILEGES ON DATABASE nextcloud TO ncadmin;
+GRANT
+```
+
+这样数据库准备好了。将旧的nextcloud容器删除掉，然后重新运行一个新的nextcloud容器。
+
+
+
+删除旧的nextcloud容器，并删除目录挂载数据：
+
+```sh
+[root@hellogitlab nextcloud]# pwd
+/dockerdata/nextcloud
+# 删除容器
+[root@hellogitlab nextcloud]# dkr nextcloud
+nextcloud
+nextcloud
+# 删除挂载数据
+[root@hellogitlab nextcloud]# trash-put data/
+[root@hellogitlab nextcloud]# trash-empty
+[root@hellogitlab nextcloud]# mkdir data
+```
+
+重新运行容器：
+
+```sh
+docker run --name nextcloud --env-file=/dockerdata/nextcloud/.nextcloud.env -p 8080:80 -v /dockerdata/nextcloud/data:/var/www/html -d nextcloud
+```
+
+运行：
+
+```sh
+[root@hellogitlab ~]# docker run --name nextcloud --env-file=/dockerdata/nextcloud/.nextcloud.env -p 8080:80 -v /dockerdata/nextcloud/data:/var/www/html -d nextcloud
+7d0951455066120c3eb8a94b37527d5c53fdb839fc3583166ec9625e15741b30
+```
+
+查看日志：
+
+```sh
+[root@hellogitlab ~]# docker logs -f nextcloud
+Configuring Redis as session handler
+Initializing nextcloud 20.0.5.2 ...
+Initializing finished
+New nextcloud instance
+Installing with PostgreSQL database
+starting nextcloud installation
+
+^[[O^[[INextcloud was successfully installed
+setting trusted domains…
+System config value trusted_domains => 1 set to string hellogitlab.com:8080,nextcloud.hellogitlab.com
+AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 172.18.0.4. Set the 'ServerName' directive globally to suppress this message
+AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 172.18.0.4. Set the 'ServerName' directive globally to suppress this message
+[Tue Apr 06 23:53:23.469067 2021] [mpm_prefork:notice] [pid 1] AH00163: Apache/2.4.38 (Debian) PHP/7.4.14 configured -- resuming normal operations
+[Tue Apr 06 23:53:23.469149 2021] [core:notice] [pid 1] AH00094: Command line: 'apache2 -D FOREGROUND'
+```
+
+打开nextcloud链接地址 [https://nextcloud.hellogitlab.com:444/](https://nextcloud.hellogitlab.com:444/),页面提示`通过不被信任的域名访问`异常：
+
+![](/img/Snipaste_2021-04-07_07-56-32.png)
+
+查看配置文件，可知`config.php`中域名配置异常：
+
+```sh
+[root@hellogitlab ~]# dkin nextcloud
+root@7d0951455066:/var/www/html# cat config/config.php |grep -A 4 'trusted_domains'
+  'trusted_domains' =>
+  array (
+    0 => 'localhost',
+    1 => 'hellogitlab.com:8080,nextcloud.hellogitlab.com',
+  ),
+```
+
+说明我们配置文件中可信域名配置错误。
+
+
+
+我们安装一下vim后，然后使用vim编辑一下config.php配置文件，更新后查看可信域名信息：
+
+```sh
+root@7d0951455066:/var/www/html# cat config/config.php |grep -A 5 'trusted_domains'
+  'trusted_domains' =>
+  array (
+    0 => 'hellogitlab.com:8080',
+    1 => 'nextcloud.hellogitlab.com',
+  ),
+```
+
+退出容器命令行，然后重启容器：
+
+```sh
+[root@hellogitlab ~]# docker stop nextcloud
+nextcloud
+[root@hellogitlab ~]# docker start nextcloud
+nextcloud
+```
+
+再次打开web页面：
+
+![](/img/Snipaste_2021-04-07_08-09-31.png)
+
+页面正常显示。
+
+我们输入一下登陆用户名和密码，看看能不能登陆进去。此时可以正常登陆进入到nextcloud页面，说明配置正确！
+
+
 
 
 
