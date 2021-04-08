@@ -2099,6 +2099,30 @@ nextcloud
 
 
 
+安全检查时会提示安全异常，需要运行命令：
+
+```sh
+[root@hellogitlab nextcloud]# docker exec --user www-data nextcloud php occ db:add-missing-indices
+Check indices of the share table.
+Check indices of the filecache table.
+Check indices of the twofactor_providers table.
+Check indices of the login_flow_v2 table.
+Check indices of the whats_new table.
+Check indices of the cards table.
+Adding cards_abiduri index to the cards table, this can take some time...
+cards table updated successfully.
+Check indices of the cards_properties table.
+Check indices of the calendarobjects_props table.
+Check indices of the schedulingobjects table.
+Check indices of the oc_properties table.
+```
+
+这样`概览`页面就不会显示警告了！
+
+![](/img/Snipaste_2021-04-08_08-20-47.png)
+
+
+
 
 
 
