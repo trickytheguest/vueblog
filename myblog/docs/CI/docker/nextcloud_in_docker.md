@@ -2127,6 +2127,125 @@ Check indices of the oc_properties table.
 
 ![](/img/Snipaste_2021-04-08_08-20-47.png)
 
+自定义的环境配置文件如下：
+
+```sh
+[root@hellogitlab nextcloud]# cat .nextcloud.env
+#1.postgresql数据库相关
+#数据库名
+POSTGRES_DB=nextcloud
+#数据库端口号5432
+POSTGRES_PORT=5432
+#数据库主机名
+POSTGRES_HOST=hellogitlab.com
+#用户名
+POSTGRES_USER=ncadmin
+#登陆数据库使用的密码
+POSTGRES_PASSWORD=securepassword
+
+#2.Redis缓存相关
+#缓存主机
+REDIS_HOST=hellogitlab.com
+#Redis端口号
+REDIS_HOST_PORT=6378
+#Redis密码
+REDIS_HOST_PASSWORD=securepassword
+
+# 3.外部邮箱
+# SMTP服务器地址
+SMTP_HOST=smtp.mxhichina.com
+# SMTP域名
+MAIL_DOMAIN=hellogitlab.com
+# SMTP安全类型
+SMTP_SECURE=ssl
+# SMTP端口号
+SMTP_PORT=465
+# SMTP认证类型
+SMTP_AUTHTYPE=LOGIN
+# SMTP认证用户名
+SMTP_NAME=notice@hellogitlab.com
+# SMTP认证用户密码
+SMTP_PASSWORD=securepassword
+# 邮件from地址设置
+# MAIL_FROM_ADDRESS 此处只应写用户名
+MAIL_FROM_ADDRESS=notice
+
+# 4. nextcloud设置
+# nextcloud管理员用户名
+NEXTCLOUD_ADMIN_USER=ncadmin
+# nextcloud管理员密码
+NEXTCLOUD_ADMIN_PASSWORD=securepassword
+# 可信域名
+NEXTCLOUD_TRUSTED_DOMAINS=hellogitlab.com:8080 nextcloud.hellogitlab.com
+[root@hellogitlab nextcloud]#
+```
+
+
+
+最终生成的配置文件如下：
+
+```sh
+root@b172ace555a9:/var/www/html# cat config/config.php
+<?php
+$CONFIG = array (
+  'htaccess.RewriteBase' => '/',
+  'memcache.local' => '\\OC\\Memcache\\APCu',
+  'apps_paths' =>
+  array (
+    0 =>
+    array (
+      'path' => '/var/www/html/apps',
+      'url' => '/apps',
+      'writable' => false,
+    ),
+    1 =>
+    array (
+      'path' => '/var/www/html/custom_apps',
+      'url' => '/custom_apps',
+      'writable' => true,
+    ),
+  ),
+  'memcache.distributed' => '\\OC\\Memcache\\Redis',
+  'memcache.locking' => '\\OC\\Memcache\\Redis',
+  'redis' =>
+  array (
+    'host' => 'hellogitlab.com',
+    'password' => 'securepassword',
+    'port' => 6378,
+  ),
+  'mail_smtpmode' => 'smtp',
+  'mail_smtphost' => 'smtp.mxhichina.com',
+  'mail_smtpport' => '465',
+  'mail_smtpsecure' => 'ssl',
+  'mail_smtpauth' => true,
+  'mail_smtpauthtype' => 'LOGIN',
+  'mail_smtpname' => 'notice@hellogitlab.com',
+  'mail_smtppassword' => 'securepassword',
+  'mail_from_address' => 'notice',
+  'mail_domain' => 'hellogitlab.com',
+  'passwordsalt' => 'dszdHKxV/dfsdfdsfsd',
+  'secret' => 'XqVVvw8YRfdsfsdLhGI+securepassword',
+  'trusted_domains' =>
+  array (
+    0 => 'localhost',
+    1 => 'hellogitlab.com:8080',
+    2 => 'nextcloud.hellogitlab.com',
+  ),
+  'datadirectory' => '/var/www/html/data',
+  'dbtype' => 'pgsql',
+  'version' => '20.0.5.2',
+  'overwrite.cli.url' => 'http://localhost',
+  'dbname' => 'nextcloud',
+  'dbhost' => 'hellogitlab.com',
+  'dbport' => '',
+  'dbtableprefix' => 'oc_',
+  'dbuser' => 'ncadmin',
+  'dbpassword' => 'password',
+  'installed' => true,
+  'instanceid' => 'ocmdfsdfds',
+);
+```
+
 
 
 ## 19.  手机客户端多次登陆出现请求过多的问题
