@@ -2268,6 +2268,37 @@ $CONFIG = array (
 
 
 
+需要做的事情：
+
+```sh
+# 1. 更新apt源
+cat > /etc/apt/source.list << EOF
+deb http://mirrors.cloud.tencent.com/debian/ buster main non-free contrib
+deb http://mirrors.cloud.tencent.com/debian-security buster/updates main
+deb http://mirrors.cloud.tencent.com/debian/ buster-updates main non-free contrib
+deb http://mirrors.cloud.tencent.com/debian/ buster-backports main non-free contrib
+
+deb-src http://mirrors.cloud.tencent.com/debian-security buster/updates main
+deb-src http://mirrors.cloud.tencent.com/debian/ buster main non-free contrib
+deb-src http://mirrors.cloud.tencent.com/debian/ buster-updates main non-free contrib
+deb-src http://mirrors.cloud.tencent.com/debian/ buster-backports main non-free contrib
+EOF
+
+# 2. 更新源
+apt update
+
+# 3. 安装软件
+apt inatall vim ffmpge -y
+
+# 4. 
+```
+
+自制镜像示例，参考https://engr-z.com/278.html：
+
+![](/img/Snipaste_2021-04-10_22-45-15.png)
+
+
+
 
 
 **说明：**
