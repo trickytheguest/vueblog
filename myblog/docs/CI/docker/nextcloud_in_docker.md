@@ -2129,10 +2129,25 @@ Check indices of the oc_properties table.
 
 
 
+## 19.  手机客户端多次登陆出现请求过多的问题
+
+
+
+多次手机登陆后，有可能手机客户端被拦截住:
+
+![](/img/IMG_0676BDB6CA5B-1.jpeg)
+
+
+
+
 
 
 
 ## 定制Docker镜像，编写自己的dockerfile
+
+待补充。
+
+
 
 
 
