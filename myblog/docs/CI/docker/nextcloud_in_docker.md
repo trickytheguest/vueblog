@@ -2040,7 +2040,7 @@ New nextcloud instance
 Installing with PostgreSQL database
 starting nextcloud installation
 
-^[[O^[[INextcloud was successfully installed
+Nextcloud was successfully installed
 setting trusted domains…
 System config value trusted_domains => 1 set to string hellogitlab.com:8080,nextcloud.hellogitlab.com
 AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 172.18.0.4. Set the 'ServerName' directive globally to suppress this message
@@ -2097,9 +2097,15 @@ nextcloud
 
 我们输入一下登陆用户名和密码，看看能不能登陆进去。此时可以正常登陆进入到nextcloud页面，说明配置正确！
 
+我们在`概览`页面可以看到有`数据库丢失了一些索引`的警告：
+
+![](/img/Snipaste_2021-04-10_19-19-35.png)
 
 
-安全检查时会提示安全异常，需要运行命令：
+
+
+
+我们不用关闭容器，直接运行以下命令：
 
 ```sh
 [root@hellogitlab nextcloud]# docker exec --user www-data nextcloud php occ db:add-missing-indices
@@ -2117,7 +2123,7 @@ Check indices of the schedulingobjects table.
 Check indices of the oc_properties table.
 ```
 
-这样`概览`页面就不会显示警告了！
+刷新页面，这样`概览`页面就不会显示警告了！
 
 ![](/img/Snipaste_2021-04-08_08-20-47.png)
 
