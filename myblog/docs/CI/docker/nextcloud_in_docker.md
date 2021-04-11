@@ -2234,7 +2234,8 @@ $CONFIG = array (
   'datadirectory' => '/var/www/html/data',
   'dbtype' => 'pgsql',
   'version' => '20.0.5.2',
-  'overwrite.cli.url' => 'http://localhost',
+  'overwrite.cli.url' => 'http://hellogitlab.com:8080',
+  'overwriteprotocol' => 'https',
   'dbname' => 'nextcloud',
   'dbhost' => 'hellogitlab.com',
   'dbport' => '',
@@ -2255,6 +2256,31 @@ $CONFIG = array (
 多次手机登陆后，有可能手机客户端被拦截住:
 
 ![](/img/IMG_0676BDB6CA5B-1.jpeg)
+
+参考 [https://help.nextcloud.com/t/cannot-login-too-many-requests/100905/16](https://help.nextcloud.com/t/cannot-login-too-many-requests/100905/16) 运行以下命令：
+
+`docker exec --user www-data nextcloud php occ security:bruteforce:reset <IP>` 其中IP是被拦截的IP，可以在`设置`-`日志`界面查看到被拦截的IP地址信息。
+
+执行命令：
+
+```sh
+[root@hellogitlab ~]# docker exec --user www-data nextcloud php occ security:bruteforce:reset 172.18.0.1
+[root@hellogitlab ~]#
+```
+
+重新使用手机客户端则可以正常登陆！
+
+也可以将表中的数据删除掉：
+
+```sh
+nextcloud=# DELETE FROM oc_bruteforce_attempts WHERE id > 1;
+DELETE 212
+nextcloud=# SELECT * FROM oc_bruteforce_attempts;
+ id | action |  occurred  |     ip     |    subnet     |       metadata
+----+--------+------------+------------+---------------+-----------------------
+  1 | login  | 1618053092 | 172.18.0.1 | 172.18.0.1/32 | {"user":"meizhaohui"}
+(1 行记录)
+```
 
 
 
@@ -2289,8 +2315,6 @@ apt update
 
 # 3. 安装软件
 apt inatall vim ffmpge -y
-
-# 4. 
 ```
 
 自制镜像示例，参考https://engr-z.com/278.html：
@@ -2335,4 +2359,7 @@ markdown字体标红处理方法：`<font color='red'> text </font>`
 - [nextcloud Converting database type](https://docs.nextcloud.com/server/20/admin_manual/configuration_database/db_conversion.html)
 - [nextcloud 切换数据库 mysql-＞PostgreSQL(sqlite-＞mysql同理) 遇到的一些问题 Docker版](https://blog.csdn.net/qq_31663099/article/details/108171261)
 - [[docker link 过时不再用了？那容器互联、服务发现怎么办？](https://www.cnblogs.com/YatHo/p/7866018.html)
+- [Cannot login: Too Many Requests](https://help.nextcloud.com/t/cannot-login-too-many-requests/100905)
+
+  
 
