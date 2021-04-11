@@ -2244,6 +2244,13 @@ $CONFIG = array (
   'dbpassword' => 'password',
   'installed' => true,
   'instanceid' => 'ocmdfsdfds',
+  'enable_previews' => true,
+  'enabledPreviewProviders' =>
+  array (
+    0 => 'OC\\Preview\\Image',
+    1 => 'OC\\Preview\\Movie',
+    2 => 'OC\\Preview\\TXT',
+ ),
 );
 ```
 
@@ -2315,6 +2322,8 @@ apt update
 
 # 3. 安装软件
 apt inatall vim ffmpge -y
+
+# 4. 更新配置文件，如增加缩略图设置、overwrite.cli.url设置等
 ```
 
 自制镜像示例，参考https://engr-z.com/278.html：
