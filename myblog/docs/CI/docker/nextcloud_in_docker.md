@@ -711,6 +711,24 @@ nextcloud有非常多好用的app,你可以在nextcloud App Store上面去看一
 - External sites 外部站点，可以在nextcloud中链接到外部网站。
 - passwords密码管理，自动生成密码，并管理你的密码，再也不用记一大堆密码了。可配合手机端的`Passwords`应用使用。
 - Bookmarks书签管理，可以同步不同浏览器之间的书签同步，需要安装浏览器插件应用`floccus`。可配置手机端的`nextBookmark`应用使用。
+- Brute-force settings白名单设置。
+
+下载链接：
+
+```sh
+# 外部站点
+https://github.com/nextcloud/external/releases/download/v3.8.1/external-3.8.1.tar.gz
+# music
+https://github.com/owncloud/music/releases/download/v1.1.0/music_1.1.0_nc-signed.tar.gz
+# 密码管理
+https://git.mdns.eu/nextcloud/passwords/-/jobs/12073/artifacts/raw/passwords.tar.gz
+# 书签
+https://github.com/nextcloud/bookmarks/releases/download/v4.1.0/bookmarks-4.1.0.tar.gz
+# 白名单
+https://github.com/nextcloud/bruteforcesettings/releases/download/v2.1.0/bruteforcesettings.tar.gz
+```
+
+
 
 在nextcloud应用界面点击`下载并启用`时，会经常下载不成功。我们通过手动下载安装app。
 
