@@ -2313,7 +2313,7 @@ nextcloud=# SELECT * FROM oc_bruteforce_attempts;
 
 
 
-## 定制Docker镜像，编写自己的dockerfile
+## 20. 定制Docker镜像，编写自己的dockerfile
 
 待补充。
 
@@ -2349,6 +2349,12 @@ apt inatall vim ffmpge -y
 ![](/img/Snipaste_2021-04-10_22-45-15.png)
 
 
+
+## 21. 照片自动上传
+
+在手机客户端可以设置照片自动上传，并设置文件名格式，默认的文件名中包含空格，我不喜欢文件名上包含空格，改成不带空格的格式，设置如下图：
+
+![](/img/750-1334-max.png)
 
 
 
