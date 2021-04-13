@@ -4004,9 +4004,113 @@ $ echo $?
 
 此处需要注意，函数`get_line`不要写成`getline`，这样会与`stdio.h`库中的`ssize_t getline(char ** __restrict __linep, size_t * __restrict __linecapp, FILE * __restrict __stream) __OSX_AVAILABLE_STARTING(__MAC_10_7, __IPHONE_4_3);`函数冲突。
 
-，
 
 
+我们优化一下，给输出结果加上颜色。
+
+优化后的源码如下：
+
+```c
+int main(int argc, char *argv[])
+{
+    char pattern[MAXLINE] = "";    // 存储用户输入的模式
+    strcpy(pattern, argv[1]);    // string.h头文件中定义的函数，将参数值赋值给字符数组
+
+    char line[MAXLINE];
+    int found = 0;
+    int index = 0;
+    printf("\033[1;31m粉红色字体\033[0m\n");
+    while (get_line(line, MAXLINE) > 0) {
+        index = strindex(line, pattern);
+        fflush(stdout);
+        if (index >= 0) {
+            // printf("index:%d\n", index);
+            int i     = 0;
+            int p_len = strlen(pattern);
+            // printf("p_len:%d\n", p_len);
+            for (i = 0; line[i] != '\0'; i++) {
+                if (i >= index && i <= index + p_len - 1)
+                    printf("\033[1;31m%c\033[0m", line[i]);
+                else
+                    printf("%c", line[i]);
+            }
+            found++;
+
+            fflush(stdout);
+        }
+    }
+    return found;
+}
+```
+
+
+
+
+
+编译并运行：
+
+```sh
+$ cc my_grep.c
+$ cat my_grep.c|grep 'for'
+int strindex(char source[], char searchchfor[]);
+            for (i = 0; line[i] != '\0'; i++) {
+    for (i = 0; s[i] != '\0'; i++) {
+        for (j = i, k = 0; t[k] != '\0' && s[j] == t[k]; j++, k++)
+$ cat my_grep.c|grep 'int'
+int get_line(char line[], int max);
+int strindex(char source[], char searchchfor[]);
+int main(int argc, char *argv[])
+    int found = 0;
+    int index = 0;
+    printf("\033[1;31m粉红色字体\033[0m\n");
+            // printf("index:%d\n", index);
+            int i     = 0;
+            int p_len = strlen(pattern);
+            // printf("p_len:%d\n", p_len);
+                    printf("\033[1;31m%c\033[0m", line[i]);
+                    printf("%c", line[i]);
+int get_line(char s[], int lim)
+    int c, i;
+int strindex(char s[], char t[])
+    int i, j, k;
+$ cat my_grep.c|my_grep.out 'for'
+粉红色字体
+int strindex(char source[], char searchchfor[]);
+            for (i = 0; line[i] != '\0'; i++) {
+    for (i = 0; s[i] != '\0'; i++) {
+        for (j = i, k = 0; t[k] != '\0' && s[j] == t[k]; j++, k++)
+$ cat my_grep.c|my_grep.out 'int'
+粉红色字体
+int get_line(char line[], int max);
+int strindex(char source[], char searchchfor[]);
+int main(int argc, char *argv[])
+    int found = 0;
+    int index = 0;
+    printf("\033[1;31m粉红色字体\033[0m\n");
+            // printf("index:%d\n", index);
+            int i     = 0;
+            int p_len = strlen(pattern);
+            // printf("p_len:%d\n", p_len);
+                    printf("\033[1;31m%c\033[0m", line[i]);
+                    printf("%c", line[i]);
+int strindex(char s[], char t[])
+    int i, j, k;
+$
+```
+
+可以看到带颜色的输出：
+
+![](/img/Snipaste_2021-04-13_22-52-47.png)
+
+可以看到，程序能够正常的将每行一个匹配字符串标记为粉红色，与`grep`命令一致。
+
+本程序存在以下问题：
+
+- 仅匹配每行的第一个匹配字符串并标红，后续能匹配的字符串被忽略。
+
+- `printf`延迟输出，导致程序会影响命令行显示。
+
+  
 
 
 
