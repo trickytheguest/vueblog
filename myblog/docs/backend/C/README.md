@@ -3869,6 +3869,8 @@ i = 0
 
 ## 第4章 函数与程序结构
 
+### 4.1 函数的基本知识
+
 - 函数可以把大的计算任务分解成若干个较小的任务，程序设计人员可以基于函数进一步构造程序，而不需要重新编写一些代码。
 
 - 一个设计得当的函数可以把程序中不需要了解的具体操作细节隐藏起来，从而使整个程序结构更加清晰，并降低修改程序的难度。
@@ -4110,7 +4112,162 @@ $
 
 - `printf`延迟输出，导致程序会影响命令行显示。
 
-  
+### 4.2 返回非整数值的函数
+
+有的函数不返回任何值(void)，有的函数返回int类型值，但还有许多函数返回double类型值。
+
+
+
+将数字字符串转换成双精度数字：
+
+```c
+$ cat atof.c
+/*
+ *      Filename: atof.c
+ *        Author: Zhaohui Mei<mzh.whut@gmail.com>
+ *   Description: 把字符串数字转换成双精度浮点数
+ *   Create Time: 2021-04-15 22:51:36
+ * Last Modified: 2021-04-15 22:57:34
+ */
+
+#include <ctype.h>
+#include <stdio.h>
+#include <string.h>
+
+#define MAX 1000    // 定义最长字符串
+
+// 把字符串s转换为相应的双精度浮点数
+double atof(char s[]);
+
+int main(int argc, char *argv[])
+{
+    int i;    // 记录参数序号
+    double stof(char[]);    // 显式声明atof函数
+    for (i = 1; i < argc; i++) {
+        char s[MAX];
+        strcpy(s, argv[i]);    // string.h头文件中定义的函数，将参数值赋值给字符数组
+        printf("%f\n", atof(s));
+    }
+}
+
+double atof(char s[])
+{
+    double val, power;
+    int i, sign;
+    // 跳过空白字符
+    for (i = 0; isspace(s[i]); i++)
+        ;
+    // 确定符号位，+-
+    sign = (s[i] == '-') ? -1 : 1;
+    // 从符号位后一位开始计数
+    if (s[i] == '+' || s[i] == '-')
+        i++;
+}
+
+```
+
+编译并运行：
+
+```sh
+$ cc atof.c
+$ atof.out '-123' "-12.345" "+123.01" +01234.5
+-123.000000
+-12.345000
+123.010000
+1234.500000
+```
+
+  可以看到，多个输入参数都正常的转换成双精度数字了。
+
+
+
+对代码进行修改一下，增加`atoi`函数：
+
+```c
+$ cat atof.c
+/*
+ *      Filename: atof.c
+ *        Author: Zhaohui Mei<mzh.whut@gmail.com>
+ *   Description: 把字符串数字转换成双精度浮点数
+ *   Create Time: 2021-04-15 22:51:36
+ * Last Modified: 2021-04-15 23:16:23
+ */
+
+#include <ctype.h>
+#include <stdio.h>
+#include <string.h>
+
+#define MAX 1000    // 定义最长字符串
+
+// 把字符串s转换为相应的双精度浮点数
+double atof(char s[]);
+
+// 把字符串s转换为相应的整型
+int atoi(char s[]);
+
+int main(int argc, char *argv[])
+{
+    int i;    // 记录参数序号
+    double stof(char[]);    // 显式声明atof函数
+    for (i = 1; i < argc; i++) {
+        char s[MAX];
+        strcpy(s, argv[i]);    // string.h头文件中定义的函数，将参数值赋值给字符数组
+        printf("%f\n", atof(s));
+        printf("%d\n", atoi(s));
+    }
+}
+
+double atof(char s[])
+{
+    double val, power;
+    int i, sign;
+    // 跳过空白字符
+    for (i = 0; isspace(s[i]); i++)
+        ;
+    // 确定符号位，+-
+    sign = (s[i] == '-') ? -1 : 1;
+    // 从符号位后一位开始计数
+    if (s[i] == '+' || s[i] == '-')
+        i++;
+    // isdigit由ctype.h提供，判断字符是否是数字
+    for (val = 0.0; isdigit(s[i]); i++)
+        val = 10.0 * val + (s[i] - '0');
+    // 判断是否是小数点
+    if (s[i] == '.')
+        i++;
+    // 计算小数点后的数据
+    for (power = 1.0; isdigit(s[i]); i++) {
+        val = 10.0 * val + (s[i] - '0');
+        power *= 10.0;
+    }
+    // 返回值
+    return sign * val / power;
+}
+
+int atoi(char s[])
+{
+    double atof(char s[]);    // 显式声明atof函数返回double类型
+
+    return (int) atof(s);
+}
+```
+
+编译并运行：
+
+```sh
+$ cc atof.c
+$ atof.out '-123' "-12.345" "+123.01" +01234.5
+-123.000000
+-123
+-12.345000
+-12
+123.010000
+123
+1234.500000
+1234
+```
+
+可以看到正常的输出了整型数据。
 
 
 
