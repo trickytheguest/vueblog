@@ -1503,6 +1503,60 @@ auto_deploy
 
 这样自动部署项目的工作就完成了！
 
+## CDN加速配置
+
+当网站文章变多时，网站页面打开速度变得越来越慢。这时我们可以通过配置CDN加速，来使我们的网站更快。
+
+我使用腾讯云的内容分发网络CDN，可参考内容分发网络快速入门进行操作 [https://cloud.tencent.com/document/product/228/38091](https://cloud.tencent.com/document/product/228/38091)
+
+需要在内容分发网络控制台 [https://console.cloud.tencent.com/cdn/domains](https://console.cloud.tencent.com/cdn/domains) 添加域名。
+
+添加完成后，内容分发网络中的域名如下：
+
+![](/img/Snipaste_2021-04-16_20-58-34.png)
+
+我因为使用了腾讯云的免费证书，因此选择回源协议时使用了`HTTPS`形式：
+
+![](/img/Snipaste_2021-04-16_21-04-41.png)
+
+另外，需要配置域名解析，需要在DNS 解析 DNSPod控制台配置。
+
+添加`CNAME`记录，并将原来的`A`记录暂停：
+
+暂停原先的A记录：
+
+![](/img/Snipaste_2021-04-16_23-16-45.png)
+
+并添加`CNAME`记录：
+
+![](/img/Snipaste_2021-04-16_23-18-17.png)
+
+配置好域名解析后，等几分钟解析就会生效。生效后，我们可以通过`ping`我们的域名来看一下是否是从CDN解析过来的。
+
+```sh
+$ ping hellogitlab.com -c 3
+PING 9jr9cwhb.slt.sched.tdnsv8.com (180.96.32.89): 56 data bytes
+64 bytes from 180.96.32.89: icmp_seq=0 ttl=53 time=16.757 ms
+64 bytes from 180.96.32.89: icmp_seq=1 ttl=53 time=17.313 ms
+64 bytes from 180.96.32.89: icmp_seq=2 ttl=53 time=17.547 ms
+
+--- 9jr9cwhb.slt.sched.tdnsv8.com ping statistics ---
+3 packets transmitted, 3 packets received, 0.0% packet loss
+round-trip min/avg/max/stddev = 16.757/17.206/17.547/0.331 ms
+$ ping www.hellogitlab.com -c 3
+PING 9jr9cwhb.slt.sched.tdnsv8.com (180.96.32.88): 56 data bytes
+64 bytes from 180.96.32.88: icmp_seq=0 ttl=53 time=17.681 ms
+64 bytes from 180.96.32.88: icmp_seq=1 ttl=53 time=17.275 ms
+64 bytes from 180.96.32.88: icmp_seq=2 ttl=53 time=17.705 ms
+
+--- 9jr9cwhb.slt.sched.tdnsv8.com ping statistics ---
+3 packets transmitted, 3 packets received, 0.0% packet loss
+round-trip min/avg/max/stddev = 17.275/17.554/17.705/0.197 ms
+$ 
+```
+
+通过`ping`命令可以看到，已经不是从原始的域名返回信息了，说明加速成功了！
+
 
 
 
