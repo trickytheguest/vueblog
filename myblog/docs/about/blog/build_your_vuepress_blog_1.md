@@ -1563,6 +1563,58 @@ $
 
 又考虑到腾讯云的CDN只能免费使用6个月，因此我还是将CDN加速关闭了！
 
+
+
+因为我们的源码存放在GitHub和gitee码云上面。我们可以利用`gitee`或`github`的加速。
+
+首先使用`jsdelivr`对赚点图片进行加速，你可以访问jsdelivr官网 [https://www.jsdelivr.com/](https://www.jsdelivr.com/)。
+
+我们尝试对我们的图片进行加速,以下是一个加速链接：
+
+`https://cdn.jsdelivr.net/gh/meizhaohui/vueblog/tree/master/myblog/docs/.vuepress/public/img/1589212177224.png`
+
+访问时，提示异常：
+
+![](/img/Snipaste_2021-04-20_22-31-12.png)
+
+即"Package size exceeded the configured limit of 50 MB."原因是我的仓库超过50M，jsdelivr不给提供加速服务。因此我们不用这种方式。我们使用码云对我们的网站进行加速。
+
+我们执行以下命令`ping -c 3 gitee.com`:
+
+```sh
+$ ping -c 3 gitee.com
+PING fn0wz54v.dayugslb.com (180.97.125.228): 56 data bytes
+64 bytes from 180.97.125.228: icmp_seq=0 ttl=53 time=16.763 ms
+64 bytes from 180.97.125.228: icmp_seq=1 ttl=53 time=18.131 ms
+64 bytes from 180.97.125.228: icmp_seq=2 ttl=53 time=18.443 ms
+
+--- fn0wz54v.dayugslb.com ping statistics ---
+3 packets transmitted, 3 packets received, 0.0% packet loss
+round-trip min/avg/max/stddev = 16.763/17.779/18.443/0.730 ms
+```
+
+可以看出`gitee.com`网站也是做了CDN加速的。并没有直接从`gitee.com`原始域名返回数据，我们可以利用这个特性来加快我们的网站访问速度。
+
+为了白嫖`gitee.com`码云的CDN，我们将仓库中所有图片地址更新为码云的地址。
+
+以图片`Snipaste_2021-04-20_22-06-33.png`为例，其在gitee.com上图床的地址是是：
+
+`https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-04-20_22-06-33.png`
+而在我们本地的Markdown文件中配置是`![](/img/Snipaste_2021-04-20_22-06-33.png)`
+
+我们只需要把`(/img/`字符符进行批量替换成`(https://meizhaohui.gitee.io/imagebed/img/`即可。
+
+
+
+
+
+
+https://meizhaohui.gitee.io/imagebed/
+
+
+
+
+
 ## 增加百度收录
 
 可以在百度的站点管理页面 [https://ziyuan.baidu.com/site/index#/](https://ziyuan.baidu.com/site/index#/) 将个人博客的url添加到百度资源中。
