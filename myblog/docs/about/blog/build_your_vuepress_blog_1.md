@@ -1563,6 +1563,57 @@ $
 
 又考虑到腾讯云的CDN只能免费使用6个月，因此我还是将CDN加速关闭了！
 
+## 增加百度收录
+
+可以在百度的站点管理页面 [https://ziyuan.baidu.com/site/index#/](https://ziyuan.baidu.com/site/index#/) 将个人博客的url添加到百度资源中。
+
+![](/img/Snipaste_2021-04-20_22-06-33.png)
+
+配置完成后，在网站仓库的`docs`目录下，创建`auto_generate_sites.sh`。然后使用`auto_generate_sites.sh`生成站点的所有URL地址，并提交到百度资源中：
+
+```sh
+[mzh@MacBookPro docs (master ✗)]$ cat auto_generate_sites.sh
+#!/bin/bash
+##################################################
+#      Filename: auto_generate_sites.sh
+#        Author: Zhaohui Mei<mzh.whut@gmail.com>
+#   Description: 自动生成网站URL超链接并提交至百度资源中
+#   Create Time: 2021-04-20 21:28:06
+# Last Modified: 2021-04-20 21:53:09
+# 百度资源链接 : https://ziyuan.baidu.com/linksubmit/index?site=https://hellogitlab.com/
+##################################################
+
+SCRIPT_PATH=$(cd "$(dirname "${0}")" && pwd)
+echo "SCRIPT_PATH:${SCRIPT_PATH}"
+site_file="${SCRIPT_PATH}/urls.txt"
+# 你可以将百度token存放在环境变量中，在~/.bashrc中加入以下内容
+# export BAIDU_TOKEN="your_baidu_token"
+echo "BAIDU_TOKEN:${BAIDU_TOKEN}"
+find . -name '*.md'|sed 's/.md$/.html/g'|sed 's/README.html//g'|sed 's@^.@https://hellogitlab.com@g'|sort > "${site_file}"
+upload_result=$(curl -H 'Content-Type:text/plain' --data-binary @${site_file} "http://data.zz.baidu.com/urls?site=https://hellogitlab.com&token=${BAIDU_TOKEN}")
+echo "字段	说明
+remain	当天剩余的可推送url条数
+success	成功推送的url条数"
+echo "upload_result:${upload_result}"
+```
+
+执行脚本：
+
+```sh
+[mzh@MacBookPro docs (master ✗)]$ sh auto_generate_sites.sh
+SCRIPT_PATH:/Users/mzh/Documents/Github/vueblog/myblog/docs
+BAIDU_TOKEN:securetoken
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100  5991  100    29  100  5962    144  29661 --:--:-- --:--:-- --:--:-- 29805
+字段	说明
+remain	当天剩余的可推送url条数
+success	成功推送的url条数
+upload_result:{"remain":2168,"success":104}
+```
+
+你可以配置一个定时任务，隔段时间执行一下脚本将网站URL上传到百度资源中。
+
 
 
 
