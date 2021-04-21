@@ -128,7 +128,23 @@ deploy: 1 windows (created Wed Mar 17 06:53:20 2021)
 
  
 
+## 11. 图床工具PicGo
 
+PicGo官网地址： [https://github.com/PicGo/](https://github.com/PicGo/)
+
+PicGo的使用可参考： [PicGo：免费搭建个人图床](https://zhuanlan.zhihu.com/p/128014135)
+
+注意，`repo`地址处不用写`https://gitee.com/`字符。
+
+![image-20210421233656676](https://meizhaohui.gitee.io/imagebed/img/image-20210421233656676.png)
+
+参考： [PicGo 配置Gitee 图床](https://www.pianshen.com/article/12391560560/)
+
+
+
+截图成功后，使用快捷键`command + shift + P`就可以调用PicGo上传图片了，上传成功后自动复制链接地址。
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210421234510.png)
 
 
 
