@@ -63,11 +63,11 @@ Python语言作者Guido van Rossum在 [邮件](https://mail.python.org/pipermail
 
 - 运行速度慢：代码执行时需要一行一行地翻译成计算机的机器码，翻译过程耗时，但是大量的应用程序不需要这么快的运行速度，因为用户根本感觉不出来。
 
-![do_not_care_about_runtime.jpg](/img/do_not_care_about_runtime.jpg)
+![do_not_care_about_runtime.jpg](https://meizhaohui.gitee.io/imagebed/img/do_not_care_about_runtime.jpg)
 
 - 代码不能加密：如果要发布你的Python程序，实际上就是发布源代码，凡是编译型的语言，都没有这个问题，而解释型的语言，则必须把源码发布出去。
 
-![have_no_time_check_your_fuck_code.jpg](/img/have_no_time_check_your_fuck_code.jpg)
+![have_no_time_check_your_fuck_code.jpg](https://meizhaohui.gitee.io/imagebed/img/have_no_time_check_your_fuck_code.jpg)
 
 
 参考文献：

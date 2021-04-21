@@ -611,7 +611,7 @@ globals_after: {'change_lang': <function change_lang at 0x7f67f611a048>, '__load
 
 对比函数执行前后的差异：
 
-![locals_globals.png](/img/locals_globals.png)
+![locals_globals.png](https://meizhaohui.gitee.io/imagebed/img/locals_globals.png)
 
 - 发现仅LOVE_LANG变量仅不一样，在执行函数change_lang后，LOVE_LANG从Python变成了GO。
 - 在执行函数change_lang前，locals和global获取的值是一样的。

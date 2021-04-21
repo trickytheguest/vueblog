@@ -1,7 +1,7 @@
 # 总结
 
 ## Linux操作系统的启动过程？
-![](/img/startup.png)
+![](https://meizhaohui.gitee.io/imagebed/img/startup.png)
 - 打开电源开关。
 
 - BIOS上电自检(POST)。

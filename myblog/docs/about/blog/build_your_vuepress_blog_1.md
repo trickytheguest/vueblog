@@ -18,7 +18,7 @@
 
 使用``yarn docs:dev``重新构建，则会生成目录结构。如 [VuePress从零开始搭建自己的博客](http://hellogitlab.com/web/build_your_vuepress_blog.html) 增加目录结构显示如下：
 
-![vuepress_set_table_of_centent](/img/vuepress_set_table_of_centent.png)
+![vuepress_set_table_of_centent](https://meizhaohui.gitee.io/imagebed/img/vuepress_set_table_of_centent.png)
 
 参考： [VuePress目录设置](http://caibaojian.com/vuepress/guide/markdown.html#%E7%9B%AE%E5%BD%95-table-of-contents)
 
@@ -110,7 +110,7 @@
 
 使用``yarn docs:dev``重新构建，则会生成目录结构。如 [VuePress从零开始搭建自己的博客](http://hellogitlab.com/web/build_your_vuepress_blog.html) Emoji表情和提示警告显示如下：
 
-![vuepress_set_emoji_and_tip_warning_danger](/img/vuepress_set_emoji_and_tip_warning_danger.png)
+![vuepress_set_emoji_and_tip_warning_danger](https://meizhaohui.gitee.io/imagebed/img/vuepress_set_emoji_and_tip_warning_danger.png)
 
 参考： [自定义容器](https://vuepress.vuejs.org/zh/guide/markdown.html#%E8%87%AA%E5%AE%9A%E4%B9%89%E5%AE%B9%E5%99%A8)
 
@@ -129,7 +129,7 @@ module.exports = {
 
 使用``yarn docs:dev``重新构建，则会生成目录结构。如 [VuePress从零开始搭建自己的博客](http://hellogitlab.com/web/build_your_vuepress_blog.html) 上次更新时间显示如下：
 
-![vuepress_set_lastUpdated_time](/img/vuepress_set_lastUpdated_time.png)
+![vuepress_set_lastUpdated_time](https://meizhaohui.gitee.io/imagebed/img/vuepress_set_lastUpdated_time.png)
 
 参考： [多语言支持](https://vuepress.vuejs.org/zh/guide/i18n.html#%E5%A4%9A%E8%AF%AD%E8%A8%80%E6%94%AF%E6%8C%81)
 
@@ -156,7 +156,7 @@ module.exports = {
 ```
 
 再次运行程序，显示如下：
-![vuepress_set_lastUpdated_time_with_locales](/img/vuepress_set_lastUpdated_time_with_locales.png)
+![vuepress_set_lastUpdated_time_with_locales](https://meizhaohui.gitee.io/imagebed/img/vuepress_set_lastUpdated_time_with_locales.png)
 
 参考： [多语言支持](https://vuepress.vuejs.org/zh/guide/i18n.html#%E5%A4%9A%E8%AF%AD%E8%A8%80%E6%94%AF%E6%8C%81)
 
@@ -197,7 +197,7 @@ footer: MIT Licensed | Copyright © 2019-present Zhaohui Mei
 ```
 
 再次运行程序，显示如下：
-![vuepress_set_logo_and_heroImage](/img/vuepress_set_logo_and_heroImage.png)
+![vuepress_set_logo_and_heroImage](https://meizhaohui.gitee.io/imagebed/img/vuepress_set_logo_and_heroImage.png)
 
 可以看到标签页上面的小图片已经变成了我们的logo图标了，并且页面中间的图片和说明内容也更新了。
 
@@ -214,7 +214,7 @@ footer: MIT Licensed | Copyright © 2019-present Zhaohui Mei
 
 leancloud中显示如下:
 
-![leancloud_keys](/img/leancloud_keys.png)
+![leancloud_keys](https://meizhaohui.gitee.io/imagebed/img/leancloud_keys.png)
 
 然后按照 [在VuePress中使用Valine](https://valine.js.org/vuepress.html) 的配置方法下载安装``vuepress-plugin-comment``插件，并配置config.js文件。
 
@@ -275,19 +275,19 @@ module.exports = {
 
 重新运行后，打开任意一篇文章，都可以在最下方添加评论信息了。
 
-![vuepress_set_comment](/img/vuepress_set_comment.png)
+![vuepress_set_comment](https://meizhaohui.gitee.io/imagebed/img/vuepress_set_comment.png)
 
 此时，可以在输入框中添加评论信息了。
 
 如我添加两条评论信息。第一条"写得不错，棒棒哒！"，第二条"与君共勉，加油!👍"。评论后的页面信息如下：
 
-![vuepress_add_comments](/img/vuepress_add_comments.png)
+![vuepress_add_comments](https://meizhaohui.gitee.io/imagebed/img/vuepress_add_comments.png)
 
 但此时存在一个问题，每个页面都会显示相同的评论信息，后续咨询Valina团队再改进。但过一会再刷新页面，评论又显示是正常的，感觉是API调用延迟的问题。
 
 另外，我们提交了两个评论信息，在leancloud.cn的应用--存储页面也看到提交的Comment评论记录：
 
-![vuepress_leancloud_comments_history](/img/vuepress_leancloud_comments_history.png)
+![vuepress_leancloud_comments_history](https://meizhaohui.gitee.io/imagebed/img/vuepress_leancloud_comments_history.png)
 
 以上说明评论功能配置正常！
 
@@ -326,7 +326,7 @@ module.exports = {
 
 重新运行后，可以看到在导航栏的左侧多出了logo图标，并且通过repo属性也生成了GitHub的超链接。效果如下图所示：
 
-![vuepress_set_nar_logo_and_repo](/img/vuepress_set_nar_logo_and_repo.png)
+![vuepress_set_nar_logo_and_repo](https://meizhaohui.gitee.io/imagebed/img/vuepress_set_nar_logo_and_repo.png)
 
 ## 添加编辑此页面超链接
 
@@ -362,7 +362,7 @@ module.exports = {
 
 重新构建后，在页面的底部可以看到多出了"帮助我们改善此页面"超链接，点击超链接可以打开GitHub仓库中文件的编辑页面。效果如下图所示：
 
-![vuepress_set_edit_page_links](/img/vuepress_set_edit_page_links.png)
+![vuepress_set_edit_page_links](https://meizhaohui.gitee.io/imagebed/img/vuepress_set_edit_page_links.png)
 
 ## 隐藏私密信息
 
@@ -373,7 +373,7 @@ module.exports = {
 
 我们在项目根目录docs目录同级创建一个``config``目录，并在其中创建``secureinfo.js``文件。目录结构如下图：
 
-![vueblog_project_structure](/img/vueblog_project_structure.png)
+![vueblog_project_structure](https://meizhaohui.gitee.io/imagebed/img/vueblog_project_structure.png)
 
 我们同时创建了``secureinfo.js.txt``文件，用于与``secureinfo.js``文件进行对比，``secureinfo.js.txt``文件中增加一些说明。
 
@@ -444,13 +444,13 @@ nothing added to commit but untracked files present (use "git add" to track)
 
 修改后，我们使用正确的``leancloud_appId``和``leancloud_appKey``值时，在本地可以调试时，可以获取到评论信息，显示如下图所示：
 
-![vueblog_set_local_secure_leancloud](/img/vueblog_set_local_secure_leancloud.png)
+![vueblog_set_local_secure_leancloud](https://meizhaohui.gitee.io/imagebed/img/vueblog_set_local_secure_leancloud.png)
 
 评论显示正常！
 
 我们修改一下``leancloud_appId``，随机改成其他的值，再运行试一下，显示如下图所示：
 
-![vueblog_set_error_local_secure_leancloud](/img/vueblog_set_error_local_secure_leancloud.png)
+![vueblog_set_error_local_secure_leancloud](https://meizhaohui.gitee.io/imagebed/img/vueblog_set_error_local_secure_leancloud.png)
 
 此时，可以看到页面显示"Code 401: 未经授权的操作，请检查你的AppId和AppKey."，且在Console界面显示异常。
 
@@ -699,7 +699,7 @@ module.exports = {
 
 我们随意修改一下导航栏(navConfig.js)、插件(pluginConfig.js)、侧边栏(sidebarConfig.js)三个配置文件的数据，分别增加testnav, testplugin, testsidebar字符，然后重新运行，看看效果:
 
-![vueblog_split_plugin_nar_sidebar](/img/vueblog_split_plugin_nar_sidebar.png)
+![vueblog_split_plugin_nar_sidebar](https://meizhaohui.gitee.io/imagebed/img/vueblog_split_plugin_nar_sidebar.png)
 
 可以发现导航栏、侧边栏、评论插件都发生了变化，并且console中没有提示异常，说明我们的拆分配置正常。
 
@@ -806,7 +806,7 @@ module.exports = {
 
 如在docs中增加php目录，并增加`php学习笔记.md`文件，最后使用`yarn docs:dev`运行项目，可以看到php相关页面会显示出来。
 
-![auto_sidebar](/img/auto_sidebar.png)
+![auto_sidebar](https://meizhaohui.gitee.io/imagebed/img/auto_sidebar.png)
 
 ## 全文搜索
 
@@ -815,7 +815,7 @@ module.exports = {
 algolia提供了简化的方式[Algolia DocSearch](https://docsearch.algolia.com/apply/) ,只需要提交自己的网站和邮箱地址，然后加入少量的脚本，就能使用了。
 
 - 申请
-![algolia_docsearch](/img/algolia_docsearch.png)
+![algolia_docsearch](https://meizhaohui.gitee.io/imagebed/img/algolia_docsearch.png)
 
 - 回复确认邮件
 
@@ -844,19 +844,19 @@ Algolia DocSearch会发送一封使用邮件，里面有`apiKey`和`indexName`�
 
 在证书申请页面[https://console.cloud.tencent.com/ssl/apply](https://console.cloud.tencent.com/ssl/apply)填写证书的一些信息：
 
-![tencent_SSL_apply](/img/tencent_SSL_apply.png)
+![tencent_SSL_apply](https://meizhaohui.gitee.io/imagebed/img/tencent_SSL_apply.png)
 
 按照提示申请完成后，可以在证书管理页面看到申请到的免费SSL证书记录：
 
-![tencent_ssl_item](/img/tencent_ssl_item.png)
+![tencent_ssl_item](https://meizhaohui.gitee.io/imagebed/img/tencent_ssl_item.png)
 
 点击`详情`可以查看证书的详细信息：
 
-![tencent_SSL_detail](/img/tencent_SSL_detail.png)
+![tencent_SSL_detail](https://meizhaohui.gitee.io/imagebed/img/tencent_SSL_detail.png)
 
 点击`下载`下载证书文件，下载下来的文件名为`hellogitlab.com.zip`，解压后文件夹的内容如下:
 
-![tencent_ssl_zip_file_detail](/img/tencent_ssl_zip_file_detail.png)
+![tencent_ssl_zip_file_detail](https://meizhaohui.gitee.io/imagebed/img/tencent_ssl_zip_file_detail.png)
 
 根据自己使用的web服务器选择不同文件夹里面的SSL文件即可。 [证书安装指引 -> 如何选择证书安装类型？](https://cloud.tencent.com/document/product/400/4143)有手动安装指引。
 
@@ -883,7 +883,7 @@ Algolia DocSearch会发送一封使用邮件，里面有`apiKey`和`indexName`�
 </VirtualHost>
 ```
 
-![tencent_vuepress_httpd_conf](/img/tencent_vuepress_httpd_conf.png)
+![tencent_vuepress_httpd_conf](https://meizhaohui.gitee.io/imagebed/img/tencent_vuepress_httpd_conf.png)
 
 ### HTTP 自动跳转 HTTPS 的安全配置
 
@@ -940,7 +940,7 @@ Syntax OK
 
 在URL点可以查看网站SSL的具体信息：
 
-![tencent_ssl_info_detail](/img/tencent_ssl_info_detail.png)
+![tencent_ssl_info_detail](https://meizhaohui.gitee.io/imagebed/img/tencent_ssl_info_detail.png)
 
 至此，网站的SSL证书配置完成。
 
@@ -948,13 +948,13 @@ Syntax OK
 
 证书过期时，使用Chrome浏览器访问网站时，会提示以下异常。
 
-![err_cert_date_invalid.png](/img/err_cert_date_invalid.png)
+![err_cert_date_invalid.png](https://meizhaohui.gitee.io/imagebed/img/err_cert_date_invalid.png)
 
 应在腾讯的SSL证书界面进行重新签发。地址 https://console.cloud.tencent.com/ssl
 
 点击证书的重颁发，让腾讯公司进行重新签发。
 
-![Snipaste_2021-03-15_21-34-41.png](/img/Snipaste_2021-03-15_21-34-41.png)
+![Snipaste_2021-03-15_21-34-41.png](https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-03-15_21-34-41.png)
 
 重新签发成功后，可以点击下载超链接下载新颁发的证书。并将证书上传到服务器上。
 
@@ -1031,9 +1031,9 @@ Syntax OK
 
 此时再重启浏览器并登陆网站，可以看到连接是安全的，并且网站过期时间已经更新了。
 
-![Snipaste_2021-03-15_21-49-31.png](/img/Snipaste_2021-03-15_21-49-31.png)
+![Snipaste_2021-03-15_21-49-31.png](https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-03-15_21-49-31.png)
 
-![Snipaste_2021-03-15_21-48-13.png](/img/Snipaste_2021-03-15_21-48-13.png)
+![Snipaste_2021-03-15_21-48-13.png](https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-03-15_21-48-13.png)
 
 说明更新成功！
 
@@ -1279,7 +1279,7 @@ Travis CI在自动部署的时候，需要push内容到仓库的某个分支，�
 
 勾选repo下的所有项，以及user下的user:email后，生成一个token，复制token值。
 
-![travis_github_token](/img/travis_github_token.png)
+![travis_github_token](https://meizhaohui.gitee.io/imagebed/img/travis_github_token.png)
 
 ::: warning 注意
 这个token只有现在可以看到，再次进入就看不到了，而且是再也看不到了，忘记了就只能重新生成了，所以要记住保管好。
@@ -1444,7 +1444,7 @@ after_success:
 
 travis网站上面也可以看到构建过程：
 
-![travis_ci_build_history](/img/travis_ci_build_history.png)
+![travis_ci_build_history](https://meizhaohui.gitee.io/imagebed/img/travis_ci_build_history.png)
 
 可以将下面的内容加入到markdown文件中，显示出构建状态：
 
@@ -1513,11 +1513,11 @@ auto_deploy
 
 添加完成后，内容分发网络中的域名如下：
 
-![](/img/Snipaste_2021-04-16_20-58-34.png)
+![](https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-04-16_20-58-34.png)
 
 我因为使用了腾讯云的免费证书，因此选择回源协议时使用了`HTTPS`形式：
 
-![](/img/Snipaste_2021-04-16_21-04-41.png)
+![](https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-04-16_21-04-41.png)
 
 另外，需要配置域名解析，需要在DNS 解析 DNSPod控制台配置。
 
@@ -1525,11 +1525,11 @@ auto_deploy
 
 暂停原先的A记录：
 
-![](/img/Snipaste_2021-04-16_23-16-45.png)
+![](https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-04-16_23-16-45.png)
 
 并添加`CNAME`记录：
 
-![](/img/Snipaste_2021-04-16_23-18-17.png)
+![](https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-04-16_23-18-17.png)
 
 配置好域名解析后，等几分钟解析就会生效。生效后，我们可以通过`ping`我们的域名来看一下是否是从CDN解析过来的。
 
@@ -1575,7 +1575,7 @@ $
 
 访问时，提示异常：
 
-![](/img/Snipaste_2021-04-20_22-31-12.png)
+![](https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-04-20_22-31-12.png)
 
 即"Package size exceeded the configured limit of 50 MB."原因是我的仓库超过50M，jsdelivr不给提供加速服务。因此我们不用这种方式。我们使用码云对我们的网站进行加速。
 
@@ -1600,16 +1600,35 @@ round-trip min/avg/max/stddev = 16.763/17.779/18.443/0.730 ms
 以图片`Snipaste_2021-04-20_22-06-33.png`为例，其在gitee.com上图床的地址是是：
 
 `https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-04-20_22-06-33.png`
-而在我们本地的Markdown文件中配置是`![](/img/Snipaste_2021-04-20_22-06-33.png)`
+而在我们本地的Markdown文件中配置是`![](https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-04-20_22-06-33.png)`
 
-我们只需要把`(/img/`字符符进行批量替换成`(https://meizhaohui.gitee.io/imagebed/img/`即可。
+我们只需要把`(https://meizhaohui.gitee.io/imagebed/img/`字符符进行批量替换成`(https://meizhaohui.gitee.io/imagebed/img/`即可。
 
+使用以下命令替换：
 
+```sh
+ sed -i "" 's@(https://meizhaohui.gitee.io/imagebed/img/@(https://meizhaohui.gitee.io/imagebed/img/@g' `grep "(https://meizhaohui.gitee.io/imagebed/img/" -rl --include="*.md" ./`
+```
 
+注意，macbook上面`-i`直接替换时，需要加一个`""`，表示不进行备份。
 
+```sh
+# 替换
+[mzh@MacBookPro docs (master ✗)]$ sed -i "" 's@(/img/@(https://meizhaohui.gitee.io/imagebed/img/@g' `grep "(/img/" -rl --include="*.md" ./`
 
-
-https://meizhaohui.gitee.io/imagebed/
+# 查看一下
+[mzh@MacBookPro docs (master ✗)]$ grep -Rn '](https://meizhaohui' *|head
+CI/docker/nextcloud_in_docker.md:191:![](https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-03-24_21-52-18.png)
+CI/docker/nextcloud_in_docker.md:195:![](https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-03-24_21-53-00.png)
+CI/docker/nextcloud_in_docker.md:215:![](https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-03-26_00-33-12.png)
+CI/docker/nextcloud_in_docker.md:241:![](https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-03-26_00-39-52.png)
+CI/docker/nextcloud_in_docker.md:567:![](https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-03-26_01-22-04.png)
+CI/docker/nextcloud_in_docker.md:569:![](https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-03-26_01-30-33.png)
+CI/docker/nextcloud_in_docker.md:579:![](https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-03-27_15-23-30.png)
+CI/docker/nextcloud_in_docker.md:583:![](https://meizhaohui.gitee.io/imagebed/img/电子邮件设置测试.png)
+CI/docker/nextcloud_in_docker.md:692:![](https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-03-27_20-37-48.png)
+CI/docker/nextcloud_in_docker.md:703:![](https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-03-27_20-41-56.png)
+```
 
 
 
@@ -1619,7 +1638,7 @@ https://meizhaohui.gitee.io/imagebed/
 
 可以在百度的站点管理页面 [https://ziyuan.baidu.com/site/index#/](https://ziyuan.baidu.com/site/index#/) 将个人博客的url添加到百度资源中。
 
-![](/img/Snipaste_2021-04-20_22-06-33.png)
+![](https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-04-20_22-06-33.png)
 
 配置完成后，在网站仓库的`docs`目录下，创建`auto_generate_sites.sh`。然后使用`auto_generate_sites.sh`生成站点的所有URL地址，并提交到百度资源中：
 

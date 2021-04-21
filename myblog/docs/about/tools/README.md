@@ -5,7 +5,7 @@
 ## 1. 截图工具`Snipaste`
 
 `Snipaste`支持windows和MacOS系统，官网地址[https://www.snipaste.com/](https://www.snipaste.com/),按`F1`截图。
-![Snipaste.png](/img/Snipaste.png)
+![Snipaste.png](https://meizhaohui.gitee.io/imagebed/img/Snipaste.png)
 
 
 
@@ -19,18 +19,18 @@ Typora所见即所得模式比较好，下载地址[https://www.typora.io/](http
 
 在线生成Markdown表格`TableConvert`地址[https://tableconvert.com/](https://tableconvert.com/)
 
-![tableconvert.png](/img/tableconvert.png)
+![tableconvert.png](https://meizhaohui.gitee.io/imagebed/img/tableconvert.png)
 
 
 ## 4. 制作U盘启动盘`Rufus`和`Etcher`
 
 `Rufus`支持windows系统，官网地址 [http://rufus.ie/](http://rufus.ie/)   
 
-![rufus_en_2x.png](/img/rufus_en_2x.png)
+![rufus_en_2x.png](https://meizhaohui.gitee.io/imagebed/img/rufus_en_2x.png)
 
 `Etcher`支持windows、Linux和MacOS系统，官网地址[https://www.balena.io/etcher/](https://www.balena.io/etcher/)
 
-![etcher_step.gif](/img/etcher_step.gif)
+![etcher_step.gif](https://meizhaohui.gitee.io/imagebed/img/etcher_step.gif)
 
 
 ## 5. 国内开源镜像站
@@ -41,7 +41,7 @@ Typora所见即所得模式比较好，下载地址[https://www.typora.io/](http
 
 阿里云官方镜像站，提供极速全面的系统镜像服务，链接[https://developer.aliyun.com/mirror/](https://developer.aliyun.com/mirror/)。
 
-![aliyun_mirror](/img/aliyun_mirror.png)
+![aliyun_mirror](https://meizhaohui.gitee.io/imagebed/img/aliyun_mirror.png)
 
 
 
@@ -49,7 +49,7 @@ Typora所见即所得模式比较好，下载地址[https://www.typora.io/](http
 
 清脂大学开源软件镜像站，链接[https://mirrors.tuna.tsinghua.edu.cn/](https://mirrors.tuna.tsinghua.edu.cn/)
 
-![tsinghua_mirror.png](/img/tsinghua_mirror.png)
+![tsinghua_mirror.png](https://meizhaohui.gitee.io/imagebed/img/tsinghua_mirror.png)
 
 ## 6. jsDelivr – Open Source CDN 开源CDN
 

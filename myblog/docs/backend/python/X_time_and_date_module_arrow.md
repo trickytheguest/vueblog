@@ -59,7 +59,7 @@ arrow.Arrow(        arrow.factory       arrow.locales       arrow.ParserError(
 
 ## 时区图
 
-![时区图](/img/timezone.gif)
+![时区图](https://meizhaohui.gitee.io/imagebed/img/timezone.gif)
 
 注：图中的GMT是指格林威治标准时间，也就是UTC标准时间，可参考[格林威治标准时间](http://www.shijian.cc/shiqu/184/) 。
 

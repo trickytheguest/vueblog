@@ -727,7 +727,7 @@ Out[14]: <sqlalchemy.dialects.sqlite.pysqlite.SQLiteDialect_pysqlite at 0x225a27
 
 `SQLAlchemy Engine`的架构如下:
 
-![sqla_engine_arch.png](/img/sqla_engine_arch.png)
+![sqla_engine_arch.png](https://meizhaohui.gitee.io/imagebed/img/sqla_engine_arch.png)
 
 - SQLAlchemy `create_engine()`函数基于数据库URL(Database Url)来生成`Engine`对象，URL通常包含`username用户名`,  `password密码`, `hostname主机名`, `database name数据库名称`以及用于其他配置的可选关键字参数。
 
@@ -4436,8 +4436,8 @@ public (active)
 
 Redis的命令非常多，如下图所示：
 
-![redis_command_1.png](/img/redis_command_1.png)
-![redis_command_2.png](/img/redis_command_2.png)
+![redis_command_1.png](https://meizhaohui.gitee.io/imagebed/img/redis_command_1.png)
+![redis_command_2.png](https://meizhaohui.gitee.io/imagebed/img/redis_command_2.png)
 
 详细可参考 [Redis 命令参考 ](http://doc.redisfans.com/)
 

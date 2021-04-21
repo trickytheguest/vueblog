@@ -919,7 +919,7 @@ irb(main):003:0> quit
 
 没有报异常，说明邮件发送成功！登陆QQ邮箱检查邮件信息，发现已经收到邮件！
 
-![test_gitlab_smtp_domain.png](/img/test_gitlab_smtp_domain.png)
+![test_gitlab_smtp_domain.png](https://meizhaohui.gitee.io/imagebed/img/test_gitlab_smtp_domain.png)
 
 ## 启动GitLab和Nginx服务
 
@@ -997,7 +997,7 @@ Disabled
 
 在Google浏览器中访问URL: http://hellogitlab.com/ ，可以看到GitLab页面了。
 
-![gitlab_first_domain_page.png](/img/gitlab_first_domain_page.png)
+![gitlab_first_domain_page.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_first_domain_page.png)
 
 如果发现异常，可查看GitLab的错误日志文件`/var/log/nginx/gitlab_error.log`，另外检查SELinux是否关闭。
 
@@ -1006,40 +1006,40 @@ Disabled
 
 设置GitLab管理员root的密码为"1234567890"，并重新登陆，进入主页：
 
-![gitlab_domain_index_page.png](/img/gitlab_domain_index_page.png)
+![gitlab_domain_index_page.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_domain_index_page.png)
 
 新建一个用户，并设置为管理员:
 
-![gitlab_domain_new_user.png](/img/gitlab_domain_new_user.png)
+![gitlab_domain_new_user.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_domain_new_user.png)
 
 登陆邮箱查看邮件，验证账号：
 
-![gitlab_domain_account_was_created_for_you_email.png](/img/gitlab_domain_account_was_created_for_you_email.png)
+![gitlab_domain_account_was_created_for_you_email.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_domain_account_was_created_for_you_email.png)
 
 点击链接"Click here to set your password"重置密码:
 
-![gitlab_domain_first_page.png](/img/gitlab_domain_first_page.png)
+![gitlab_domain_first_page.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_domain_first_page.png)
 
 使用刚新建的管理员账号登陆：
 
-![gitlab_domain_login_page.png](/img/gitlab_domain_login_page.png)
+![gitlab_domain_login_page.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_domain_login_page.png)
 
 创建一个新的个人项目：
 
-![gitlab_domain_new_project.png](/img/gitlab_domain_new_project.png)
+![gitlab_domain_new_project.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_domain_new_project.png)
 
 点击"Create project"创建项目。
 
 创建完成后，可以看到跳转到项目详情界面：
 
-![gitlab_domain_new_project_details.png](/img/gitlab_domain_new_project_details.png)
+![gitlab_domain_new_project_details.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_domain_new_project_details.png)
 
 
 我们将宿主机上的个人公钥加到Gitlab上去，如果没有公钥，可以使用`ssh-keygen -C your_email@example.com`添加。
 
 在WEB界面添加SSH KEY：
 
-![gitlab_domain_add_ssh_key.jpg](/img/gitlab_domain_add_ssh_key.jpg)
+![gitlab_domain_add_ssh_key.jpg](https://meizhaohui.gitee.io/imagebed/img/gitlab_domain_add_ssh_key.jpg)
 
 
 配置git环境:
@@ -1110,7 +1110,7 @@ To hellogitlab.com:meizhaohui/firstrepo.git
 
 在WEB界面上查看刚才的提交:
 
-![gitlab_domain_the_ssh_method_push.png](/img/gitlab_domain_the_ssh_method_push.png)
+![gitlab_domain_the_ssh_method_push.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_domain_the_ssh_method_push.png)
 
 
 通过http方式下载项目文件:
@@ -1127,7 +1127,7 @@ Unpacking objects: 100% (6/6), done.
 
 在克隆下载时，需要输入用户名和密码：
 
-![gitlab_domain_git_clone_with_http_method.png](/img/gitlab_domain_git_clone_with_http_method.png)
+![gitlab_domain_git_clone_with_http_method.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_domain_git_clone_with_http_method.png)
 
 我们再次进行修改并提交:
 
@@ -1169,7 +1169,7 @@ To http://hellogitlab.com/meizhaohui/firstrepo.git
 
 在WEB界面上查看刚才的提交:
 
-![gitlab_domain_the_http_method_push.png](/img/gitlab_domain_the_http_method_push.png)
+![gitlab_domain_the_http_method_push.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_domain_the_http_method_push.png)
 
 
 ## GitLab HTTPS协议配置
@@ -1218,7 +1218,7 @@ drwxr-xr-x 4 root root 4.0K Aug 18 11:44 ..
 
 查看配置文件，我们关注35、46、52-54行：
 
-![gitlab_nginx_ssl_config.png](/img/gitlab_nginx_ssl_config.png)
+![gitlab_nginx_ssl_config.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_nginx_ssl_config.png)
 
 我们将`YOUR_SERVER_FQDN`替换成域名地址`hellogitlab.com`:
 
@@ -1396,25 +1396,25 @@ ok: run: unicorn: (pid 21543) 12s
 
 在Google浏览器中访问URL:[http://hellogitlab.com/](http://hellogitlab.com/) ，可以看到页面自动跳转到[https://hellogitlab.com/](https://hellogitlab.com/)了：
 
-![gitlab_http_2_https.png](/img/gitlab_http_2_https.png)
+![gitlab_http_2_https.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_http_2_https.png)
 
 我们点击"高级"--"继续前往hellogitlab.com（不安全）"，可以看到打开了 
 [https://hellogitlab.com/](https://hellogitlab.com/)页面：
 
-![gitlab_domain_https_page.png](/img/gitlab_domain_https_page.png)
+![gitlab_domain_https_page.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_domain_https_page.png)
 
 我们使用"meizhaohui"这个账号进行登陆，发现可以登陆上，登陆后的界面如下：
 
-![gitlab_domain_https_login.png](/img/gitlab_domain_https_login.png)
+![gitlab_domain_https_login.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_domain_https_login.png)
 
 查看项目的详情界面，点击"clone"按钮，查看URL地址是否更新，可以发现URL已经变成https开头了：
 
-![gitlab_domain_https_url_updated.png](/img/gitlab_domain_https_url_updated.png)
+![gitlab_domain_https_url_updated.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_domain_https_url_updated.png)
 
 
 我们在宿主机上面使用https方式克隆下载仓库，也需要输入用户名和密码：
 
-![gitlab_domain_git_clone_with_https_method.png](/img/gitlab_domain_git_clone_with_https_method.png)
+![gitlab_domain_git_clone_with_https_method.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_domain_git_clone_with_https_method.png)
 
 修改文件并提交:
 
@@ -1459,7 +1459,7 @@ To https://hellogitlab.com/meizhaohui/firstrepo.git
 
 在WEB界面上查看刚才的提交：
 
-![gitlab_domain_https_commit.png](/img/gitlab_domain_https_commit.png)
+![gitlab_domain_https_commit.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_domain_https_commit.png)
 
 我们再在ssh方式下载的目录更新一下，看能否拉出最新的修改:
 
@@ -1544,7 +1544,7 @@ To hellogitlab.com:meizhaohui/firstrepo.git
 
 发现可以正常提交，并且在WEB界面上面可以看到提交的更新：
     
-![gitlab_domain_https_ssh_push.png](/img/gitlab_domain_https_ssh_push.png)
+![gitlab_domain_https_ssh_push.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_domain_https_ssh_push.png)
 
 
 ## GitLab汉化
@@ -1656,13 +1656,13 @@ ok: run: unicorn: (pid 27466) 134s
 
 重新访问GitLab，可以看到中文页面了:
 
-![gitlab_domain_https_with_i18n.png](/img/gitlab_domain_https_with_i18n.png)
+![gitlab_domain_https_with_i18n.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_domain_https_with_i18n.png)
 
 正常登陆。在"偏好"中设置"语言"是"简体中文"，重新登陆即可。
 
 再次查看项目详情页面：
 
-![gitlab_domain_https_project_details_with_i18n.png](/img/gitlab_domain_https_project_details_with_i18n.png)
+![gitlab_domain_https_project_details_with_i18n.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_domain_https_project_details_with_i18n.png)
 
 ## GitLab常用命令
 

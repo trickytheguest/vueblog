@@ -55,4 +55,4 @@ See 'man htop' for more information.
 
 htop查看进程示例：
 
-![htop_graph.gif](/img/htop_graph.gif)
+![htop_graph.gif](https://meizhaohui.gitee.io/imagebed/img/htop_graph.gif)

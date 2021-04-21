@@ -11,7 +11,7 @@
 
 Proxmox的架构图如下图所示
 
-![proxmox_introduction.svg](/img/proxmox_introduction.svg)
+![proxmox_introduction.svg](https://meizhaohui.gitee.io/imagebed/img/proxmox_introduction.svg)
 
 
 ## 管理中心

@@ -49,7 +49,7 @@ Server: Docker Engine - Community
 
 在任务栏点击`Docker Desktop`应用图标，打开`Perferences`个人设置，切换到`Docker Engine`标签页，可以看到默认的配置：
 
-![docker_setting_default](/img/docker_setting_default.png)
+![docker_setting_default](https://meizhaohui.gitee.io/imagebed/img/docker_setting_default.png)
 
 我们在这个配置文件中添加镜像的配置，配置内容如下：
 
@@ -61,7 +61,7 @@ Server: Docker Engine - Community
 }
 ```
 
-![docker_add_registry_mirrors](/img/docker_add_registry_mirrors.png) 
+![docker_add_registry_mirrors](https://meizhaohui.gitee.io/imagebed/img/docker_add_registry_mirrors.png) 
 
 添加完成后，点击「Apple & Restart」应用并重启后，再看看docker的镜像信息：
 

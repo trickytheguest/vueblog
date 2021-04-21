@@ -428,7 +428,7 @@ public (active)
 
 在浏览器中访问链接[http://192.168.56.15/](http://192.168.56.15/)，则可以看到httpd的测试页:
 
-![httpd_test](/img/httpd_test.png)
+![httpd_test](https://meizhaohui.gitee.io/imagebed/img/httpd_test.png)
 
 现在我们能够正常访问httpd的服务，能正常访问80端口，我们在Client客户端配置CA证书，使httpd提供https加密服务。
 
@@ -864,19 +864,19 @@ dr-xr-x---. 14 root root 4.0K Jun  5 22:08 ..
 
 在Google浏览器中打开[https://192.168.56.15/](https://192.168.56.15/)链接，显示如下图:
 
-![err_cert_authority_invalid.png](/img/err_cert_authority_invalid.png)
+![err_cert_authority_invalid.png](https://meizhaohui.gitee.io/imagebed/img/err_cert_authority_invalid.png)
 
 点击"高级" --> "继续前往192.168.56.15（不安全）"，则会正常显示页面:
 
-![httpd_https_test.png](/img/httpd_https_test.png)
+![httpd_https_test.png](https://meizhaohui.gitee.io/imagebed/img/httpd_https_test.png)
 
 点击Google地址栏"不安全" --> "证书(无效)"，则会正常显示页面，可以看到证书有效期是2年: 
 
-![unsecure.png](/img/unsecure.png)
+![unsecure.png](https://meizhaohui.gitee.io/imagebed/img/unsecure.png)
 
 点击"证书" --> "详细信息"，可以看到颁发者就是我们的CA中心，则会正常显示页面: 
 
-![ca_details.png](/img/ca_details.png)
+![ca_details.png](https://meizhaohui.gitee.io/imagebed/img/ca_details.png)
 
 ## 在client客户端使用CA中心颁发的证书文件配置https nginx web服务
 
@@ -1225,7 +1225,7 @@ public (active)
 
 可以看到`nginx`当前启动的是`80`端口，我们使用google浏览器打开[http://192.168.56.15/](http://192.168.56.15/)链接:
 
-![nginx_test.png](/img/nginx_test.png)
+![nginx_test.png](https://meizhaohui.gitee.io/imagebed/img/nginx_test.png)
 
 我们将CA证书应用到nginx中，修改nginx的配置文件`/etc/nginx/nginx.conf`， 将38-57行80端口部分注释掉，61-87行部分取消注释:
 
@@ -1465,7 +1465,7 @@ root     14066 11535  0 22:35 pts/0    00:00:00 grep --color=auto nginx
 
 使用google浏览器打开[https://192.168.56.15/](https://192.168.56.15/)链接:
 
-![nginx_https_test.png](/img/nginx_https_test.png)
+![nginx_https_test.png](https://meizhaohui.gitee.io/imagebed/img/nginx_https_test.png)
 
 ## nginx 80端口转443端口
 
@@ -1534,7 +1534,7 @@ root     14066 11535  0 22:35 pts/0    00:00:00 grep --color=auto nginx
 
 使用google浏览器打开[http://192.168.56.15/](http://192.168.56.15/)链接时，会自动跳转到  [https://192.168.56.15/](https://192.168.56.15/)链接:
 
-![nginx_80_2_443.png](/img/nginx_80_2_443.png)
+![nginx_80_2_443.png](https://meizhaohui.gitee.io/imagebed/img/nginx_80_2_443.png)
 
 打开F12调试Network可以看到返回301重定向。
 
@@ -1651,7 +1651,7 @@ Syntax OK
 
 使用google浏览器打开[http://192.168.56.15/](http://192.168.56.15/)链接时，会自动跳转到[https://192.168.56.15/](https://192.168.56.15/)链接，此时查看证书的详情:
 
-![self_ca.png](/img/self_ca.png)
+![self_ca.png](https://meizhaohui.gitee.io/imagebed/img/self_ca.png)
 
 可以看到证书的颁发者和使用者都是`192.168.56.15`，有效期三年，也就是我们刚才的配置的自签名证书呢。
 
@@ -1697,7 +1697,7 @@ openssl req -x509 -nodes -days 1095 -config req.conf -newkey rsa:2048 -keyout /e
 ### 什么是Let’s Encrypt
 
 
-![LetsEncrypt.jpg](/img/LetsEncrypt.jpg)
+![LetsEncrypt.jpg](https://meizhaohui.gitee.io/imagebed/img/LetsEncrypt.jpg)
 
 [Let's Encrypt](https://letsencrypt.org/)是一个由非营利性组织，互联网安全研究小组（ISRG）提供的免费、自动化和开放的证书颁发机构（CA）。
 
@@ -2708,7 +2708,7 @@ Syntax OK
 ```
 使用google浏览器打开[http://hopewait.com/](http://hopewait.com/)链接或[http://www.hopewait.com/](http://www.hopewait.com/)时，会自动跳转到[https://hopewait.com/](https://hopewait.com/)链接或[https://www.hopewait.com/](https://www.hopewait.com/)链接，此时查看证书的详情:
 
-![LetsEncrypt_cert.png](/img/LetsEncrypt_cert.png)
+![LetsEncrypt_cert.png](https://meizhaohui.gitee.io/imagebed/img/LetsEncrypt_cert.png)
 
 可以看到证书的颁发者是"Let's Encrypt Authority X3"和使用者是"hopewait.com"，有效期从2019年6月17日至2019年9月15日，并且浏览器提示"连接是安全的"、"证书有效"。
 
@@ -2957,7 +2957,7 @@ tcp6       0      0 :::443                  :::*                    LISTEN      
 使用google浏览器打开[http://hopewait.com/](http://hopewait.com/)链接或[http://www.hopewait.com/](http://www.hopewait.com/)时，会自动跳转到[https://hopewait.com/](https://hopewait.com/)链接或[https://www.hopewait.com/](https://www.hopewait.com/)链接，此时查看证书的详情:
 
 
-![LetsEncrypt_nginx.png](/img/LetsEncrypt_nginx.png)
+![LetsEncrypt_nginx.png](https://meizhaohui.gitee.io/imagebed/img/LetsEncrypt_nginx.png)
 
 可以看到证书的颁发者是"Let's Encrypt Authority X3"和使用者是"hopewait.com"，有效期从2019年6月17日至2019年9月15日，并且浏览器提示"连接是安全的"、"证书有效"。
 

@@ -352,7 +352,7 @@ Created 10 fake messages!
 
 查询MYSQL数据库的数据如下图:
 
-![use_faker_1.png](/img/use_faker_1.png)
+![use_faker_1.png](https://meizhaohui.gitee.io/imagebed/img/use_faker_1.png)
 
 如果初始化`fake`时指定`locale`，如:
 
@@ -362,7 +362,7 @@ fake = Faker(locale='zh_CN')
 
 则显示如下:
 
-![use_faker_2.png](/img/use_faker_2.png)
+![use_faker_2.png](https://meizhaohui.gitee.io/imagebed/img/use_faker_2.png)
 
 ::: tip 说明
 注: 不同语种的可用方法可能不同，在使用过程中请参考官网说明。

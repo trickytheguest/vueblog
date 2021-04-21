@@ -839,7 +839,7 @@ I/O size (minimum/optimal): 512 bytes / 512 bytes
 
 我们先要确保虚拟机`jumpserver-server`已经处于关机状态：
 
-![1589674678671](/img/1589674678671.png)
+![1589674678671](https://meizhaohui.gitee.io/imagebed/img/1589674678671.png)
 
 可以看到当前虚拟分配空间为20GB，我们要将这个空间扩展到50GB。
 
@@ -960,7 +960,7 @@ $
 
 再次在VirtualBox中查看虚拟机虚拟分配空间大小：
 
-![1589675559489](/img/1589675559489.png)
+![1589675559489](https://meizhaohui.gitee.io/imagebed/img/1589675559489.png)
 
 ## 启动虚拟机分配空间
 

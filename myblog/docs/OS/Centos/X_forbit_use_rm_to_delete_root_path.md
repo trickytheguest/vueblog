@@ -336,7 +336,7 @@ alias s.='source ~/.bashrc && echo "reload OK"'
 
 使用`rm`命令时的提示如下:
 
-![do_not_use_rm_command.png](/img/do_not_use_rm_command.png)
+![do_not_use_rm_command.png](https://meizhaohui.gitee.io/imagebed/img/do_not_use_rm_command.png)
 
 
 参考文献：

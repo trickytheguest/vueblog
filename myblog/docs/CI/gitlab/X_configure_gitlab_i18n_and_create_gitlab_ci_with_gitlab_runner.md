@@ -64,7 +64,7 @@ Jun 27 19:58:19 server.hopewait systemd[1]: Started The nginx HTTP and reverse p
 
 Nginx服务正常运行，访问GitLab服务 http://192.168.56.14 ，发现可以正常访问：
 
-![gitlab_login_page.png](/img/gitlab_login_page.png)
+![gitlab_login_page.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_login_page.png)
 
 我们使用meizhaohui这个账号来下载hellopython项目:
 
@@ -94,7 +94,7 @@ remote: Total 9 (delta 0), reused 0 (delta 0)
 
 查看GitLab中文社区官方仓库 https://gitlab.com/xhang/gitlab ， 检查对应的汉化包版本信息：
 
-![gitlab_stable_zh.png](/img/gitlab_stable_zh.png)
+![gitlab_stable_zh.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_stable_zh.png)
 
 我们下载GitLab版本对应的汉化包，11-10-stable-zh这个版本:
 
@@ -211,23 +211,23 @@ ok: run: unicorn: (pid 22330) 697s
 
 访问GitLab服务 http://192.168.56.14 ，发现可以正常访问，并显示中文的页面：
 
-![gitlab_chinese_login_page.png](/img/gitlab_chinese_login_page.png)
+![gitlab_chinese_login_page.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_chinese_login_page.png)
 
 点击右上角的个人图标，在弹出的下拉选项中点击 `Settings`进入到 `Settings`设置界面：
 
-![gitlab_setting.png](/img/gitlab_setting.png)
+![gitlab_setting.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_setting.png)
 
 点击左侧的 `preferences`标签页，进入到个人偏好设置界面，下拉到`Localization`本地化的位置：
 
-![gitlab_preferences.png](/img/gitlab_preferences.png)
+![gitlab_preferences.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_preferences.png)
 
 点击`Language`语言下拉框选择 "简体中文"，并将周一设置为每周的第一天，并点击 `Save changes`保存修改：
 
-![gitlab_change_language.png](/img/gitlab_change_language.png)
+![gitlab_change_language.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_change_language.png)
 
 保存后，按F5刷新一下页面，可以看到页面显示已经变成中文了：
 
-![gitlab_preferences_chinese.png](/img/gitlab_preferences_chinese.png)
+![gitlab_preferences_chinese.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_preferences_chinese.png)
 
 修改图像时，保存时，提示 "Request failed with status code 500" 异常，查看日志信息:
 
@@ -268,7 +268,7 @@ drwxr-xr-x. 33 root root 4096 Jun 23 20:18 /var/lib/
 
 将 `/var/lib/nginx/` 和 `/var/lib/nginx/tmp/`目录增加`rx`权限，再上传图像能够正常修改成功！可以看看很酷的头像：
 
-![gitlab_admin_icon.png](/img/gitlab_admin_icon.png)
+![gitlab_admin_icon.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_admin_icon.png)
 
 我们将"meizhaohui"这个账号设置为管理员，后期可以直接使用这个账号登陆操作GitLab。
 
@@ -333,39 +333,39 @@ To 192.168.56.14:higit/bluelog.git
 
 上传完成后，查看 ``bluelog`` 项目：
 
-![gitlab_bluelog_project.png](/img/gitlab_bluelog_project.png)
+![gitlab_bluelog_project.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_bluelog_project.png)
 
 我们点击"配置CD/CD"按钮：
 
-![gitlab_configure_ci_cd.png](/img/gitlab_configure_ci_cd.png)
+![gitlab_configure_ci_cd.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_configure_ci_cd.png)
 
 我们点击"选择一个GitLab CI Yaml模板"：
 
-![gitlab_cicd_template.png](/img/gitlab_cicd_template.png)
+![gitlab_cicd_template.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_cicd_template.png)
 
 选择`Bash`模板：
 
-![gitlab_cicd_bash_template.png](/img/gitlab_cicd_bash_template.png)
+![gitlab_cicd_bash_template.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_cicd_bash_template.png)
 
 会自动加入Bash模板的内容，我们点击"提交修改"按钮进行提交，并检查CI/CD中的流水线工程：
 
-![gitlab_cicd-pipeline.png](/img/gitlab_cicd-pipeline.png)
+![gitlab_cicd-pipeline.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_cicd-pipeline.png)
 
 发现流水线任务的状态是 `"卡住(stuck)"` `"等待中"`，说明我们的流水线配置还不正确，没能正确的运行。
 
-![gitlab_cicd_job_stuck.png](/img/gitlab_cicd_job_stuck.png)
+![gitlab_cicd_job_stuck.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_cicd_job_stuck.png)
 
 提示 `作业卡住了，请检查运行器`，我们查看具体哪个JOB卡住了：
 
-![gitlab_cicd_build_stuck.png](/img/gitlab_cicd_build_stuck.png)
+![gitlab_cicd_build_stuck.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_cicd_build_stuck.png)
 
 我们查看build这个作业的详情页面：
 
-![gitlab_cicd_build_stuck_detail.png](/img/gitlab_cicd_build_stuck_detail.png)
+![gitlab_cicd_build_stuck_detail.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_cicd_build_stuck_detail.png)
 
 可以看到提示 `由于您没有任何可以运行此作业的活跃运行器，因此作业卡住了。转到 Runner页面`，说明我们没有配置运行器，我们点击"Runner页面"跳转到运行器配置页面：
 
-![gitlab_cicd_gitlab_runner_page.png](/img/gitlab_cicd_gitlab_runner_page.png)
+![gitlab_cicd_gitlab_runner_page.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_cicd_gitlab_runner_page.png)
 
 终于到了GitLab Runner界面了，这个就是我们接下来要重点讲的`GitLab Runner`，也就是`运行器`！
 
@@ -878,11 +878,11 @@ Runner registered successfully. Feel free to start it, but if it's running alrea
 
 注册成功后，查看WEB界面中已经激活的运行器：
 
-![gitlab_cicd_active_runner.png](/img/gitlab_cicd_active_runner.png)
+![gitlab_cicd_active_runner.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_cicd_active_runner.png)
 
 点击"1aXYZ5H9"，查看运行器的详情：
 
-![gitlab_cicd_active_runner_detail.png](/img/gitlab_cicd_active_runner_detail.png)
+![gitlab_cicd_active_runner_detail.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_cicd_active_runner_detail.png)
 
 说明是我们刚才创建的运行器！
 
@@ -1539,21 +1539,21 @@ To 192.168.56.14:higit/bluelog.git
 
 提交后，查看`bluelog`项目的流水线，发现状态是"已通过"：
 
-![gitlab_cicd_pipeline_success.png](/img/gitlab_cicd_pipeline_success.png)
+![gitlab_cicd_pipeline_success.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_cicd_pipeline_success.png)
 
 查看4#流水线的详情：
 
-![gitlab_cicd-pipeline_detail.png](/img/gitlab_cicd-pipeline_detail.png)
+![gitlab_cicd-pipeline_detail.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_cicd-pipeline_detail.png)
 
 可以发现其`build`、`Test`、`Deploy`三个阶段的任务都执行成功！
 
 查看作业详情，可以看到控制台输出的内容，就是我们在`.gitlab-ci.yml`中定义的一些过程的输出:
 
-![gitlab_cicd-pipeline_console_output.png](/img/gitlab_cicd-pipeline_console_output.png)
+![gitlab_cicd-pipeline_console_output.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_cicd-pipeline_console_output.png)
 
 后台控制台输出以及工作目录中的内容如下：
 
-![gitlab_cicd_gitlab_runner_console.png](/img/gitlab_cicd_gitlab_runner_console.png)
+![gitlab_cicd_gitlab_runner_console.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_cicd_gitlab_runner_console.png)
 
 今天就讲这些，下一节讲解 详解`.gitlab-ci.yml`！
 

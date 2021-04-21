@@ -16,7 +16,7 @@
 
 使用windows操作系统时，可以在"打开或关闭Windows功能"中开启“Telnet客户端”，如下图所示：
 
-![open_telnet_client](/img/open_telnet_client.png)
+![open_telnet_client](https://meizhaohui.gitee.io/imagebed/img/open_telnet_client.png)
 
 
 

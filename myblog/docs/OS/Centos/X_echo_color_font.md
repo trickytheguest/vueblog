@@ -52,7 +52,7 @@ $ echo -e "\033[32m绿色文字\033[0m"
 $ echo -e "\033[31m红字\033[32m绿字\033[0m" # 输出红字和绿字
 ```    
 
-![red_green_font.png](/img/red_green_font.png)
+![red_green_font.png](https://meizhaohui.gitee.io/imagebed/img/red_green_font.png)
 
 
 ### 输出红字和带黄色背景的绿字
@@ -61,7 +61,7 @@ $ echo -e "\033[31m红字\033[32m绿字\033[0m" # 输出红字和绿字
 $ echo -e "\033[31m红字\033[43;32m绿字带黄色背景\033[0m" # 输出红字和带黄色背景的绿字
 ```
    
-![red_green_font_yellow_background.png](/img/red_green_font_yellow_background.png) 
+![red_green_font_yellow_background.png](https://meizhaohui.gitee.io/imagebed/img/red_green_font_yellow_background.png) 
 
 
 ### 带下划线的白色背景的红字、高亮的红色背景的绿字
@@ -70,7 +70,7 @@ $ echo -e "\033[31m红字\033[43;32m绿字带黄色背景\033[0m" # 输出红字
 $ echo -e "\033[4;47;31m带下划线的白色背景的红字\033[0m\033[1;41;32m高亮的红色背景的绿字\033[0m"
 ```
   
-![underline_highlight1](/img/underline_highlight1.png)
+![underline_highlight1](https://meizhaohui.gitee.io/imagebed/img/underline_highlight1.png)
 
 
 
@@ -80,7 +80,7 @@ $ echo -e "\033[4;47;31m带下划线的白色背景的红字\033[0m\033[1;41;32m
 $ echo -e "\033[4m\033[47m\033[31m带下划线的白色背景的红字\033[0m \033[1m\033[41m\033[32m高亮的红色背景的绿字\033[0m"
 ```
     
-![underline_highlight2](/img/underline_highlight2.png)    
+![underline_highlight2](https://meizhaohui.gitee.io/imagebed/img/underline_highlight2.png)    
 
 
 ### 带下划线的白色背景的红字、高亮的红色背景的带下划线的绿字
@@ -89,7 +89,7 @@ $ echo -e "\033[4m\033[47m\033[31m带下划线的白色背景的红字\033[0m \0
 $ echo -e "\033[4m\033[47m\033[31m带下划线的白色背景的红字\033[0m \033[1;4m\033[41m\033[32m高亮的红色背景的带下划线的绿字\033[0m"
 ```
 
-![underline_highlight3](/img/underline_highlight3.png)    
+![underline_highlight3](https://meizhaohui.gitee.io/imagebed/img/underline_highlight3.png)    
 
 
 通过以上示例可知：控制符可以进行组合在一起，如`\033[4;47;31m`将三个属性组合在一起(属性数字中间使用分号;隔开)；也可以`\033[4m\033[47m\033[31m`每个属性单独写。
@@ -194,7 +194,7 @@ echo -e "${bg_red}${fg_green}${set_bold}红色背景粗体的绿色字${set_clea
 [meizhaohui@localhost ~]$ sh print_color.sh
 ```
 
-![red_back_bold_green.PNG](/img/red_back_bold_green.PNG)    
+![red_back_bold_green.PNG](https://meizhaohui.gitee.io/imagebed/img/red_back_bold_green.PNG)    
 
 
 参考文献：

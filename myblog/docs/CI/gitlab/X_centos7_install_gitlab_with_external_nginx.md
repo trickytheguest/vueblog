@@ -980,7 +980,7 @@ irb(main):002:0> quit
 
 没有报异常，说明邮件发送成功！登陆QQ邮箱检查邮件信息，发现已经收到邮件！
 
-![test_gitlab_smtp.png](/img/test_gitlab_smtp.png)
+![test_gitlab_smtp.png](https://meizhaohui.gitee.io/imagebed/img/test_gitlab_smtp.png)
 
 ## 启动GitLab和Nginx服务
 
@@ -1019,7 +1019,7 @@ tcp6       0      0 :80                   :*                    LISTEN      2157
 
 在Google浏览器中访问URL: http://192.168.56.14/ ，提示"502 Bad Gateway"，说明GitLab异常。
 
-![502_bad_gateway.png](/img/502_bad_gateway.png)
+![502_bad_gateway.png](https://meizhaohui.gitee.io/imagebed/img/502_bad_gateway.png)
 
 查看GitLab的错误日志文件`/var/log/nginx/gitlab_error.log`:
 
@@ -1944,7 +1944,7 @@ ok: run: unicorn: (pid 16466) 443s
 
 访问GitLab，终于见到了GitLab页面了！
 
-![gitlab_first_page.png](/img/gitlab_first_page.png)
+![gitlab_first_page.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_first_page.png)
 
 
 ## GitLab WEB界面配置
@@ -1952,31 +1952,31 @@ ok: run: unicorn: (pid 16466) 443s
 
 设置GitLab管理员root的密码为"1234567890"，并重新登陆，进入主页：
 
-![gitlab_index_page.png](/img/gitlab_index_page.png)
+![gitlab_index_page.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_index_page.png)
 
 新建一个用户:
 
-![gitlab_new_user.png](/img/gitlab_new_user.png)
+![gitlab_new_user.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_new_user.png)
 
 登陆邮箱查看邮件，验证账号：
 
-![gitlab_account_was_created_for_you_email.png](/img/gitlab_account_was_created_for_you_email.png)
+![gitlab_account_was_created_for_you_email.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_account_was_created_for_you_email.png)
 
 重置密码:
 
-![gitlab_first_page.png](/img/gitlab_first_page.png)
+![gitlab_first_page.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_first_page.png)
 
 普通账号登陆：
 
-![gitlab_login_page.png](/img/gitlab_login_page.png)
+![gitlab_login_page.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_login_page.png)
 
 管理员账号新建组(Group)和项目(Project)，并添加组成员，并给予开发者权限：
 
-![gitlab_add_group_members.png](/img/gitlab_add_group_members.png)
+![gitlab_add_group_members.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_add_group_members.png)
 
 管理员账号将普通账号加入到项目中后，普通用户就可以看到相应的项目：
 
-![gitlab_project.png](/img/gitlab_project.png)
+![gitlab_project.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_project.png)
 
 - 在服务器上面创建一个普通用户，并切换到普通用户下，然后创建`SSH KEY`
 
@@ -2013,7 +2013,7 @@ ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC1pm04LLmCaiLeapPKgMvCsl2XC1M1GR4R1pHvqfzw
 
 - 普通用户在WEB界面添加SSH KEY
 
-![gitlab_add_ssh_key.png](/img/gitlab_add_ssh_key.png)
+![gitlab_add_ssh_key.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_add_ssh_key.png)
 
 
 - 配置`git`环境
@@ -2094,7 +2094,7 @@ error: failed to push some refs to 'git@192.168.56.14:higit/hellopython.git'
 
 在WEB界面上操作也可以发现无法合入:
 
-![gitlab_not_allowed_to_push.png](/img/gitlab_not_allowed_to_push.png)
+![gitlab_not_allowed_to_push.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_not_allowed_to_push.png)
 
 - 通过http方式下载项目文件
 
@@ -2284,7 +2284,7 @@ To http://192.168.56.14/higit/hellopython.git
 
 在WEB界面上可以看到刚才的两次提交:
 
-![gitlab_check_commits.png](/img/gitlab_check_commits.png)
+![gitlab_check_commits.png](https://meizhaohui.gitee.io/imagebed/img/gitlab_check_commits.png)
 
 项目成员权限请参考:
 

@@ -807,28 +807,28 @@ root     12179  7909  0 17:19 pts/0    00:00:00 grep --color=auto jupyter
 
 所以我可以通过域名访问jupyter notebook，如果你没有配置域名解决对应关系，通过ip地址([https://192.168.56.103:8888](https://192.168.56.103:8888))也可以访问:
 
-![jupyter_notebook_login_page](/img/jupyter_notebook_login_page.png)
+![jupyter_notebook_login_page](https://meizhaohui.gitee.io/imagebed/img/jupyter_notebook_login_page.png)
 
 
 输入密码123456，登陆进jupyter notebook主页：
 
-![jupyter_notebook_home_page](/img/jupyter_notebook_home_page.png)
+![jupyter_notebook_home_page](https://meizhaohui.gitee.io/imagebed/img/jupyter_notebook_home_page.png)
 
 我们点击右上角的"New" --> "Python3" 可以创建Python3的notebook:
 
-![jupyter_notebook_create_python3_page](/img/jupyter_notebook_create_python3_page.png)
+![jupyter_notebook_create_python3_page](https://meizhaohui.gitee.io/imagebed/img/jupyter_notebook_create_python3_page.png)
 
 在新页面输入python命令，并按Ctrl + Enter键执行，如下图：
 
-![jupyter_notebook_input_python_command](/img/jupyter_notebook_input_python_command.png)
+![jupyter_notebook_input_python_command](https://meizhaohui.gitee.io/imagebed/img/jupyter_notebook_input_python_command.png)
 
 你可以使用 ``%timeit`` 计算程序执行时间，如 ``%timeit [i*i for i in range(1000)]``。
 
-![jupyter_notebook_run_timeit](/img/jupyter_notebook_run_timeit.png)
+![jupyter_notebook_run_timeit](https://meizhaohui.gitee.io/imagebed/img/jupyter_notebook_run_timeit.png)
 
 保存文件：
 
-![jupyter_notebook_save_notebook](/img/jupyter_notebook_save_notebook.png)
+![jupyter_notebook_save_notebook](https://meizhaohui.gitee.io/imagebed/img/jupyter_notebook_save_notebook.png)
 
 保存后，可以在服务器/root/jupyter_data目录中看到笔记文件first_notebook.ipynb:
 

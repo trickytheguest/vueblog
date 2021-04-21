@@ -703,7 +703,7 @@ Request says:message #5
 
 MessagePack：
 
-![](/img/messagepack.png)
+![](https://meizhaohui.gitee.io/imagebed/img/messagepack.png)
 
 由于任何数量的REQ客户端都可以`connect()`到一个REP服务器，即使是基础的请求-响应模式也可以实现一些有趣的通信模式。服务器是同步的，一次只能处理一个请求，但是并不会丢弃这段时间到达的其他请求。ZeroMQ会触发某些限制之前一直缓存这些消息，走到它们被处理；这就是ZeroMQ中Q的意思，Q表示队列Queue，M表示消息Message，Zero表示不需要任何消息分发者。
 
@@ -732,7 +732,7 @@ ZeroMQ并不是Python支持的唯一一个消息传递库。消息传递是网�
 
 Scapy是一款强大的交互式数据包处理工具、数据包生成器、网络扫描器、网络发现工具和包嗅探工具。它提供多种类别的交互式生成数据包或数据包集合、对 数据包进行操作、发送数据包、包嗅探、应答和反馈匹配等等功能。Python解释器提供交互功能，所以要用到Python编程知识（例如 variables、loops、和functions）。支持生成报告，且报告生成简单。
 
-![](/img/animation-scapy-install.svg)
+![](https://meizhaohui.gitee.io/imagebed/img/animation-scapy-install.svg)
 
 - Scapy的github源码地址[https://github.com/secdev/scapy](https://github.com/secdev/scapy)。
 - 官网地址[https://scapy.net/](https://scapy.net/)。
@@ -814,7 +814,7 @@ TypeError: getaddrinfo() missing 1 required positional argument: 'port'
 标准的`ftplib`模块[https://docs.python.org/3/library/ftplib.html](https://docs.python.org/3/library/ftplib.html)可以使用文件传输协议(FTP)来发送字节。虽然这是一个很古老的协议，但它的表现仍然非常优秀。
 
 现在已经介绍了很多标准库中的模块，不过还是推荐你阅读一下标准库文档中的网络协议[https://docs.python.org/3/library/internet.html](https://docs.python.org/3/library/internet.html)部分。
-![](/img/internet_protocols.png)
+![](https://meizhaohui.gitee.io/imagebed/img/internet_protocols.png)
 
 
 ## Web服务和API

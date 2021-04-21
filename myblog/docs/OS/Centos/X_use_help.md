@@ -25,7 +25,7 @@ man命令的实用性非常高，基本上所有的类Unix系统都支持，所�
 
 /usr/share/man目录结构如下:
 
-![man_folder_list.png](/img/man_folder_list.png)
+![man_folder_list.png](https://meizhaohui.gitee.io/imagebed/img/man_folder_list.png)
 
 
 
@@ -47,7 +47,7 @@ man命令的实用性非常高，基本上所有的类Unix系统都支持，所�
   查找vim相关的手册
 
 
-![mankvim.png](/img/mankvim.png)
+![mankvim.png](https://meizhaohui.gitee.io/imagebed/img/mankvim.png)
 
 
 - 列出符合关键字的可用手册页
@@ -56,7 +56,7 @@ man命令的实用性非常高，基本上所有的类Unix系统都支持，所�
   
   查找man关键字可用的手册页
   
-![manfman.png](/img/manfman.png)
+![manfman.png](https://meizhaohui.gitee.io/imagebed/img/manfman.png)
 
 
 - 打印man帮助文件的路径
@@ -66,7 +66,7 @@ man命令的实用性非常高，基本上所有的类Unix系统都支持，所�
   打印man帮助文档存放的路径
   
 
-![manpath.png](/img/manpath.png)
+![manpath.png](https://meizhaohui.gitee.io/imagebed/img/manpath.png)
 
 
 ### man帮忙文档分类
@@ -101,7 +101,7 @@ man命令的实用性非常高，基本上所有的类Unix系统都支持，所�
 在命令行输入 ``info vim`` 则可以查看vim的info信息页。
 
 
-![infovim.png](/img/infovim.png)
+![infovim.png](https://meizhaohui.gitee.io/imagebed/img/infovim.png)
 
 
 ## help帮助
@@ -112,7 +112,7 @@ man命令的实用性非常高，基本上所有的类Unix系统都支持，所�
 在命令行输入 ``vim -h`` 则可以查看vim的帮助信息。
 
 
-![vimhelp.png](/img/vimhelp.png)
+![vimhelp.png](https://meizhaohui.gitee.io/imagebed/img/vimhelp.png)
 
 推荐使用man手册方式查看命令的使用帮助信息。
 

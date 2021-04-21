@@ -438,7 +438,7 @@ myblog
 
 此时运行项目，打开"http://hellogitlab.com:8081/"查看到界面如下图所示:
 
-![vuepress_set_title](/img/vuepress_set_title.png) 
+![vuepress_set_title](https://meizhaohui.gitee.io/imagebed/img/vuepress_set_title.png) 
 
 ## 基本配置
 一个config.js的主要配置包括网站的标题、描述、主题、端口号的配置。这里简单的列举一下常用配置。
@@ -480,7 +480,7 @@ module.exports = {
 
 此时运行项目，打开"http://hellogitlab.com/"查看到界面如下图所示:
 
-![vuepress_set_port](/img/vuepress_set_port.png)
+![vuepress_set_port](https://meizhaohui.gitee.io/imagebed/img/vuepress_set_port.png)
 
 
 ### Markdown显示代码行号
@@ -547,15 +547,15 @@ module.exports = {
 
 此时运行项目，打开"http://hellogitlab.com/"查看到界面如下图所示:
 
-![vuepress_set_nav](/img/vuepress_set_nav.png)
+![vuepress_set_nav](https://meizhaohui.gitee.io/imagebed/img/vuepress_set_nav.png)
 
 在右上角出现了导航栏，可以看到多出了"首页"、"博文"、"关于"、"Github"等导航，我们点击"博文"，可以看到下拉框中显示了我们定义的"Python"、"Golang"、"Web"三个超链接。
 
-![vuepress_set_nav_down_menu](/img/vuepress_set_nav_down_menu.png)
+![vuepress_set_nav_down_menu](https://meizhaohui.gitee.io/imagebed/img/vuepress_set_nav_down_menu.png)
 
 点击相应的超链接，可以打开各自的页面，如打开"Python"超链接，跳转到 http://hellogitlab.com/python/ 页面：
 
-![vuepress_set_nav_python_docs](/img/vuepress_set_nav_python_docs.png)
+![vuepress_set_nav_python_docs](https://meizhaohui.gitee.io/imagebed/img/vuepress_set_nav_python_docs.png)
 
 
 
@@ -681,14 +681,14 @@ success [23:49:32] Build 5591e0 finished in 173 ms! ( http://localhost:80/ )
 
 此时运行项目，打开"http://hellogitlab.com/python/"查看到界面如下图所示:
 
-![vuepress_set_sidebar_python](/img/vuepress_set_sidebar_python.png)
+![vuepress_set_sidebar_python](https://meizhaohui.gitee.io/imagebed/img/vuepress_set_sidebar_python.png)
 
 可以看到Python相关的侧边栏正常显示出来了，并且进行了分组显示。
 
 
 打开"http://hellogitlab.com/golang/"查看到界面如下图所示:
 
-![vuepress_set_sidebar_golang](/img/vuepress_set_sidebar_golang.png)
+![vuepress_set_sidebar_golang](https://meizhaohui.gitee.io/imagebed/img/vuepress_set_sidebar_golang.png)
 
 可以看到Python相关的侧边栏正常显示出来了，并且进行了分组显示。
 
@@ -718,7 +718,7 @@ footer: MIT Licensed | Copyright © 2019-present Zhaohui Mei
 
 重新打开网站首页，查看到的效果如下图所示：
 
-![vuepress_set_self_home](/img/vuepress_set_self_home.png)
+![vuepress_set_self_home](https://meizhaohui.gitee.io/imagebed/img/vuepress_set_self_home.png)
 
 以上一个基本的博客系统就配置好了！
 

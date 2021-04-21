@@ -1213,7 +1213,7 @@ graph LR;
   构造类型-->枚举类型enum
 ```
 
-![c_data_type](/img/c_data_type.png)
+![c_data_type](https://meizhaohui.gitee.io/imagebed/img/c_data_type.png)
 
 - 此处仅说明基本类型， `short`、`int`、`long`、`float`、`double`、`char`这六个关键字代表C语言里面的六种基本数据类型。
 
@@ -2874,7 +2874,7 @@ n = (j > i) && (i > 1)
 
 盗个图，参考地址 https://zhuanlan.zhihu.com/p/53147212
 
-![](/img/2021-03-04_22-24-33.jpg)
+![](https://meizhaohui.gitee.io/imagebed/img/2021-03-04_22-24-33.jpg)
 
 上表中可以总结出以下规律：
 
@@ -4000,7 +4000,7 @@ $ echo $?
 3
 ```
 
-![](/img/Snipaste_2021-03-24_07-24-20.png)
+![](https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-03-24_07-24-20.png)
 
 可以看到，`my_grep.out`程序可以执行`grep`类似的功能，打印出匹配的行。
 
@@ -4102,7 +4102,7 @@ $
 
 可以看到带颜色的输出：
 
-![](/img/Snipaste_2021-04-13_22-52-47.png)
+![](https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-04-13_22-52-47.png)
 
 可以看到，程序能够正常的将每行一个匹配字符串标记为粉红色，与`grep`命令一致。
 

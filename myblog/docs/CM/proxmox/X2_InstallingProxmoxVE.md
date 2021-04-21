@@ -80,7 +80,7 @@ Proxmox VE可以使用本地存储（DAS），SAN，NAS以及分布式存储（C
     
 请插入安装CD-ROM，然后从该驱动器启动。 之后您可以选择以下菜单选项：
 
-![pve-grub-menu.png](/img/pve-grub-menu.png)
+![pve-grub-menu.png](https://meizhaohui.gitee.io/imagebed/img/pve-grub-menu.png)
 
 
 - Install Proxmox VE 正常安装

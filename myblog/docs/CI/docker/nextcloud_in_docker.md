@@ -188,11 +188,11 @@ public
 
 在浏览器中输入`http://hellogitlab.com:8080/`，可以正常打开nextcloud页面：
 
-![](/img/Snipaste_2021-03-24_21-52-18.png)
+![](https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-03-24_21-52-18.png)
 
 创建一个管理员账号：
 
-![](/img/Snipaste_2021-03-24_21-53-00.png)
+![](https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-03-24_21-53-00.png)
 
 并点击安装完成。
 
@@ -212,7 +212,7 @@ public
 
 在腾讯DNS解析界面增加一条新的域名解析：
 
-![](/img/Snipaste_2021-03-26_00-33-12.png)
+![](https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-03-26_00-33-12.png)
 
 等待一段时间后，使用`ping`命令来测试子域名是否解析成功：
 
@@ -238,7 +238,7 @@ round-trip min/avg/max/stddev = 25.004/25.358/25.848/0.358 ms
 
 将解压后的Nginx文件夹中的两个文件上传到服务器端。
 
-![](/img/Snipaste_2021-03-26_00-39-52.png)
+![](https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-03-26_00-39-52.png)
 
 文件上传后，存放在`/etc/pki/nginx`目录下：
 
@@ -564,9 +564,9 @@ CONTAINER ID        IMAGE               COMMAND                  CREATED        
 
 在浏览器中访问新的域名：
 
-![](/img/Snipaste_2021-03-26_01-22-04.png)
+![](https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-03-26_01-22-04.png)
 
-![](/img/Snipaste_2021-03-26_01-30-33.png)
+![](https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-03-26_01-30-33.png)
 
 
 
@@ -576,11 +576,11 @@ CONTAINER ID        IMAGE               COMMAND                  CREATED        
 
 使用`postmaster`账号登陆企业邮箱，创建一个企业邮箱的通知账号用户`notice@hellogitlab.com`，然后在nextcloud设置`个人信息`中配置自己的`电子邮箱`，然后在管理`基本设置`界面，设置一下`电子邮件服务器`，按下图方式设置：
 
-![](/img/Snipaste_2021-03-27_15-23-30.png)
+![](https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-03-27_15-23-30.png)
 
 设置完成后，点击`发送电子邮件`按钮，查看一下自己的邮箱中是否会收到测试邮件通知,过一会儿收到邮件通知：
 
-![](/img/电子邮件设置测试.png)
+![](https://meizhaohui.gitee.io/imagebed/img/电子邮件设置测试.png)
 
 说明邮件通知配置成功！
 
@@ -689,7 +689,7 @@ root@89a04170593a:/var/www/html/config# tail -n 8 config.php
 );
 ```
 
-![](/img/Snipaste_2021-03-27_20-37-48.png)
+![](https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-03-27_20-37-48.png)
 
 修改后，重启nextcloud容器：
 
@@ -700,7 +700,7 @@ nextcloud
 
 然后再在nextcloud中可以看到视频已经的缩略图了。
 
-![](/img/Snipaste_2021-03-27_20-41-56.png)
+![](https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-03-27_20-41-56.png)
 
 
 
@@ -734,15 +734,15 @@ https://github.com/nextcloud/bruteforcesettings/releases/download/v2.1.0/brutefo
 
 nextcloud App Store: [https://apps.nextcloud.com/](https://apps.nextcloud.com/)
 
-![](/img/Snipaste_2021-03-28_14-21-15.png)
+![](https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-03-28_14-21-15.png)
 
 在右上角的搜索框输入`music`,并按回车搜索，点击进入到第一个搜索结果中：
 
-![](/img/Snipaste_2021-03-28_14-22-22.png)
+![](https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-03-28_14-22-22.png)
 
 在Music详情页面，下方有一个`Downloads`列表，我们选择一个下载版本，右键复制链接地址：
 
-![](/img/Snipaste_2021-03-28_14-24-05.png)
+![](https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-03-28_14-24-05.png)
 
 进入到nextcloud容器中，并切换到`apps`目录：
 
@@ -821,7 +821,7 @@ root@89a04170593a:/var/www/html/apps#
 
 修改权限后，在应用界面可以看到`Music`应用：
 
-![](/img/Snipaste_2021-03-28_14-35-21.png)
+![](https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-03-28_14-35-21.png)
 
 我们点击`启用`按钮，此时让输入`授权密码`,输入你的密码，并确认即可。
 
@@ -829,7 +829,7 @@ root@89a04170593a:/var/www/html/apps#
 
 上传一首歌曲到nextcloud，然后点击页面顶部的`音乐`图标，就可以打开音乐界面，可以看到刚才上传的音乐了：
 
-![](/img/Snipaste_2021-03-28_14-40-44.png)
+![](https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-03-28_14-40-44.png)
 
 点击播放按钮就可以听音乐🎵了！
 
@@ -837,7 +837,7 @@ root@89a04170593a:/var/www/html/apps#
 
 使用cron去执行后台任务：在设置中将设置从ajax调整到cron，然后在宿主机建立crontab任务。
 
-![](/img/Snipaste_2021-03-28_15-51-53.png)
+![](https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-03-28_15-51-53.png)
 
 首先在容器中查看一下`cron.php`文件路径：
 
@@ -875,7 +875,7 @@ uid=33(www-data) gid=33(www-data) groups=33(www-data)
 
 在界面上可以看到同步成功了：
 
-![](/img/Snipaste_2021-03-28_15-58-12.png)
+![](https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-03-28_15-58-12.png)
 
 在宿主机上面添加一个定时任务：
 
@@ -919,7 +919,7 @@ root@89a04170593a:/var/www/html/data/meizhaohui/files/Documents#
 
 此时在nextcloud上面并没有显示：
 
-![](/img/Snipaste_2021-03-28_21-06-58.png)
+![](https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-03-28_21-06-58.png)
 
 这时，我们应该更新一下数据库数据，需要手动执行以下命令(注意，是在宿主机上面执行！！)，nextcloud才会将数据添加进数据库里：
 
@@ -937,7 +937,7 @@ Starting scan for user 2 out of 2 (test)
 
 此时，刷新一下nextcloud页面，可以看到，刚才手动添加的文件已经正常显示了:
 
-![](/img/Snipaste_2021-03-28_21-11-39.png)
+![](https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-03-28_21-11-39.png)
 
 为了不每次手动添加文件时，都需要执行该命令，我们在宿主机上面也可以添加一个定时任务：
 
@@ -1137,7 +1137,7 @@ OK
 
 配置nextcloud的缓存，参考官方指导：
 
-![](/img/Snipaste_2021-03-29_01-42-08.png)
+![](https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-03-29_01-42-08.png)
 
 配置`config.php`文件：
 
@@ -1673,11 +1673,11 @@ checkpoints  config.v2.json  hostconfig.json  hostname  hosts  resolv.conf  reso
 
 修改前，`new_config.v2.json`关于挂载点的信息：
 
-![](/img/Snipaste_2021-03-31_07-25-59.png)
+![](https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-03-31_07-25-59.png)
 
 我们使用vim进行修改，修改后挂载点的信息如下：
 
-![](/img/Snipaste_2021-03-31_07-28-58.png)
+![](https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-03-31_07-28-58.png)
 
 然后我们生成压缩后的配置写入到正式文件：
 
@@ -1690,11 +1690,11 @@ checkpoints  config.v2.json  hostconfig.json  hostname  hosts  resolv.conf  reso
 
 修改前：
 
-![](/img/Snipaste_2021-03-31_07-38-53.png)
+![](https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-03-31_07-38-53.png)
 
 修改后：
 
-![](/img/Snipaste_2021-03-31_07-39-50.png)
+![](https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-03-31_07-39-50.png)
 
 然后我们生成压缩后的配置写入到正式文件：
 
@@ -1816,9 +1816,9 @@ docker exec --user www-data nextcloud php occ db:convert-type --port="5432" --pa
 
 执行发现转换失败：
 
-![](/img/Snipaste_2021-04-01_08-11-09.png)
+![](https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-04-01_08-11-09.png)
 
-![](/img/Snipaste_2021-04-01_08-09-09.png)
+![](https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-04-01_08-09-09.png)
 
 报以下异常：
 
@@ -1855,7 +1855,7 @@ db:convert-type [--port PORT] [--password PASSWORD] [--clear-schema] [--all-apps
 
 说是要禁用	text`应用，并删除`-app-apps`参数。
 
-![](/img/Snipaste_2021-04-02_06-49-54.png)
+![](https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-04-02_06-49-54.png)
 
 我们在`已启用的应用`管理界面禁用`text`应用，并将`--all-apps`参数去掉后，再尝试一次。执行命令`docker exec --user www-data nextcloud php occ db:convert-type --port="5432" --password="securepasswd" --clear-schema pgsql ncadmin hellogitlab.com nextcloud`。
 
@@ -1890,7 +1890,7 @@ Continue with the conversion (y/n)? [n] y  # <---------备注，此处提示时�
 
 在dockerhub nextcloud官方镜像中，提到我们可以通过配置环境变量来自动配置nextcloud。
 
-![](/img/Snipaste_2021-04-02_21-20-35.png)
+![](https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-04-02_21-20-35.png)
 
 如前面我们测试的，我们需要使用Redis作缓存、postgresql作数据库、SMTP外部邮箱配置，另外，可以在在环境变量中配置nextcloud的管理员账号和密码。
 
@@ -2069,7 +2069,7 @@ AH00558: apache2: Could not reliably determine the server's fully qualified doma
 
 打开nextcloud链接地址 [https://nextcloud.hellogitlab.com:444/](https://nextcloud.hellogitlab.com:444/),页面提示`通过不被信任的域名访问`异常：
 
-![](/img/Snipaste_2021-04-07_07-56-32.png)
+![](https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-04-07_07-56-32.png)
 
 查看配置文件，可知`config.php`中域名配置异常：
 
@@ -2109,7 +2109,7 @@ nextcloud
 
 再次打开web页面：
 
-![](/img/Snipaste_2021-04-07_08-09-31.png)
+![](https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-04-07_08-09-31.png)
 
 页面正常显示。
 
@@ -2117,7 +2117,7 @@ nextcloud
 
 我们在`概览`页面可以看到有`数据库丢失了一些索引`的警告：
 
-![](/img/Snipaste_2021-04-10_19-19-35.png)
+![](https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-04-10_19-19-35.png)
 
 
 
@@ -2143,7 +2143,7 @@ Check indices of the oc_properties table.
 
 刷新页面，这样`概览`页面就不会显示警告了！
 
-![](/img/Snipaste_2021-04-08_08-20-47.png)
+![](https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-04-08_08-20-47.png)
 
 自定义的环境配置文件如下：
 
@@ -2280,7 +2280,7 @@ $CONFIG = array (
 
 多次手机登陆后，有可能手机客户端被拦截住:
 
-![](/img/IMG_0676BDB6CA5B-1.jpeg)
+![](https://meizhaohui.gitee.io/imagebed/img/IMG_0676BDB6CA5B-1.jpeg)
 
 参考 [https://help.nextcloud.com/t/cannot-login-too-many-requests/100905/16](https://help.nextcloud.com/t/cannot-login-too-many-requests/100905/16) 运行以下命令：
 
@@ -2346,7 +2346,7 @@ apt inatall vim ffmpge -y
 
 自制镜像示例，参考https://engr-z.com/278.html：
 
-![](/img/Snipaste_2021-04-10_22-45-15.png)
+![](https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-04-10_22-45-15.png)
 
 
 
@@ -2354,7 +2354,7 @@ apt inatall vim ffmpge -y
 
 在手机客户端可以设置照片自动上传，并设置文件名格式，默认的文件名中包含空格，我不喜欢文件名上包含空格，改成不带空格的格式，设置如下图：
 
-![](/img/750-1334-max.png)
+![](https://meizhaohui.gitee.io/imagebed/img/750-1334-max.png)
 
 
 

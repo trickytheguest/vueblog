@@ -4,7 +4,7 @@
 
 ## 打开访达文件夹的快捷键
 
-![finder_keymap](/img/finder_keymap.png)
+![finder_keymap](https://meizhaohui.gitee.io/imagebed/img/finder_keymap.png)
 
 说明： 
 
@@ -15,11 +15,11 @@
 
 通过快捷键⌃+⌘+空格键可以调出『表情符号与人物』窗口：
 
-![emoji](/img/emoji.png)
+![emoji](https://meizhaohui.gitee.io/imagebed/img/emoji.png)
 
 点击『表情符号与人物』窗口右下角的向右的箭头，调到『技术符号』处就可以看到常用的"command"等键的符号了。
 
-![emoji_command](/img/emoji_command.png)
+![emoji_command](https://meizhaohui.gitee.io/imagebed/img/emoji_command.png)
 
 ## 常用快捷键
 
@@ -89,12 +89,12 @@ Alfred具有很多功能，可以参考[Alfred 究竟好用在哪里？](https:/
 2.  查找本地文件，按空格，再输入搜索关键字。
 3.  网页搜索，默认使用Google搜索，可以配置百度搜索，百度搜索的话，可以输入『bd 搜索关键字』进行搜索，Alfred中百度搜索配置如下：
 
-![alfred_baidu_search](/img/alfred_baidu_search.png)
+![alfred_baidu_search](https://meizhaohui.gitee.io/imagebed/img/alfred_baidu_search.png)
 
 4. 简单数学计算，如输入「2+2」则会自动计算出结果4。
 5. 查字典，如输入「d lovely」则会显示lovely的翻译。Alfred中字典配置如下：
 
-![alfred_dict_search](/img/alfred_dict_search.png)
+![alfred_dict_search](https://meizhaohui.gitee.io/imagebed/img/alfred_dict_search.png)
 
 6. 退出某个应用程序，输入「quit 应用」。
 
@@ -112,7 +112,7 @@ macos中快捷键特别多，有时记不住快捷键，安装CheatSheet后，�
 
 如我的火狐浏览器中长按⌘键弹出的所有的快捷键如下图：
 
-![firefox_shortcuts](/img/firefox_shortcuts.png)
+![firefox_shortcuts](https://meizhaohui.gitee.io/imagebed/img/firefox_shortcuts.png)
 
 ## shuttle的使用
 参考[https://github.com/fitztrev/shuttle](https://github.com/fitztrev/shuttle)
@@ -121,7 +121,7 @@ Shuttle是一款快捷操作管理软件，你可以通过自定义命令，将�
 
 如我的shuttle配置后，显示如下：
 
-![shuttle](/img/shuttle.png)
+![shuttle](https://meizhaohui.gitee.io/imagebed/img/shuttle.png)
 
 - 点击「编辑」可以编辑默认的配置文件。
 - 点击「导出」可以将默认的配置文件导出，你可以参照这个导出的配置文件写自己的命令。
@@ -266,7 +266,7 @@ $ sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/t
 
 运行脚本后，自动安装`oh-my-zsh`并设置默认的主题。 显示如下：
 
-![installed_ohmyzsh](/img/installed_ohmyzsh.png)
+![installed_ohmyzsh](https://meizhaohui.gitee.io/imagebed/img/installed_ohmyzsh.png)
 
 ### 安装`Powerline Fonts`字体
 
@@ -301,7 +301,7 @@ Powerline fonts installed to /Users/mzh/Library/Fonts
 
 像我配置的随机主题：
 
-![oh_my_zsh_random_theme](/img/oh_my_zsh_random_theme.png)
+![oh_my_zsh_random_theme](https://meizhaohui.gitee.io/imagebed/img/oh_my_zsh_random_theme.png)
 
 重新加载配置
 ```sh
@@ -309,7 +309,7 @@ $ source ~/.zshrc
 ```
 
 显示如下：
-![reload_random_theme](/img/reload_random_theme.png)
+![reload_random_theme](https://meizhaohui.gitee.io/imagebed/img/reload_random_theme.png)
 
 
 ### 设置插件
@@ -437,7 +437,7 @@ HTTPie - a CLI, cURL-like tool for humans. <https://httpie.org>
 
 参考官方的示例：
 
-![httpie](/img/httpie.png)
+![httpie](https://meizhaohui.gitee.io/imagebed/img/httpie.png)
 
 你可以尝试执行以下两个命令，查看他们的区别，你得到的显示结果与官网的示例结果会有部分差异。
 
@@ -467,7 +467,7 @@ CONTAINER ID        IMAGE                  COMMAND                  CREATED     
 
 启动服务后，浏览器中打开`localhost`，可以看到如下效果图：
 
-![docker_local_httpbin](/img/docker_local_httpbin.png)
+![docker_local_httpbin](https://meizhaohui.gitee.io/imagebed/img/docker_local_httpbin.png)
 
 
 - 发送GET请求
@@ -480,7 +480,7 @@ $ http :/get
 ```
 上面几种方式都是向本地80端口的'/get'地址发送GET请求，返回结果相同：
 
-![httpie_GET](/img/httpie_GET.png)
+![httpie_GET](https://meizhaohui.gitee.io/imagebed/img/httpie_GET.png)
 
 - 发送POST请求
 
@@ -518,7 +518,7 @@ Server: gunicorn/19.9.0
 ```
 发送POST请求，返回结果如下：
 
-![httpie_POST](/img/httpie_POST.png)
+![httpie_POST](https://meizhaohui.gitee.io/imagebed/img/httpie_POST.png)
 
 
 - 发送PUT请求
@@ -610,7 +610,7 @@ Done. 3.28 kB in 0.00093s (3.44 MB/s)
 
 我的触控条自定义后显示如下图所示：
 
-![touchbar_display](/img/touchbar_display.png)
+![touchbar_display](https://meizhaohui.gitee.io/imagebed/img/touchbar_display.png)
 
 ::: tip 提示
 此处使用`cmd+shift+6`截取触控条图像。
@@ -848,7 +848,7 @@ SpaceInEmptyParentheses: true
 
 - https://clang.llvm.org/docs/ClangFormat.html#vim-integration
 
-![](/img/Snipaste_2021-03-03_21-55-23.png)
+![](https://meizhaohui.gitee.io/imagebed/img/Snipaste_2021-03-03_21-55-23.png)
 
 在上一节配置好`.clang-format`配置文件后，此处直接对vim进行配置。
 

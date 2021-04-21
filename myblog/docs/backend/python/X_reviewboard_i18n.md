@@ -295,7 +295,7 @@ ReviewBoard关于语言和时区的配置:
 
 此时ReviewBoard登陆界面如下：
 
-![reviewboard_default_login_page.png](/img/reviewboard_default_login_page.png)
+![reviewboard_default_login_page.png](https://meizhaohui.gitee.io/imagebed/img/reviewboard_default_login_page.png)
 
 ## 修改配置
 
@@ -510,7 +510,7 @@ msgstr "新增普通评论"
 
 此时再刷新一下页面看一下，是否有变化。
 
-![reviewboard_default_login_page_modify.png](/img/reviewboard_default_login_page_modify.png)
+![reviewboard_default_login_page_modify.png](https://meizhaohui.gitee.io/imagebed/img/reviewboard_default_login_page_modify.png)
 
 刷新页面后，可以看到页面中出现了"Log in to Review Board meizhaohui"，说明此处就是登陆页面对应的翻译原文件。
 
@@ -596,7 +596,7 @@ processing file django.po in /usr/lib64/python2.7/site-packages/reviewboard/loca
 
 重新刷新ReviewBoard系统，可以看到中文翻译:
 
-![reviewboard_default_login_page_i18n_chinese.png](/img/reviewboard_default_login_page_i18n_chinese.png)
+![reviewboard_default_login_page_i18n_chinese.png](https://meizhaohui.gitee.io/imagebed/img/reviewboard_default_login_page_i18n_chinese.png)
 
 ## 汉化注意事项
 

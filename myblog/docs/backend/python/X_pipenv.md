@@ -113,7 +113,7 @@ $
 
 初始化虚拟环境后，会在项目目录下生成`Pipfile`和`Pipfile.lock`，以及目录`.venv`。如下图所示：
 
-![pipenv_folder.png](/img/pipenv_folder.png)
+![pipenv_folder.png](https://meizhaohui.gitee.io/imagebed/img/pipenv_folder.png)
 
 `Pipfile`和`Pipfile.lock`为`pipenv`包的配置文件，代替原来的 `requirement.txt`。
 
@@ -499,7 +499,7 @@ D:\data\myproject\.venv\Scripts\python.exe D:/data/myproject/myweb.py
 
 此时查看[http://127.0.0.1:5000/](http://127.0.0.1:5000/)，结果如下图所示:
 
-![pipenv_none.png](/img/pipenv_none.png)
+![pipenv_none.png](https://meizhaohui.gitee.io/imagebed/img/pipenv_none.png)
 
 可知`Flask`并没有获取到相应的配置数据，需要安装`python-dotenv`，在虚拟环境中安装:
 
@@ -536,7 +536,7 @@ wheel         0.32.3
 
 安装完成`python-dotenv`后，再重新运行`Flask`项目，重新访问 [http://127.0.0.1:5000/](http://127.0.0.1:5000/) ，结果如下图所示:
 
-![pipenv_show.png](/img/pipenv_show.png)
+![pipenv_show.png](https://meizhaohui.gitee.io/imagebed/img/pipenv_show.png)
 
 说明`.env`配置数据已经成功解析。
 
