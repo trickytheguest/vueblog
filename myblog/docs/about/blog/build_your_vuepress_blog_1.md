@@ -1735,6 +1735,8 @@ GITEE_PASSWORD = 修改为你的gitee密码
 IMAGE_HOST = imagebed
 ```
 
+你只需要修改`.env`配置文件中用户名和密码，以及你的图床项目名称即可。
+
 注意，需要安装依赖包：
 
 ```sh
@@ -1744,7 +1746,7 @@ python-dotenv 0.17.0
 selenium      3.141.0
 ```
 
-后面每次提交代码时，在快捷命令后面加上`python3 auto_deploy_gitee_page.py`即可。这样就会自动部署Gitee Pager服务了。
+后面每次提交代码时，在快捷命令后面加上`python3 auto_deploy_gitee_page.py`即可。这样就会自动部署Gitee Pages服务了。
 
 
 
