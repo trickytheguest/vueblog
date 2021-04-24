@@ -268,6 +268,10 @@ nginx: configuration file /etc/nginx/nginx.conf test is successful
 
 之前初始体验的时候，我们并没有配置Gogs的邮件，我们再次测试的时候，可以在初始安装界面加上邮件相关的配置。
 
+你可以准备一个外部邮箱，专门用来做邮件通知。如我使用的是`notice@hellogitlab.com`专用邮箱。
+
+可以在后面重新运行docker容器后，再进行配置。
+
 
 
 ## 1.10 头像优化
@@ -278,6 +282,299 @@ nginx: configuration file /etc/nginx/nginx.conf test is successful
 
 我们参考 [https://github.com/gogs/gogs/issues/1470](https://github.com/gogs/gogs/issues/1470) 尝试给docker容器加上`OFFLINE_MODE`参数，并设置值为`true`，看能不能解决该问题。
 
+我们将该参数写到配置文件`.gogs.env`中，后面运行容器时，从配置文件中读取环境变量。
+
+```sh
+[root@hellogitlab ~]# cat /dockerdata/gogs/.gogs.env
+# 关闭原程头像引用 https://gravatar.com连接异常
+OFFLINE_MODE=true
+```
+
+注意，等号`=`两侧不要有空格。
+
+
+
+## 1.11 优化后重新运行容器
+
+我们在运行容器时加载环境变量，并在容器运行后重启Nginx服务。
+
+注意，我们最终需要使用的gogs服务的地址是`https://gogs.hellogitlab.com:10081`。
+
+在重新运行容器前，我们将之前生成的数据库数据删除，以及持久化的数据删除。
+
+先停止gogs容器。
+
+```sh
+[root@hellogitlab ~]# docker stop gogs
+gogs
+[root@hellogitlab ~]# docker rm gogs
+gogs
+```
+
+删除持久化数据：
+
+```sh
+# 查看持久化目录下的文件
+[root@hellogitlab ~]# ls /dockerdata/gogs/data/
+git  gogs  ssh
+# 删除持久化目录下的所有文件
+[root@hellogitlab ~]# trash-put /dockerdata/gogs/data/* && trash-empty
+[root@hellogitlab ~]# ls /dockerdata/gogs/data/
+```
+
+删除数据库，并新建数据库，并授权：
+
+```sh
+[root@hellogitlab ~]# psql -Uadmin -dtestdb -h localhost
+用户 admin 的口令：
+psql (9.2.24, 服务器 13.1 (Debian 13.1-1.pgdg100+1))
+警告：psql 版本9.2， 服务器版本13.0.
+一些psql功能可能无法工作.
+输入 "help" 来获取帮助信息.
+
+testdb=# 
+# 删除数据库
+testdb=# DROP DATABASE gogs;
+DROP DATABASE
+
+# 重新创建数据库
+testdb=# CREATE DATABASE gogs;
+CREATE DATABASE
+
+# 给数据库管理用户授权
+testdb=# GRANT ALL PRIVILEGES ON DATABASE gogs TO gogsadmin;
+GRANT
+testdb=# \q
+```
+
+以上准备工作完成后，我们重新运行容器。
+
+```sh
+[root@hellogitlab ~]# docker run --name=gogs --env-file=/dockerdata/gogs/.gogs.env --restart=always -p 10022:22 -p 10080:3000 -v /dockerdata/gogs/data:/data -d gogs/gogs
+e1a3883c0a818f74a480d731d7a26e10bb7406e462b37d760fc7d7b021e75b34
+[root@hellogitlab ~]# docker ps --latest
+CONTAINER ID        IMAGE               COMMAND                  CREATED              STATUS              PORTS                                            NAMES
+e1a3883c0a81        gogs/gogs           "/app/gogs/docker/..."   About a minute ago   Up About a minute   0.0.0.0:10022->22/tcp, 0.0.0.0:10080->3000/tcp   gogs
+```
+
+可以看到容器正常运行。
+
+我们重启一下Nginx服务：
+
+```sh
+[root@hellogitlab ~]# systemctl restart nginx
+[root@hellogitlab ~]# systemctl status nginx
+● nginx.service - The nginx HTTP and reverse proxy server
+   Loaded: loaded (/usr/lib/systemd/system/nginx.service; disabled; vendor preset: disabled)
+   Active: active (running) since 六 2021-04-24 23:45:38 CST; 6s ago
+  Process: 30101 ExecStart=/usr/sbin/nginx (code=exited, status=0/SUCCESS)
+  Process: 30097 ExecStartPre=/usr/sbin/nginx -t (code=exited, status=0/SUCCESS)
+  Process: 30095 ExecStartPre=/usr/bin/rm -f /run/nginx.pid (code=exited, status=0/SUCCESS)
+ Main PID: 30103 (nginx)
+    Tasks: 3
+   Memory: 4.1M
+   CGroup: /system.slice/nginx.service
+           ├─30103 nginx: master process /usr/sbin/nginx
+           ├─30104 nginx: worker process
+           └─30105 nginx: worker process
+
+4月 24 23:45:38 hellogitlab.com systemd[1]: Starting The nginx HTTP and reverse proxy server...
+4月 24 23:45:38 hellogitlab.com nginx[30097]: nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+4月 24 23:45:38 hellogitlab.com nginx[30097]: nginx: configuration file /etc/nginx/nginx.conf test is successful
+4月 24 23:45:38 hellogitlab.com systemd[1]: Started The nginx HTTP and reverse proxy server.
+[root@hellogitlab ~]#
+```
+
+此时，我们可以访问`https://gogs.hellogitlab.com:10081/install`，进行初始化安装配置。
+
+数据库配置：
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210424234958.png)
+
+应用基本配置：
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210424235044.png)
+
+邮件服务配置：
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210424235357.png)
+
+注意，此处邮件服务时，应在SMTP主机处加上端口号，我们需要使用SMTP加密，使用465端口号。
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210425000119.png)
+
+此处我们启用邮件通知提醒。
+
+另外，在服务器和其他服务设置中。我们`禁用Gravatar服务`，以及`禁用用户自主注册`。
+
+最后要设置一个管理员账号。
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210424235721.png)
+
+配置好后，点击`立即安装`按钮。
+
+安装成功后，系统自动进入到`控制面板`页面:
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210425000235.png)
+
+可以创建一个`testrepo`仓库。
+
+创建后，测试一下是否能够正常克隆下载并提交修改。
+
+此时，可以看到，测试仓库页面可以正常显示HTTPS和SSH方式的下载链接：
+
+- HTTPS方式： [https://gogs.hellogitlab.com:10081/meizhaohui/testrepo.git](https://gogs.hellogitlab.com:10081/meizhaohui/testrepo.git)
+- SSH方式：[ssh://git@gogs.hellogitlab.com:10022/meizhaohui/testrepo.git](ssh://git@gogs.hellogitlab.com:10022/meizhaohui/testrepo.git)
+
+我们尝试下载一下。
+
+通过`HTTPS`方式下载并提交修改：
+
+```sh
+$ git clone https://gogs.hellogitlab.com:10081/meizhaohui/testrepo.git
+Cloning into 'testrepo'...
+Username for 'https://gogs.hellogitlab.com:10081': meizhaohui
+Password for 'https://meizhaohui@gogs.hellogitlab.com:10081': 
+remote: Enumerating objects: 4, done.
+remote: Counting objects: 100% (4/4), done.
+remote: Compressing objects: 100% (3/3), done.
+remote: Total 4 (delta 0), reused 0 (delta 0)
+Unpacking objects: 100% (4/4), done.
+```
+
+可以看到，在输入正确的用户名和密码之后，可以正常下载。
+
+如果首次下载提示`fatal: Authentication failed for`，可以先执行命令`git config --global --unset credential.helper`再进行下载。
+
+```sh
+[mzh@MacBookPro test ]$ cd testrepo 
+[mzh@MacBookPro testrepo (master)]$ ls
+README.md
+[mzh@MacBookPro testrepo (master)]$ cat README.md 
+# testrepo
+
+测试仓库%                                                                       [mzh@MacBookPro testrepo (master)]$ echo -e '\nadd by https\n' >> README.md 
+[mzh@MacBookPro testrepo (master ✗)]$ cat README.md 
+# testrepo
+
+测试仓库
+add by https
+[mzh@MacBookPro testrepo (master ✗)]$ git add .
+[mzh@MacBookPro testrepo (master ✗)]$ git commit -m"commit by https"
+[master 25837c6] commit by https
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+[mzh@MacBookPro testrepo (master)]$ git push origin master
+Enumerating objects: 5, done.
+Counting objects: 100% (5/5), done.
+Delta compression using up to 8 threads
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (3/3), 323 bytes | 323.00 KiB/s, done.
+Total 3 (delta 0), reused 0 (delta 0)
+To https://gogs.hellogitlab.com:10081/meizhaohui/testrepo.git
+   855f8c1..25837c6  master -> master
+[mzh@MacBookPro testrepo (master)]$
+```
+
+我们刷新页面，可以看到刚才的提交已经显示在页面上了：
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210425001637.png)
+
+说明HTTPS方式配置正常！
+
+
+
+同样，使用SSH方式下载试一下。
+
+使用SSH方式下载前，需要将自动的电脑公钥加到Gogs系统的个人账号的SSH密钥当中。
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210425002015.png)
+
+添加后，再使用SSH方式下载。
+
+```sh
+$ git clone ssh://git@gogs.hellogitlab.com:10022/meizhaohui/testrepo.git
+Cloning into 'testrepo'...
+The authenticity of host '[gogs.hellogitlab.com]:10022 ([106.54.98.83]:10022)' can't be established.
+ECDSA key fingerprint is SHA256:7FdGgE80pPNZ87i6TfgVwBaZ+fLc4SvE9lgVx/zYwHM.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added '[gogs.hellogitlab.com]:10022,[106.54.98.83]:10022' (ECDSA) to the list of known hosts.
+remote: Enumerating objects: 7, done.
+remote: Counting objects: 100% (7/7), done.
+remote: Compressing objects: 100% (5/5), done.
+remote: Total 7 (delta 0), reused 0 (delta 0)
+Receiving objects: 100% (7/7), done.
+```
+
+可以看到，能够正常下载。
+
+如果你遇到异常提示：
+
+```sh
+$ git clone ssh://git@gogs.hellogitlab.com:10022/meizhaohui/testrepo.git
+Cloning into 'testrepo'...
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@    WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!     @
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+IT IS POSSIBLE THAT SOMEONE IS DOING SOMETHING NASTY!
+Someone could be eavesdropping on you right now (man-in-the-middle attack)!
+It is also possible that a host key has just been changed.
+The fingerprint for the ECDSA key sent by the remote host is
+SHA256:7FdGgE80pPNZ87i6TfgVwBaZ+fLc4SvE9lgVx/zYwHM.
+Please contact your system administrator.
+Add correct host key in /Users/mzh/.ssh/known_hosts to get rid of this message.
+Offending ECDSA key in /Users/mzh/.ssh/known_hosts:16
+ECDSA host key for [gogs.hellogitlab.com]:10022 has changed and you have requested strict checking.
+Host key verification failed.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+```
+
+说明服务器端的指纹发生变化，只需要将`~/.ssh/known_hosts`文件中关于`gogs`的行信息删除掉即可。删除后再执行上述下载操作。
+
+我们再进行提交操作。
+
+```sh
+$ cd testrepo 
+[mzh@MacBookPro testrepo (master)]$ ls
+README.md
+[mzh@MacBookPro testrepo (master)]$ vi README.md 
+[mzh@MacBookPro testrepo (master ✗)]$ cat README.md 
+# testrepo
+
+测试仓库
+add by https
+
+add by ssh
+
+[mzh@MacBookPro testrepo (master ✗)]$ git add .
+[mzh@MacBookPro testrepo (master ✗)]$ git commit -m"commit by ssh"
+[master 9f4b930] commit by ssh
+ 1 file changed, 2 insertions(+)
+[mzh@MacBookPro testrepo (master)]$ git push origin master
+Enumerating objects: 5, done.
+Counting objects: 100% (5/5), done.
+Delta compression using up to 8 threads
+Compressing objects: 100% (3/3), done.
+Writing objects: 100% (3/3), 327 bytes | 327.00 KiB/s, done.
+Total 3 (delta 0), reused 0 (delta 0)
+To ssh://gogs.hellogitlab.com:10022/meizhaohui/testrepo.git
+   25837c6..9f4b930  master -> master
+[mzh@MacBookPro testrepo (master)]$ 
+```
+
+在Gogs系统上面，刷新页面，可以看到刚才的提交已经正常显示了：
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210425003300.png)
+
+说明我们的配置正常的！
+
+
+
+后续你就可以自己创建比较正式的仓库，存放自己的代码了！
+
+
 
 
 
@@ -286,5 +583,7 @@ nginx: configuration file /etc/nginx/nginx.conf test is successful
 
 参考：
 
+- [gogs docs](https://gogs.io/docs)
 - [国内引用头像问题](https://github.com/gogs/gogs/issues/1470)
+- [ 基于docker搭建gogs](https://www.cnblogs.com/yuexiaoyun/articles/11946103.html)
 
