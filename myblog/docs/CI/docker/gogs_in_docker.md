@@ -69,12 +69,19 @@ drwxr-xr-x 2 root root 4.0K 4月  23 23:50 data
 
 
 
-## 1.5 运算容器
+## 1.5 运行容器
 
 运行以下命令：
 
 ```sh
 $ docker run --name=gogs --restart=always -p 10022:22 -p 10080:3000 -v /dockerdata/gogs/data:/data -d gogs/gogs
+
+# --name=gogs 设置容器名称为gogs
+# --restart=always 设置docker服务重启后自动启动容器
+# -p 10022:22 将容器内部22端口映射到宿主机10022端口
+# -p 10080:3000 将容器内容3000端口映射到宿主机10080端口
+# -v /dockerdata/gogs/data:/data 把gogs的数据/data 持久化到宿主机的/dockerdata/gogs/data下，做数据备份
+# -d 在后台运行容器
 ```
 
 运行：
@@ -92,7 +99,7 @@ ccb8bd71125e        gogs/gogs           "/app/gogs/docker/..."   2 minutes ago  
 
 ## 1.6 防火墙放行端口
 
-防火墙放行10022和10080端口：
+防火墙放行10022和10080端口
 
 我们先放行一下端口：
 
@@ -128,7 +135,20 @@ public
   rich rules:
 ```
 
-防火墙放行后。我们就可以在页面上查看gogs页面。
+防火墙放行后。我们就可以在浏览器上查看gogs页面。
+
+
+::: tip 优化提示
+
+后面对系统优化可以知道，需要再放行一个HTTPS方式使用的端口号，我们使用10081作为Gogs HTTPS加密传输使用的端口号：
+
+```sh
+[root@hellogitlab ~]# firewall-cmd --zone=public --add-port=10081/tcp --permanent
+success
+```
+
+由于我们计划使用Nginx对docker容器进行反向代码，将10080端口映射到10081端口，然后配置SSL证书，因此我们在这里也将10081端口放行。
+:::
 
 ## 1.7 初始安装配置
 
@@ -144,22 +164,127 @@ public
 
 ![](https://meizhaohui.gitee.io/imagebed/img/20210424004639.png)
 
-这些需要注意的是，我们虽然在应用URL中指定了`https://gogs.hellogitlab.com:10080/"，开启了https协议，但由于我们并没有配置证书，此时`https`不可用，需要使用`http`形式访问Gogs。
+这里需要注意的是，我们虽然在应用URL中指定了`https://gogs.hellogitlab.com:10080/`，开启了`https`协议，但由于我们并没有配置证书，此时`https`不可用，需要使用`http`形式访问Gogs。
 
 登陆后，创建`test`仓库，可以看到HTTPS和SSH形式的下载链接都可以显示：
 
 - HTTPS形式: `https://gogs.hellogitlab.com:10080/meizhaohui/test.git`
 - SSH形式:`ssh://git@gogs.hellogitlab.com:10022/meizhaohui/test.git`
 
+我尝试使用这两种方式下载仓库代码。
+
+HTTP方式下载：
+
+```sh
+$ git clone https://gogs.hellogitlab.com:10080/meizhaohui/test.git
+Cloning into 'test'...
+fatal: unable to access 'https://gogs.hellogitlab.com:10080/meizhaohui/test.git/': error:1400410B:SSL routines:CONNECT_CR_SRVR_HELLO:wrong version number
+```
+
+出现异常。
+
+SSH方式下载：
+
+```sh
+$ git clone ssh://git@gogs.hellogitlab.com:10022/meizhaohui/test.git
+Cloning into 'test'...
+remote: Enumerating objects: 10, done.
+remote: Counting objects: 100% (10/10), done.
+remote: Compressing objects: 100% (7/7), done.
+remote: Total 10 (delta 0), reused 0 (delta 0)
+Receiving objects: 100% (10/10), done.
+```
+
+可以看到，能正常下载。
 
 
-此时，SSH形式可以正常下载，HTTPS形式下载会出现异常。需要优化。
 
-## 1.8 邮件配置
+此时，SSH形式可以正常下载。而HTTPS方式下载需要优化。
 
-待补。
+## 1.8 Nginx反向代理配置
 
-## 1.9 头像优化
+为了让我们通过HTTPS加密形式访问Gogs服务，我们配置一下Nginx代码，将10080端口转发到10081端口，并且为10081端口设置SSL证书。
 
-待补。
+我们将1.3节点准备的证书文件下载下来，并上传到服务器上。存放到`/etc/pki/nginx/`目录下。
+
+```sh
+[root@hellogitlab ~]# ls -lah /etc/pki/nginx/*gogs*
+-rw-r--r-- 1 root root 3.9K 4月  24 19:03 /etc/pki/nginx/1_gogs.hellogitlab.com_bundle.crt
+-rw-r--r-- 1 root root 1.7K 4月  24 19:03 /etc/pki/nginx/2_gogs.hellogitlab.com.key
+```
+
+然后在`/etc/nginx/conf.d/`目录下创建一个`gogs.conf`的配置文件。
+
+[download gogs.conf](/scripts/nginx/gogs.conf)
+
+配置文件内容如下：
+
+```sh
+[root@hellogitlab ~]# cat /etc/nginx/conf.d/gogs.conf
+server {
+        listen       10081 ssl;
+        server_name  gogs.hellogitlab.com;
+        ssl_certificate "/etc/pki/nginx/1_gogs.hellogitlab.com_bundle.crt";
+        ssl_certificate_key "/etc/pki/nginx/2_gogs.hellogitlab.com.key";
+        ssl_session_timeout 5m;
+        ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+        ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:HIGH:!aNULL:!MD5:!RC4:!DHE;
+        ssl_prefer_server_ciphers on;
+
+        location / {
+       # proxy_set_header Host $host;
+       # proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_pass http://localhost:10080/;
+       }
+}
+```
+
+::: warning 注意
+`listen       10081 ssl;` 最后HTTPS加密传输需要暴露的端口号。
+
+`server_name  gogs.hellogitlab.com;`处改成你的域名。
+
+`ssl_certificate "/etc/pki/nginx/1_gogs.hellogitlab.com_bundle.crt";` 证书文件。
+
+`ssl_certificate_key "/etc/pki/nginx/2_gogs.hellogitlab.com.key";` 证书文件。
+
+`proxy_pass http://localhost:10080/;`  将10081端口转发到10080端口。
+:::
+
+配置完成后，测试一下nginx配置文件是否正确。使用`nginx -t`检查一下：
+
+```sh
+[root@hellogitlab ~]# nginx -t
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+```
+
+说明Nginx配置正确。
+
+
+
+
+## 1.9 邮件配置
+
+之前初始体验的时候，我们并没有配置Gogs的邮件，我们再次测试的时候，可以在初始安装界面加上邮件相关的配置。
+
+
+
+## 1.10 头像优化
+
+默认情况下，会加载`gravatar.com`网站上的头像，而在国内这个网站却被屏蔽了，导致Gogs系统显示头像会出现异常：
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210424225339.png)
+
+我们参考 [https://github.com/gogs/gogs/issues/1470](https://github.com/gogs/gogs/issues/1470) 尝试给docker容器加上`OFFLINE_MODE`参数，并设置值为`true`，看能不能解决该问题。
+
+
+
+
+
+
+
+参考：
+
+- [国内引用头像问题](https://github.com/gogs/gogs/issues/1470)
 
