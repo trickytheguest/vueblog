@@ -52,6 +52,12 @@ GRANT ALL PRIVILEGES ON DATABASE gogs TO gogsadmin;
 
 为后面设置HTTPS协议做准备。
 
+在创建证书的同时，我们也需要增加一个`gogs.hellogitlab.com`的域名解析。
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210425225729.png)
+
+这样便于后面为Gogs服务设置域名。
+
 
 
 ## 1.4 创建持久化目录
