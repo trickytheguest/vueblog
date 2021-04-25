@@ -116,6 +116,10 @@ module.exports = [{
                 text: '私有云盘',
                 link: 'https://nextcloud.hellogitlab.com:444'
             },
+            {
+                text: '私有代码仓库',
+                link: 'https://gogs.hellogitlab.com:10081/'
+            }
         ]
     },
     {
