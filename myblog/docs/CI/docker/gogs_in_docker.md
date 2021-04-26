@@ -29,7 +29,7 @@ Status: Downloaded newer image for docker.io/gogs/gogs:latest
 [root@hellogitlab ~]#
 ```
 
-## 1.2 数据库准备
+### 1.2 数据库准备
 
 我们在postgresql中创建一个gogs的数据库，并授权。
 
@@ -44,7 +44,7 @@ CREATE USER gogsadmin WITH password 'securepasswd';
 GRANT ALL PRIVILEGES ON DATABASE gogs TO gogsadmin;
 ```
 
-## 1.3 准备证书文件
+### 1.3 准备证书文件
 
 在腾讯云上面申请二级域名`gogs.hellogitlab.com`的免费证书。
 
@@ -60,7 +60,7 @@ GRANT ALL PRIVILEGES ON DATABASE gogs TO gogsadmin;
 
 
 
-## 1.4 创建持久化目录
+### 1.4 创建持久化目录
 
 创建持久化目录`/dockerdata/gogs/data`用于存储gogs的数据。
 
@@ -75,7 +75,7 @@ drwxr-xr-x 2 root root 4.0K 4月  23 23:50 data
 
 
 
-## 1.5 运行容器
+### 1.5 运行容器
 
 运行以下命令：
 
@@ -103,7 +103,7 @@ CONTAINER ID        IMAGE               COMMAND                  CREATED        
 ccb8bd71125e        gogs/gogs           "/app/gogs/docker/..."   2 minutes ago       Up About a minute   0.0.0.0:10022->22/tcp, 0.0.0.0:10080->3000/tcp   gogs
 ```
 
-## 1.6 防火墙放行端口
+### 1.6 防火墙放行端口
 
 防火墙放行10022和10080端口
 
@@ -156,7 +156,7 @@ success
 由于我们计划使用Nginx对docker容器进行反向代码，将10080端口映射到10081端口，然后配置SSL证书，因此我们在这里也将10081端口放行。
 :::
 
-## 1.7 初始安装配置
+### 1.7 初始安装配置
 
 打开浏览器，访问页面`http://hellogitlab.com:10080`,此时会自动跳转到首次运行安装程序页面。
 
@@ -207,7 +207,7 @@ Receiving objects: 100% (10/10), done.
 
 此时，SSH形式可以正常下载。而HTTPS方式下载需要优化。
 
-## 1.8 Nginx反向代理配置
+### 1.8 Nginx反向代理配置
 
 为了让我们通过HTTPS加密形式访问Gogs服务，我们配置一下Nginx代码，将10080端口转发到10081端口，并且为10081端口设置SSL证书。
 
@@ -270,7 +270,7 @@ nginx: configuration file /etc/nginx/nginx.conf test is successful
 
 
 
-## 1.9 邮件配置
+### 1.9 邮件配置
 
 之前初始体验的时候，我们并没有配置Gogs的邮件，我们再次测试的时候，可以在初始安装界面加上邮件相关的配置。
 
@@ -280,7 +280,7 @@ nginx: configuration file /etc/nginx/nginx.conf test is successful
 
 
 
-## 1.10 头像优化
+### 1.10 头像优化
 
 默认情况下，会加载`gravatar.com`网站上的头像，而在国内这个网站却被屏蔽了，导致Gogs系统显示头像会出现异常：
 
@@ -300,7 +300,7 @@ OFFLINE_MODE=true
 
 
 
-## 1.11 优化后重新运行容器
+### 1.11 优化后重新运行容器
 
 我们在运行容器时加载环境变量，并在容器运行后重启Nginx服务。
 
@@ -582,6 +582,162 @@ To ssh://gogs.hellogitlab.com:10022/meizhaohui/testrepo.git
 
 
 
+## 2. 服务地址优化
+
+你如果按上述部署完成了部署的话，也可以不进行此节的操作。
+
+
+
+由于某些原因，我需要更新一下服务地址，直接使用`https://gogs.hellogitlab.com`来访问我们的Gogs服务。
+
+你可以参考 [统一网站端口号]( ../../about/blog/build_your_vuepress_blog_1.html#统一网站端口号) 其中有详细的说明。
+
+此处我们仅修改一下`/etc/nginx/conf.d/gogs.conf`配置即可。
+
+查看优化后的配置文件：
+
+```sh
+[root@hellogitlab ~]# cat /etc/nginx/conf.d/gogs.conf
+server {
+        listen       80;
+        server_name gogs.hellogitlab.com;
+        rewrite ^ https://$http_host$request_uri? permanent;
+}
+server {
+        listen       443 ssl;
+        server_name  gogs.hellogitlab.com;
+        ssl_certificate "/etc/pki/nginx/1_gogs.hellogitlab.com_bundle.crt";
+        ssl_certificate_key "/etc/pki/nginx/2_gogs.hellogitlab.com.key";
+        ssl_session_timeout 5m;
+        ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+        ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:HIGH:!aNULL:!MD5:!RC4:!DHE;
+        ssl_prefer_server_ciphers on;
+
+        location / {
+
+                proxy_set_header Host $host;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_pass http://localhost:10080/;
+       }
+}
+[root@hellogitlab ~]# nginx -t
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+[root@hellogitlab ~]#
+```
+
+检查`Nginx`配置，可以发现没有异常，我们重启一下`Nginx`服务：
+
+```sh
+[root@hellogitlab ~]# systemctl restart nginx && systemctl status nginx|grep Active
+   Active: active (running) since 一 2021-04-26 23:55:56 CST; 7ms ago
+[root@hellogitlab ~]#
+```
+
+此时在浏览器中打开`https://gogs.hellogitlab.com/`，可以正常访问，但查看我们仓库中的`HTTPS`形式下载的URL并没有更新过来，还是`https://gogs.hellogitlab.com:10081/meizhaohui/testrepo.git`:
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210426235941.png)
+
+### 2.1 修改gogs的HTTPS端口号
+
+现在我们要做的是将`Gogs`服务中`HTTPS`形式使用的端口号`10081`改成`443`端口，这样才与我们的修改后的页面地址保持一致。
+
+我们先停止gogs容器，然后去持久化文件夹里面直接修改配置文件。
+
+```sh
+# 停止容器
+[root@hellogitlab ~]# docker stop gogs
+gogs
+
+# 切换到gogs配置文件目录
+[root@hellogitlab ~]# cd /dockerdata/gogs/data/gogs/conf/
+[root@hellogitlab conf]# ls
+app.ini
+
+# 查看配置文件中10081字符
+[root@hellogitlab conf]# grep '10081' app.ini
+HTTP_PORT        = 10081
+EXTERNAL_URL     = https://gogs.hellogitlab.com:10081/
+```
+
+我们使用VIM进行修改：
+
+```sh
+[root@hellogitlab conf]# grep -E 'HTTP_PORT|EXTERNAL_URL' app.ini
+HTTP_PORT        = 3000
+EXTERNAL_URL     = https://gogs.hellogitlab.com/
+```
+
+只需要gogs应用在内部监控默认的`3000`端口，然后应用URL通过`EXTERNAL_URL     = https://gogs.hellogitlab.com/`指定，此时不需要在域名后带带`:443`端口信息。
+
+我们再启动一下gogs容器：
+
+```sh
+[root@hellogitlab conf]# cd
+[root@hellogitlab ~]# docker start gogs
+gogs
+[root@hellogitlab ~]# docker ps -l
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                                            NAMES
+eaa3883c0a81        gogs/gogs           "/app/gogs/docker/..."   2 days ago          Up 5 seconds        0.0.0.0:10022->22/tcp, 0.0.0.0:10080->3000/tcp   gogs
+[root@hellogitlab ~]#
+```
+
+可以看到`gogs`容器启动成功。我们在浏览器再检查一下。
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210427003703.png)
+
+可以看到`HTTPS`形式下载的链接已经发生变更，变成了`https://gogs.hellogitlab.com/meizhaohui/testrepo.git`。说明我们的配置基本正确。
+
+我们再尝试使用`HTTPS`方式下载：
+
+```sh
+$ git clone https://gogs.hellogitlab.com/meizhaohui/testrepo.git
+Cloning into 'testrepo'...
+remote: Enumerating objects: 10, done.
+remote: Counting objects: 100% (10/10), done.
+remote: Compressing objects: 100% (8/8), done.
+remote: Total 10 (delta 0), reused 0 (delta 0)
+Unpacking objects: 100% (10/10), done.
+```
+
+尝试提交修改：
+
+```sh
+$ cat README.md 
+# testrepo
+
+测试仓库
+add by https
+
+add by ssh
+
+[mzh@MacBookPro testrepo (master)]$ echo '\n add by https again!' >> README.md 
+[mzh@MacBookPro testrepo (master ✗)]$ git add .                           
+[mzh@MacBookPro testrepo (master ✗)]$ git commit -m"commit by https again"
+[master f01ec2d] commit by https again
+ 1 file changed, 2 insertions(+)
+[mzh@MacBookPro testrepo (master)]$ git push origin master
+Enumerating objects: 5, done.
+Counting objects: 100% (5/5), done.
+Delta compression using up to 8 threads
+Compressing objects: 100% (3/3), done.
+Writing objects: 100% (3/3), 347 bytes | 347.00 KiB/s, done.
+Total 3 (delta 0), reused 0 (delta 0)
+To https://gogs.hellogitlab.com/meizhaohui/testrepo.git
+   9f4b930..f01ec2d  master -> master
+[mzh@MacBookPro testrepo (master)]$ 
+```
+
+可以看到能够正常提交成功，说明我们的网站服务地址更新成功了！
+
+
+
+另外，你也可以参考 [Share port 22 between Gogs inside Docker & the local system](ttp://www.ateijelo.com/blog/2016/07/09/share-port-22-between-docker-gogs-ssh-and-local-system) 将`10022`端口改成`22`端口，与宿主机共用`22`端口。我因为是自己使用，不做修改。
+
+
+
+
+
 
 
 
@@ -592,4 +748,7 @@ To ssh://gogs.hellogitlab.com:10022/meizhaohui/testrepo.git
 - [gogs docs](https://gogs.io/docs)
 - [国内引用头像问题](https://github.com/gogs/gogs/issues/1470)
 - [ 基于docker搭建gogs](https://www.cnblogs.com/yuexiaoyun/articles/11946103.html)
+- [Docker for Gogs](https://github.com/gogs/gogs/tree/main/docker)
+- [Share port 22 between Gogs inside Docker & the local system](http://www.ateijelo.com/blog/2016/07/09/share-port-22-between-docker-gogs-ssh-and-local-system)
+- [Gogs与Linux主机共享SSH22端口](https://blog.csdn.net/u013710784/article/details/78778044)
 
