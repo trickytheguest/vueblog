@@ -37,5 +37,5 @@ footer: MIT Licensed | Copyright © 2019-2021 Zhaohui Mei. 京ICP备19051502号-
 
 **个人网站**
 
-- NextCloud私有网盘 [https://nextcloud.hellogitlab.com:444/](https://nextcloud.hellogitlab.com:444/)
-- Gogs私有代码仓库 [https://gogs.hellogitlab.com:10081/](https://gogs.hellogitlab.com:10081/)
+- NextCloud私有网盘 [https://nextcloud.hellogitlab.com/](https://nextcloud.hellogitlab.com/)
+- Gogs私有代码仓库 [https://gogs.hellogitlab.com/](https://gogs.hellogitlab.com/)
