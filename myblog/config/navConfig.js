@@ -118,7 +118,7 @@ module.exports = [{
             },
             {
                 text: '私有代码仓库',
-                link: 'https://gogs.hellogitlab.com:10081/'
+                link: 'https://gogs.hellogitlab.com/'
             }
         ]
     },
