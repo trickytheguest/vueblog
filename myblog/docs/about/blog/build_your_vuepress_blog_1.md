@@ -1813,11 +1813,285 @@ upload_result:{"remain":2168,"success":104}
 
 
 
+## 统一网站端口号
+
+当我的配置越来越多的二级域名网站，如`gogs.hellogitlab.com`、`nextcloud.hellogitlab.com`之后，我发现存在了以下问题：
+
+- 我的博客主页`hellogitlab.com`使用`httpd`服务驱动，`httpd`将`80`和`443`端口占用。博客系统页面直接从`80`跳转到`443`端口正常。
+- 其他二级域名所对应的服务，我一般是用`docker`运行的，这个时候会存在多个端口之间的转发，如私有云盘系统`nextcloud.hellogitlab.com`，首先`docker`中使用的是`80`端口，运行容器时，将容器内部`80`端口映射到宿主机`8080`端口，为了使用`HTTPS`加密协议传输，因为`httpd`服务已经将`80`和`443`端口占用了，所以`Nginx`服务不能用这两个端口，只用能其他。使用`Nginx`进行反向代理，将宿主机`444`端口转发到`8080`端口，这就涉及到宿主机的两个端口`444`和`8080`，这个时候如果用户直接输入`http://nextcloud.hellogitlab.com`将会提示`您的连接不是私密连接`异常。同样,`Gogs`服务也会存在这个问题。需要多考虑一个端口号，还需要配置防火墙放行规则。发现配置新的服务越来越麻烦，`HTTP`还不能自动跳转至`HTTPS`页面。
+
+存在以上问题，能不能同一个端口绑定多个域名呢。这时就有了新的需求：同一端口绑定多个域名提供服务。
+
+百度一下，找到了这篇文章 [多个域名通过nginx共用一个端口 ](https://funyan.cn/p/343.html)
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210426224046.png)
+
+可以看到其使用了`Nginx`直接将`80`端口绑定了不同的域名，最后转发到`8770`端口的`blog`地址或`download`地址。
+
+受此启发，我们应该可以使用`Nginx`监听`80`或`443`端口，然后转到到其他的端口，如`8080`或`10080`端口。
+
+我就要开始运行起来了。
+
+大体思路如下：
+
+1. 将主页`hellogitlab.com`使用`Nginx`驱动，并监听`80`和`443`端口。
+2. 配置二级域名的端口转发。
+
+刚开始的时候，我们`httpd`和`nginx`都是正常运行的。
+
+我尝试在`/etc/nginx/conf.d`目录中加一个博客系统的配置信息：
+
+```sh
+# 查看修改后的博客配置文件
+[root@hellogitlab ~]# cat /etc/nginx/conf.d/blog.conf
+server {
+        listen       443 ssl;
+        server_name  hellogitlab.com;
+        ssl_certificate "/etc/pki/nginx/1_hellogitlab.com_bundle.crt";
+        ssl_certificate_key "/etc/pki/nginx/2_hellogitlab.com.key";
+        ssl_session_timeout 5m;
+        ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+        ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:HIGH:!aNULL:!MD5:!RC4:!DHE;
+        ssl_prefer_server_ciphers on;
+
+        root /var/www/html/vueblog;
+}
+[root@hellogitlab ~]#
+# 检查nginx配置是否正确
+[root@hellogitlab ~]# nginx -t
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+[root@hellogitlab ~]#
+```
+
+这时候可以看到`Nginx`配置正确，没有报异常。
+
+那我尝试再重启`Nginx`服务：
+
+```sh
+[root@hellogitlab ~]# systemctl restart nginx
+Job for nginx.service failed because the control process exited with error code. See "systemctl status nginx.service" and "journalctl -xe" for details.
+[root@hellogitlab ~]# systemctl status nginx
+● nginx.service - The nginx HTTP and reverse proxy server
+   Loaded: loaded (/usr/lib/systemd/system/nginx.service; disabled; vendor preset: disabled)
+   Active: failed (Result: exit-code) since 一 2021-04-26 22:53:09 CST; 10s ago
+  Process: 20460 ExecStart=/usr/sbin/nginx (code=exited, status=1/FAILURE)
+  Process: 20456 ExecStartPre=/usr/sbin/nginx -t (code=exited, status=0/SUCCESS)
+  Process: 20454 ExecStartPre=/usr/bin/rm -f /run/nginx.pid (code=exited, status=0/SUCCESS)
+
+4月 26 22:53:06 hellogitlab.com nginx[20460]: nginx: [emerg] bind() to 0.0.0.0:443 failed (98: Address already in use)
+4月 26 22:53:07 hellogitlab.com nginx[20460]: nginx: [emerg] bind() to 0.0.0.0:443 failed (98: Address already in use)
+4月 26 22:53:07 hellogitlab.com nginx[20460]: nginx: [emerg] bind() to 0.0.0.0:443 failed (98: Address already in use)
+4月 26 22:53:08 hellogitlab.com nginx[20460]: nginx: [emerg] bind() to 0.0.0.0:443 failed (98: Address already in use)
+4月 26 22:53:08 hellogitlab.com nginx[20460]: nginx: [emerg] bind() to 0.0.0.0:443 failed (98: Address already in use)
+4月 26 22:53:09 hellogitlab.com nginx[20460]: nginx: [emerg] still could not bind()
+4月 26 22:53:09 hellogitlab.com systemd[1]: nginx.service: control process exited, code=exited status=1
+4月 26 22:53:09 hellogitlab.com systemd[1]: Failed to start The nginx HTTP and reverse proxy server.
+4月 26 22:53:09 hellogitlab.com systemd[1]: Unit nginx.service entered failed state.
+4月 26 22:53:09 hellogitlab.com systemd[1]: nginx.service failed.
+Hint: Some lines were ellipsized, use -l to show in full.
+[root@hellogitlab ~]#
+[root@hellogitlab ~]# netstat -tunlp|grep 443
+tcp6       0      0 :::443                  :::*                    LISTEN      19259/httpd
+[root@hellogitlab ~]#
+```
+
+重启失败了，提示`nginx: [emerg] bind() to 0.0.0.0:443 failed (98: Address already in use)`异常，即`443`端口被占用了。
+
+而我们查看`443`端口占用情况，可以看到`443`端口被`httpd`服务占用了。这是当然，因为我的博客系统正在`httpd`服务上面跑着。为了让我们`Nginx`服务能够运行起来，我们将`httpd`服务停止掉。
+
+在我们停掉`httpd`服务时，我们可以通过`curl -I  博客URL地址`的方式查看一下我们的网站到底是由`httpd`还是`nginx`服务驱动的：
+
+```sh
+$ curl -I http://hellogitlab.com
+HTTP/1.1 302 Found
+Date: Mon, 26 Apr 2021 14:59:28 GMT
+Server: Apache/2.4.6 (CentOS) SVN/1.11.1 OpenSSL/1.0.2k-fips PHP/7.2.27 mod_wsgi/4.6.2 Python/3.6
+Location: https://hellogitlab.com/
+Content-Type: text/html; charset=iso-8859-1
+
+$ curl -I https://hellogitlab.com
+HTTP/1.1 200 OK
+Date: Mon, 26 Apr 2021 14:59:33 GMT
+Server: Apache/2.4.6 (CentOS) SVN/1.11.1 OpenSSL/1.0.2k-fips PHP/7.2.27 mod_wsgi/4.6.2 Python/3.6
+Last-Modified: Sun, 25 Apr 2021 16:31:43 GMT
+ETag: "5c30-5c0ce907ad0e1"
+Accept-Ranges: bytes
+Content-Length: 23600
+Content-Type: text/html; charset=UTF-8
+
+$
+```
+
+可以看到，此时博客系统是由`Apache/2.4.6`驱动的。
+
+在服务器端验证一下`httpd`的版本信息:
+
+```sh
+[root@hellogitlab ~]# httpd -v
+Server version: Apache/2.4.6 (CentOS)
+Server built:   Aug  8 2019 11:41:18
+```
+
+可以看到与我们使用`curl -I`命令查看到版本信息是一致，说明我们的博客系统的确是由`Apache/2.4.6`驱动的。
+
+现在我们停止`httpd`服务，再尝试启动`nginx`服务：
+
+```sh
+[root@hellogitlab ~]# systemctl stop httpd
+[root@hellogitlab ~]# systemctl status httpd
+● httpd.service - The Apache HTTP Server
+   Loaded: loaded (/usr/lib/systemd/system/httpd.service; enabled; vendor preset: disabled)
+   Active: inactive (dead) since 一 2021-04-26 23:11:16 CST; 5s ago
+     Docs: man:httpd(8)
+           man:apachectl(8)
+  Process: 24720 ExecStop=/bin/kill -WINCH ${MAINPID} (code=exited, status=0/SUCCESS)
+  Process: 11873 ExecReload=/usr/sbin/httpd $OPTIONS -k graceful (code=exited, status=0/SUCCESS)
+  Process: 19259 ExecStart=/usr/sbin/httpd $OPTIONS -DFOREGROUND (code=exited, status=0/SUCCESS)
+ Main PID: 19259 (code=exited, status=0/SUCCESS)
+   Status: "Total requests: 45; Current requests/sec: 0; Current traffic:   0 B/sec"
+
+4月 26 22:48:02 hellogitlab.com systemd[1]: Starting The Apache HTTP Server...
+4月 26 22:48:03 hellogitlab.com systemd[1]: Started The Apache HTTP Server.
+4月 26 23:11:15 hellogitlab.com systemd[1]: Stopping The Apache HTTP Server...
+4月 26 23:11:16 hellogitlab.com systemd[1]: Stopped The Apache HTTP Server.
+[root@hellogitlab ~]# systemctl restart nginx
+[root@hellogitlab ~]# systemctl status nginx
+● nginx.service - The nginx HTTP and reverse proxy server
+   Loaded: loaded (/usr/lib/systemd/system/nginx.service; disabled; vendor preset: disabled)
+   Active: active (running) since 一 2021-04-26 23:11:43 CST; 5s ago
+  Process: 24854 ExecStart=/usr/sbin/nginx (code=exited, status=0/SUCCESS)
+  Process: 24851 ExecStartPre=/usr/sbin/nginx -t (code=exited, status=0/SUCCESS)
+  Process: 24849 ExecStartPre=/usr/bin/rm -f /run/nginx.pid (code=exited, status=0/SUCCESS)
+ Main PID: 24856 (nginx)
+    Tasks: 3
+   Memory: 4.2M
+   CGroup: /system.slice/nginx.service
+           ├─24856 nginx: master process /usr/sbin/nginx
+           ├─24857 nginx: worker process
+           └─24858 nginx: worker process
+
+4月 26 23:11:43 hellogitlab.com systemd[1]: Starting The nginx HTTP and reverse proxy server...
+4月 26 23:11:43 hellogitlab.com nginx[24851]: nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+4月 26 23:11:43 hellogitlab.com nginx[24851]: nginx: configuration file /etc/nginx/nginx.conf test is successful
+4月 26 23:11:43 hellogitlab.com systemd[1]: Started The nginx HTTP and reverse proxy server.
+[root@hellogitlab ~]#
+```
+
+此时，可以看到，我们的`Nginx`服务正常启动了！
+
+
+
+我们检查一下自己的博客系统是否能正常访问，访问`https://hellogitlab.com`，此时可以正常访问。但直接访问`http://hellogitlab.com/`出现异常，不能访问。
+
+同样，我们使用`curl -i`命令检查一下我们的URL地址：
+
+```sh
+$ curl -I https://hellogitlab.com
+HTTP/1.1 200 OK
+Server: nginx/1.16.1
+Date: Mon, 26 Apr 2021 15:19:04 GMT
+Content-Type: text/html
+Content-Length: 23600
+Last-Modified: Sun, 25 Apr 2021 16:31:43 GMT
+Connection: keep-alive
+ETag: "6085996f-5c30"
+Accept-Ranges: bytes
+
+$ curl -I http://hellogitlab.com 
+curl: (7) Failed to connect to hellogitlab.com port 80: Connection refused
+$ 
+```
+
+可以看到我们的博客系统现在是由`nginx/1.16.1`驱动的，说明我们的博客系统配置生效了，页面也能正常访问。只是现在`80`端口访问还存在问题。原因是我们在博客配置中并没有监听`80`端口，也没有配置自动跳转。
+
+我们修改一下配置，增加`80`端口的监听并自动跳转到`https`服务页面。
+
+修改后的配置如下：
+
+```sh
+# 查看修改后的博客配置文件
+[root@hellogitlab ~]# cat /etc/nginx/conf.d/blog.conf
+server {
+        listen       80;
+	      server_name hellogitlab.com;
+	      rewrite ^ https://$http_host$request_uri? permanent;
+}
+server {
+        listen       443 ssl;
+        server_name  hellogitlab.com;
+        ssl_certificate "/etc/pki/nginx/1_hellogitlab.com_bundle.crt";
+        ssl_certificate_key "/etc/pki/nginx/2_hellogitlab.com.key";
+        ssl_session_timeout 5m;
+        ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+        ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:HIGH:!aNULL:!MD5:!RC4:!DHE;
+        ssl_prefer_server_ciphers on;
+
+        root /var/www/html/vueblog;
+}
+[root@hellogitlab ~]#
+# 检查nginx配置是否正确
+[root@hellogitlab ~]# nginx -t
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+[root@hellogitlab ~]#
+```
+
+然后重启`Nginx`服务：
+
+```sh
+[root@hellogitlab ~]# systemctl restart nginx
+[root@hellogitlab ~]# systemctl status nginx|grep Active
+   Active: active (running) since 一 2021-04-26 23:25:55 CST; 4min 31s ago
+[root@hellogitlab ~]# netstat -tunlp|grep nginx
+tcp        0      0 0.0.0.0:80              0.0.0.0:*               LISTEN      29938/nginx: master
+tcp        0      0 0.0.0.0:443             0.0.0.0:*               LISTEN      29938/nginx: master
+tcp        0      0 0.0.0.0:444             0.0.0.0:*               LISTEN      29938/nginx: master
+tcp        0      0 0.0.0.0:10081           0.0.0.0:*               LISTEN      29938/nginx: master
+tcp6       0      0 :::444                  :::*                    LISTEN      29938/nginx: master
+[root@hellogitlab ~]# 
+```
+
+此时，再在浏览器中检查博客系统，发现可以正常访问了。并且能够实现`http`链接自动跳转到`https`链接。
+
+再次用`curl -I`命令检查一下我们的博客系统的地址：
+
+```sh
+$ curl -I http://hellogitlab.com
+HTTP/1.1 301 Moved Permanently
+Server: nginx/1.16.1
+Date: Mon, 26 Apr 2021 15:35:33 GMT
+Content-Type: text/html
+Content-Length: 169
+Connection: keep-alive
+Location: https://hellogitlab.com/
+
+$ curl -I https://hellogitlab.com
+HTTP/1.1 200 OK
+Server: nginx/1.16.1
+Date: Mon, 26 Apr 2021 15:35:45 GMT
+Content-Type: text/html
+Content-Length: 23600
+Last-Modified: Sun, 25 Apr 2021 16:31:43 GMT
+Connection: keep-alive
+ETag: "6085996f-5c30"
+Accept-Ranges: bytes
+
+$ 
+```
+
+此时，`http://hellogitlab.com`和`https://hellogitlab.com`都能正常显示，并且可以看`http`形式会自动重定向到`https`形式。
+
+说明我们配置正确！
+
+现在需要优化的是，将各子域名的端口号绑定到`443`端口，并设置`http`自动重定向`https`。
+
 
 
 参考：
 
 - [基于vuepress的个人博客搭建完全教程](https://www.jianshu.com/p/2220dbacfde1)
+- 
 - [VuePress从零开始搭建自己专属博客](https://segmentfault.com/a/1190000015237352?utm_source=tag-newest)
 - [markdown-it-emoji](https://github.com/markdown-it/markdown-it-emoji/blob/master/lib/data/full.json)
 - [Vuepress使用Valine搭建带有评论系统的博客](https://segmentfault.com/a/1190000016144076)
@@ -1837,3 +2111,4 @@ upload_result:{"remain":2168,"success":104}
 - [从今天开始，拿起VuePress打造属于自己的专属博客](https://blog.csdn.net/weixin_34345560/article/details/91457750)
 - [导航栏 Logo](https://vuepress.vuejs.org/zh/theme/default-theme-config.html#%E5%AF%BC%E8%88%AA%E6%A0%8F-logo)
 - [Git repository and Edit Links](https://vuepress.vuejs.org/theme/default-theme-config.html#git-repository-and-edit-links)
+- [多个域名通过nginx共用一个端口](https://funyan.cn/p/343.html)
