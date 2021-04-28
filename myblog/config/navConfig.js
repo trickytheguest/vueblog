@@ -114,7 +114,7 @@ module.exports = [{
         text: '个人网站',
         items: [{
                 text: '私有云盘',
-                link: 'https://nextcloud.hellogitlab.com:444'
+                link: 'https://nextcloud.hellogitlab.com'
             },
             {
                 text: '私有代码仓库',
