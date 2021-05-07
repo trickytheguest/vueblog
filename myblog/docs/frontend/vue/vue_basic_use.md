@@ -288,5 +288,337 @@ app.message
 
 `push`和`pop`可以将元素压入到列表中，或从列表中弹出一个元素。
 
+### 2.4 v-on事件监听指令
+
+通过`v-on`指令可以添加一个事件监听器。官方示例给了一个监听点击事件的示例：
+
+```html
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<!-- 开发环境版本，包含了有帮助的命令行警告 -->
+		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	</head>
+	<body>
+		<div id="app">
+			<p>{{ message }}</p>
+			<!--
+			 @click是v-on:click的简写，监听点击事件,
+			 reverseMessage函数与reverseMessage()函数效果一样
+			-->
+			<button v-on:click="reverseMessage">反转消息</button>
+		</div>
+
+		<!-- script脚本包裹了一段js代码 -->
+		<script>
+			// 在引用vue.js时，会声明一个全局变量Vue
+			// 通过`new Vue`的方式可以获取一个Vue的应用
+			// 它会返回一个对象，我们称之为应用对象，如`app`
+			// 在`new Vue`时需要注意的时候，需要传入一个对象{}作为参数
+			// 这个对象{}有两个非常重要的属性，el和data
+			var app = new Vue({
+				// el: element 指代元素属性
+				// data: 指代码数据属性，用于保存数据。在视图中声明了哪些变量，就需要在data里面注册，并且为变量进行初始化赋值
+				el: '#app', // 利用元素选择器方式选中app div对象
+				data: {
+					message: 'Hello Vue.js!',
+				},
+				methods: {
+					// 字符串反转
+					reverseMessage: function() {
+						// 注意split和join中间需要指定''分隔符
+						this.message = this.message.split('').reverse().join('')
+					}
+				}
+			})
+		</script>
+	</body>
+</html>
+
+```
+
+点击`反转消息`按钮后，`Hello Vue.js!`字符串就会变成`!sj.euV olleH`，再次点击按钮后，字符串会再次反转还原。
+
+可以看到，当我们点击按钮时，会触发`reverseMessage`函数的执行，`reverseMessage`函数将会将`this.message`的值进行反转。
+
+### 2.5 v-model双向绑定指令
+
+`v-model` 指令可以轻松实现表单输入和应用状态之间的双向绑定。官方示例中，通过修改输入框内容，message消息会自动更新。
+
+```html
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<!-- 开发环境版本，包含了有帮助的命令行警告 -->
+		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	</head>
+	<body>
+		<div id="app">
+			<p>{{ message }}</p>
+			<!-- v-model指令实现双向绑定 -->
+			<input v-model="message"></input>
+			<button v-on:click="reverseMessage">反转消息</button>
+		</div>
+
+		<!-- script脚本包裹了一段js代码 -->
+		<script>
+			// 在引用vue.js时，会声明一个全局变量Vue
+			// 通过`new Vue`的方式可以获取一个Vue的应用
+			// 它会返回一个对象，我们称之为应用对象，如`app`
+			// 在`new Vue`时需要注意的时候，需要传入一个对象{}作为参数
+			// 这个对象{}有两个非常重要的属性，el和data
+			var app = new Vue({
+				// el: element 指代元素属性
+				// data: 指代码数据属性，用于保存数据。在视图中声明了哪些变量，就需要在data里面注册，并且为变量进行初始化赋值
+				el: '#app', // 利用元素选择器方式选中app div对象
+				data: {
+					message: 'Hello Vue.js!',
+				},
+				methods: {
+					// 字符串反转
+					reverseMessage: function() {
+						// 注意split和join中间需要指定''分隔符
+						this.message = this.message.split('').reverse().join('')
+					}
+				}
+			})
+		</script>
+	</body>
+</html>
+
+```
+
+我们在上一节示例的基础上，增加代码`<input v-model="message"></input>`，此时，当我们修改输入框中的内容时，上方的消息也会自动变更。点击按钮时，上方的消息以及输入框中的内容都会反转。
+
+## 3. 组件化应用构建
+
+- 组件是可复用的`Vue`实例。
+- 一个组件本质上是一个拥有预定义选项的一个`Vue`实例。
+
+创建一个简单的`todo-item`的组件，并应用：
+
+```html
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<!-- 开发环境版本，包含了有帮助的命令行警告 -->
+		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	</head>
+	<body>
+		<div id="app">
+			<ol>
+				<!-- 创建一个 todo-item 组件的实例 -->
+				<todo-item></todo-item>
+				<todo-item></todo-item>
+				<todo-item></todo-item>
+			</ol>
+		</div>
+
+		<!-- script脚本包裹了一段js代码 -->
+		<script>
+			// 定义一个Vue组件
+			Vue.component('todo-item', {
+				template: '<li>这是一个待办项</li>'
+			})
+			// 在引用vue.js时，会声明一个全局变量Vue
+			// 通过`new Vue`的方式可以获取一个Vue的应用
+			// 它会返回一个对象，我们称之为应用对象，如`app`
+			// 在`new Vue`时需要注意的时候，需要传入一个对象{}作为参数
+			// 这个对象{}有两个非常重要的属性，el和data
+			var app = new Vue({
+				// 此处的el属性必须保留，否则组件无法正常使用
+				el: '#app',
+			})
+		</script>
+	</body>
+</html>
+
+```
+
+此时，界面上显示如下：
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210507214607.png)
+
+可以看到，为每个待办项渲染同样的文本，各项都是一样的。
 
 
+
+如果我们能够从父作用域将数据传递到子组件才好。Vue有这样的功能。我们只需要修改一下组件的定义，并通过`props`参数设置一个自定义的参数列表。然后将参数传递到`template`中。
+
+```html
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<!-- 开发环境版本，包含了有帮助的命令行警告 -->
+		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	</head>
+	<body>
+		<div id="app">
+			<ol>
+				<!-- 
+				  为每个 todo-item 提供 todo 对象
+				  todo 对象是变量，即其内容可以是动态的。
+				  官方文档中说需要指定`v-bind:key`,但不指定也可以正常运行
+				-->
+				<todo-item v-for='item in todolist' v-bind:todo='item' v-bind:key='item.index'></todo-item>
+			</ol>
+		</div>
+
+		<!-- script脚本包裹了一段js代码 -->
+		<script>
+			// 定义一个Vue组件
+			Vue.component('todo-item', {
+				// props中可以定义多个自定义属性
+				props: ['todo'],
+				template: '<li>{{ todo.text }}</li>'
+			})
+			// 在引用vue.js时，会声明一个全局变量Vue
+			// 通过`new Vue`的方式可以获取一个Vue的应用
+			// 它会返回一个对象，我们称之为应用对象，如`app`
+			// 在`new Vue`时需要注意的时候，需要传入一个对象{}作为参数
+			// 这个对象{}有两个非常重要的属性，el和data
+			var app = new Vue({
+				// 此处的el属性必须保留，否则组件无法正常使用
+				el: '#app',
+				data: {
+					// 待办事项列表
+					todolist: [{
+							index: 1,
+							text: '买菜'
+						},
+						{
+							index: 2,
+							text: '买酸奶'
+						},
+						{
+							index: 3,
+							text: '买水果'
+						},
+					]
+				}
+			})
+		</script>
+	</body>
+</html>
+
+```
+
+此时运行可以看到，页面中显示出不同的待办事项了：
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210507223241.png)
+
+在大型应用中，会将整个应用划分为多个组件，以使开发更容易管理。
+
+如：
+
+```html
+<div id="app">
+  <app-nav></app-nav>
+  <app-view>
+    <app-sidebar></app-sidebar>
+    <app-content></app-content>
+  </app-view>
+</div>
+```
+
+## 4. Vue实例
+
+- 每个Vue应用都是通过用`Vue`函数创建一个新的`Vue`实例开始的。
+
+如：
+
+```javascript
+var vm = new Vue({
+  // 选项
+})
+```
+
+变量名`vm`是`ViewModel`的缩写，表示Vue实例。
+
+- 当创建一个 Vue 实例时，你可以传入一个**选项对象**。
+- 选项列表可以在 [https://cn.vuejs.org/v2/api/#选项-数据](https://cn.vuejs.org/v2/api/#%E9%80%89%E9%A1%B9-%E6%95%B0%E6%8D%AE) 查看。如`el`、`data`、`methods`、`props`等等。
+- 一个 Vue 应用由一个通过 `new Vue` 创建的**根 Vue 实例**，以及可选的嵌套的、可复用的组件树组成。
+- 所有的 Vue 组件都是 Vue 实例，并且接受相同的选项对象 (一些根实例特有的选项除外)。
+- 当一个 Vue 实例被创建时，它将 `data` 对象中的所有的 property属性 加入到 Vue 的**响应式系统**中。当这些 property属性 的值发生改变时，视图将会产生“响应”，即匹配更新为新的值。当这些数据改变时，视图会进行重渲染。
+- 值得注意的是只有当实例被创建时就已经存在于 `data` 中的 property属性 才是**响应式**的。也就是说，没有在`data`中初始化的属性不会动态响应。
+
+### 4.1 特例-对象冻结
+
+- 使用 `Object.freeze()`，这会阻止修改现有的 property属性，也意味着响应系统无法再*追踪*变化。
+
+如我们使用以下示例：
+
+```html
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<!-- 开发环境版本，包含了有帮助的命令行警告 -->
+		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	</head>
+	<body>
+		<div id="app">
+			a = {{ a }}
+			<button v-on:click="a += 1 ">Change it</button>
+		</div>
+
+		<!-- script脚本包裹了一段js代码 -->
+		<script>
+			var mydata = {
+				a: 1
+			}
+			// 冻结mydata
+			// Object.freeze(mydata)
+
+			// 在引用vue.js时，会声明一个全局变量Vue
+			// 通过`new Vue`的方式可以获取一个Vue的应用
+			// 它会返回一个对象，我们称之为应用对象，如`app`
+			// 在`new Vue`时需要注意的时候，需要传入一个对象{}作为参数
+			// 这个对象{}有两个非常重要的属性，el和data
+			var app = new Vue({
+				// 此处的el属性必须保留，否则组件无法正常使用
+				el: '#app',
+				data: mydata,
+			})
+		</script>
+	</body>
+</html>
+
+```
+
+当注释掉`Object.freeze(mydata)`时，在页面点击`Change it`按钮时，a的值会不断增加1。
+
+当取消`Object.freeze(mydata)`注释后,再次点击按钮。控制台会抛出异常：
+
+`[Vue warn]: Error in v-on handler: "TypeError: Attempted to assign to readonly property."`即禁止对只读属性进行赋值。
+
+
+
+### 4.2 Vue实例属性与方法
+
+可以在 [https://cn.vuejs.org/v2/api/#实例-property](https://cn.vuejs.org/v2/api/#%E5%AE%9E%E4%BE%8B-property) 页面查看所有Vue实例属性与方法。他们都是以`$`开头。
+
+如：
+
+- `vm.$data`, Vue 实例观察的数据对象。
+- `vm.$el`，Vue 实例使用的根 DOM 元素。
+- `vm.$props`，当前组件接收到的 props 对象。Vue 实例代理了对其 props 对象 property 的访问。
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210507235620.png)
+
+
+
+### 4.3 实例生命周期
+
+- 每个 Vue 实例在被创建时都要经过一系列的初始化过程——例如，需要设置数据监听、编译模板、将实例挂载到 DOM 并在数据变化时更新 DOM 等。同时在这个过程中也会运行一些叫做**生命周期钩子**的函数，这给了用户在不同阶段添加自己的代码的机会。
+
+  
