@@ -621,4 +621,102 @@ var vm = new Vue({
 
 - 每个 Vue 实例在被创建时都要经过一系列的初始化过程——例如，需要设置数据监听、编译模板、将实例挂载到 DOM 并在数据变化时更新 DOM 等。同时在这个过程中也会运行一些叫做**生命周期钩子**的函数，这给了用户在不同阶段添加自己的代码的机会。
 
-  
+- Vue钩子函数类似SVN中的`pre-commit`、`post-commit`等，在特定的情形下执行。
+
+官方文档中的生命周期图：
+
+![](https://cn.vuejs.org/images/lifecycle.png)
+
+  我们参考官方视频示例：[生命周期 https://learning.dcloud.io/#/?vid=4](https://learning.dcloud.io/#/?vid=4)
+
+以及[ 详解vue生命周期 https://segmentfault.com/a/1190000011381906](https://segmentfault.com/a/1190000011381906)
+
+编写如下测试代码：
+
+```html
+
+```
+
+运行代码，在浏览器中打开页面，并查看控制台输出：
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210508230633.png)
+
+可以看到，在我们定义了多个钩子函数后，刚开始只执行了4个钩子函数，依次是：
+
+- `beforeCreate`
+- `created`
+- `beforeMount`
+- `mounted`
+
+可以看到：
+
+- 在`beforeCreate钩子函数执行时，`el`、`data`、`message`都是未定义的，此时我们观测的数据都是空的。
+- 在`beforeCreate`和`created`之间的生命周期阶段，`el`仍然是未定义的，`data`、`message`已经有数据了，说明此阶段已经与data属性进行了绑定。el选项还没有。
+- 在`created`和`beforeMount`之间的生命周期阶段，由于我们有定义`el: '#app'`属性，此时会继续向下编译。`el`开始有数据了，`data`、`message`数据保持不变，此时el中通过{{message}}进行占位的。因为此时还没有挂载到页面上，还是JavaScript中的虚拟DOM形式存在的。
+- 在`beforeMount`和`mounted`之间的生命周期阶段，由于我们有定义`el: '#app'`属性，此时会继续向下编译。`el`开始有数据了，`data`、`message`数据保持不变，此时el中的{{message}}占位已经被data中的message值所替换。页面挂载成功。
+
+注意一点，在`created`和`beforeMount`之间的生命周期阶段，需要对`el`属性和`template`属性进行判断。现阶段我们不了解`template`属性，先不展开。
+
+如果我们没有定义`el`属性，会怎么样。我们把代码中的`el: '#app',`行注释掉，再看看控制台输出。
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210508233321.png)
+
+此时可以看到，此执行了`beforeCreate`和`created`勾子函数。没有执行后面其他的钩子函数。
+
+此时，如果我们在控制台进行`el`定义，并执行命令：
+
+```sh
+el = '#app'
+app.$mount(el)
+```
+
+此时可以看到执行了后续的`beforeMount`和`mounted`钩子函数，页面被挂载成功。
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210508234436.png)
+
+我们把代码中的`el: '#app',`行取消注释。
+
+
+
+尝试更新`message`数据。
+
+在控制台执行命令：
+
+```sh
+app.message = '新消息'
+```
+
+
+
+当我们在控制台更新`message`消息后，执行了以下钩子函数：
+
+- `beforeUpdate`
+- `updated`
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210508235029.png)
+
+可以看到，在`beforeUpdate`钩子执行过程中`el`、`data`中的`message`值已经更新为新的值`新消息`了。在`updated`钩子执行完成后，自动返回了新的消息值。
+
+
+
+另外，在销毁实例时，也会调用`beforeDestroy`和`destroyed`钩子函数，在我们点击`内部销毁`按钮时，会调用这两个钩子函数。
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210509004532.png)
+
+页面中虽然已经不能看到实例对象了，但数据仍然存在。
+
+
+
+参考：
+
+- [生命周期图示](https://cn.vuejs.org/v2/guide/instance.html#生命周期图示)
+
+- [详解vue生命周期](https://segmentfault.com/a/1190000011381906)
+
+- [vue生命周期实战（四）—— 实例销毁](https://blog.csdn.net/jcyka/article/details/106420889)
+
+
+
+
+
+
