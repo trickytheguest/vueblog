@@ -2088,10 +2088,63 @@ $
 
 
 
+## 掘金风格代码块复制
+
+当博客系统中的很多代码块时，为方便用户复制代码，可以拉回一个"掘金风格代码块复制
+"功能，只需要安装`vuepress-plugin-nuggets-style-copy`插件即可。
+
+参考：[https://gitee.com/yaoaifen/vuepress-plugins/tree/master/vuepress-plugin-copy](https://gitee.com/yaoaifen/vuepress-plugins/tree/master/vuepress-plugin-copy)
+
+安装方法：
+```sh
+yarn add vuepress-plugin-nuggets-style-copy
+```
+
+安装完成后，在`pluginConfig.js`增加以下内容：
+
+```javascript
+     // 代码复制插件
+     "vuepress-plugin-nuggets-style-copy": {
+        copyText: "复制代码",
+        tip: { content: "复制成功" }
+     }
+```
+
+最终插件配置文件`pluginConfig.js`内容如下：
+
+```javascript
+const secureConf = require('./secureinfo.js');
+module.exports = {
+    'vuepress-plugin-comment': {
+        choosen: 'valine',
+        // options选项中的所有参数，会传给Valine的配置
+        options: {
+            el: '#valine-vuepress-comment',
+            appId: secureConf.leancloud_appId, // 读取secure_info.js中的配置信息
+            appKey: secureConf.leancloud_appKey, // 读取secure_info.js中的配置信息
+            placeholder: '同道中人，文明留言...', // 评论框占位提示符
+            lang: 'zh-cn', // 支持中文
+        }
+    },
+     "vuepress-plugin-auto-sidebar" : {
+        sidebarDepth: 2
+     }, // 自动侧边栏
+
+     // 代码复制插件
+     "vuepress-plugin-nuggets-style-copy": {
+        copyText: "复制代码",
+        tip: { content: "复制成功" }
+     }
+}
+```
+
+这样在每个代码块右上角都有`复制代码`的文字，点击该处就可以复制代码了。
+
+
+
 参考：
 
 - [基于vuepress的个人博客搭建完全教程](https://www.jianshu.com/p/2220dbacfde1)
-- 
 - [VuePress从零开始搭建自己专属博客](https://segmentfault.com/a/1190000015237352?utm_source=tag-newest)
 - [markdown-it-emoji](https://github.com/markdown-it/markdown-it-emoji/blob/master/lib/data/full.json)
 - [Vuepress使用Valine搭建带有评论系统的博客](https://segmentfault.com/a/1190000016144076)

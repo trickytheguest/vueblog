@@ -29,6 +29,6 @@ module.exports = {
         docsDir: 'myblog/docs',  // docs文件的路径，从根目录开始
         nav: navConf,
 //        sidebar: sidebarConf,
-        sidebarDepth: 2 // 侧边栏显示深度，默认为1，即显示一级标题
+        sidebarDepth: 2, // 侧边栏显示深度，默认为1，即显示一级标题
     }
 }

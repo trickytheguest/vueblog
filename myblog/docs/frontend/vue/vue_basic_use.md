@@ -3,6 +3,7 @@
 - vue官方文档：[https://cn.vuejs.org/v2/guide/](https://cn.vuejs.org/v2/guide/)
 
 - vue官方指定的视频教程： [https://learning.dcloud.io/#/?vid=0](https://learning.dcloud.io/#/?vid=0)
+- vue教程：[https://www.lookroot.cn/course/vuebasics/](https://www.lookroot.cn/course/vuebasics/)
 
 - Vue (读音 /vjuː/，类似于 **view**) 是一套用于构建用户界面的**渐进式框架**。与其它大型框架不同的是，Vue 被设计为可以自底向上逐层应用。
 

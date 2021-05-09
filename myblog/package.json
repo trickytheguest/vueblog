@@ -13,7 +13,8 @@
     "leancloud-storage": "^4.1.0",
     "minimist": "^1.2.2",
     "valine": "^1.3.10",
-    "vuepress-plugin-comment": "^0.7.3"
+    "vuepress-plugin-comment": "^0.7.3",
+    "vuepress-plugin-nuggets-style-copy": "^1.0.3"
   },
   "devDependencies": {
     "vuepress-plugin-auto-sidebar": "^1.4.1"

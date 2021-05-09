@@ -14,4 +14,10 @@ module.exports = {
      "vuepress-plugin-auto-sidebar" : {
         sidebarDepth: 2 
      }, // 自动侧边栏
+
+     // 代码复制插件
+     "vuepress-plugin-nuggets-style-copy": {
+        copyText: "复制代码",
+        tip: { content: "复制成功" }
+     }
 }
