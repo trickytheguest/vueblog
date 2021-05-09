@@ -1,14 +1,11 @@
 # vue的基本使用
 
 - vue官方文档：[https://cn.vuejs.org/v2/guide/](https://cn.vuejs.org/v2/guide/)
-
 - vue官方指定的视频教程： [https://learning.dcloud.io/#/?vid=0](https://learning.dcloud.io/#/?vid=0)
 - vue教程：[https://www.lookroot.cn/course/vuebasics/](https://www.lookroot.cn/course/vuebasics/)
-
+- 可以安装Vue DevTools，参考 [Mac环境下安装Vue DevTools Vue.js的调试神器](https://www.jianshu.com/p/5cd1f9770ff7)
 - Vue (读音 /vjuː/，类似于 **view**) 是一套用于构建用户界面的**渐进式框架**。与其它大型框架不同的是，Vue 被设计为可以自底向上逐层应用。
-
 - 开始尝试vue时，可以简单的创建一个`html`文件，并引用cdn上面的`vue.js`文件。
-
 - 官方视频教程中老师是使用的`HBuilder X`来进行编码的。我们也使用`HBuilder X`工具来学习vue。在官方下载 [https://www.dcloud.io/hbuilderx.html](https://www.dcloud.io/hbuilderx.html) 安装即可。
 
 ## 1. 第一个vue程序
