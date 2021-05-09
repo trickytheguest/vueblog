@@ -631,9 +631,107 @@ var vm = new Vue({
 
 以及[ 详解vue生命周期 https://segmentfault.com/a/1190000011381906](https://segmentfault.com/a/1190000011381906)
 
-编写如下测试代码：
+
+编写如下测试代码 [download lifecycle.html](/scripts/vue/lifecycle.html.txt)  (注意，下载时请将文件后缀修改为`.html`)：
 
 ```html
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<!-- 开发环境版本，包含了有帮助的命令行警告 -->
+		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	</head>
+	<body>
+		<div id="app">
+			{{ message }}
+			<button @click="destroy">内部销毁</button>
+		</div>
+
+		<!-- script脚本包裹了一段js代码 -->
+		<script>
+			// 在引用vue.js时，会声明一个全局变量Vue
+			// 通过`new Vue`的方式可以获取一个Vue的应用
+			// 它会返回一个对象，我们称之为应用对象，如`app`
+			// 在`new Vue`时需要注意的时候，需要传入一个对象{}作为参数
+			// 这个对象{}有两个非常重要的属性，el和data
+			var app = new Vue({
+				// 此处的el属性必须保留
+				el: '#app',
+				data: {
+					message: '消息',
+				},
+				methods: {
+					destroy() {
+						this.$destroy()
+						console.log('after run this.$destroy()');
+						//this.$destroy()不会销毁DOM, 需对DOM进行处理
+						document.querySelector('#app').remove()
+					},
+				},
+				// 在实例初始化之后，数据观测 (data observer) 和 event/watcher 事件配置之前被调用。
+				beforeCreate: function() {
+					console.log('beforeCreate')
+					console.log('el:', this.$el); // undefined
+					console.log('data:', this.$data); // undefined
+					console.log('message:', this.message); // undefined
+				},
+				/* 在实例创建完成后被立即调用。
+				在这一步，实例已完成以下的配置：数据观测 (data observer)，属性和方法的运算，watch/event 事件回调。
+				然而，挂载阶段还没开始，$el 属性目前不可见。 */
+				created: function() {
+					console.log('created')
+					console.log('el:', this.$el); // undefined
+					console.log('data:', this.$data); // 已经被初始化
+					console.log('message:', this.message); // 已经被初始化
+				},
+				// 在挂载开始之前被调用：相关的渲染函数首次被调用
+				beforeMount: function() {
+					console.log('beforeMount');
+					console.log('el:', this.$el); // 已经被初始化，此时el中通过{{message}}进行占位的
+					console.log('data:', this.$data); // 已经被初始化
+					console.log('message:', this.message); // 已经被初始化
+				},
+				//el 被新创建的 vm.$el 替换, 挂载成功	
+				mounted: function() {
+					console.log('mounted');
+					console.log('el:', this.$el); // 已经被初始化，此时el中的{{message}}占位已经被替换成真实的值
+					console.log('data:', this.$data); // 已经被初始化
+					console.log('message:', this.message); // 已经被初始化
+				},
+				// 数据更新时调用
+				beforeUpdate: function() {
+					console.log('beforeUpdate');
+					console.log('el:', this.$el); // 已经被更新
+					console.log('data:', this.$data); // 已经被更新
+					console.log('message:', this.message); // 已经被更新
+				},
+				// 组件 DOM 已经更新, 组件更新完毕 
+				updated: function() {
+					console.log('updated');
+					console.log('el:', this.$el); // 已经被更新
+					console.log('data:', this.$data); // 已经被更新
+					console.log('message:', this.message); // 已经被更新
+				},
+				// 销毁前
+				beforeDestroy: function() {
+					console.log('beforeDestroy');
+					console.log('el:', this.$el); // 数据被保留
+					console.log('data:', this.$data); // 数据被保留
+					console.log('message:', this.message); // 数据被保留
+				},
+				// 销毁后
+				destroyed: function() {
+					console.log('destroyed');
+					console.log('el:', this.$el); // 内部销毁时数据被保留
+					console.log('data:', this.$data); // 内部销毁时数据被保留
+					console.log('message:', this.message); // 内部销毁时数据被保留
+				}
+			});
+		</script>
+	</body>
+</html>
 
 ```
 
@@ -650,18 +748,18 @@ var vm = new Vue({
 
 可以看到：
 
-- 在`beforeCreate钩子函数执行时，`el`、`data`、`message`都是未定义的，此时我们观测的数据都是空的。
+- 在`beforeCreate`钩子函数执行时，`el`、`data`、`message`都是未定义的，此时我们观测的数据都是空的。
 - 在`beforeCreate`和`created`之间的生命周期阶段，`el`仍然是未定义的，`data`、`message`已经有数据了，说明此阶段已经与data属性进行了绑定。el选项还没有。
 - 在`created`和`beforeMount`之间的生命周期阶段，由于我们有定义`el: '#app'`属性，此时会继续向下编译。`el`开始有数据了，`data`、`message`数据保持不变，此时el中通过{{message}}进行占位的。因为此时还没有挂载到页面上，还是JavaScript中的虚拟DOM形式存在的。
 - 在`beforeMount`和`mounted`之间的生命周期阶段，由于我们有定义`el: '#app'`属性，此时会继续向下编译。`el`开始有数据了，`data`、`message`数据保持不变，此时el中的{{message}}占位已经被data中的message值所替换。页面挂载成功。
 
-注意一点，在`created`和`beforeMount`之间的生命周期阶段，需要对`el`属性和`template`属性进行判断。现阶段我们不了解`template`属性，先不展开。
+注意一点，在`created`和`beforeMount`之间的生命周期阶段，需要对`el`属性和`template`属性进行判断。现阶段我不了解`template`属性，先不展开。
 
 如果我们没有定义`el`属性，会怎么样。我们把代码中的`el: '#app',`行注释掉，再看看控制台输出。
 
 ![](https://meizhaohui.gitee.io/imagebed/img/20210508233321.png)
 
-此时可以看到，此执行了`beforeCreate`和`created`勾子函数。没有执行后面其他的钩子函数。
+此时可以看到，只执行了`beforeCreate`和`created`勾子函数。没有执行后面其他的钩子函数。
 
 此时，如果我们在控制台进行`el`定义，并执行命令：
 
