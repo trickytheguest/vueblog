@@ -74,3 +74,52 @@ Mustache英文的意思是`胡子`，`{{}}`就像人的胡子。
 ![](https://meizhaohui.gitee.io/imagebed/img/20210512222457.png)
 
 说明，使用`v-once`只会进行一次插值，数据更新后，页面内容不会发生变化。
+
+### 1.2 原始html
+
+如果双大括号中的原始数据是html类型的数据，Vue会将其字符直接原样输出。如果要将其转换成真正的HTML，则需要使用`v-html`指令。请看如下示例：
+
+```html
+<!DOCTYPE html>
+<!-- filename:rawHtml.html -->
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>解析HTML代码</title>
+		<!-- 开发环境版本，包含了有帮助的命令行警告 -->
+		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	</head>
+	<body>
+		<div id="app">
+			<p>Using mustaches: {{ rawHtml }}</p>
+			<p>Using v-html directive: <span v-html="rawHtml"></span></p>
+		</div>
+
+		<!-- script脚本包裹了一段js代码 -->
+		<script>
+			var app = new Vue({
+				// 此处的el属性必须保留，否则组件无法正常使用
+				el: '#app',
+				data: {
+					rawHtml: '<span style="color: red;">This should be red.</span>',
+				}
+			})
+		</script>
+	</body>
+</html>
+
+```
+
+运行后，在浏览器中查看的效果如下：
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210512232500.png)
+
+可以看到使用双大括号解析的数据当作字符串原样输出。而通过`v-html`指令将`rawHtml`数据解析成html标签数据,成功显示了红色样式字体。
+
+
+
+::: danger 危险
+你的站点上动态渲染的任意 HTML 可能会非常危险，因为它很容易导致 [XSS 攻击](https://en.wikipedia.org/wiki/Cross-site_scripting)。请只对可信内容使用 HTML 插值，**绝不要**对用户提供的内容使用插值。
+:::
+
+注意，你不能使用 v-html 来复合局部模板，因为 Vue 不是基于字符串的模板引擎。反之，对于用户界面 (UI)，组件更适合作为可重用和可组合的基本单位。
