@@ -123,3 +123,15 @@ Mustache英文的意思是`胡子`，`{{}}`就像人的胡子。
 :::
 
 注意，你不能使用 v-html 来复合局部模板，因为 Vue 不是基于字符串的模板引擎。反之，对于用户界面 (UI)，组件更适合作为可重用和可组合的基本单位。
+
+### 1.3 Attribute属性
+
+Mustache双大括号语法不能应用于HTML Attribute属性上，此时应使用`v-bind`指令。对于布尔属性(只要存在则意味着`true`)，`v-bind`工作起来有所不同。请看以下示例。
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210513081155.png)
+
+可以看到，在属性中直接使用`id="{{ dynamicId }}`并没有正常解析出id值，而通过`v-bind:id="dynamicId"`则正常解析出id值了。
+
+`<button disabled>`中`disabled`中不带任何值时，按钮也是不可用的，说明只要存在`disabled`属性则其值就是`true`。
+
+`<button v-bind:disabled="isButtonDisabled">`中通过解析`isButtonDisabled`属性的值来确定按钮是否可用。如果我们将`isButtonDisabled`设置为`false`，则按钮可点击。
