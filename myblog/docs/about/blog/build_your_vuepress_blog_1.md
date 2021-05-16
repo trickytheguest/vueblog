@@ -2157,6 +2157,8 @@ module.exports = {
 ```javascript
 .page .theme-default-content:not(.custom) {
     max-width: 1000px;
+    margin: 0 auto;
+    padding: 2rem 2.5rem;
 }
 ```
 
