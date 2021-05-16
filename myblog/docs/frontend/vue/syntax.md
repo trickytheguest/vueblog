@@ -222,6 +222,10 @@ Mustache双大括号语法不能应用于HTML Attribute属性上，此时应使�
 
 :::
 
+- 沙盒（英语：sandbox，又译为沙箱）：计算机术语，在计算机安全领域中是一种安全机制，为运行中的程序提供的隔离环境。沙盒通常严格控制其中的程序所能访问的资源。
+
+- Vue将模板表达式放在封闭环境中，定义其只能访问指定的全局变量（白名单），所以自定义的全局变量无法在模板表达式中使用。
+
 如我们在Javascript中定义一个全局变量`const LANG = 'VUE'`:
 
 ```javascript
@@ -275,3 +279,95 @@ if (process.env.NODE_ENV !== 'production') {
 最后在页面上显示如下：
 
 ![](https://meizhaohui.gitee.io/imagebed/img/20210516121618.png)
+
+其他的一些变量后面实际中遇到后再使用。
+
+
+
+## 2. 指令与缩写
+
+指令 (Directives) 是带有 `v-` 前缀的特殊特性。指令特性的值预期是**单个 JavaScript 表达式** (`v-for` 是例外情况，稍后我们再讨论)。指令的职责是，当表达式的值改变时，将其产生的连带影响，响应式地作用于 DOM。
+
+我们在 [指令](./vue_basic_use.html#_2-指令) 中已经使用过`v-bind`、`v-if`、`v-for`、`v-on`、`v-model`等指令。
+
+- `v-if`指令
+
+```html
+<p v-if="seen">现在你看到我了</p>
+```
+
+当`seen`属性的值为`true`时，页面会上渲染`p`标签的内容。当值为`false`时，页面上不会渲染`p`标签的内容。
+
+### 2.1 参数
+
+一些指令能够接收一个“参数”，在指令名称之后以冒号表示。
+
+- `v-bind`指令
+
+我们在 [v-bind属性绑定指令](vue_basic_use.html#_2-1-v-bind属性绑定指令) 中已经使用过`v-bind:title`来绑定一个`title`属性。
+
+此处官方示例：
+
+```html
+<a v-bind:href="url">...</a>
+```
+
+当点击`...`则会打开对应的URL地址，如果在Vue对象的`data`属性中定义`url:'https://cn.vuejs.org/v2/guide/'`，则点击`...`时会打开Vue的官方教程。
+
+这里`href`是`v-bind`的参数，告知`v-bind`将该元素的`href`属性与表达式的`url`的值绑定。
+
+- `v-on`指令
+
+我们在 [v-on事件监听指令](vue_basic_use.html#_2-4-v-on事件监听指令)中已经使用`v-on:click`指令来监听点击事件。
+
+此处我们使用`<input type="text" v-on:blur="echo">`来监听输入框失去焦点事件，当鼠标从输入框中移出时，自动触发`echo`函数的执行，输出警告并打印日志信息：
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210516173214.png)
+
+后面有章节会详细介绍事件处理。
+
+### 2.2 动态参数
+
+从 2.6.0 开始，可以用方括号括起来的 JavaScript 表达式作为一个指令的参数。
+
+如我们在HTML中增加以下代码，尝试使用动态参数：
+
+```html
+<!-- 动态参数 -->
+<a v-bind:[attributeName]="url">...</a>
+```
+
+然后在`data`属性中定义`attributeName: 'href'`,此时打开页面，会发现抛出异常。
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210516181203.png)
+
+可以看到属性`attributeName`会强制转换成了小写`attributename`。官方文档中也指出：
+
+::: warning 警告
+
+在 DOM 中使用模板时 (直接在一个 HTML 文件里撰写模板)，还需要避免使用大写字符来命名键名，因为浏览器会把 attribute 名全部强制转为小写。
+
+:::
+
+我们将html和data中`attributeName`转换成小写`attributename`，然后再打开页面。此时没有报异常，并且正常渲染了`href`属性。
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210516181712.png)
+
+我们在控制台修改一下attributename的值：
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210516181837.png)
+
+此时，可以看到`href`属性已经没有了，出现了`title`属性：
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210516181949.png)
+
+
+
+使用动态参数绑定事件名。
+
+可以在 [HTML 事件属性](https://www.runoob.com/tags/ref-eventattributes.html) 获取HTML中有哪些事件属性。
+
+我们尝试使用以下几个属性：
+
+- `onfocus` 当窗口获得焦点时运行脚本
+- `onblur` 当窗口失去焦点时运行脚本
