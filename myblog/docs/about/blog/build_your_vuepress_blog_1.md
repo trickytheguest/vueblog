@@ -2142,6 +2142,34 @@ module.exports = {
 
 
 
+
+
+## 文章主体宽度设置
+
+默认样式中，文章主体宽度最大宽度是`740px`，主体左侧和右侧有两个大空白区域。我们可以调整一下最大宽度值。
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210516221210.png)
+
+参考：[Vuepress CSS 样式覆盖：修改内容宽度](https://blog.csdn.net/sinat_31213021/article/details/113185110)
+
+在`.vuepress`目录下新建`styles`文件夹，并在`styles`文件夹下创建`palette.styl`文件，并在该文件中增加以下内容：
+
+```javascript
+.page .theme-default-content:not(.custom) {
+    max-width: 1000px;
+}
+```
+
+然后重新运行项目，可以发现文章主体宽度已经发生变化。
+
+修改后：
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210516221829.png)
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210516222036.png)
+
+
+
 参考：
 
 - [基于vuepress的个人博客搭建完全教程](https://www.jianshu.com/p/2220dbacfde1)
