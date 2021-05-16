@@ -224,7 +224,7 @@ Mustache双大括号语法不能应用于HTML Attribute属性上，此时应使�
 
 如我们在Javascript中定义一个全局变量`const LANG = 'VUE'`:
 
-```text
+```javascript
 		<script>
 			const LANG = 'VUE' // 增加此行
 			var app = new Vue({
@@ -248,7 +248,7 @@ Mustache双大括号语法不能应用于HTML Attribute属性上，此时应使�
 
 实例中属性或方法`LANG`没有定义。说明这种方式使用全局变量是错误的。
 
-https://github.com/vuejs/vue/blob/v2.6.10/src/core/instance/proxy.js#L9中定义了一些全局变量：
+[https://github.com/vuejs/vue/blob/v2.6.10/src/core/instance/proxy.js#L9](https://github.com/vuejs/vue/blob/v2.6.10/src/core/instance/proxy.js#L9)  中定义了一些全局变量：
 
 ```javascript
 if (process.env.NODE_ENV !== 'production') {
@@ -274,3 +274,4 @@ if (process.env.NODE_ENV !== 'production') {
 
 最后在页面上显示如下：
 
+![](https://meizhaohui.gitee.io/imagebed/img/20210516121618.png)
