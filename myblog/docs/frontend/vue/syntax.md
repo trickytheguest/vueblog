@@ -371,3 +371,281 @@ if (process.env.NODE_ENV !== 'production') {
 
 - `onfocus` 当窗口获得焦点时运行脚本
 - `onblur` 当窗口失去焦点时运行脚本
+- `onmouseover` 当鼠标指针移至元素之上时运行脚本
+- `onmousemove` 当鼠标指针移动时运行脚本
+
+在html中增加以下代码：
+
+```html
+<a v-on:[eventname]="doSomething" v-bind:href="url">事件属性</a>
+...省略
+				data: {
+					...省略
+					eventname: 'focus'
+				},
+				methods: {
+					...省略
+					doSomething: function() {
+						if (this.eventname === 'focus') {
+							console.log('获得焦点');
+						} else if (this.eventname === 'blur') {
+							console.log('失去焦点');
+						} else if (this.eventname === 'mouseover') {
+							console.log('鼠标指针移至元素之上');
+						} else if (this.eventname === 'mouseout') {
+							console.log('鼠标指针移出元素');
+						}
+					}
+				}
+```
+
+`eventname`初始值设置为`foucus`。我们打开页面，按`Tab`键，当切换到`事件属性`时，可以看到控制台输出`获得焦点`。
+
+然后在控制台设置一下`app.eventname = 'blur'`，此时鼠标点击一下页面中间的空白，控制台会输出`失去焦点`。
+
+然后在控制台设置一下`app.eventname = 'mouseover'`，此时将鼠标移动到`事件属性`字符处，控制台会输出`鼠标指针移至元素之上`。
+
+然后在控制台设置一下`app.eventname = 'mouseout'`，此时先将鼠标移动到`事件属性`字符处然后移开，控制台会输出`鼠标指针移出元素`。
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210516194151.png)
+
+本节使用的代码如下：
+
+```html
+<!DOCTYPE html>
+<!-- directives.html -->
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>指令的使用</title>
+		<!-- 开发环境版本，包含了有帮助的命令行警告 -->
+		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	</head>
+	<body>
+		<div id="app">
+			<p v-if="seen">现在你看到我了</p>
+			<a v-bind:href="url">...</a><br>
+			<!-- 当窗口失去焦点时运行脚本 -->
+			<input type="text" v-on:blur="echo"><br>
+			<!-- 动态参数 -->
+			<!-- 避免使用大写字符来命名键名，因为浏览器会把 attribute 名全部强制转为小写 -->
+			<!-- <a v-bind:[attributeName]="url">...</a> -->
+			<!-- 属性使用小写时，才能正常解析 -->
+			<a v-bind:[attributename]="url">...</a>
+			<!-- 同样，在单独的HTML文件中，不能直接使用大写的eventName变量 -->
+			<!-- 下面语句会提示eventname属性不存在 -->
+			<!-- <a v-on:[eventName]="doSomething"> ... </a> -->
+			<a v-on:[eventname]="doSomething" v-bind:href="url">事件属性</a>
+		</div>
+
+		<!-- script脚本包裹了一段js代码 -->
+		<script>
+			var app = new Vue({
+				// 此处的el属性必须保留，否则组件无法正常使用
+				el: '#app',
+				data: {
+					seen: true,
+					url: 'https://cn.vuejs.org/v2/guide/',
+					attributename: 'href',
+					eventname: 'focus'
+				},
+				methods: {
+					echo: function() {
+						console.log('you left me.')
+						alert('you left me.')
+					},
+					doSomething: function() {
+						if (this.eventname === 'focus') {
+							console.log('获得焦点');
+						} else if (this.eventname === 'blur') {
+							console.log('失去焦点');
+						} else if (this.eventname === 'mouseover') {
+							console.log('鼠标指针移至元素之上');
+						} else if (this.eventname === 'mouseout') {
+							console.log('鼠标指针移出元素');
+						}
+					}
+				}
+			})
+		</script>
+	</body>
+</html>
+
+```
+
+另外，动态表达式有一些语法约束。如不能包含空格和引号。
+
+
+
+### 2.3 修饰符
+
+修饰符 (modifier) 是以半角句号 `.` 指明的特殊后缀，用于指出一个指令应该以特殊方式绑定。
+
+在 [事件处理](https://cn.vuejs.org/v2/guide/events.html) 章节详细介绍了修饰符的使用。
+
+如`事件修饰符`、`按键修饰符`、`系统修饰键`等。
+
+我们来看一下不使用修饰符时，对div进行点击时，会出现什么效果。
+
+```html
+<!DOCTYPE html>
+<!-- modifiers.html -->
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>修饰符(modifier)的使用</title>
+		<!-- 开发环境版本，包含了有帮助的命令行警告 -->
+		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+		<style>
+			.div1 {
+				width: 100px;
+				height: 50px;
+				border-style:solid;
+				border-color: red;
+				background: green;
+				margin-left: 50px;
+			}
+			.div2 {
+				width: 50px;
+				height: 100px;
+				border-style:solid;
+				border-color: blue;
+				background: skyblue;
+				margin-left: 25px;
+				margin-top: 25px;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="app">
+			<div id="div1" v-on:click="click1()" class="div1">
+        <!-- 不使用修饰符 (modifier) -->
+				<!-- <div id="div2" v-on:click="click2()" class="div2"> -->
+        <!-- 修饰符 (modifier) 是以半角句号 . 指明的特殊后缀 -->
+				<div id="div2" v-on:click.stop="click2()" class="div2">
+					点击我
+				</div>
+			</div>
+		</div>
+
+		<!-- script脚本包裹了一段js代码 -->
+		<script>
+			var app = new Vue({
+				// 此处的el属性必须保留，否则组件无法正常使用
+				el: '#app',
+				data: {
+					test: true
+				},
+				methods: {
+					click1: function() {
+						console.log('you clicked the div1')
+					},
+					click2: function() {
+						console.log('you clicked the div2')
+					},
+				}
+			})
+		</script>
+	</body>
+</html>
+
+```
+
+此时我们打开页面`http://127.0.0.1:8848/vuedata/modifiers.html`,看到如下图所示页面：
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210516204519.png)
+
+
+
+我们点击`div1`的绿色区域，此时控制台显示`you clicked the div1`。
+
+我们点击`div2`的天蓝色区域，此时控制台显示`you clicked the div2`并显示了`you clicked the div1`。
+
+因为`div2`与`div1`有部分区域重叠，所有点击`div2`时，相当于同时点击了`div1`，所以显示了两条语句。
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210516210543.png)
+
+而如果我们在`div2`的点击事件中增加一个`stop`修饰符，此时的现象则会不一样。
+
+```html
+<!-- <div id="div2" v-on:click="click2()" class="div2"> -->
+<div id="div2" v-on:click.stop="click2()" class="div2">
+```
+
+注意`v-on:click.stop`中`.stop`是修饰符，用于阻止单击事件继续传播 。
+
+
+
+此时，我们再进行上述操作：
+
+我们点击`div1`的绿色区域，此时控制台显示`you clicked the div1`。
+
+我们点击`div2`的天蓝色区域，此时控制台显示`you clicked the div2`。没有显示其他的信息。说明单击事件传播已经被成功阻止了。
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210516210904.png)
+
+说明修饰符已经起作用了。
+
+后续在事件处理章节再详细了解其他修饰符的使用。
+
+
+
+### 2.4 说说缩写
+
+此处抄一下官方的说明和示例。
+
+`v-` 前缀作为一种视觉提示，用来识别模板中 Vue 特定的属性。当你在使用 Vue.js 为现有标签添加动态行为 (dynamic behavior) 时，`v-` 前缀很有帮助，然而，对于一些频繁用到的指令来说，就会感到使用繁琐。同时，在构建由 Vue 管理所有模板的[单页面应用程序 (SPA - single page application)](https://en.wikipedia.org/wiki/Single-page_application) 时，`v-` 前缀也变得没那么重要了。因此，Vue 为 `v-bind` 和 `v-on` 这两个最常用的指令，提供了特定简写：
+
+- `v-bind`缩写
+
+```html
+<!-- 完整语法 -->
+<a v-bind:href="url">...</a>
+
+<!-- 缩写 -->
+<a :href="url">...</a>
+
+<!-- 动态参数的缩写 (2.6.0+) -->
+<a :[key]="url"> ... </a>
+```
+
+- `v-on`缩写
+
+```html
+<!-- 完整语法 -->
+<a v-on:click="doSomething">...</a>
+
+<!-- 缩写 -->
+<a @click="doSomething">...</a>
+
+<!-- 动态参数的缩写 (2.6.0+) -->
+<a @[event]="doSomething"> ... </a>
+```
+
+
+
+虽然有时使用缩写形式很方便，但不提倡在程序中使用缩写。原因如下：
+
+::: tip 提示
+
+- 代码20%的时间在写，80%的时间在读，可读性比敲代码时的时间节省要重要得多，况且敲代码的时间，占整个工程的时间，其实并不多。
+
+- 缩写，不是每个人都可以理解。对一部分而言很熟悉很明显的缩写，对另一部分人则不是。例如cli是什么？是command line interface的缩写，还是client的缩写？
+
+- 缩写，不同的人，缩出来的结果不一样。甚至在同一个工程下，都可能出现不同的缩写，严重影响代码可读性和心情。
+
+
+
+作者：Jiafu89
+
+链接：https://www.jianshu.com/p/eff10b0c4970
+
+来源：简书
+
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+
+:::
+
+
+
+因此，尽量还是写完整的语句。
