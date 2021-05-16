@@ -135,3 +135,142 @@ Mustache双大括号语法不能应用于HTML Attribute属性上，此时应使�
 `<button disabled>`中`disabled`中不带任何值时，按钮也是不可用的，说明只要存在`disabled`属性则其值就是`true`。
 
 `<button v-bind:disabled="isButtonDisabled">`中通过解析`isButtonDisabled`属性的值来确定按钮是否可用。如果我们将`isButtonDisabled`设置为`false`，则按钮可点击。
+
+
+
+### 1.4 使用JavaScript表达式
+
+- 对于所有的数据绑定，Vue.js 都提供了完全的 JavaScript 表达式支持。
+- 每个绑定都只能包含**单个表达式**。
+
+按官方示例。我们编写`use_js.html`文件：
+
+```html
+<!DOCTYPE html>
+<!-- use_js.html -->
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>模板中使用JavaScript表达式</title>
+		<!-- 开发环境版本，包含了有帮助的命令行警告 -->
+		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	</head>
+	<body>
+		<div id="app">
+			<!-- 正式解析的表达式 -->
+			{{ number + 1 }}
+			{{ ok ? 'YES' : 'NO' }}
+			{{ message.split('').reverse().join('') }}
+			<div v-bind:id="'list-' + id"></div>
+			
+			<!-- 这是语句，不是表达式 -->
+			<!-- {{ var a = 1 }} -->
+			<!-- 流控制也不会生效，请使用三元表达式 -->
+			<!-- {{ if (ok) { return message } }} -->
+			<!-- 尝试访问用户自定义的全局变量，不能访问 -->
+			<!-- {{ LANG }} -->
+			<!-- 使用内置全局变量 -->
+			Date()={{ Date() }}<br>
+			Boolean()={{ Boolean() }}<br>
+			Boolean(0)={{ Boolean(0) }}<br>
+			Boolean(1)={{ Boolean(1) }}<br>
+			Boolean(-1)={{ Boolean(-1) }}<br>
+			Math.PI={{ Math.PI }}<br>
+			Number('0.123')={{ Number('0.123') }}<br>
+		</div>
+
+		<!-- script脚本包裹了一段js代码 -->
+		<script>
+			const LANG = 'VUE' // 增加此行
+			var app = new Vue({
+				// 此处的el属性必须保留，否则组件无法正常使用
+				el: '#app',
+				data: {
+					number: 1,
+					ok: true,
+					message: 'Hello,Vue.js!',
+					id: 2,
+				},		
+			})
+		</script>
+	</body>
+</html>
+
+```
+
+
+
+此时页面正常解析，页面显示如下：
+
+![img](https://meizhaohui.gitee.io/imagebed/img/20210516103240.png)
+
+此时`div`的id值也能正常解析：
+
+![img](https://meizhaohui.gitee.io/imagebed/img/20210516103430.png)
+
+我们如果把19行的取消注释，此时页面解析会报错：
+
+![img](https://meizhaohui.gitee.io/imagebed/img/20210516103654.png)
+
+提示`avoid using JavaScript keyword as property name: "var"`禁止使用关键字`var`作为属性名。同样，如果将21行取消注释。也会报异常`avoid using JavaScript keyword as property name: "if"`禁止使用关键字`if`作为属性名。
+
+官方文档中指出：
+
+::: warning 警告
+
+模板表达式都被放在沙盒中，只能访问[全局变量的一个白名单](https://github.com/vuejs/vue/blob/v2.6.10/src/core/instance/proxy.js#L9)，如 `Math` 和 `Date` 。你不应该在模板表达式中试图访问用户定义的全局变量。
+
+:::
+
+如我们在Javascript中定义一个全局变量`const LANG = 'VUE'`:
+
+```text
+		<script>
+			const LANG = 'VUE' // 增加此行
+			var app = new Vue({
+				// 此处的el属性必须保留，否则组件无法正常使用
+				el: '#app',
+				...省略
+```
+
+然后在上面增加内容：
+
+```html
+			<!-- 尝试访问用户自定义的全局变量 -->
+			{{ LANG }}
+```
+
+
+
+此时提示异常`vue.js:634 [Vue warn]: Property or method "LANG" is not defined on the instance but referenced during render.`：
+
+![img](https://meizhaohui.gitee.io/imagebed/img/20210516110508.png)
+
+实例中属性或方法`LANG`没有定义。说明这种方式使用全局变量是错误的。
+
+https://github.com/vuejs/vue/blob/v2.6.10/src/core/instance/proxy.js#L9中定义了一些全局变量：
+
+```javascript
+if (process.env.NODE_ENV !== 'production') {
+  const allowedGlobals = makeMap(
+    'Infinity,undefined,NaN,isFinite,isNaN,' +
+    'parseFloat,parseInt,decodeURI,decodeURIComponent,encodeURI,encodeURIComponent,' +
+    'Math,Number,Date,Array,Object,Boolean,String,RegExp,Map,Set,JSON,Intl,' +
+    'require' // for Webpack/Browserify
+  )
+```
+
+我们可以尝试使用其中的一些变量：
+
+```html
+			Date()={{ Date() }}<br>
+			Boolean()={{ Boolean() }}<br>
+			Boolean(0)={{ Boolean(0) }}<br>
+			Boolean(1)={{ Boolean(1) }}<br>
+			Boolean(-1)={{ Boolean(-1) }}<br>
+			Math.PI={{ Math.PI }}<br>
+			Number('0.123')={{ Number('0.123') }}<br>
+```
+
+最后在页面上显示如下：
+
