@@ -130,7 +130,13 @@ Mustache双大括号语法不能应用于HTML Attribute属性上，此时应使�
 
 ![](https://meizhaohui.gitee.io/imagebed/img/20210513081155.png)
 
-可以看到，在属性中直接使用`id="{{ dynamicId }}`并没有正常解析出id值，而通过`v-bind:id="dynamicId"`则正常解析出id值了。
+可以看到，在属性中直接使用
+
+```html 
+id="{{ dynamicId }}"`
+```
+
+并没有正常解析出id值，而通过`v-bind:id="dynamicId"`则正常解析出id值了。
 
 `<button disabled>`中`disabled`中不带任何值时，按钮也是不可用的，说明只要存在`disabled`属性则其值就是`true`。
 
@@ -518,10 +524,11 @@ if (process.env.NODE_ENV !== 'production') {
 	</head>
 	<body>
 		<div id="app">
+			<!-- 修饰符 (modifier) 是以半角句号 . 指明的特殊后缀 -->
 			<div id="div1" v-on:click="click1()" class="div1">
-        <!-- 不使用修饰符 (modifier) -->
+				<!-- 不使用修饰符 (modifier) -->
 				<!-- <div id="div2" v-on:click="click2()" class="div2"> -->
-        <!-- 修饰符 (modifier) 是以半角句号 . 指明的特殊后缀 -->
+				<!-- 修饰符 (modifier) 是以半角句号 . 指明的特殊后缀 -->
 				<div id="div2" v-on:click.stop="click2()" class="div2">
 					点击我
 				</div>
