@@ -146,6 +146,53 @@ id="{{ dynamicId }}"`
 
 
 
+我们可以通过事件（如点击事件）来改变按钮的`disabled`属性。
+
+```html
+<!DOCTYPE html>
+<!-- html_attribute.html -->
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>双大括号应用于HTML属性</title>
+		<!-- 开发环境版本，包含了有帮助的命令行警告 -->
+		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	</head>
+	<body>
+		<div id="app">
+			<p id="{{ dynamicId }}">mustache id</p>
+			<p v-bind:id="dynamicId">v-bind id</p>
+			<button disabled>Use default disabled Button</button>
+			<button v-bind:disabled="isButtonDisabled">Use v-bind:disabled Button</button>
+			<button v-on:click="changeDisable">Change</button>
+		</div>
+
+		<!-- script脚本包裹了一段js代码 -->
+		<script>
+			var app = new Vue({
+				// 此处的el属性必须保留，否则组件无法正常使用
+				el: '#app',
+				data: {
+					dynamicId: 'dynamic_id',
+					isButtonDisabled: true,
+				},
+				methods:{
+					changeDisable () {
+						console.log('change disable attribute')
+						this.isButtonDisabled = !this.isButtonDisabled
+					}
+				}
+			})
+		</script>
+	</body>
+</html>
+
+```
+
+此时点击`Change`按钮可以切换左边`Use v-bind:disabled Button`按钮的显示状态。可以在禁用和非禁用状态来回切换。
+
+
+
 ### 1.4 使用JavaScript表达式
 
 - 对于所有的数据绑定，Vue.js 都提供了完全的 JavaScript 表达式支持。
