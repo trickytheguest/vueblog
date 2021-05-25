@@ -188,3 +188,127 @@
 
 **如果你不希望有缓存，请用方法来替代。**
 
+
+
+总结：
+
+- 计算属性监听的属性，不需要在`data`属性对象中进行定义。
+
+- 如果一个属性是由其他属性计算而来，该属性受多个属性影响时，使用计算属性。
+
+- 如果中间涉及大量计算，需要多次渲染的话，因为计算属性有缓存，此时用计算属性比较好。
+
+- 计算属性初看起来像是一个方法，但事实上又不是方法，而是是一个与data中定义的数据使用相同方法的属性。
+
+  
+
+## 计算属性与侦听属性
+
+可以使用Watcher来对一些属性进行侦听处理。通过`watch`关键字来定义需要监听的属性值。
+
+以下示例比较使用计算属性和侦听属性的使用。
+
+```html
+<!DOCTYPE html>
+<!-- computed_watch.html -->
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>computed计算属性和watch侦听器</title>
+		<!-- 开发环境版本，包含了有帮助的命令行警告 -->
+		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	</head>
+	<body>
+		<div id="app" style="margin-left: 50px;">
+			First name: <input type="text" name="fname" v-model="firstName"><br>
+			Last name: <input type="text" name="lname" v-model="lastName"><br>
+			<p>Full name C: {{ cfullName }}</p>
+			<p>Full name C1: {{ c1fullName }}</p>
+			<p>Full name C2: {{ c2fullName }}</p>
+			<p>Full name C3: {{ c3fullName }}</p>
+			<p>Full name W: {{ wfullName }}</p>
+			<p>Full name W1: {{ w1fullName }}</p>
+			<p>Full name W2: {{ w2fullName }}</p>
+			<p>Full name W3: {{ w3fullName }}</p>
+		</div>
+
+		<!-- script脚本包裹了一段js代码 -->
+		<script>
+			// 去掉 vue 的 "You are running Vue in development mode" 提示
+			Vue.config.productionTip = false
+			var app = new Vue({
+				// 此处的el属性必须保留，否则组件无法正常使用
+				el: '#app',
+				data: {
+					firstName: 'Foo',
+					lastName: 'Bar',
+					wfullName: '',
+					w1fullName: '',
+					w2fullName: '',
+					w3fullName: '',
+					// cfullName: '',
+					// c1fullName: '',
+					// c2fullName: '',
+					// c3fullName: '',
+				},
+				watch: {
+					firstName: function(val, oldval) {
+						console.log('change at firstName')
+						console.log(oldval);
+						this.wfullName = val + ' ' + this.lastName
+						this.w1fullName = val + ' ' + this.lastName
+						this.w2fullName = val + ' ' + this.lastName
+						this.w3fullName = val + ' ' + this.lastName
+					},
+					lastName: function(val) {
+						console.log('change at lastName')
+						this.wfullName = this.firstName + ' ' + val
+					}
+				},
+				computed: {
+					cfullName: function() {
+						console.log('change at cfullName')
+						return this.firstName + ' ' + this.lastName
+					},
+					c1fullName: function() {
+						console.log('change at c1fullName')
+						return this.firstName + ' ' + this.lastName
+					},
+					c2fullName: function() {
+						console.log('change at c2fullName')
+						return this.firstName + ' ' + this.lastName
+					},
+					c3fullName: function() {
+						console.log('change at c3fullName')
+						return this.firstName + ' ' + this.lastName
+					}
+				},
+			})
+		</script>
+	</body>
+</html>
+
+```
+
+通过该示例我们可以看到，在打开页面时，显示如下：
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210525215904.png)
+
+计算属性相关的属性cfullName、c1fullName、c2fullName、c2fullName会自动计算并渲染到页面，而watch侦听器监听的wfullName、w1fullName、w2fullName、w3fullName由于初始状态时会空值，此时渲染为空字符串，watch侦听器此时没有检查到这几个属性的变化。
+
+
+
+当我们在Frist name输入框输入一个字符1时，系统监听到firstName发生了变化。触发了相关函数的执行。此时输出如下：
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210525220202.png)
+
+此时，可以看到，由于firstName值的变化，调用了一次watch侦听器中firstName定义的函数，只输出了一次'change at firstName'，但却同时影响了wfullName、w1fullName、w2fullName、w3fullName四个属性值的变化。同时，由于firstName的变化，调用了四个计算属性中定义的函数，每个函数都被调用了，此时cfullName、c1fullName、c2fullName、c2fullName也发生相应的变化。
+
+通过该测试我们可以看到：
+
+- watch侦听器在页面初始化时并不会起作用。而computed计算属性在页面初始化时就会进行计算并渲染页面。
+- watch只能监听`data`中定义好的属性，如果不定义的话，则会提示类似以下异常：`[Vue warn]: Property or method "lastName" is not defined on the instance but referenced during render. Make sure that this property is reactive, either in the data option, or for class-based components, by initializing the property`。而`computed`计算属性监听的属性是不需要在`data`中定义的。如果定义的话，则提示类似以下异常：`vue.js:634 [Vue warn]: The computed property "cfullName" is already defined in data.`。
+- watch侦听器适合处理一个属性影响多个其他属性的情况。如`firstName`会同时影响`wfullName`、`w1fullName`、`w2fullName`、`w3fullName`四个属性值的变化。计算属性适合处理一个属性受多个属性影响的情况。如`cfullName`受`firstName`和`lastName`的影响。
+
+
+
