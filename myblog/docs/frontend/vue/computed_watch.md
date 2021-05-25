@@ -202,7 +202,7 @@
 
   
 
-## 计算属性与侦听属性
+## 2. 计算属性与侦听属性
 
 可以使用Watcher来对一些属性进行侦听处理。通过`watch`关键字来定义需要监听的属性值。
 
@@ -312,3 +312,104 @@
 
 
 
+## 3. 计算属性的setter与getter
+
+计算属性默认只有 getter，不过在需要时你也可以提供一个 setter。get是获取的意思，set是设置的意思，也就是用于计算属性的获取和设置。
+
+以下示例是在官方示例上面进行了修改：
+
+```html
+<!DOCTYPE html>
+<!-- computed_getter_setter.html -->
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>computed计算属性的set与get的使用</title>
+		<!-- 开发环境版本，包含了有帮助的命令行警告 -->
+		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	</head>
+	<body>
+		<div id="app" style="margin-left: 50px;">
+			First name: <input type="text" name="fname" v-model="firstName"><br>
+			Last name: <input type="text" name="lname" v-model="lastName"><br>
+			<p>Full name C: {{ cfullName }}</p>
+			<p>Full name C1: {{ c1fullName }}</p>
+			<p>Full name C2: {{ c2fullName }}</p>
+		</div>
+
+		<!-- script脚本包裹了一段js代码 -->
+		<script>
+			// 去掉 vue 的 "You are running Vue in development mode" 提示
+			Vue.config.productionTip = false
+			var app = new Vue({
+				// 此处的el属性必须保留，否则组件无法正常使用
+				el: '#app',
+				data: {
+					firstName: 'Foo',
+					lastName: 'Bar',
+					// cfullName: '',
+					// c1fullName: '',
+					// c2fullName: '',
+				},
+				computed: {
+					// 方式一，通过函数方式定义计算属性
+					cfullName: function() {
+						console.log('change at cfullName')
+						return this.firstName + ' ' + this.lastName
+					},
+					// 方式一，通过函数方式定义计算属性，另一种写法
+					c1fullName() {
+						console.log('change at c1fullName')
+						return this.firstName + ' ' + this.lastName
+					},
+					// 方式二，通过对象方式设置set和get方法
+					// get对应计算属性的获取
+					// set对应计算属性的设置
+					c2fullName: {
+						// 获取
+						get() {
+							console.log('get the c2fullName')
+							return this.firstName + ' ' + this.lastName
+						},
+						// 设置
+						// 设置时，需要此处函数中定义新值newValue
+						set: function(newValue) {
+							console.log('set the c2fullName')
+							let names = newValue.split(' ')
+							this.firstName = names[0]
+							this.lastName = names[names.length - 1]
+						}
+					},
+
+				},
+			})
+		</script>
+	</body>
+</html>
+
+```
+
+当我们把49行的`get()`修改一下，改成`get1()`，这时页面会提示以下异常：``vue.js:634 [Vue warn]: Getter is missing for computed property "c2fullName".
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210525230452.png)
+
+我们将该处还原，则显示正常。
+
+然后我们在控制台输入`app.c2fullName=’Kobe Bryant‘`:
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210525230755.png)
+
+此时，系统自动调用了计算属性的`set`方法，打印了`set the c2fullName`消息，由于`c2fullName`的值进行了重新设置，将会自动影响`firstName`和`lastName`值的变更，由于这两个值发生了变化，相应的触发了`cfullName`和`c1fullName`计算属性的重新计算，同时由于`c2fullName`自己也变化了，需要重新渲染其值，因此会调用其`get`方法。
+
+## 4. 侦听器
+
+官方示例中使用`Lodash`来限制操作频率，调用API接口来演示了`watch`侦听器的使用。
+
+相对复杂。此处不测试。请参考： [https://cn.vuejs.org/v2/guide/computed.html#侦听器](https://cn.vuejs.org/v2/guide/computed.html#%E4%BE%A6%E5%90%AC%E5%99%A8)
+
+
+
+
+参考：
+
+- [vue系列---理解Vue中的computed,watch,methods的区别及源码实现(六)](https://www.cnblogs.com/tugenhua0707/p/11760466.html)
