@@ -69,8 +69,6 @@
 	<body>
 		<div id="app" style="margin-left: 100px;">
 			<div class="wrap">
-
-
 				<div style="width: 100px; height: 100px;text-align: center;line-height: 150px;"
 					v-bind:class="{active: isActive}" class="static">
 					hi vue
