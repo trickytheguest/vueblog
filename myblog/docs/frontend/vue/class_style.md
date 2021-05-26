@@ -47,7 +47,6 @@
 				height: 150px;
 				border: 2px solid black;
 				margin-left: 20px;
-
 			}
 
 			.active {
@@ -77,27 +76,27 @@
 				</div>
 				<div class="static">不使用动态绑定,显示150*150大小黑色边框的div</div>
 				<!--
-			由于isActive值为true，为真，所以对象中的`active`属性样式类可用。
-			注意，此处`active`外面带不带引号都可以。
-			hasError值为false，为假，所以对象中的`text-danger`属性样式类不可用。
-			注意，此处因`text-danger`样式类名称中间有个`-`横线，因此必须带引号，
-			否则会提示异常`
-			[Vue warn]: Error compiling template:
-			invalid expression: Unexpected token '-' in
-			{active: isActive, text-danger: hasError}`,
-			因此必须加上引号括起来。
-			所以只渲染static active样式， 
-			显示一个绿色的div块
-			-->
+        由于isActive值为true，为真，所以对象中的`active`属性样式类可用。
+        注意，此处`active`外面带不带引号都可以。
+        hasError值为false，为假，所以对象中的`text-danger`属性样式类不可用。
+        注意，此处因`text-danger`样式类名称中间有个`-`横线，因此必须带引号，
+        否则会提示异常`
+        [Vue warn]: Error compiling template:
+        invalid expression: Unexpected token '-' in
+        {active: isActive, text-danger: hasError}`,
+        因此必须加上引号括起来。
+        所以只渲染static active样式， 
+        显示一个绿色的div块
+        -->
 				<div class="static" v-bind:class="{active: isActive, 'text-danger': hasError}">
 					绿色div,字体20px，向右移动10px
 				</div>
 				<!--
-			由于isActive值为true，是真，再使用!isActive取反，就是假，
-			因此ative样式不起作用。
-			!hasError值为true，所以渲染static text_warn样式类
-			最终显示一个橘色的div
-			-->
+        由于isActive值为true，是真，再使用!isActive取反，就是假，
+        因此ative样式不起作用。
+        !hasError值为true，所以渲染static text_warn样式类
+        最终显示一个橘色的div
+        -->
 				<div class="static" v-bind:class="{'active': !isActive, text_warn: !hasError}">
 					橘色div
 				</div>
