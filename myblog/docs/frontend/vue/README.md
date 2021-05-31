@@ -5,3 +5,4 @@
 3. [计算属性与侦听器](./computed_watch.md)
 4. [Vue-Multiselect下拉框强化插件的使用](./use_Vue-Multiselect.md)
 5. [动态绑定class或style样式](./class_style.md)
+6. [v-if与v-show条件渲染](./v-if_v_show.md)
