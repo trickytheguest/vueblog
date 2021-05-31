@@ -297,4 +297,4 @@
 - 代码中`v-for="(item, index) in items"`对`items`数组进行循环读取处理。`index`是当前处理行的索引号。`item`是当前迭代的对象。
 
 - `v-bind:class="[index % 2 === 0 ? activeClass: otherClass, {'move-on': index===moveOnFlag}]"`使用了本节使用的动态绑定样式类名知识点。在数组语法中使用了对象语法。`index % 2 === 0 ? activeClass: otherClass`判断当前索引号是奇数还是偶数，是偶数的话，则渲染`activeClass`样式，是奇数的话，则渲染`otherClass`样式。
-- `v-on:mousemove.once="moveOn(index)" v-on:mouseleave="leave(index)"` 则实现鼠标移入和移出时调用不同的函数，来改变当前行的颜色。注意此处的`.once`修饰符，如果不使用该修饰符，鼠标移入时，会不停地执行moveOn`函数，使用`.once`修饰符只会执行一次。
+- `v-on:mousemove.once="moveOn(index)" v-on:mouseleave="leave(index)"` 则实现鼠标移入和移出时调用不同的函数，来改变当前行的颜色。注意此处的`.once`修饰符，如果不使用该修饰符，鼠标移入时，会不停地执行`moveOn`函数，使用`.once`修饰符只会执行一次。
