@@ -165,3 +165,136 @@
 
 ![](https://meizhaohui.gitee.io/imagebed/img/20210527070842.png)
 
+
+
+利用上面的知识，我们来实现一个表格偶数行和奇数行渲染不同的背景色，并且当鼠标移动到每一行时，该行的颜色发生变化。
+
+最终实现的效果如下图所示：
+
+表格原始状态：
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210531205614.png)
+
+将鼠标移动到表格行上：
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210531205714.png)
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210531205740.png)
+
+
+
+下面是代码：
+
+```html
+<!DOCTYPE html>
+<!-- use_v-bind:class.html -->
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>使用v-bind:class实现表格样式动态绑定</title>
+    <!-- 开发环境版本，包含了有帮助的命令行警告 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <style>
+      .active {
+        background-color: #c3e6cb;
+      }
+
+      .other {
+        background-color: #92789c;
+      }
+
+      .move-on {
+        background-color: #eab498;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div style="margin-left: 50px;">
+        <!-- 
+        border="1" 给表格的每一格，及边框加上1像素的边框
+        cellspacing="0" 单元格间距为0
+        cellpadding="10" 单元格边距为10px
+         -->
+        <table border="1" cellspacing="0" cellpadding="10">
+          <thead>
+            <tr>
+              <th>序号</th>
+              <th>姓名</th>
+              <th>年龄</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- 
+            v-on:mousemove.once 当鼠标移入时，执行函数，once修饰符只执行一次
+            v-on:mouseleave 当鼠标移出时，执行函数
+             -->
+            <tr v-for="(item, index) in items"
+              v-bind:class="[index % 2 === 0 ? activeClass: otherClass, {'move-on': index===moveOnFlag}]"
+              v-on:mousemove.once="moveOn(index)" v-on:mouseleave="leave(index)">
+              <th>{{index + 1}}</th>
+              <th>{{item.first_name}} {{item.last_name}}</th>
+              <th>{{item.age}}</th>
+            </tr>
+          </tbody>
+
+        </table>
+      </div>
+    </div>
+
+    <!-- script脚本包裹了一段js代码 -->
+    <script>
+      var app = new Vue({
+        // 此处的el属性必须保留，否则组件无法正常使用
+        el: '#app',
+        data: {
+          items: [{
+              age: 40,
+              first_name: 'Dickerson',
+              last_name: 'Macdonald'
+            },
+            {
+              age: 21,
+              first_name: 'Larsen',
+              last_name: 'Shaw'
+            },
+            {
+              age: 89,
+              first_name: 'Geneva',
+              last_name: 'Wilson'
+            },
+            {
+              age: 38,
+              first_name: 'Jami',
+              last_name: 'Carney'
+            }
+          ],
+          activeClass: 'active',
+          otherClass: 'other',
+          moveOnFlag: -1,
+        },
+        methods: {
+          moveOn: function(index) {
+            let line = index + 1
+            console.log('修改第' + line + '行的颜色.\n\n')
+            this.moveOnFlag = index
+          },
+          leave: function(index) {
+            let line = index + 1
+            console.log('还原第' + line + '行的颜色.\n\n')
+            this.moveOnFlag = -1
+          }
+        }
+      })
+    </script>
+  </body>
+</html>
+
+```
+
+代码关键点解释：
+
+- 代码中`v-for="(item, index) in items"`对`items`数组进行循环读取处理。`index`是当前处理行的索引号。`item`是当前迭代的对象。
+
+- `v-bind:class="[index % 2 === 0 ? activeClass: otherClass, {'move-on': index===moveOnFlag}]"`使用了本节使用的动态绑定样式类名知识点。在数组语法中使用了对象语法。`index % 2 === 0 ? activeClass: otherClass`判断当前索引号是奇数还是偶数，是偶数的话，则渲染`activeClass`样式，是奇数的话，则渲染`otherClass`样式。
+- `v-on:mousemove.once="moveOn(index)" v-on:mouseleave="leave(index)"` 则实现鼠标移入和移出时调用不同的函数，来改变当前行的颜色。注意此处的`.once`修饰符，如果不使用该修饰符，鼠标移入时，会不停地执行moveOn`函数，使用`.once`修饰符只会执行一次。
