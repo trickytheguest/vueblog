@@ -117,3 +117,146 @@
 
 此时可以看到渲染为`<div style>A</div>`，没有`"display: none;"`样式属性了。说明了`v-show`是通过CSS样式进行切换来改变元素是否显示的。
 
+
+
+## 用key管理可复用的元素
+
+我们按官方示例，编写以下代码：
+
+```html
+<!DOCTYPE html>
+<!-- v-if_v-show.html -->
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>v-if与v-show条件渲染的使用</title>
+    <!-- 开发环境版本，包含了有帮助的命令行警告 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+    <!-- 参考：https://code.z01.com/bootstrap-vue/docs/#browser -->
+    <!-- Load required Bootstrap and BootstrapVue CSS -->
+    <link type="text/css" rel="stylesheet" href="//unpkg.com/bootstrap/dist/css/bootstrap.min.css" />
+    <link type="text/css" rel="stylesheet" href="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.css" />
+    <!-- Load Vue followed by BootstrapVue -->
+    <script src="//unpkg.com/vue@latest/dist/vue.min.js"></script>
+    <script src="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.js"></script>
+  </head>
+  <body>
+    <div id="app" style="margin-left: 50px;">
+      <template v-if="loginType === 'username'">
+        <label>Username</label>
+        <input placeholder="Enter your username" v-model="usernameEmail">
+      </template>
+      <template v-else>
+        <label>Email</label>
+        <input placeholder="Enter your email address" v-model="usernameEmail">
+      </template>
+      <b-button variant="success" v-on:click="changeType">Change</b-button>
+    </div>
+
+    <!-- script脚本包裹了一段js代码 -->
+    <script>
+      // 去掉 vue 的 "You are running Vue in development mode" 提示
+      Vue.config.productionTip = false
+      var app = new Vue({
+        // 此处的el属性必须保留，否则组件无法正常使用
+        el: '#app',
+        data: {
+          loginType: 'username',
+          usernameEmail: ''
+        },
+        methods: {
+          changeType: function() {
+            // 切换登陆类型
+            console.log('切换前登陆类型为:' + this.loginType)
+            this.loginType = this.loginType === 'username' ? 'email' : 'username'
+            console.log('切换后登陆类型为:' + this.loginType)
+          },
+        }
+      })
+    </script>
+  </body>
+</html>
+
+```
+
+打开页面并在输入框中输入值：
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210602072930.png)
+
+点击`Change`切换按钮后：
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210602073108.png)
+
+多次点击切换按钮时，可以发现元素中仅紫色区域发生变化：
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210602073209.png)
+
+可以看到`<label>`标签的值发生变化，标签本身还在，同时，`<input>`仅仅替换掉了其`placeholder`的值。说明`label`和`input`都被高效地复用了。
+
+在切换登陆类型时，输入框中的内容被保留了下来。
+
+如果想输入框内容不被保留，可以给`input`输入框指定不同的`key`属性。
+
+
+
+修改一下代码：
+
+```html
+<!DOCTYPE html>
+<!-- v-if_v-show.html -->
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>v-if与v-show条件渲染的使用</title>
+    <!-- 开发环境版本，包含了有帮助的命令行警告 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+    <!-- 参考：https://code.z01.com/bootstrap-vue/docs/#browser -->
+    <!-- Load required Bootstrap and BootstrapVue CSS -->
+    <link type="text/css" rel="stylesheet" href="//unpkg.com/bootstrap/dist/css/bootstrap.min.css" />
+    <link type="text/css" rel="stylesheet" href="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.css" />
+    <!-- Load Vue followed by BootstrapVue -->
+    <script src="//unpkg.com/vue@latest/dist/vue.min.js"></script>
+    <script src="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.js"></script>
+  </head>
+  <body>
+    <div id="app" style="margin-left: 50px;">
+      <template v-if="loginType === 'username'">
+        <label>Username</label>
+        <input placeholder="Enter your username" v-model="username" key="username-input">
+      </template>
+      <template v-else>
+        <label>Email</label>
+        <input placeholder="Enter your email address" v-model="email" key="email-input">
+      </template>
+      <b-button variant="success" v-on:click="changeType">Change</b-button>
+    </div>
+
+    <!-- script脚本包裹了一段js代码 -->
+    <script>
+      // 去掉 vue 的 "You are running Vue in development mode" 提示
+      Vue.config.productionTip = false
+      var app = new Vue({
+        // 此处的el属性必须保留，否则组件无法正常使用
+        el: '#app',
+        data: {
+          loginType: 'username',
+          username: '',
+          email: '',
+        },
+        methods: {
+          changeType: function() {
+            // 切换登陆类型
+            console.log('切换前登陆类型为:' + this.loginType)
+            this.loginType = this.loginType === 'username' ? 'email' : 'username'
+            console.log('切换后登陆类型为:' + this.loginType)
+          },
+        }
+      })
+    </script>
+  </body>
+</html>
+
+```
+
