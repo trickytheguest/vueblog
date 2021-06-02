@@ -260,3 +260,8 @@
 
 ```
 
+此时`label`和`input`都会重新被渲染。
+
+由于有指定`v-model`，所以在切换时，会保留之前输入的用户名或邮箱。但用户名字符和邮箱字符又是独立的。
+
+如在用户名处输入`meizhaohui`，然后点击`Change`，切换到邮箱处，输入`mzh@hellogitlab.com`，然后再点击`Change`切换到用户名输入，可以看到`meizhaohui`仍然还在,再切换的话，又可以看到`mzh@hellogitlab.com`邮箱地址数据也还在。
