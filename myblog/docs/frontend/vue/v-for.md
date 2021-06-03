@@ -75,11 +75,13 @@
 <li v-for="item in items" v-bind:key="item.message">
 ```
 改成
+
 ```html
 <li v-for="(item,index) in items" v-bind:key="index">
-```。
+```
 
 将13行改成:
+
 ```html
 {{index+1}}&nbsp;{{ item.message }}
 ```
