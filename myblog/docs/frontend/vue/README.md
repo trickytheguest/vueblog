@@ -6,3 +6,4 @@
 4. [Vue-Multiselect下拉框强化插件的使用](./use_Vue-Multiselect.md)
 5. [动态绑定class或style样式](./class_style.md)
 6. [v-if与v-show条件渲染](./v-if_v_show.md)
+7. [v-for循环列表](./v-for.md)
