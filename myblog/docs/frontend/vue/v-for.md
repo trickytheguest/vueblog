@@ -70,9 +70,20 @@
 
 由于我们使用的是`v-bind:key="item.message"`来确定`key`属性，多们多次点击`Add`按钮后，会出现多个key值是`new message`的`<li>`,因此此时我们应该修改一下`key`绑定的值，我们可以使用`index`索引值。
 
-将12行的`<li v-for="item in items" v-bind:key="item.message">`改成`<li v-for="(item,index) in items" v-bind:key="index">`。
+将12行的
+```html
+<li v-for="item in items" v-bind:key="item.message">
+```
+改成
+```html
+<li v-for="(item,index) in items" v-bind:key="index">
+```。
 
-将13行改成`{{index+1}}&nbsp;{{ item.message }}`。然后再刷新页面，并多次点击`Add`按钮。效果如下：
+将13行改成:
+```html
+{{index+1}}&nbsp;{{ item.message }}
+```
+然后再刷新页面，并多次点击`Add`按钮。效果如下：
 
 ![](https://meizhaohui.gitee.io/imagebed/img/20210603214600.png)
 
