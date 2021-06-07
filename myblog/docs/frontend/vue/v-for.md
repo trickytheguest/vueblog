@@ -192,8 +192,8 @@
         </thead>
         <tbody>
           <tr v-for="(book, index) in books" v-bind:key="index">
-            <th>{{index + 1}}</th>
-            <th>{{book.title}}</th>
+            <th>{{ index + 1 }}</th>
+            <th>{{ book.title }}</th>
             <th>{{ book.author }}</th>
             <th>{{ book.publishedAt }}</th>
             <th>￥{{ book.price }}</th>
