@@ -435,3 +435,13 @@ Vue在进行`v-for`渲染时，默认使用就地更新策略。即默认使用�
 
 - ` this.splice(index, 0, item);`实现元素的插入。
 - `this.books.splice(index, 1)`实现元素的删除。
+
+另外，我们在之前的章节 [计算属性与侦听器](./computed_watch.md)中已经使用过`this.message.split('').reverse().join('')`来对数组进行反转和结合。
+
+我们也可以在控制台使用数组的方法来改变我们页面的显示。
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210610080953.png)
+
+经过`pop()`和`shift()`操作后，`app.books`的长度变成2了。
+
+你还可以进行其他的方法的测试。此处省略。
