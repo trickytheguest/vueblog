@@ -445,3 +445,75 @@ Vue在进行`v-for`渲染时，默认使用就地更新策略。即默认使用�
 经过`pop()`和`shift()`操作后，`app.books`的长度变成2了。
 
 你还可以进行其他的方法的测试。此处省略。
+
+
+
+## 6. v-for与过滤器联合使用
+
+我们也可以在`v-for`中使用过滤器。如官方示例通过两种方式显示偶数。请看以下代码。
+
+```html
+<!DOCTYPE html>
+<!-- v_for_filter.html -->
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>v-for中显示过滤/排序后的结果</title>
+    <!-- 开发环境版本，包含了有帮助的命令行警告 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <p>通过computed计算属性进行过滤</p>
+      <li v-for="n in evenNumbers">{{ n }}</li>
+      <p>通过methods方法进行过滤</p>
+      <ul v-for="set in sets">
+        <li v-for="n in even(set)">{{ n }}</li>
+      </ul>
+    </div>
+
+    <!-- script脚本包裹了一段js代码 -->
+    <script>
+      var app = new Vue({
+        // 此处的el属性必须保留，否则组件无法正常使用
+        el: '#app',
+        data: {
+          numbers: [1, 2, 3, 4, 5],
+          sets: [
+            [1, 2, 3, 4, 5],
+            [6, 7, 8, 9, 10]
+          ]
+        },
+        computed: {
+          evenNumbers: function() {
+            // javascript数组filter过滤器
+            // 参考：https://www.runoob.com/jsref/jsref-filter.html
+            // 语法：
+            // array.filter(function(currentValue,index,arr), thisValue)
+            return this.numbers.filter(function(value, index, arr) {
+              return value % 2 === 0
+            })
+          }
+        },
+        methods: {
+          even: function(numbers) {
+            console.log('过滤偶数.')
+            return numbers.filter(
+              function(value, index, arr) {
+                return value % 2 === 0
+              }
+            )
+          },
+        }
+      })
+    </script>
+  </body>
+</html>
+
+```
+
+运行结果：
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210612220706.png)
+
+可以看到通过计算属性或方法的方式都可以进行过滤处理。
