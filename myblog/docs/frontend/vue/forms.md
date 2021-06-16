@@ -249,3 +249,54 @@ HTML 表单用于收集用户输入。表单元素包括不同类型的 input �
 
 推荐使用Vue-Multiselect来处理下拉选择。请参考[Vue-Multiselect下拉框强化插件的使用](./use_Vue-Multiselect.md) 。
 
+
+
+## 6. 修饰符
+
+`v-model`支持以下修饰符：
+
+- `.lazy` 在“change”时而非“input”时更新。lazy修饰符是让数据在失去焦点或者回车时才会更新，避免value内容没有打完就执行后续的方法。
+- `.number` 将用户的输入值转为数值类型。
+- `.trim` 自动过滤用户输入的首尾空白字符。
+
+请看以下示例。
+
+```html
+<!DOCTYPE html>
+<!-- forms.html -->
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>表单输入绑定</title>
+    <!-- 开发环境版本，包含了有帮助的命令行警告 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <p>修饰符的使用</p>
+      <p>单行文本</p>
+      <input v-model="message" placeholder="edit me"><br>
+      <input v-model.lazy="message" placeholder="edit me"><br>
+      <p>Message is: {{ message }}</p>
+    </div>
+
+    <!-- script脚本包裹了一段js代码 -->
+    <script>
+      var app = new Vue({
+        // 此处的el属性必须保留，否则组件无法正常使用
+        el: '#app',
+        data: {
+          message: 'message in data',
+        }
+      })
+    </script>
+  </body>
+</html>
+
+```
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210616233054.png)
+
+第一个输入框不使用`.lazy`修饰符，则每次输入时一个字符时都会同步更新<p>标签中的显示，并且会更新第二个输入框中的输入内容。
+
+而第二个输入框因为使用了`.lazy`修饰符，则只有当输入框失去焦点或者按回车键时，才进行同步更新数据。

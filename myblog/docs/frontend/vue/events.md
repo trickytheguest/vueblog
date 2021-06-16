@@ -80,7 +80,7 @@ Vue 允许为 `v-on` 在监听键盘事件时添加按键修饰符。
 				methods:{
 					submit: function() {
 						console.log('submit method.')
-            alert('你输入的用户名为:' + this.username)
+						alert('你输入的用户名为:' + this.username)
 					},
 				}
 			})
