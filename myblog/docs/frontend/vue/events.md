@@ -123,3 +123,4 @@ Vue 允许为 `v-on` 在监听键盘事件时添加按键修饰符。
 <div v-on:click.ctrl="doSomething">Do something</div>
 ```
 
+其他示例请参考 [https://cn.vuejs.org/v2/guide/events.html](https://cn.vuejs.org/v2/guide/events.html)。
