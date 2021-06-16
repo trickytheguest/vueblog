@@ -166,7 +166,6 @@ HTML 表单用于收集用户输入。表单元素包括不同类型的 input �
       <label for="two">Two</label>
       <br>
       <span>Picked: {{ picked }}</span>
-
     </div>
 
     <!-- script脚本包裹了一段js代码 -->
@@ -224,7 +223,6 @@ HTML 表单用于收集用户输入。表单元素包括不同类型的 input �
       </select>
       <br>
       <span>Selected: {{ selected }}</span>
-
     </div>
 
     <!-- script脚本包裹了一段js代码 -->
@@ -258,6 +256,8 @@ HTML 表单用于收集用户输入。表单元素包括不同类型的 input �
 - `.lazy` 在“change”时而非“input”时更新。lazy修饰符是让数据在失去焦点或者回车时才会更新，避免value内容没有打完就执行后续的方法。
 - `.number` 将用户的输入值转为数值类型。
 - `.trim` 自动过滤用户输入的首尾空白字符。
+
+### 6.1 `.lazy`修饰符
 
 请看以下示例。
 
@@ -300,3 +300,102 @@ HTML 表单用于收集用户输入。表单元素包括不同类型的 input �
 第一个输入框不使用`.lazy`修饰符，则每次输入时一个字符时都会同步更新<p>标签中的显示，并且会更新第二个输入框中的输入内容。
 
 而第二个输入框因为使用了`.lazy`修饰符，则只有当输入框失去焦点或者按回车键时，才进行同步更新数据。
+
+### 6.2 `.number`修饰符
+
+我们看以下示例：
+
+```html
+<!DOCTYPE html>
+<!-- forms.html -->
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>表单输入绑定</title>
+    <!-- 开发环境版本，包含了有帮助的命令行警告 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <p>修饰符的使用</p>
+      <input v-model="age" type="number" v-on:change="change">
+      <input v-model.number="age" type="number" v-on:change="change">
+    </div>
+
+    <!-- script脚本包裹了一段js代码 -->
+    <script>
+      var app = new Vue({
+        // 此处的el属性必须保留，否则组件无法正常使用
+        el: '#app',
+        data: {
+          age: 16,
+        },
+        methods: {
+          change: function() {
+            console.log(this.age)
+            console.log(typeof(this.age))
+          }
+        }
+      })
+    </script>
+  </body>
+</html>
+
+```
+
+可以看到，修改第一个输入框数值时，输出的类型是`string`字符串类型。而修改第二个输入框数值时，输出的类型是`number`类型。说明使用`.number`修饰符已经将输入的数据自动转换成数值类型了。
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210617064500.png)
+
+
+
+### 6.3 `.trim`修饰符
+
+我们也可以使用`.trim`修饰符来将用户输入的字符两端的空白字符自动移除。
+
+请看如下示例：
+
+```html
+<!DOCTYPE html>
+<!-- forms.html -->
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>表单输入绑定</title>
+    <!-- 开发环境版本，包含了有帮助的命令行警告 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <p>修饰符的使用</p>
+      <input v-model="username" v-on:change="change">
+      <input v-model.trim="username" v-on:change="change">
+    </div>
+
+    <!-- script脚本包裹了一段js代码 -->
+    <script>
+      var app = new Vue({
+        // 此处的el属性必须保留，否则组件无法正常使用
+        el: '#app',
+        data: {
+          username: '',
+        },
+        methods: {
+          change: function() {
+            console.log("用户名:'" + this.username + "'")
+          }
+        }
+      })
+    </script>
+  </body>
+</html>
+
+```
+
+第一个输入框没有使用`.trim`修饰符，当这个输入框输入带有空格的字符"    mei     "时，在控制台输入中可以看到输出：`用户名:'    mei     '`,可以看到包含了字符串前后的空白字符。
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210617065454.png)
+
+而我们改变第二个输入框时，在输入框后面再增加一些空格，此时仅输出`mei`。并且可以看到，视图被重新渲染，输入框字符两端的空格被自动移除了，仅保留了`mei`。
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210617070002.png)
