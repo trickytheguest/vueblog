@@ -142,3 +142,110 @@ HTML 表单用于收集用户输入。表单元素包括不同类型的 input �
 
 ![](https://meizhaohui.gitee.io/imagebed/img/20210616224352.png)
 
+## 4. 单选按钮
+
+测试代码如下:
+
+```html
+<!DOCTYPE html>
+<!-- forms.html -->
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>表单输入绑定</title>
+    <!-- 开发环境版本，包含了有帮助的命令行警告 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <p>单选按钮</p>
+      <input type="radio" id="one" value="One" v-model="picked">
+      <label for="one">One</label>
+      <br>
+      <input type="radio" id="two" value="Two" v-model="picked">
+      <label for="two">Two</label>
+      <br>
+      <span>Picked: {{ picked }}</span>
+
+    </div>
+
+    <!-- script脚本包裹了一段js代码 -->
+    <script>
+      var app = new Vue({
+        // 此处的el属性必须保留，否则组件无法正常使用
+        el: '#app',
+        data: {
+          picked: ''
+        }
+      })
+    </script>
+  </body>
+</html>
+
+```
+
+此时运行效果如下图:
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210616230527.png)
+
+只能选中一个，选择`One`或者`Two`。
+
+## 5. 下拉选择框
+
+单选时，绑定到一个具体的值。多选时，绑定到一个数组。
+
+```html
+<!DOCTYPE html>
+<!-- forms.html -->
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>表单输入绑定</title>
+    <!-- 开发环境版本，包含了有帮助的命令行警告 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <p>选择框</p>
+      <p>单选</p>
+      <select v-model="singleSelected">
+        <option disabled value="">请选择</option>
+        <option>A</option>
+        <option>B</option>
+        <option>C</option>
+      </select>
+      <span>Selected: {{ singleSelected }}</span><br>
+
+      <p>多选</p>
+      <select v-model="selected" multiple style="width: 50px;">
+        <option>A</option>
+        <option>B</option>
+        <option>C</option>
+      </select>
+      <br>
+      <span>Selected: {{ selected }}</span>
+
+    </div>
+
+    <!-- script脚本包裹了一段js代码 -->
+    <script>
+      var app = new Vue({
+        // 此处的el属性必须保留，否则组件无法正常使用
+        el: '#app',
+        data: {
+          selected: [],
+          singleSelected: '',
+        }
+      })
+    </script>
+  </body>
+</html>
+
+```
+
+注意，多选时，应将`Ctrl`键或`Shift`键按住，来选择多个。
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210616231327.png)
+
+推荐使用Vue-Multiselect来处理下拉选择。请参考[Vue-Multiselect下拉框强化插件的使用](./use_Vue-Multiselect.md) 。
+
