@@ -23,7 +23,11 @@ module.exports = [{
             {
                 text: 'Windows',
                 link: '/OS/Windows/'
-            }
+            },
+            {
+                text: 'Cobbler',
+                link: '/OS/Cobbler/'
+            },
         ]
     },
     {
