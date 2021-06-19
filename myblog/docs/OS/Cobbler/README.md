@@ -372,6 +372,533 @@ cobbler <aclsetup|buildiso|import|list|replicate|report|reposync|sync|validateks
 
 
 
+## 6. 检查cobbler配置
+
+可以使用`cobbler check`来检查cobbler的配置，看还存在哪些问题。
+
+```sh
+[root@cobbler-master ~]# cobbler check
+The following are potential configuration items that you may want to fix:
+
+1 : The 'server' field in /etc/cobbler/settings must be set to something other than localhost, or kickstarting features will not work.  This should be a resolvable hostname or IP for the boot server as reachable by all machines that will use it.
+2 : For PXE to be functional, the 'next_server' field in /etc/cobbler/settings must be set to something other than 127.0.0.1, and should match the IP of the boot server on the PXE network.
+3 : change 'disable' to 'no' in /etc/xinetd.d/tftp
+4 : Some network boot-loaders are missing from /var/lib/cobbler/loaders, you may run 'cobbler get-loaders' to download them, or, if you only want to handle x86/x86_64 netbooting, you may ensure that you have installed a *recent* version of the syslinux package installed and can ignore this message entirely.  Files in this directory, should you want to support all architectures, should include pxelinux.0, menu.c32, elilo.efi, and yaboot. The 'cobbler get-loaders' command is the easiest way to resolve these requirements.
+5 : enable and start rsyncd.service with systemctl
+6 : debmirror package is not installed, it will be required to manage debian deployments and repositories
+7 : The default password used by the sample templates for newly installed machines (default_password_crypted in /etc/cobbler/settings) is still set to 'cobbler' and should be changed, try: "openssl passwd -1 -salt 'random-phrase-here' 'your-password-here'" to generate new one
+8 : fencing tools were not found, and are required to use the (optional) power management features. install cman or fence-agents to use them
+
+Restart cobblerd and then run 'cobbler sync' to apply changes.
+[root@cobbler-master ~]# 
+```
+
+可以看到，存在8个问题：
+
+- 问题1，配置文件`/etc/cobbler/settings`中需要配置`server`字段。
+- 问题2，配置文件`/etc/cobbler/settings`中需要配置`next_server`字段。
+- 问题3，配置文件`/etc/xinetd.d/tftp`需要将`disable`字段设置为`no`。
+- 问题4，需要下载网络加载程序。
+- 问题5，需要开启`rsyncd`服务。
+- 问题6，需要下载安装`debmirror`包，用于管理 debian相关的部署、
+- 问题7，配置文件`/etc/cobbler/settings`中需要配置`default_password_crypted`字段。修改默认的密码。
+- 问题8，需要安装`fencing tools`工具，进行电源管理。
+
+可以将问题6和问题8分为一类，缺失软件包，需要安装。
+
+可以将问题1、问题2、问题7分为一类，cobbler配置文件配置。
+
+问题3、问题4、问题5单独处理。
+
+### 6.1 安装缺失包
+
+我们首先处理问题6和问题8，将缺失的包安装上。
+
+查看官方文档 [https://cobbler.readthedocs.io/en/latest/user-guide.html#power-management](https://cobbler.readthedocs.io/en/latest/user-guide.html#power-management)：
+
+> 7.9. Power Management
+>
+> Cobbler contains a power management feature that allows the user to associate system records in Cobbler with the power management configuration attached to them. This can ease installation by making it easy to reassign systems to new operating systems and then reboot those systems.
+
+即：
+
+> 7.9。 能源管理
+>
+> Cobbler包含一个电源管理功能，允许用户将System Records与其连接的电源管理配置相关联。 这可以通过简单地将系统重新分配给新的操作系统，然后重新启动这些系统来简化安装。
+
+而debmirror包是用于安装ubuntu或debian系统时需要使用的。如果仅需要安装centos系统，则可以不用安装。为了消除这个异常提示，我们还是安装一下。
+
+安装缺失包：
+
+```sh
+[root@cobbler-master ~]# yum install debmirror fence-agents -y
+... 省略
+Installed:
+  debmirror.noarch 1:2.30-4.el7                            fence-agents-all.x86_64 0:4.2.1-41.el7_9.4                           
+
+Dependency Installed:
+  OpenIPMI.x86_64 0:2.0.27-1.el7                                 OpenIPMI-libs.x86_64 0:2.0.27-1.el7                            
+  OpenIPMI-modalias.x86_64 0:2.0.27-1.el7                        audit-libs-python.x86_64 0:2.8.5-4.el7                         
+  autogen-libopts.x86_64 0:5.18-5.el7                            bzip2.x86_64 0:1.0.6-13.el7                                    
+  checkpolicy.x86_64 0:2.5-8.el7                                 device-mapper-multipath.x86_64 0:0.4.9-134.el7_9               
+  device-mapper-multipath-libs.x86_64 0:0.4.9-134.el7_9          ed.x86_64 0:1.9-4.el7                                          
+  fence-agents-amt-ws.x86_64 0:4.2.1-41.el7_9.4                  fence-agents-apc.x86_64 0:4.2.1-41.el7_9.4                     
+  fence-agents-apc-snmp.x86_64 0:4.2.1-41.el7_9.4                fence-agents-bladecenter.x86_64 0:4.2.1-41.el7_9.4             
+  fence-agents-brocade.x86_64 0:4.2.1-41.el7_9.4                 fence-agents-cisco-mds.x86_64 0:4.2.1-41.el7_9.4               
+  fence-agents-cisco-ucs.x86_64 0:4.2.1-41.el7_9.4               fence-agents-common.x86_64 0:4.2.1-41.el7_9.4                  
+  fence-agents-compute.x86_64 0:4.2.1-41.el7_9.4                 fence-agents-drac5.x86_64 0:4.2.1-41.el7_9.4                   
+  fence-agents-eaton-snmp.x86_64 0:4.2.1-41.el7_9.4              fence-agents-emerson.x86_64 0:4.2.1-41.el7_9.4                 
+  fence-agents-eps.x86_64 0:4.2.1-41.el7_9.4                     fence-agents-heuristics-ping.x86_64 0:4.2.1-41.el7_9.4         
+  fence-agents-hpblade.x86_64 0:4.2.1-41.el7_9.4                 fence-agents-ibmblade.x86_64 0:4.2.1-41.el7_9.4                
+  fence-agents-ifmib.x86_64 0:4.2.1-41.el7_9.4                   fence-agents-ilo-moonshot.x86_64 0:4.2.1-41.el7_9.4            
+  fence-agents-ilo-mp.x86_64 0:4.2.1-41.el7_9.4                  fence-agents-ilo-ssh.x86_64 0:4.2.1-41.el7_9.4                 
+  fence-agents-ilo2.x86_64 0:4.2.1-41.el7_9.4                    fence-agents-intelmodular.x86_64 0:4.2.1-41.el7_9.4            
+  fence-agents-ipdu.x86_64 0:4.2.1-41.el7_9.4                    fence-agents-ipmilan.x86_64 0:4.2.1-41.el7_9.4                 
+  fence-agents-kdump.x86_64 0:4.2.1-41.el7_9.4                   fence-agents-mpath.x86_64 0:4.2.1-41.el7_9.4                   
+  fence-agents-redfish.x86_64 0:4.2.1-41.el7_9.4                 fence-agents-rhevm.x86_64 0:4.2.1-41.el7_9.4                   
+  fence-agents-rsa.x86_64 0:4.2.1-41.el7_9.4                     fence-agents-rsb.x86_64 0:4.2.1-41.el7_9.4                     
+  fence-agents-sbd.x86_64 0:4.2.1-41.el7_9.4                     fence-agents-scsi.x86_64 0:4.2.1-41.el7_9.4                    
+  fence-agents-vmware-rest.x86_64 0:4.2.1-41.el7_9.4             fence-agents-vmware-soap.x86_64 0:4.2.1-41.el7_9.4             
+  fence-agents-wti.x86_64 0:4.2.1-41.el7_9.4                     fence-virt.x86_64 0:0.3.2-16.el7                               
+  gnutls.x86_64 0:3.3.29-9.el7_6                                 gnutls-dane.x86_64 0:3.3.29-9.el7_6                            
+  gnutls-utils.x86_64 0:3.3.29-9.el7_6                           ipmitool.x86_64 0:1.8.18-9.el7_7                               
+  libcgroup.x86_64 0:0.41-21.el7                                 libevent.x86_64 0:2.0.21-4.el7                                 
+  libsemanage-python.x86_64 0:2.5-14.el7                         libwsman1.x86_64 0:2.6.3-7.git4391e5c.el7                      
+  net-snmp-libs.x86_64 1:5.7.2-49.el7_9.1                        net-snmp-utils.x86_64 1:5.7.2-49.el7_9.1                       
+  nettle.x86_64 0:2.7.1-9.el7_9                                  openwsman-python.x86_64 0:2.6.3-7.git4391e5c.el7               
+  patch.x86_64 0:2.7.1-12.el7_7                                  perl-Business-ISBN.noarch 0:2.06-2.el7                         
+  perl-Business-ISBN-Data.noarch 0:20120719.001-2.el7            perl-Compress-Raw-Bzip2.x86_64 0:2.061-3.el7                   
+  perl-Compress-Raw-Zlib.x86_64 1:2.061-4.el7                    perl-Data-Dumper.x86_64 0:2.145-3.el7                          
+  perl-Digest.noarch 0:1.17-245.el7                              perl-Digest-MD5.x86_64 0:2.52-3.el7                            
+  perl-Digest-SHA.x86_64 1:5.85-4.el7                            perl-Encode-Locale.noarch 0:1.03-5.el7                         
+  perl-File-Listing.noarch 0:6.04-7.el7                          perl-HTML-Parser.x86_64 0:3.71-4.el7                           
+  perl-HTML-Tagset.noarch 0:3.20-15.el7                          perl-HTTP-Cookies.noarch 0:6.01-5.el7                          
+  perl-HTTP-Daemon.noarch 0:6.01-8.el7                           perl-HTTP-Date.noarch 0:6.02-8.el7                             
+  perl-HTTP-Message.noarch 0:6.06-6.el7                          perl-HTTP-Negotiate.noarch 0:6.01-5.el7                        
+  perl-IO-Compress.noarch 0:2.061-2.el7                          perl-IO-HTML.noarch 0:1.00-2.el7                               
+  perl-IO-Socket-INET6.noarch 0:2.69-5.el7                       perl-IO-Socket-IP.noarch 0:0.21-5.el7                          
+  perl-IO-Socket-SSL.noarch 0:1.94-7.el7                         perl-LWP-MediaTypes.noarch 0:6.02-2.el7                        
+  perl-LockFile-Simple.noarch 0:0.208-1.el7                      perl-Mozilla-CA.noarch 0:20130114-5.el7                        
+  perl-Net-HTTP.noarch 0:6.06-2.el7                              perl-Net-INET6Glue.noarch 0:0.5-3.el7                          
+  perl-Net-LibIDN.x86_64 0:0.12-15.el7                           perl-Net-SSLeay.x86_64 0:1.55-6.el7                            
+  perl-Socket6.x86_64 0:0.23-15.el7                              perl-TimeDate.noarch 1:2.30-2.el7                              
+  perl-URI.noarch 0:1.60-9.el7                                   perl-WWW-RobotRules.noarch 0:6.02-5.el7                        
+  perl-libwww-perl.noarch 0:6.05-2.el7                           pexpect.noarch 0:2.3-11.el7                                    
+  policycoreutils-python.x86_64 0:2.5-34.el7                     python-IPy.noarch 0:0.75-6.el7                                 
+  python-requests.noarch 0:2.6.0-10.el7                          python-six.noarch 0:1.9.0-2.el7                                
+  python-suds.noarch 0:0.4.1-5.el7                               python-urllib3.noarch 0:1.10.2-7.el7                           
+  setools-libs.x86_64 0:3.3.8-4.el7                              sg3_utils.x86_64 1:1.37-19.el7                                 
+  sg3_utils-libs.x86_64 1:1.37-19.el7                            telnet.x86_64 1:0.17-66.el7                                    
+  trousers.x86_64 0:0.3.14-2.el7                                 unbound-libs.x86_64 0:1.6.6-5.el7_8                            
+
+Dependency Updated:
+  kpartx.x86_64 0:0.4.9-134.el7_9                                                                                               
+
+Complete!
+[root@cobbler-master ~]# 
+```
+
+安装完成后，再使用`cobbler check`进行检查一次。
+
+```sh
+[root@cobbler-master ~]# cobbler check
+The following are potential configuration items that you may want to fix:
+
+1 : The 'server' field in /etc/cobbler/settings must be set to something other than localhost, or kickstarting features will not work.  This should be a resolvable hostname or IP for the boot server as reachable by all machines that will use it.
+2 : For PXE to be functional, the 'next_server' field in /etc/cobbler/settings must be set to something other than 127.0.0.1, and should match the IP of the boot server on the PXE network.
+3 : change 'disable' to 'no' in /etc/xinetd.d/tftp
+4 : Some network boot-loaders are missing from /var/lib/cobbler/loaders, you may run 'cobbler get-loaders' to download them, or, if you only want to handle x86/x86_64 netbooting, you may ensure that you have installed a *recent* version of the syslinux package installed and can ignore this message entirely.  Files in this directory, should you want to support all architectures, should include pxelinux.0, menu.c32, elilo.efi, and yaboot. The 'cobbler get-loaders' command is the easiest way to resolve these requirements.
+5 : enable and start rsyncd.service with systemctl
+6 : comment out 'dists' on /etc/debmirror.conf for proper debian support
+7 : comment out 'arches' on /etc/debmirror.conf for proper debian support
+8 : The default password used by the sample templates for newly installed machines (default_password_crypted in /etc/cobbler/settings) is still set to 'cobbler' and should be changed, try: "openssl passwd -1 -salt 'random-phrase-here' 'your-password-here'" to generate new one
+
+Restart cobblerd and then run 'cobbler sync' to apply changes.
+[root@cobbler-master ~]# 
+```
+
+可以看到，此时多出了问题6和问题7是和`debmirror`相关的。我们处理一下配置文件`/etc/debmirror.conf`。为了支持debian，需要将`dists`和`arches`配置给注释掉。
+
+查看配置文件`/etc/debmirror.conf`的内容：
+
+```sh
+[root@cobbler-master ~]# cat -n /etc/debmirror.conf 
+     1	# Default config for debmirror
+     2	
+     3	# The config file is a perl script so take care to follow perl syntax.
+     4	# Any setting in /etc/debmirror.conf overrides these defaults and
+     5	# ~/.debmirror.conf overrides those again. Take only what you need.
+     6	#
+     7	# The syntax is the same as on the command line and variable names
+     8	# loosely match option names. If you don't recognize something here
+     9	# then just stick to the command line.
+    10	#
+    11	# Options specified on the command line override settings in the config
+    12	# files.
+    13	
+    14	# Location of the local mirror (use with care)
+    15	# $mirrordir="/path/to/mirrordir"
+    16	
+    17	# Output options
+    18	$verbose=0;
+    19	$progress=0;
+    20	$debug=0;
+    21	
+    22	# Download options
+    23	$host="ftp.debian.org";
+    24	$user="anonymous";
+    25	$passwd="anonymous@";
+    26	$remoteroot="debian";
+    27	$download_method="ftp";
+    28	@dists="sid";
+    29	@sections="main,main/debian-installer,contrib,non-free";
+    30	@arches="i386";
+    31	# @ignores="";
+    32	# @excludes="";
+    33	# @includes="";
+    34	# @excludes_deb_section="";
+    35	# @limit_priority="";
+    36	$omit_suite_symlinks=0;
+    37	$skippackages=0;
+    38	# @rsync_extra="doc,tools";
+    39	$i18n=0;
+    40	$getcontents=0;
+    41	$do_source=1;
+    42	$max_batch=0;
+    43	
+    44	# @di_dists="dists";
+    45	# @di_archs="arches";
+    46	
+    47	# Save mirror state between runs; value sets validity of cache in days
+    48	$state_cache_days=0;
+    49	
+    50	# Security/Sanity options
+    51	$ignore_release_gpg=0;
+    52	$ignore_release=0;
+    53	$check_md5sums=0;
+    54	$ignore_small_errors=0;
+    55	
+    56	# Cleanup
+    57	$cleanup=0;
+    58	$post_cleanup=1;
+    59	
+    60	# Locking options
+    61	$timeout=300;
+    62	
+    63	# Rsync options
+    64	$rsync_batch=200;
+    65	$rsync_options="-aIL --partial";
+    66	
+    67	# FTP/HTTP options
+    68	$passive=0;
+    69	# $proxy="http://proxy:port/";
+    70	
+    71	# Dry run
+    72	$dry_run=0;
+    73	
+    74	# Don't keep diff files but use them
+    75	$diff_mode="use";
+    76	
+    77	# The config file must return true or perl complains.
+    78	# Always copy this.
+    79	1;
+[root@cobbler-master ~]# 
+[root@cobbler-master ~]# cat -n /etc/debmirror.conf|grep 'dists' 
+    28	@dists="sid";
+    44	# @di_dists="dists";
+[root@cobbler-master ~]# cat -n /etc/debmirror.conf|grep 'arches' 
+    30	@arches="i386";
+    45	# @di_archs="arches";
+```
+
+我们把28行和30行的配置替换掉。
+
+```sh
+# 尝试替换
+[root@cobbler-master ~]# sed -n 's/@dists=/# @dists=/gp' /etc/debmirror.conf 
+# @dists="sid";
+[root@cobbler-master ~]# sed -n 's/@arches=/# @arches=/gp' /etc/debmirror.conf 
+# @arches="i386";
+
+# 直接替换文件内容
+[root@cobbler-master ~]# sed -i 's/@dists=/# @dists=/g' /etc/debmirror.conf 
+[root@cobbler-master ~]# sed -i 's/@arches=/# @arches=/g' /etc/debmirror.conf 
+
+# 再次查看配置信息
+[root@cobbler-master ~]# cat -n /etc/debmirror.conf|grep 'dists' 
+    28	# @dists="sid";
+    44	# @di_dists="dists";
+[root@cobbler-master ~]# cat -n /etc/debmirror.conf|grep 'arches' 
+    30	# @arches="i386";
+    45	# @di_archs="arches";
+```
+
+可以看到`@dists`和`@arches`行已经注释掉了。
+
+再使用`cobbler check`进行检查一次。
+
+```sh
+[root@cobbler-master ~]# cobbler check
+The following are potential configuration items that you may want to fix:
+
+1 : The 'server' field in /etc/cobbler/settings must be set to something other than localhost, or kickstarting features will not work.  This should be a resolvable hostname or IP for the boot server as reachable by all machines that will use it.
+2 : For PXE to be functional, the 'next_server' field in /etc/cobbler/settings must be set to something other than 127.0.0.1, and should match the IP of the boot server on the PXE network.
+3 : change 'disable' to 'no' in /etc/xinetd.d/tftp
+4 : Some network boot-loaders are missing from /var/lib/cobbler/loaders, you may run 'cobbler get-loaders' to download them, or, if you only want to handle x86/x86_64 netbooting, you may ensure that you have installed a *recent* version of the syslinux package installed and can ignore this message entirely.  Files in this directory, should you want to support all architectures, should include pxelinux.0, menu.c32, elilo.efi, and yaboot. The 'cobbler get-loaders' command is the easiest way to resolve these requirements.
+5 : enable and start rsyncd.service with systemctl
+6 : The default password used by the sample templates for newly installed machines (default_password_crypted in /etc/cobbler/settings) is still set to 'cobbler' and should be changed, try: "openssl passwd -1 -salt 'random-phrase-here' 'your-password-here'" to generate new one
+
+Restart cobblerd and then run 'cobbler sync' to apply changes.
+```
+
+可以发现`debmirror`异常已经没有了。
+
+
+
+### 6.2  cobbler配置文件修改
+
+本节涉及到第二类问题，`server`、`next_server`和`default_password_crypted`的修改。
+
+在修改配置文件前，我们开启下动态更新配置文件开关。
+
+查看官方文档 [https://cobbler.readthedocs.io/en/latest/cobbler-conf.html#allow-dynamic-settings](https://cobbler.readthedocs.io/en/latest/cobbler-conf.html#allow-dynamic-settings)
+
+> ### allow_dynamic_settings
+>
+> If `True`, Cobbler will allow settings to be changed dynamically without a restart of the `cobblerd` daemon. You can only change this variable by manually editing the settings file, and you MUST restart `cobblerd` after changing it.
+>
+> default: `False`
+
+可以知道。通过开启该配置，可以在修改配置文件后，不需要重置cobblerd服务。因此我们先手动修改一下该配置，并重置cobblerd服务，后面再修改配置就不需要重置了。
+
+修改前，先备份配置文件。
+
+```sh
+[root@cobbler-master ~]# cp /etc/cobbler/settings{,.bak}
+[root@cobbler-master ~]# ls /etc/cobbler/settings*
+/etc/cobbler/settings  /etc/cobbler/settings.bak
+```
+
+查看当前allow_dynamic_settings配置信息：
+
+```sh
+[root@cobbler-master ~]# grep 'allow_dynamic_settings' /etc/cobbler/settings
+allow_dynamic_settings: 0
+
+
+# 获取帮助信息
+[root@cobbler-master ~]# cobbler setting --help
+usage
+=====
+cobbler setting edit
+cobbler setting report
+[root@cobbler-master ~]# cobbler setting report --help
+Usage: cobbler [options]
+
+Options:
+  -h, --help   show this help message and exit
+  --name=NAME  name of object
+  
+  
+# 查看当前allow_dynamic_settings的配置信息  
+[root@cobbler-master ~]# cobbler setting report --name=allow_dynamic_settings
+allow_dynamic_settings                  : 0
+```
+
+我们使用`sed`命令替换掉：
+
+```sh
+# 尝试替换
+[root@cobbler-master ~]# sed -n 's/allow_dynamic_settings: 0/allow_dynamic_settings: 1/gp' /etc/cobbler/settings
+allow_dynamic_settings: 1
+
+# 直接替换文件中内容
+[root@cobbler-master ~]# sed -i 's/allow_dynamic_settings: 0/allow_dynamic_settings: 1/g' /etc/cobbler/settings
+
+# 再次查看配置文件
+[root@cobbler-master ~]# grep 'allow_dynamic_settings' /etc/cobbler/settings
+allow_dynamic_settings: 1
+```
+
+重启`cobblerd`服务：
+
+```sh
+[root@cobbler-master ~]# systemctl restart cobblerd && systemctl status cobblerd
+● cobblerd.service - Cobbler Helper Daemon
+   Loaded: loaded (/usr/lib/systemd/system/cobblerd.service; enabled; vendor preset: disabled)
+   Active: active (running) since 六 2021-06-19 12:13:18 CST; 20ms ago
+  Process: 2120 ExecStartPost=/usr/bin/touch /usr/share/cobbler/web/cobbler.wsgi (code=exited, status=0/SUCCESS)
+ Main PID: 2119 (cobblerd)
+   CGroup: /system.slice/cobblerd.service
+           └─2119 /usr/bin/python2 -s /usr/bin/cobblerd -F
+
+6月 19 12:13:18 cobbler-master systemd[1]: Stopped Cobbler Helper Daemon.
+6月 19 12:13:18 cobbler-master systemd[1]: Starting Cobbler Helper Daemon...
+6月 19 12:13:18 cobbler-master systemd[1]: Started Cobbler Helper Daemon.
+[root@cobbler-master ~]# 
+```
+
+下面我们开始修改配置文件。
+
+#### 6.2.1 修改`server`和`next_server`配置
+
+- `server`选项是指cobbler server的ip地址，修改服务器的IP地址`192.168.2.20`。
+- `next_server`选项被用在DHCP/PXE上，用来作为DHCP Server和TFTP Server的IP地址，一般和Cobbler服务地址使用一个IP。
+
+我们使用命令`cobbler setting edit`命令来动态更新配置文件
+
+```sh
+# 获取帮助信息
+[root@cobbler-master ~]# cobbler setting edit --help
+Usage: cobbler [options]
+
+Options:
+  -h, --help     show this help message and exit
+  --name=NAME    Name (Ex: server)
+  --value=VALUE  Value (Ex: 127.0.0.1)
+
+# 获取帮助信息
+[root@cobbler-master ~]# cobbler setting report --help
+Usage: cobbler [options]
+
+Options:
+  -h, --help   show this help message and exit
+  --name=NAME  name of object
+```
+
+先查看一下配置信息：
+
+```sh
+[root@cobbler-master ~]# cobbler setting report --name=server
+server                                  : 127.0.0.1
+[root@cobbler-master ~]# cobbler setting report --name=next_server
+next_server                             : 127.0.0.1
+```
+
+更新：
+
+```sh
+[root@cobbler-master ~]# cobbler setting edit --name=server --value="192.168.2.20"
+[root@cobbler-master ~]# cobbler setting edit --name=next_server --value="192.168.2.20"
+[root@cobbler-master ~]# cobbler setting report --name=server
+server                                  : 192.168.2.20
+[root@cobbler-master ~]# cobbler setting report --name=next_server
+next_server                             : 192.168.2.20
+```
+
+可以看到`server`和`next_server`配置已经更新成功。
+
+再使用`cobbler check`进行检查一次。
+
+```sh
+[root@cobbler-master ~]# cobbler check
+The following are potential configuration items that you may want to fix:
+
+1 : change 'disable' to 'no' in /etc/xinetd.d/tftp
+2 : Some network boot-loaders are missing from /var/lib/cobbler/loaders, you may run 'cobbler get-loaders' to download them, or, if you only want to handle x86/x86_64 netbooting, you may ensure that you have installed a *recent* version of the syslinux package installed and can ignore this message entirely.  Files in this directory, should you want to support all architectures, should include pxelinux.0, menu.c32, elilo.efi, and yaboot. The 'cobbler get-loaders' command is the easiest way to resolve these requirements.
+3 : enable and start rsyncd.service with systemctl
+4 : The default password used by the sample templates for newly installed machines (default_password_crypted in /etc/cobbler/settings) is still set to 'cobbler' and should be changed, try: "openssl passwd -1 -salt 'random-phrase-here' 'your-password-here'" to generate new one
+
+Restart cobblerd and then run 'cobbler sync' to apply changes.
+[root@cobbler-master ~]# 
+```
+
+可能发现`server`和`next_server`异常已经没有了。
+
+
+
+搓着处理`default_password_crypted`配置的问题。
+
+#### 6.2.2 修改`default_password_crypted`配置
+
+`default_password_crypted`配置用于指定安装新系统时`root`账号的密码。
+
+按提示可以使用命令`openssl passwd -1 -salt 'random-phrase-here' 'your-password-here'`生成加密的密码。
+
+查看默认密码：
+
+```sh
+[root@cobbler-master ~]# cobbler setting report --name=default_password_crypted
+default_password_crypted                : $1$mF86/UHC$WvcIcX2t6crBz2onWxyac.
+```
+
+可以看到，这是一个加密后的密码字符串。
+
+我们需要更新该密码。假设我们使用`admin.CB@nodes1234`作为新的系统的默认密码(注意，该密码不要让别人知道，此处我是随意取的)。那么我们需要进行以下处理，生成加密后的密码字符串。
+
+
+
+生成随机盐：
+
+```sh
+[root@cobbler-master ~]# openssl rand --help
+Usage: rand [options] num
+where options are
+-out file             - write to file
+-engine e             - use engine e, possibly a hardware device.
+-rand file:file:... - seed PRNG from files
+-base64               - base64 encode output
+-hex                  - hex encode output
+[root@cobbler-master ~]# salt=$( openssl rand -hex 6 )
+[root@cobbler-master ~]# echo $salt
+ccd64bfd742f
+```
+
+使用刚才生成的随机盐进行密码加密：
+
+```sh
+[root@cobbler-master ~]# openssl passwd --help
+Usage: passwd [options] [passwords]
+where options are
+-crypt             standard Unix password algorithm (default)
+-1                 MD5-based password algorithm
+-apr1              MD5-based password algorithm, Apache variant
+-salt string       use provided salt
+-in file           read passwords from file
+-stdin             read passwords from stdin
+-noverify          never verify when reading password from terminal
+-quiet             no warnings
+-table             format output as table
+-reverse           switch table columns
+[root@cobbler-master ~]# scpasswd=$( openssl passwd -1 -salt "${salt}" "admin.CB@nodes1234" )
+[root@cobbler-master ~]# echo $scpasswd 
+$1$ccd64bfd$5VwI.zd5m7wpraFvvClhT.
+```
+
+更新默认密码：
+
+```sh
+[root@cobbler-master ~]# cobbler setting edit --name=default_password_crypted --value="${scpasswd}"
+[root@cobbler-master ~]# cobbler setting report --name=default_password_crypted
+default_password_crypted                : $1$ccd64bfd$5VwI.zd5m7wpraFvvClhT.
+```
+
+再使用`cobbler check`进行检查一次。
+
+```sh
+[root@cobbler-master ~]# cobbler check
+The following are potential configuration items that you may want to fix:
+
+1 : change 'disable' to 'no' in /etc/xinetd.d/tftp
+2 : Some network boot-loaders are missing from /var/lib/cobbler/loaders, you may run 'cobbler get-loaders' to download them, or, if you only want to handle x86/x86_64 netbooting, you may ensure that you have installed a *recent* version of the syslinux package installed and can ignore this message entirely.  Files in this directory, should you want to support all architectures, should include pxelinux.0, menu.c32, elilo.efi, and yaboot. The 'cobbler get-loaders' command is the easiest way to resolve these requirements.
+3 : enable and start rsyncd.service with systemctl
+
+Restart cobblerd and then run 'cobbler sync' to apply changes.
+[root@cobbler-master ~]# 
+```
+
+可以看到，cobbler配置文件相关的异常已经没有了。
+
+### 6.3 修改TFTP配置文件
+
+先备份配置文件`/etc/xinetd.d/tftp`:
+
+```sh
+[root@cobbler-master ~]# cp /etc/xinetd.d/tftp{,.bak}
+[root@cobbler-master ~]# ls /etc/xinetd.d/tftp*
+/etc/xinetd.d/tftp  /etc/xinetd.d/tftp.bak
+```
+
 
 
 
