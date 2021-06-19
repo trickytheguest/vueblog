@@ -1942,6 +1942,31 @@ Hint: Some lines were ellipsized, use -l to show in full.
 
 同样，我们点击`cobbler-node1`虚拟机，依次点击`管理`-`退出`-`强制退出`-`确定`，退出虚拟机。
 
+有可能是因为我们没有配置镜像文件，导致后续步骤不能执行。因此我们先配置一下镜像。
+
+## 11. 镜像配置
+
+### 11.1 上传镜像
+
+上传镜像到cobbler服务器上。
+
+在宿主机上面执行以下命令，将iso文件上传到服务器:
+
+```sh
+meizhaohui@ubuntu:~$ scp ~/Downloads/CentOS-7-x86_64-Minimal-2009.iso root@192.168.2.20:/root/
+root@192.168.2.20's password: 
+CentOS-7-x86_64-Minimal-2009.iso              100%  973MB  32.7MB/s   00:29 
+```
+
+再在服务器端查看一下，看看文件是否上传成功：
+
+```sh
+[root@cobbler-master ~]# ls CentOS-7-x86_64-Minimal-2009.iso 
+CentOS-7-x86_64-Minimal-2009.iso
+```
+
+说明文件上传成功。
+
 
 
 参考：
