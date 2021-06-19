@@ -899,6 +899,497 @@ Restart cobblerd and then run 'cobbler sync' to apply changes.
 /etc/xinetd.d/tftp  /etc/xinetd.d/tftp.bak
 ```
 
+查看配置内容：
+
+```sh
+[root@cobbler-master ~]# cat -n /etc/xinetd.d/tftp
+     1	# default: off
+     2	# description: The tftp server serves files using the trivial file transfer \
+     3	#	protocol.  The tftp protocol is often used to boot diskless \
+     4	#	workstations, download configuration files to network-aware printers, \
+     5	#	and to start the installation process for some operating systems.
+     6	service tftp
+     7	{
+     8		socket_type		= dgram
+     9		protocol		= udp
+    10		wait			= yes
+    11		user			= root
+    12		server			= /usr/sbin/in.tftpd
+    13		server_args		= -s /var/lib/tftpboot
+    14		disable			= yes
+    15		per_source		= 11
+    16		cps			= 100 2
+    17		flags			= IPv4
+    18	}
+[root@cobbler-master ~]# 
+```
+
+将第14行的`disable			= yes`改成`disable			= no`。修改后配置文件 如下：
+
+```sh
+[root@cobbler-master ~]# cat -n /etc/xinetd.d/tftp
+     1	# default: off
+     2	# description: The tftp server serves files using the trivial file transfer \
+     3	#	protocol.  The tftp protocol is often used to boot diskless \
+     4	#	workstations, download configuration files to network-aware printers, \
+     5	#	and to start the installation process for some operating systems.
+     6	service tftp
+     7	{
+     8		socket_type		= dgram
+     9		protocol		= udp
+    10		wait			= yes
+    11		user			= root
+    12		server			= /usr/sbin/in.tftpd
+    13		server_args		= -s /var/lib/tftpboot
+    14		disable			= no
+    15		per_source		= 11
+    16		cps			= 100 2
+    17		flags			= IPv4
+    18	}
+```
+
+启动`xinetd`服务：
+
+```sh
+# 设置开机自启动
+[root@cobbler-master ~]# systemctl enable xinetd
+
+# 启动xinetd服务，并查看服务状态
+[root@cobbler-master ~]# systemctl start xinetd && systemctl status xinetd
+● xinetd.service - Xinetd A Powerful Replacement For Inetd
+   Loaded: loaded (/usr/lib/systemd/system/xinetd.service; enabled; vendor preset: enabled)
+   Active: active (running) since 六 2021-06-19 14:49:10 CST; 4ms ago
+  Process: 2310 ExecStart=/usr/sbin/xinetd -stayalive -pidfile /var/run/xinetd.pid $EXTRAOPTIONS (code=exited, status=0/SUCCESS)
+ Main PID: 2311 (xinetd)
+   CGroup: /system.slice/xinetd.service
+           └─2311 /usr/sbin/xinetd -stayalive -pidfile /var/run/xinetd.pid
+
+6月 19 14:49:10 cobbler-master xinetd[2311]: removing discard
+6月 19 14:49:10 cobbler-master xinetd[2311]: removing discard
+6月 19 14:49:10 cobbler-master xinetd[2311]: removing echo
+6月 19 14:49:10 cobbler-master xinetd[2311]: removing echo
+6月 19 14:49:10 cobbler-master xinetd[2311]: removing tcpmux
+6月 19 14:49:10 cobbler-master xinetd[2311]: removing time
+6月 19 14:49:10 cobbler-master xinetd[2311]: removing time
+6月 19 14:49:10 cobbler-master xinetd[2311]: xinetd Version 2.3.15 started with libwrap loadavg labeled-networking opt...ed in.
+6月 19 14:49:10 cobbler-master xinetd[2311]: Started working: 1 available service
+6月 19 14:49:10 cobbler-master systemd[1]: Started Xinetd A Powerful Replacement For Inetd.
+Hint: Some lines were ellipsized, use -l to show in full.
+```
+
+可以看到服务已经正常启动。这样TFTP服务就启动成功了。
+
+我们再使用`cobbler check`进行检查一次。
+
+```sh
+[root@cobbler-master ~]# cobbler check
+The following are potential configuration items that you may want to fix:
+
+1 : Some network boot-loaders are missing from /var/lib/cobbler/loaders, you may run 'cobbler get-loaders' to download them, or, if you only want to handle x86/x86_64 netbooting, you may ensure that you have installed a *recent* version of the syslinux package installed and can ignore this message entirely.  Files in this directory, should you want to support all architectures, should include pxelinux.0, menu.c32, elilo.efi, and yaboot. The 'cobbler get-loaders' command is the easiest way to resolve these requirements.
+2 : enable and start rsyncd.service with systemctl
+
+Restart cobblerd and then run 'cobbler sync' to apply changes.
+```
+
+可以看到只剩下两个问题需要处理了。
+
+### 6.4 启动rsyncd服务
+
+rsync是一种快速且极其通用的文件复制工具。我们使用以下命令将该服务启动起来。
+
+````sh
+[root@cobbler-master ~]# systemctl enable rsyncd
+Created symlink from /etc/systemd/system/multi-user.target.wants/rsyncd.service to /usr/lib/systemd/system/rsyncd.service.
+[root@cobbler-master ~]# systemctl start rsyncd && systemctl status rsyncd
+● rsyncd.service - fast remote file copy program daemon
+   Loaded: loaded (/usr/lib/systemd/system/rsyncd.service; enabled; vendor preset: disabled)
+   Active: active (running) since 六 2021-06-19 14:56:21 CST; 6ms ago
+ Main PID: 2350 (rsync)
+   CGroup: /system.slice/rsyncd.service
+           └─2350 /usr/bin/rsync --daemon --no-detach
+
+6月 19 14:56:21 cobbler-master systemd[1]: Started fast remote file copy program daemon.
+6月 19 14:56:21 cobbler-master rsyncd[2350]: rsyncd version 3.1.2 starting, listening on port 873
+[root@cobbler-master ~]# 
+````
+
+可以看到`rsyncd`服务已经启动成功，并监听`873`端口。
+
+我们再使用`cobbler check`进行检查一次。
+
+```sh
+[root@cobbler-master ~]# cobbler check
+The following are potential configuration items that you may want to fix:
+
+1 : Some network boot-loaders are missing from /var/lib/cobbler/loaders, you may run 'cobbler get-loaders' to download them, or, if you only want to handle x86/x86_64 netbooting, you may ensure that you have installed a *recent* version of the syslinux package installed and can ignore this message entirely.  Files in this directory, should you want to support all architectures, should include pxelinux.0, menu.c32, elilo.efi, and yaboot. The 'cobbler get-loaders' command is the easiest way to resolve these requirements.
+
+Restart cobblerd and then run 'cobbler sync' to apply changes.
+```
+
+可以看到，只有最后一个问题需要处理了。
+
+### 6.5 下载网络启动器文件
+
+按提示信息，直接运行命令`cobbler get-loaders`:
+
+```sh
+# 运行第1次
+[root@cobbler-master ~]# cobbler get-loaders
+task started: 2021-06-19_150035_get_loaders
+task started (id=Download Bootloader Content, time=Sat Jun 19 15:00:35 2021)
+downloading https://cobbler.github.io/loaders/README to /var/lib/cobbler/loaders/README
+Exception occured: <class 'urlgrabber.grabber.URLGrabError'>
+Exception value: [Errno 14] curl#60 - "Issuer certificate is invalid."
+Exception Info:
+  File "/usr/lib/python2.7/site-packages/cobbler/remote.py", line 82, in run
+    rc = self._run(self)
+   File "/usr/lib/python2.7/site-packages/cobbler/remote.py", line 176, in runner
+    return self.remote.api.dlcontent(self.options.get("force",False), self.logger)
+   File "/usr/lib/python2.7/site-packages/cobbler/api.py", line 735, in dlcontent
+    return grabber.run(force)
+   File "/usr/lib/python2.7/site-packages/cobbler/action_dlcontent.py", line 73, in run
+    urlgrabber.grabber.urlgrab(src, filename=dst, proxies=proxies)
+   File "/usr/lib/python2.7/site-packages/urlgrabber/grabber.py", line 773, in urlgrab
+    return default_grabber.urlgrab(url, filename, **kwargs)
+   File "/usr/lib/python2.7/site-packages/urlgrabber/grabber.py", line 1220, in urlgrab
+    return _run_callback(opts.failfunc, opts)
+   File "/usr/lib/python2.7/site-packages/urlgrabber/grabber.py", line 1071, in _run_callback
+    return cb(obj)
+   File "/usr/lib/python2.7/site-packages/urlgrabber/grabber.py", line 1065, in _do_raise
+    raise obj.exception
+
+!!! TASK FAILED !!!
+
+# 运行第2次
+[root@cobbler-master ~]# cobbler get-loaders
+task started: 2021-06-19_150041_get_loaders
+task started (id=Download Bootloader Content, time=Sat Jun 19 15:00:41 2021)
+path /var/lib/cobbler/loaders/README already exists, not overwriting existing content, use --force if you wish to update
+downloading https://cobbler.github.io/loaders/COPYING.elilo to /var/lib/cobbler/loaders/COPYING.elilo
+Exception occured: <class 'urlgrabber.grabber.URLGrabError'>
+Exception value: [Errno 14] curl#60 - "Issuer certificate is invalid."
+Exception Info:
+  File "/usr/lib/python2.7/site-packages/cobbler/remote.py", line 82, in run
+    rc = self._run(self)
+   File "/usr/lib/python2.7/site-packages/cobbler/remote.py", line 176, in runner
+    return self.remote.api.dlcontent(self.options.get("force",False), self.logger)
+   File "/usr/lib/python2.7/site-packages/cobbler/api.py", line 735, in dlcontent
+    return grabber.run(force)
+   File "/usr/lib/python2.7/site-packages/cobbler/action_dlcontent.py", line 73, in run
+    urlgrabber.grabber.urlgrab(src, filename=dst, proxies=proxies)
+   File "/usr/lib/python2.7/site-packages/urlgrabber/grabber.py", line 773, in urlgrab
+    return default_grabber.urlgrab(url, filename, **kwargs)
+   File "/usr/lib/python2.7/site-packages/urlgrabber/grabber.py", line 1220, in urlgrab
+    return _run_callback(opts.failfunc, opts)
+   File "/usr/lib/python2.7/site-packages/urlgrabber/grabber.py", line 1071, in _run_callback
+    return cb(obj)
+   File "/usr/lib/python2.7/site-packages/urlgrabber/grabber.py", line 1065, in _do_raise
+    raise obj.exception
+
+!!! TASK FAILED !!!
+
+# 运行第3次
+[root@cobbler-master ~]# cobbler get-loaders
+task started: 2021-06-19_150055_get_loaders
+task started (id=Download Bootloader Content, time=Sat Jun 19 15:00:55 2021)
+path /var/lib/cobbler/loaders/README already exists, not overwriting existing content, use --force if you wish to update
+path /var/lib/cobbler/loaders/COPYING.elilo already exists, not overwriting existing content, use --force if you wish to update
+downloading https://cobbler.github.io/loaders/COPYING.yaboot to /var/lib/cobbler/loaders/COPYING.yaboot
+Exception occured: <class 'urlgrabber.grabber.URLGrabError'>
+Exception value: [Errno 14] curl#60 - "Issuer certificate is invalid."
+Exception Info:
+  File "/usr/lib/python2.7/site-packages/cobbler/remote.py", line 82, in run
+    rc = self._run(self)
+   File "/usr/lib/python2.7/site-packages/cobbler/remote.py", line 176, in runner
+    return self.remote.api.dlcontent(self.options.get("force",False), self.logger)
+   File "/usr/lib/python2.7/site-packages/cobbler/api.py", line 735, in dlcontent
+    return grabber.run(force)
+   File "/usr/lib/python2.7/site-packages/cobbler/action_dlcontent.py", line 73, in run
+    urlgrabber.grabber.urlgrab(src, filename=dst, proxies=proxies)
+   File "/usr/lib/python2.7/site-packages/urlgrabber/grabber.py", line 773, in urlgrab
+    return default_grabber.urlgrab(url, filename, **kwargs)
+   File "/usr/lib/python2.7/site-packages/urlgrabber/grabber.py", line 1220, in urlgrab
+    return _run_callback(opts.failfunc, opts)
+   File "/usr/lib/python2.7/site-packages/urlgrabber/grabber.py", line 1071, in _run_callback
+    return cb(obj)
+   File "/usr/lib/python2.7/site-packages/urlgrabber/grabber.py", line 1065, in _do_raise
+    raise obj.exception
+
+!!! TASK FAILED !!!
+[root@cobbler-master ~]# 
+
+# 运行第4次
+[root@cobbler-master ~]# cobbler get-loaders
+task started: 2021-06-19_150140_get_loaders
+task started (id=Download Bootloader Content, time=Sat Jun 19 15:01:40 2021)
+path /var/lib/cobbler/loaders/README already exists, not overwriting existing content, use --force if you wish to update
+path /var/lib/cobbler/loaders/COPYING.elilo already exists, not overwriting existing content, use --force if you wish to update
+path /var/lib/cobbler/loaders/COPYING.yaboot already exists, not overwriting existing content, use --force if you wish to update
+downloading https://cobbler.github.io/loaders/COPYING.syslinux to /var/lib/cobbler/loaders/COPYING.syslinux
+Exception occured: <class 'urlgrabber.grabber.URLGrabError'>
+Exception value: [Errno 14] curl#60 - "Issuer certificate is invalid."
+Exception Info:
+  File "/usr/lib/python2.7/site-packages/cobbler/remote.py", line 82, in run
+    rc = self._run(self)
+   File "/usr/lib/python2.7/site-packages/cobbler/remote.py", line 176, in runner
+    return self.remote.api.dlcontent(self.options.get("force",False), self.logger)
+   File "/usr/lib/python2.7/site-packages/cobbler/api.py", line 735, in dlcontent
+    return grabber.run(force)
+   File "/usr/lib/python2.7/site-packages/cobbler/action_dlcontent.py", line 73, in run
+    urlgrabber.grabber.urlgrab(src, filename=dst, proxies=proxies)
+   File "/usr/lib/python2.7/site-packages/urlgrabber/grabber.py", line 773, in urlgrab
+    return default_grabber.urlgrab(url, filename, **kwargs)
+   File "/usr/lib/python2.7/site-packages/urlgrabber/grabber.py", line 1220, in urlgrab
+    return _run_callback(opts.failfunc, opts)
+   File "/usr/lib/python2.7/site-packages/urlgrabber/grabber.py", line 1071, in _run_callback
+    return cb(obj)
+   File "/usr/lib/python2.7/site-packages/urlgrabber/grabber.py", line 1065, in _do_raise
+    raise obj.exception
+
+!!! TASK FAILED !!!
+[root@cobbler-master ~]# 
+
+# 运行第5次
+[root@cobbler-master ~]# cobbler get-loaders
+task started: 2021-06-19_150217_get_loaders
+task started (id=Download Bootloader Content, time=Sat Jun 19 15:02:17 2021)
+path /var/lib/cobbler/loaders/README already exists, not overwriting existing content, use --force if you wish to update
+path /var/lib/cobbler/loaders/COPYING.elilo already exists, not overwriting existing content, use --force if you wish to update
+path /var/lib/cobbler/loaders/COPYING.yaboot already exists, not overwriting existing content, use --force if you wish to update
+path /var/lib/cobbler/loaders/COPYING.syslinux already exists, not overwriting existing content, use --force if you wish to update
+downloading https://cobbler.github.io/loaders/elilo-3.8-ia64.efi to /var/lib/cobbler/loaders/elilo-ia64.efi
+Exception occured: <class 'urlgrabber.grabber.URLGrabError'>
+Exception value: [Errno 14] curl#60 - "Issuer certificate is invalid."
+Exception Info:
+  File "/usr/lib/python2.7/site-packages/cobbler/remote.py", line 82, in run
+    rc = self._run(self)
+   File "/usr/lib/python2.7/site-packages/cobbler/remote.py", line 176, in runner
+    return self.remote.api.dlcontent(self.options.get("force",False), self.logger)
+   File "/usr/lib/python2.7/site-packages/cobbler/api.py", line 735, in dlcontent
+    return grabber.run(force)
+   File "/usr/lib/python2.7/site-packages/cobbler/action_dlcontent.py", line 73, in run
+    urlgrabber.grabber.urlgrab(src, filename=dst, proxies=proxies)
+   File "/usr/lib/python2.7/site-packages/urlgrabber/grabber.py", line 773, in urlgrab
+    return default_grabber.urlgrab(url, filename, **kwargs)
+   File "/usr/lib/python2.7/site-packages/urlgrabber/grabber.py", line 1220, in urlgrab
+    return _run_callback(opts.failfunc, opts)
+   File "/usr/lib/python2.7/site-packages/urlgrabber/grabber.py", line 1071, in _run_callback
+    return cb(obj)
+   File "/usr/lib/python2.7/site-packages/urlgrabber/grabber.py", line 1065, in _do_raise
+    raise obj.exception
+
+!!! TASK FAILED !!!
+[root@cobbler-master ~]# 
+
+# 运行第6次
+[root@cobbler-master ~]# cobbler get-loaders
+task started: 2021-06-19_150247_get_loaders
+task started (id=Download Bootloader Content, time=Sat Jun 19 15:02:47 2021)
+path /var/lib/cobbler/loaders/README already exists, not overwriting existing content, use --force if you wish to update
+path /var/lib/cobbler/loaders/COPYING.elilo already exists, not overwriting existing content, use --force if you wish to update
+path /var/lib/cobbler/loaders/COPYING.yaboot already exists, not overwriting existing content, use --force if you wish to update
+path /var/lib/cobbler/loaders/COPYING.syslinux already exists, not overwriting existing content, use --force if you wish to update
+path /var/lib/cobbler/loaders/elilo-ia64.efi already exists, not overwriting existing content, use --force if you wish to update
+downloading https://cobbler.github.io/loaders/yaboot-1.3.17 to /var/lib/cobbler/loaders/yaboot
+Exception occured: <class 'urlgrabber.grabber.URLGrabError'>
+Exception value: [Errno 14] curl#60 - "Issuer certificate is invalid."
+Exception Info:
+  File "/usr/lib/python2.7/site-packages/cobbler/remote.py", line 82, in run
+    rc = self._run(self)
+   File "/usr/lib/python2.7/site-packages/cobbler/remote.py", line 176, in runner
+    return self.remote.api.dlcontent(self.options.get("force",False), self.logger)
+   File "/usr/lib/python2.7/site-packages/cobbler/api.py", line 735, in dlcontent
+    return grabber.run(force)
+   File "/usr/lib/python2.7/site-packages/cobbler/action_dlcontent.py", line 73, in run
+    urlgrabber.grabber.urlgrab(src, filename=dst, proxies=proxies)
+   File "/usr/lib/python2.7/site-packages/urlgrabber/grabber.py", line 773, in urlgrab
+    return default_grabber.urlgrab(url, filename, **kwargs)
+   File "/usr/lib/python2.7/site-packages/urlgrabber/grabber.py", line 1220, in urlgrab
+    return _run_callback(opts.failfunc, opts)
+   File "/usr/lib/python2.7/site-packages/urlgrabber/grabber.py", line 1071, in _run_callback
+    return cb(obj)
+   File "/usr/lib/python2.7/site-packages/urlgrabber/grabber.py", line 1065, in _do_raise
+    raise obj.exception
+
+!!! TASK FAILED !!!
+[root@cobbler-master ~]#
+
+# 运行第7次
+[root@cobbler-master ~]# cobbler get-loaders
+task started: 2021-06-19_150327_get_loaders
+task started (id=Download Bootloader Content, time=Sat Jun 19 15:03:27 2021)
+path /var/lib/cobbler/loaders/README already exists, not overwriting existing content, use --force if you wish to update
+path /var/lib/cobbler/loaders/COPYING.elilo already exists, not overwriting existing content, use --force if you wish to update
+path /var/lib/cobbler/loaders/COPYING.yaboot already exists, not overwriting existing content, use --force if you wish to update
+path /var/lib/cobbler/loaders/COPYING.syslinux already exists, not overwriting existing content, use --force if you wish to update
+path /var/lib/cobbler/loaders/elilo-ia64.efi already exists, not overwriting existing content, use --force if you wish to update
+path /var/lib/cobbler/loaders/yaboot already exists, not overwriting existing content, use --force if you wish to update
+downloading https://cobbler.github.io/loaders/pxelinux.0-3.86 to /var/lib/cobbler/loaders/pxelinux.0
+Exception occured: <class 'urlgrabber.grabber.URLGrabError'>
+Exception value: [Errno 14] curl#60 - "Issuer certificate is invalid."
+Exception Info:
+  File "/usr/lib/python2.7/site-packages/cobbler/remote.py", line 82, in run
+    rc = self._run(self)
+   File "/usr/lib/python2.7/site-packages/cobbler/remote.py", line 176, in runner
+    return self.remote.api.dlcontent(self.options.get("force",False), self.logger)
+   File "/usr/lib/python2.7/site-packages/cobbler/api.py", line 735, in dlcontent
+    return grabber.run(force)
+   File "/usr/lib/python2.7/site-packages/cobbler/action_dlcontent.py", line 73, in run
+    urlgrabber.grabber.urlgrab(src, filename=dst, proxies=proxies)
+   File "/usr/lib/python2.7/site-packages/urlgrabber/grabber.py", line 773, in urlgrab
+    return default_grabber.urlgrab(url, filename, **kwargs)
+   File "/usr/lib/python2.7/site-packages/urlgrabber/grabber.py", line 1220, in urlgrab
+    return _run_callback(opts.failfunc, opts)
+   File "/usr/lib/python2.7/site-packages/urlgrabber/grabber.py", line 1071, in _run_callback
+    return cb(obj)
+   File "/usr/lib/python2.7/site-packages/urlgrabber/grabber.py", line 1065, in _do_raise
+    raise obj.exception
+
+!!! TASK FAILED !!!
+[root@cobbler-master ~]# 
+
+# 运行第8次
+[root@cobbler-master ~]# cobbler get-loaders
+task started: 2021-06-19_150342_get_loaders
+task started (id=Download Bootloader Content, time=Sat Jun 19 15:03:42 2021)
+path /var/lib/cobbler/loaders/README already exists, not overwriting existing content, use --force if you wish to update
+path /var/lib/cobbler/loaders/COPYING.elilo already exists, not overwriting existing content, use --force if you wish to update
+path /var/lib/cobbler/loaders/COPYING.yaboot already exists, not overwriting existing content, use --force if you wish to update
+path /var/lib/cobbler/loaders/COPYING.syslinux already exists, not overwriting existing content, use --force if you wish to update
+path /var/lib/cobbler/loaders/elilo-ia64.efi already exists, not overwriting existing content, use --force if you wish to update
+path /var/lib/cobbler/loaders/yaboot already exists, not overwriting existing content, use --force if you wish to update
+path /var/lib/cobbler/loaders/pxelinux.0 already exists, not overwriting existing content, use --force if you wish to update
+downloading https://cobbler.github.io/loaders/menu.c32-3.86 to /var/lib/cobbler/loaders/menu.c32
+Exception occured: <class 'urlgrabber.grabber.URLGrabError'>
+Exception value: [Errno 14] curl#60 - "Issuer certificate is invalid."
+Exception Info:
+  File "/usr/lib/python2.7/site-packages/cobbler/remote.py", line 82, in run
+    rc = self._run(self)
+   File "/usr/lib/python2.7/site-packages/cobbler/remote.py", line 176, in runner
+    return self.remote.api.dlcontent(self.options.get("force",False), self.logger)
+   File "/usr/lib/python2.7/site-packages/cobbler/api.py", line 735, in dlcontent
+    return grabber.run(force)
+   File "/usr/lib/python2.7/site-packages/cobbler/action_dlcontent.py", line 73, in run
+    urlgrabber.grabber.urlgrab(src, filename=dst, proxies=proxies)
+   File "/usr/lib/python2.7/site-packages/urlgrabber/grabber.py", line 773, in urlgrab
+    return default_grabber.urlgrab(url, filename, **kwargs)
+   File "/usr/lib/python2.7/site-packages/urlgrabber/grabber.py", line 1220, in urlgrab
+    return _run_callback(opts.failfunc, opts)
+   File "/usr/lib/python2.7/site-packages/urlgrabber/grabber.py", line 1071, in _run_callback
+    return cb(obj)
+   File "/usr/lib/python2.7/site-packages/urlgrabber/grabber.py", line 1065, in _do_raise
+    raise obj.exception
+
+!!! TASK FAILED !!!
+[root@cobbler-master ~]# 
+
+
+# 运行第9次
+[root@cobbler-master ~]# cobbler get-loaders
+task started: 2021-06-19_150416_get_loaders
+task started (id=Download Bootloader Content, time=Sat Jun 19 15:04:16 2021)
+path /var/lib/cobbler/loaders/README already exists, not overwriting existing content, use --force if you wish to update
+path /var/lib/cobbler/loaders/COPYING.elilo already exists, not overwriting existing content, use --force if you wish to update
+path /var/lib/cobbler/loaders/COPYING.yaboot already exists, not overwriting existing content, use --force if you wish to update
+path /var/lib/cobbler/loaders/COPYING.syslinux already exists, not overwriting existing content, use --force if you wish to update
+path /var/lib/cobbler/loaders/elilo-ia64.efi already exists, not overwriting existing content, use --force if you wish to update
+path /var/lib/cobbler/loaders/yaboot already exists, not overwriting existing content, use --force if you wish to update
+path /var/lib/cobbler/loaders/pxelinux.0 already exists, not overwriting existing content, use --force if you wish to update
+path /var/lib/cobbler/loaders/menu.c32 already exists, not overwriting existing content, use --force if you wish to update
+downloading https://cobbler.github.io/loaders/grub-0.97-x86.efi to /var/lib/cobbler/loaders/grub-x86.efi
+Exception occured: <class 'urlgrabber.grabber.URLGrabError'>
+Exception value: [Errno 14] curl#60 - "Issuer certificate is invalid."
+Exception Info:
+  File "/usr/lib/python2.7/site-packages/cobbler/remote.py", line 82, in run
+    rc = self._run(self)
+   File "/usr/lib/python2.7/site-packages/cobbler/remote.py", line 176, in runner
+    return self.remote.api.dlcontent(self.options.get("force",False), self.logger)
+   File "/usr/lib/python2.7/site-packages/cobbler/api.py", line 735, in dlcontent
+    return grabber.run(force)
+   File "/usr/lib/python2.7/site-packages/cobbler/action_dlcontent.py", line 73, in run
+    urlgrabber.grabber.urlgrab(src, filename=dst, proxies=proxies)
+   File "/usr/lib/python2.7/site-packages/urlgrabber/grabber.py", line 773, in urlgrab
+    return default_grabber.urlgrab(url, filename, **kwargs)
+   File "/usr/lib/python2.7/site-packages/urlgrabber/grabber.py", line 1220, in urlgrab
+    return _run_callback(opts.failfunc, opts)
+   File "/usr/lib/python2.7/site-packages/urlgrabber/grabber.py", line 1071, in _run_callback
+    return cb(obj)
+   File "/usr/lib/python2.7/site-packages/urlgrabber/grabber.py", line 1065, in _do_raise
+    raise obj.exception
+
+!!! TASK FAILED !!!
+[root@cobbler-master ~]# 
+
+# 运行第10次
+[root@cobbler-master ~]# cobbler get-loaders
+task started: 2021-06-19_150443_get_loaders
+task started (id=Download Bootloader Content, time=Sat Jun 19 15:04:43 2021)
+path /var/lib/cobbler/loaders/README already exists, not overwriting existing content, use --force if you wish to update
+path /var/lib/cobbler/loaders/COPYING.elilo already exists, not overwriting existing content, use --force if you wish to update
+path /var/lib/cobbler/loaders/COPYING.yaboot already exists, not overwriting existing content, use --force if you wish to update
+path /var/lib/cobbler/loaders/COPYING.syslinux already exists, not overwriting existing content, use --force if you wish to update
+path /var/lib/cobbler/loaders/elilo-ia64.efi already exists, not overwriting existing content, use --force if you wish to update
+path /var/lib/cobbler/loaders/yaboot already exists, not overwriting existing content, use --force if you wish to update
+path /var/lib/cobbler/loaders/pxelinux.0 already exists, not overwriting existing content, use --force if you wish to update
+path /var/lib/cobbler/loaders/menu.c32 already exists, not overwriting existing content, use --force if you wish to update
+path /var/lib/cobbler/loaders/grub-x86.efi already exists, not overwriting existing content, use --force if you wish to update
+downloading https://cobbler.github.io/loaders/grub-0.97-x86_64.efi to /var/lib/cobbler/loaders/grub-x86_64.efi
+Exception occured: <class 'urlgrabber.grabber.URLGrabError'>
+Exception value: [Errno 14] curl#60 - "Issuer certificate is invalid."
+Exception Info:
+  File "/usr/lib/python2.7/site-packages/cobbler/remote.py", line 82, in run
+    rc = self._run(self)
+   File "/usr/lib/python2.7/site-packages/cobbler/remote.py", line 176, in runner
+    return self.remote.api.dlcontent(self.options.get("force",False), self.logger)
+   File "/usr/lib/python2.7/site-packages/cobbler/api.py", line 735, in dlcontent
+    return grabber.run(force)
+   File "/usr/lib/python2.7/site-packages/cobbler/action_dlcontent.py", line 73, in run
+    urlgrabber.grabber.urlgrab(src, filename=dst, proxies=proxies)
+   File "/usr/lib/python2.7/site-packages/urlgrabber/grabber.py", line 773, in urlgrab
+    return default_grabber.urlgrab(url, filename, **kwargs)
+   File "/usr/lib/python2.7/site-packages/urlgrabber/grabber.py", line 1220, in urlgrab
+    return _run_callback(opts.failfunc, opts)
+   File "/usr/lib/python2.7/site-packages/urlgrabber/grabber.py", line 1071, in _run_callback
+    return cb(obj)
+   File "/usr/lib/python2.7/site-packages/urlgrabber/grabber.py", line 1065, in _do_raise
+    raise obj.exception
+
+!!! TASK FAILED !!!
+[root@cobbler-master ~]# 
+
+
+# 运行第11次
+[root@cobbler-master ~]# cobbler get-loaders
+task started: 2021-06-19_150515_get_loaders
+task started (id=Download Bootloader Content, time=Sat Jun 19 15:05:15 2021)
+path /var/lib/cobbler/loaders/README already exists, not overwriting existing content, use --force if you wish to update
+path /var/lib/cobbler/loaders/COPYING.elilo already exists, not overwriting existing content, use --force if you wish to update
+path /var/lib/cobbler/loaders/COPYING.yaboot already exists, not overwriting existing content, use --force if you wish to update
+path /var/lib/cobbler/loaders/COPYING.syslinux already exists, not overwriting existing content, use --force if you wish to update
+path /var/lib/cobbler/loaders/elilo-ia64.efi already exists, not overwriting existing content, use --force if you wish to update
+path /var/lib/cobbler/loaders/yaboot already exists, not overwriting existing content, use --force if you wish to update
+path /var/lib/cobbler/loaders/pxelinux.0 already exists, not overwriting existing content, use --force if you wish to update
+path /var/lib/cobbler/loaders/menu.c32 already exists, not overwriting existing content, use --force if you wish to update
+path /var/lib/cobbler/loaders/grub-x86.efi already exists, not overwriting existing content, use --force if you wish to update
+path /var/lib/cobbler/loaders/grub-x86_64.efi already exists, not overwriting existing content, use --force if you wish to update
+*** TASK COMPLETE ***
+[root@cobbler-master ~]# echo $?
+0
+```
+
+在执行命令的过程中，发现命令每次都在下载文件，因此经过多次下载后，所有的问题都下载完了，最后显示`*** TASK COMPLETE ***`说明任务执行完成了。
+
+我们再使用`cobbler check`进行检查一次。
+
+```sh
+[root@cobbler-master ~]# cobbler check
+No configuration problems found.  All systems go.
+```
+
+这个时候提示没有配置问题，说明所有异常都解决了。
+
+
+
 
 
 
