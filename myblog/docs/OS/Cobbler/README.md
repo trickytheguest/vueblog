@@ -143,7 +143,7 @@ nameserver 192.168.2.1
 
 另外，我们关闭VirtualBox主机网络管理器中的"DHCP服务器"，不启用服务器即可。
 
-
+![](https://meizhaohui.gitee.io/imagebed/img/virual_network_dhcp.png)
 
 后续操作，除特殊说明外，都在在虚拟机`cobbler-master`中操作的。
 
@@ -663,7 +663,7 @@ Restart cobblerd and then run 'cobbler sync' to apply changes.
 
 查看官方文档 [https://cobbler.readthedocs.io/en/latest/cobbler-conf.html#allow-dynamic-settings](https://cobbler.readthedocs.io/en/latest/cobbler-conf.html#allow-dynamic-settings)
 
-> ### allow_dynamic_settings
+> **allow_dynamic_settings**
 >
 > If `True`, Cobbler will allow settings to be changed dynamically without a restart of the `cobblerd` daemon. You can only change this variable by manually editing the settings file, and you MUST restart `cobblerd` after changing it.
 >
@@ -1390,7 +1390,528 @@ No configuration problems found.  All systems go.
 
 
 
+## 7. 配置DHCP服务
 
+注意，在使用虚拟机测试时，关闭VirtualBox的DHCP服务。
+
+参考：[https://cobbler.readthedocs.io/en/latest/quickstart-guide.html#dhcp-management-and-dhcp-server-template](https://cobbler.readthedocs.io/en/latest/quickstart-guide.html#dhcp-management-and-dhcp-server-template)
+
+> In order to PXE boot, you need a DHCP server to hand out addresses and direct the booting system to the TFTP server where it can download the network boot files. Cobbler can manage this for you, via the `manage_dhcp` setting:
+>
+> ```
+> manage_dhcp: 0
+> ```
+>
+> Change that setting to 1 so Cobbler will generate the `dhcpd.conf` file based on the `dhcp.template` that is included with Cobbler. This template will most likely need to be modified as well, based on your network settings:
+>
+> ```
+> $ vi /etc/cobbler/dhcp.template
+> ```
+>
+> For most uses, you’ll only need to modify this block:
+>
+> ```
+> subnet 192.168.1.0 netmask 255.255.255.0 {
+>     option routers             192.168.1.1;
+>     option domain-name-servers 192.168.1.210,192.168.1.211;
+>     option subnet-mask         255.255.255.0;
+>     filename                   "/pxelinux.0";
+>     default-lease-time         21600;
+>     max-lease-time             43200;
+>     next-server                $next_server_v4;
+> }
+> ```
+>
+> No matter what, make sure you do not modify the `next-server $next_server_v4;` line, as that is how the next server setting is pulled into the configuration. This file is a cheetah template, so be sure not to modify anything starting after this line:
+>
+> ```
+> #for dhcp_tag in $dhcp_tags.keys():
+> ```
+>
+> Completely going through the `dhcpd.conf` configuration syntax is beyond the scope of this document, but for more information see the man page for more details:
+>
+> ```
+> $ man dhcpd.conf
+> ```
+
+即，需要做两件事：
+
+- 开启`manager_dhcp`。
+- 配置DHCP模板文件。
+
+### 7.1 开启`manage_dhcp`
+
+查看`manage_dhcp`的当前配置：
+
+```sh
+[root@cobbler-master ~]# grep -n 'manage_dhcp' /etc/cobbler/settings
+61:manage_dhcp: 0
+[root@cobbler-master ~]# cobbler setting report --name=manage_dhcp
+manage_dhcp                             : 0
+```
+
+我们将该值设置为1，使用动态更新配置命令进行更新：
+
+```sh
+# 更新
+[root@cobbler-master ~]# cobbler setting edit --name=manage_dhcp --value=1
+
+# 再次查看配置情况
+[root@cobbler-master ~]# grep -n 'manage_dhcp' /etc/cobbler/settings
+61:manage_dhcp: 1
+[root@cobbler-master ~]# cobbler setting report --name=manage_dhcp
+manage_dhcp                             : 1
+```
+
+可以看到配置已经生效。这样cobbler就会托管DHCP服务。
+
+### 7.2 DHCP模板文件配置
+
+查看当前模板文件内容：
+
+```sh
+[root@cobbler-master ~]# cat -n /etc/cobbler/dhcp.template
+     1	# ******************************************************************
+     2	# Cobbler managed dhcpd.conf file
+     3	#
+     4	# generated from cobbler dhcp.conf template ($date)
+     5	# Do NOT make changes to /etc/dhcpd.conf. Instead, make your changes
+     6	# in /etc/cobbler/dhcp.template, as /etc/dhcpd.conf will be
+     7	# overwritten.
+     8	#
+     9	# ******************************************************************
+    10	
+    11	ddns-update-style interim;
+    12	
+    13	allow booting;
+    14	allow bootp;
+    15	
+    16	ignore client-updates;
+    17	set vendorclass = option vendor-class-identifier;
+    18	
+    19	option pxe-system-type code 93 = unsigned integer 16;
+    20	
+    21	subnet 192.168.1.0 netmask 255.255.255.0 {
+    22	     option routers             192.168.1.5;
+    23	     option domain-name-servers 192.168.1.1;
+    24	     option subnet-mask         255.255.255.0;
+    25	     range dynamic-bootp        192.168.1.100 192.168.1.254;
+    26	     default-lease-time         21600;
+    27	     max-lease-time             43200;
+    28	     next-server                $next_server;
+    29	     class "pxeclients" {
+    30	          match if substring (option vendor-class-identifier, 0, 9) = "PXEClient";
+    31	          if option pxe-system-type = 00:02 {
+    32	                  filename "ia64/elilo.efi";
+    33	          } else if option pxe-system-type = 00:06 {
+    34	                  filename "grub/grub-x86.efi";
+    35	          } else if option pxe-system-type = 00:07 {
+    36	                  filename "grub/grub-x86_64.efi";
+    37	          } else if option pxe-system-type = 00:09 {
+    38	                  filename "grub/grub-x86_64.efi";
+    39	          } else {
+    40	                  filename "pxelinux.0";
+    41	          }
+    42	     }
+    43	
+    44	}
+    45	
+    46	#for dhcp_tag in $dhcp_tags.keys():
+    47	    ## group could be subnet if your dhcp tags line up with your subnets
+    48	    ## or really any valid dhcpd.conf construct ... if you only use the
+    49	    ## default dhcp tag in cobbler, the group block can be deleted for a
+    50	    ## flat configuration
+    51	# group for Cobbler DHCP tag: $dhcp_tag
+    52	group {
+    53	        #for mac in $dhcp_tags[$dhcp_tag].keys():
+    54	            #set iface = $dhcp_tags[$dhcp_tag][$mac]
+    55	    host $iface.name {
+    56	        #if $iface.interface_type == "infiniband":
+    57	        option dhcp-client-identifier = $mac;
+    58	        #else
+    59	        hardware ethernet $mac;
+    60	        #end if
+    61	        #if $iface.ip_address:
+    62	        fixed-address $iface.ip_address;
+    63	        #end if
+    64	        #if $iface.hostname:
+    65	        option host-name "$iface.hostname";
+    66	        #end if
+    67	        #if $iface.netmask:
+    68	        option subnet-mask $iface.netmask;
+    69	        #end if
+    70	        #if $iface.gateway:
+    71	        option routers $iface.gateway;
+    72	        #end if
+    73	        #if $iface.enable_gpxe:
+    74	        if exists user-class and option user-class = "gPXE" {
+    75	            filename "http://$cobbler_server/cblr/svc/op/gpxe/system/$iface.owner";
+    76	        } else if exists user-class and option user-class = "iPXE" {
+    77	            filename "http://$cobbler_server/cblr/svc/op/gpxe/system/$iface.owner";
+    78	        } else {
+    79	            filename "undionly.kpxe";
+    80	        }
+    81	        #else
+    82	        filename "$iface.filename";
+    83	        #end if
+    84	        ## Cobbler defaults to $next_server, but some users
+    85	        ## may like to use $iface.system.server for proxied setups
+    86	        next-server $next_server;
+    87	        ## next-server $iface.next_server;
+    88	    }
+    89	        #end for
+    90	}
+    91	#end for
+    92	
+[root@cobbler-master ~]# 
+```
+
+可以看到有92行内容，我们只用修改21-25行这几行中的内容，其他行不用修改。
+
+```sh
+[root@cobbler-master ~]# cat -n /etc/cobbler/dhcp.template |sed -n '21,25p'
+    21	subnet 192.168.1.0 netmask 255.255.255.0 {
+    22	     option routers             192.168.1.5;
+    23	     option domain-name-servers 192.168.1.1;
+    24	     option subnet-mask         255.255.255.0;
+    25	     range dynamic-bootp        192.168.1.100 192.168.1.254;
+[root@cobbler-master ~]# 
+```
+
+解释一些这几行的意思：
+
+- `subnet 192.168.1.0` 服务器网段，我们cobbler服务器此处应改成`192.168.2.0`。
+- `netmask 255.255.255.0 `子网掩码，不用修改。
+- `option routers             192.168.1.5;`网关地址，我们cobbler服务器此处应改成`192.168.2.1`。
+- `option domain-name-servers 192.168.1.1;`域名服务器IP地址，我们的域名IP和网关地址相同，也是`192.168.2.1`。
+- `option subnet-mask         255.255.255.0;`子网掩码，不用修改。
+- `range dynamic-bootp        192.168.1.100 192.168.1.254;`DHCP服务器分配的IP地址租用范围。为了不与局域网内其他服务器有冲突，我们设置租用范围从`192.168.2.200`到`192.168.2.254`。这够我们测试使用了。
+
+先备份一下配置文件：
+
+```sh
+[root@cobbler-master ~]# cp /etc/cobbler/dhcp.template{,.bak}
+[root@cobbler-master ~]# ls /etc/cobbler/dhcp.template*
+/etc/cobbler/dhcp.template  /etc/cobbler/dhcp.template.bak
+```
+
+使用vim编辑一下。修改后查看21-25行内容：
+
+```sh
+[root@cobbler-master ~]# cat -n /etc/cobbler/dhcp.template |sed -n '21,25p'
+    21	subnet 192.168.2.0 netmask 255.255.255.0 {
+    22	     option routers             192.168.2.1;
+    23	     option domain-name-servers 192.168.2.1;
+    24	     option subnet-mask         255.255.255.0;
+    25	     range dynamic-bootp        192.168.2.200 192.168.2.254;
+[root@cobbler-master ~]# 
+```
+
+注意，不要修改本文件中其他任何位置的内容。
+
+## 8. 同步cobbler配置
+
+同步最新cobbler配置，它会根据配置自动修改dhcp等服务。
+
+```sh
+[root@cobbler-master ~]# cobbler sync
+task started: 2021-06-19_155041_sync
+task started (id=Sync, time=Sat Jun 19 15:50:41 2021)
+running pre-sync triggers
+cleaning trees
+removing: /var/lib/tftpboot/grub/images
+copying bootloaders
+trying hardlink /var/lib/cobbler/loaders/pxelinux.0 -> /var/lib/tftpboot/pxelinux.0
+trying hardlink /var/lib/cobbler/loaders/menu.c32 -> /var/lib/tftpboot/menu.c32
+trying hardlink /var/lib/cobbler/loaders/yaboot -> /var/lib/tftpboot/yaboot
+trying hardlink /usr/share/syslinux/memdisk -> /var/lib/tftpboot/memdisk
+trying hardlink /var/lib/cobbler/loaders/grub-x86.efi -> /var/lib/tftpboot/grub/grub-x86.efi
+trying hardlink /var/lib/cobbler/loaders/grub-x86_64.efi -> /var/lib/tftpboot/grub/grub-x86_64.efi
+copying distros to tftpboot
+copying images
+generating PXE configuration files
+generating PXE menu structure
+rendering DHCP files
+generating /etc/dhcp/dhcpd.conf
+rendering TFTPD files
+generating /etc/xinetd.d/tftp
+cleaning link caches
+running post-sync triggers
+running python triggers from /var/lib/cobbler/triggers/sync/post/*
+running python trigger cobbler.modules.sync_post_restart_services
+running: dhcpd -t -q
+received on stdout: 
+received on stderr: 
+running: service dhcpd restart
+received on stdout: 
+received on stderr: Redirecting to /bin/systemctl restart dhcpd.service
+
+running shell triggers from /var/lib/cobbler/triggers/sync/post/*
+running python triggers from /var/lib/cobbler/triggers/change/*
+running python trigger cobbler.modules.manage_genders
+running python trigger cobbler.modules.scm_track
+running shell triggers from /var/lib/cobbler/triggers/change/*
+*** TASK COMPLETE ***
+[root@cobbler-master ~]# echo $?
+0
+[root@cobbler-master ~]# 
+```
+
+可以看到，同步配置文件完成。我们看一下`/etc/dhcp/dhcpd.conf`配置文件：
+
+```sh
+[root@cobbler-master ~]# cat -n /etc/dhcp/dhcpd.conf 
+     1	# ******************************************************************
+     2	# Cobbler managed dhcpd.conf file
+     3	# generated from cobbler dhcp.conf template (Sat Jun 19 07:50:42 2021)
+     4	# Do NOT make changes to /etc/dhcpd.conf. Instead, make your changes
+     5	# in /etc/cobbler/dhcp.template, as /etc/dhcpd.conf will be
+     6	# overwritten.
+     7	# ******************************************************************
+     8	
+     9	ddns-update-style interim;
+    10	
+    11	allow booting;
+    12	allow bootp;
+    13	
+    14	ignore client-updates;
+    15	set vendorclass = option vendor-class-identifier;
+    16	
+    17	option pxe-system-type code 93 = unsigned integer 16;
+    18	
+    19	subnet 192.168.2.0 netmask 255.255.255.0 {
+    20	     option routers             192.168.2.1;
+    21	     option domain-name-servers 192.168.2.1;
+    22	     option subnet-mask         255.255.255.0;
+    23	     range dynamic-bootp        192.168.2.200 192.168.2.254;
+    24	     default-lease-time         21600;
+    25	     max-lease-time             43200;
+    26	     next-server                192.168.2.20;
+    27	     class "pxeclients" {
+    28	          match if substring (option vendor-class-identifier, 0, 9) = "PXEClient";
+    29	          if option pxe-system-type = 00:02 {
+    30	                  filename "ia64/elilo.efi";
+    31	          } else if option pxe-system-type = 00:06 {
+    32	                  filename "grub/grub-x86.efi";
+    33	          } else if option pxe-system-type = 00:07 {
+    34	                  filename "grub/grub-x86_64.efi";
+    35	          } else if option pxe-system-type = 00:09 {
+    36	                  filename "grub/grub-x86_64.efi";
+    37	          } else {
+    38	                  filename "pxelinux.0";
+    39	          }
+    40	     }
+    41	
+    42	}
+    43	
+    44	# group for Cobbler DHCP tag: default
+    45	group {
+    46	}
+    47	
+[root@cobbler-master ~]# 
+```
+
+可以看到DHCP的配置文件已经由cobbler托管了。后续不能手动更新该文件。
+
+同步完成后，为避免后续出现异常，我们把相关服务都重启一下，涉及到以下服务：
+
+- `xinetd`
+- `rsyncd`
+- `httpd`
+- `dhcpd`
+- `cobblerd`
+
+执行命令：
+
+```sh
+# 重启服务
+[root@cobbler-master ~]# systemctl restart xinetd rsyncd dhcpd httpd cobblerd
+
+# 查看服务状态
+[root@cobbler-master ~]# systemctl status xinetd rsyncd dhcpd httpd cobblerd
+● xinetd.service - Xinetd A Powerful Replacement For Inetd
+   Loaded: loaded (/usr/lib/systemd/system/xinetd.service; enabled; vendor preset: enabled)
+   Active: active (running) since 六 2021-06-19 15:58:40 CST; 9s ago
+  Process: 2545 ExecStart=/usr/sbin/xinetd -stayalive -pidfile /var/run/xinetd.pid $EXTRAOPTIONS (code=exited, status=0/SUCCESS)
+ Main PID: 2552 (xinetd)
+   CGroup: /system.slice/xinetd.service
+           └─2552 /usr/sbin/xinetd -stayalive -pidfile /var/run/xinetd.pid
+
+6月 19 15:58:40 cobbler-master xinetd[2552]: removing discard
+6月 19 15:58:40 cobbler-master xinetd[2552]: removing discard
+6月 19 15:58:40 cobbler-master xinetd[2552]: removing echo
+6月 19 15:58:40 cobbler-master xinetd[2552]: removing echo
+6月 19 15:58:40 cobbler-master xinetd[2552]: removing tcpmux
+6月 19 15:58:40 cobbler-master xinetd[2552]: removing time
+6月 19 15:58:40 cobbler-master xinetd[2552]: removing time
+6月 19 15:58:40 cobbler-master xinetd[2552]: xinetd Version 2.3.15 started with libwrap loadavg labeled-networking opt...ed in.
+6月 19 15:58:40 cobbler-master xinetd[2552]: Started working: 1 available service
+6月 19 15:58:40 cobbler-master systemd[1]: Started Xinetd A Powerful Replacement For Inetd.
+
+● rsyncd.service - fast remote file copy program daemon
+   Loaded: loaded (/usr/lib/systemd/system/rsyncd.service; enabled; vendor preset: disabled)
+   Active: active (running) since 六 2021-06-19 15:58:40 CST; 9s ago
+ Main PID: 2561 (rsync)
+   CGroup: /system.slice/rsyncd.service
+           └─2561 /usr/bin/rsync --daemon --no-detach
+
+6月 19 15:58:40 cobbler-master systemd[1]: Stopped fast remote file copy program daemon.
+6月 19 15:58:40 cobbler-master systemd[1]: Started fast remote file copy program daemon.
+6月 19 15:58:40 cobbler-master rsyncd[2561]: rsyncd version 3.1.2 starting, listening on port 873
+
+● dhcpd.service - DHCPv4 Server Daemon
+   Loaded: loaded (/usr/lib/systemd/system/dhcpd.service; disabled; vendor preset: disabled)
+   Active: active (running) since 六 2021-06-19 15:58:40 CST; 9s ago
+     Docs: man:dhcpd(8)
+           man:dhcpd.conf(5)
+ Main PID: 2546 (dhcpd)
+   Status: "Dispatching packets..."
+   CGroup: /system.slice/dhcpd.service
+           └─2546 /usr/sbin/dhcpd -f -cf /etc/dhcp/dhcpd.conf -user dhcpd -group dhcpd --no-pid
+
+6月 19 15:58:40 cobbler-master dhcpd[2546]: Copyright 2004-2013 Internet Systems Consortium.
+6月 19 15:58:40 cobbler-master dhcpd[2546]: All rights reserved.
+6月 19 15:58:40 cobbler-master dhcpd[2546]: For info, please visit https://www.isc.org/software/dhcp/
+6月 19 15:58:40 cobbler-master dhcpd[2546]: Not searching LDAP since ldap-server, ldap-port and ldap-base-dn were not ...g file
+6月 19 15:58:40 cobbler-master dhcpd[2546]: Wrote 0 class decls to leases file.
+6月 19 15:58:40 cobbler-master dhcpd[2546]: Wrote 0 leases to leases file.
+6月 19 15:58:40 cobbler-master dhcpd[2546]: Listening on LPF/enp0s3/08:00:27:87:c2:4e/192.168.2.0/24
+6月 19 15:58:40 cobbler-master dhcpd[2546]: Sending on   LPF/enp0s3/08:00:27:87:c2:4e/192.168.2.0/24
+6月 19 15:58:40 cobbler-master dhcpd[2546]: Sending on   Socket/fallback/fallback-net
+6月 19 15:58:40 cobbler-master systemd[1]: Started DHCPv4 Server Daemon.
+
+● httpd.service - The Apache HTTP Server
+   Loaded: loaded (/usr/lib/systemd/system/httpd.service; enabled; vendor preset: disabled)
+   Active: active (running) since 六 2021-06-19 15:58:41 CST; 8s ago
+     Docs: man:httpd(8)
+           man:apachectl(8)
+  Process: 2547 ExecStop=/bin/kill -WINCH ${MAINPID} (code=exited, status=0/SUCCESS)
+ Main PID: 2565 (httpd)
+   Status: "Processing requests..."
+   CGroup: /system.slice/httpd.service
+           ├─2565 /usr/sbin/httpd -DFOREGROUND
+           ├─2566 (wsgi:cobbler_w -DFOREGROUND
+           ├─2567 /usr/sbin/httpd -DFOREGROUND
+           ├─2568 /usr/sbin/httpd -DFOREGROUND
+           ├─2569 /usr/sbin/httpd -DFOREGROUND
+           ├─2570 /usr/sbin/httpd -DFOREGROUND
+           └─2571 /usr/sbin/httpd -DFOREGROUND
+
+6月 19 15:58:41 cobbler-master systemd[1]: Stopped The Apache HTTP Server.
+6月 19 15:58:41 cobbler-master systemd[1]: Starting The Apache HTTP Server...
+6月 19 15:58:41 cobbler-master systemd[1]: Started The Apache HTTP Server.
+6月 19 15:58:41 cobbler-master httpd[2565]: AH00558: httpd: Could not reliably determine the server's fully qualified ...essage
+
+● cobblerd.service - Cobbler Helper Daemon
+   Loaded: loaded (/usr/lib/systemd/system/cobblerd.service; enabled; vendor preset: disabled)
+   Active: active (running) since 六 2021-06-19 15:58:40 CST; 9s ago
+  Process: 2551 ExecStartPost=/usr/bin/touch /usr/share/cobbler/web/cobbler.wsgi (code=exited, status=0/SUCCESS)
+ Main PID: 2550 (cobblerd)
+   CGroup: /system.slice/cobblerd.service
+           └─2550 /usr/bin/python2 -s /usr/bin/cobblerd -F
+
+6月 19 15:58:40 cobbler-master systemd[1]: Stopped Cobbler Helper Daemon.
+6月 19 15:58:40 cobbler-master systemd[1]: Starting Cobbler Helper Daemon...
+6月 19 15:58:40 cobbler-master systemd[1]: Started Cobbler Helper Daemon.
+Hint: Some lines were ellipsized, use -l to show in full.
+[root@cobbler-master ~]# 
+```
+
+## 9. 防火墙配置
+
+查看当前所有监听的端口号：
+
+```sh
+[root@cobbler-master ~]# netstat -tunlp
+Active Internet connections (only servers)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name    
+tcp        0      0 0.0.0.0:873             0.0.0.0:*               LISTEN      2561/rsync          
+tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      953/sshd            
+tcp        0      0 127.0.0.1:25            0.0.0.0:*               LISTEN      1147/master         
+tcp        0      0 127.0.0.1:25151         0.0.0.0:*               LISTEN      2550/python2        
+tcp6       0      0 :::873                  :::*                    LISTEN      2561/rsync          
+tcp6       0      0 :::80                   :::*                    LISTEN      2565/httpd          
+tcp6       0      0 :::22                   :::*                    LISTEN      953/sshd            
+tcp6       0      0 ::1:25                  :::*                    LISTEN      1147/master         
+tcp6       0      0 :::443                  :::*                    LISTEN      2565/httpd          
+udp        0      0 0.0.0.0:67              0.0.0.0:*                           2546/dhcpd          
+udp        0      0 0.0.0.0:69              0.0.0.0:*                           2552/xinetd
+```
+
+我们需要注意以下几个端口号：
+
+- `25151`， cobbler服务端口号。
+- `80`和`443`，httpd web服务端口号。
+- `69`，tftp服务需要此端口号。
+- `873`，rsync同步服务端口号。
+- `87`，DHCP服务端口号。
+
+我们先放`25151`、`80`、`443`和`69`这几个端口号。
+
+```sh
+[root@cobbler-master ~]# firewall-cmd --zone=public --add-port=80/tcp --permanent
+Warning: ALREADY_ENABLED: 80:tcp
+success
+[root@cobbler-master ~]# firewall-cmd --zone=public --add-port=443/tcp --permanent
+success
+[root@cobbler-master ~]# firewall-cmd --zone=public --add-port=25151/tcp --permanent
+success
+[root@cobbler-master ~]# firewall-cmd --zone=public --add-port=69/tcp --permanent
+success
+[root@cobbler-master ~]# firewall-cmd --reload
+success
+[root@cobbler-master ~]# firewall-cmd --list-all
+public (active)
+  target: default
+  icmp-block-inversion: no
+  interfaces: enp0s3
+  sources: 
+  services: dhcpv6-client ssh
+  ports: 80/tcp 443/tcp 25151/tcp 69/tcp
+  protocols: 
+  masquerade: no
+  forward-ports: 
+  source-ports: 
+  icmp-blocks: 
+  rich rules: 
+	
+[root@cobbler-master ~]# 
+```
+
+此时打开浏览器，访问地址 [https://192.168.2.20/cobbler/](https://192.168.2.20/cobbler/)，可以看到如下文件列表信息：
+
+
+![](https://meizhaohui.gitee.io/imagebed/img/cobbler_index.png)
+
+访问：[https://192.168.2.20/cobbler_web/](https://192.168.2.20/cobbler_web/) 可以访问Cobbler的Web管理系统：
+
+![](https://meizhaohui.gitee.io/imagebed/img/cobbler_web.png)
+
+该系统使用`cobbler`作为账号和密码就可以登陆成功。
+
+## 10. 新建虚拟机节点
+
+我们尝试新建一个虚拟机节点，看是否能够从网络安装。
+
+新建一个名称为`cobbler-node1`的虚拟机：
+
+![](https://meizhaohui.gitee.io/imagebed/img/new_virtual_os.png)
+
+内存设置为2048MB，虚拟硬盘大小设置为40GB。
+
+系统设置为从“网络”启动：
+
+![](https://meizhaohui.gitee.io/imagebed/img/start_from_network.png)
+
+并且设置网络为桥接模式：
+
+![](https://meizhaohui.gitee.io/imagebed/img/network_settings.png)
+
+此时启动虚拟机节点， 发现不能正常启动，报以下异常：
+
+![](https://meizhaohui.gitee.io/imagebed/img/start_error.png)
+
+有可能是cobbler哪里配置异常，我们先关闭`cobbler-node1`虚拟机。
 
 
 
