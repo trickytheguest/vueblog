@@ -1913,6 +1913,35 @@ public (active)
 
 有可能是cobbler哪里配置异常，我们先关闭`cobbler-node1`虚拟机。
 
+我们在cobber服务上将防火墙关闭后，再重启服务：
+
+```sh
+[root@cobbler-master ~]# systemctl stop firewalld
+[root@cobbler-master ~]# systemctl status firewalld
+● firewalld.service - firewalld - dynamic firewall daemon
+   Loaded: loaded (/usr/lib/systemd/system/firewalld.service; enabled; vendor preset: enabled)
+   Active: inactive (dead) since 六 2021-06-19 17:35:05 CST; 6s ago
+     Docs: man:firewalld(1)
+  Process: 660 ExecStart=/usr/sbin/firewalld --nofork --nopid $FIREWALLD_ARGS (code=exited, status=0/SUCCESS)
+ Main PID: 660 (code=exited, status=0/SUCCESS)
+
+6月 19 16:33:36 cobbler-master systemd[1]: Starting firewalld - dynamic fi....
+6月 19 16:33:38 cobbler-master systemd[1]: Started firewalld - dynamic fir....
+6月 19 16:33:39 cobbler-master firewalld[660]: WARNING: AllowZoneDrifting ....
+6月 19 17:35:05 cobbler-master systemd[1]: Stopping firewalld - dynamic fi....
+6月 19 17:35:05 cobbler-master systemd[1]: Stopped firewalld - dynamic fir....
+Hint: Some lines were ellipsized, use -l to show in full.
+[root@cobbler-master ~]# systemctl restart xinetd rsyncd dhcpd httpd cobblerd
+```
+
+此时，再启动`cobbler-node1`虚拟机，发现还是启动不了，但是出现的结果不一样了：
+
+![](https://meizhaohui.gitee.io/imagebed/img/start_error_again.png)
+
+但这次可以看到已经能够正常显示IP地址，以及Next Server地址了。
+
+同样，我们点击`cobbler-node1`虚拟机，依次点击`管理`-`退出`-`强制退出`-`确定`，退出虚拟机。
+
 
 
 参考：
