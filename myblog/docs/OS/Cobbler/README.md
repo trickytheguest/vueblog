@@ -1,11 +1,65 @@
 # Cobbler自动化系统安装环境配置
 
+[[toc]]
+
 网络安装服务器套件 Cobbler(补鞋匠)是RedHat在2008年发布的，用于快速建立Linux网络安装环境。今天我们就用Cobbler来配置一套自动化系统安装环境。
 
 ## 0. 参考文档
 
 - Cobbler官方文档：[https://cobbler.readthedocs.io/en/latest/](https://cobbler.readthedocs.io/en/latest/)
 - Cobbler官网地址：[https://github.com/cobbler/cobbler](https://github.com/cobbler/cobbler)
+
+此处复制一段 [Cobbler自动化部署](https://www.cnblogs.com/yanjieli/p/11016825.html) 中的介绍。
+
+> ## cobbler简介
+>
+> 1、`Cobbler`是一个`Linux`服务器安装的服务，可以通过网络启动（`PXE`）的方式来快速安装、重装物理服务器和虚拟机，同时还可以管理`DHCP`，`DNS`等。
+> 2、`Cobbler`可以使用命令行方式管理，也提供了基于Web的界面管理工具（`cobbler-web`），还提供了`API`接口，可以方便二次开发使用。
+> 3、`Cobbler`是较早前的`kickstart`的升级版，优点是比较容易配置，还自带web界面比较易于管理。
+> 4、`Cobbler`内置了一个轻量级配置管理系统，但它也支持和其它配置管理系统集成，如`Puppet`。
+>
+> ## cobbler集成的服务
+>
+> - PXE服务支持
+> - DHCP服务管理
+> - DNS服务管理
+> - 电源管理
+> - Kickstart服务支持
+> - YUM仓库管理
+> - TFTP
+> - Apache
+>
+> ## cobbler工作原理
+> **Server端**
+>
+> - 启动`Cobbler`服务
+> - 进行`Cobbler`错误检查，执行`cobbler check`命令
+> - 进行配置同步，执行`cobbler sync`命令
+> - 复制相关启动文件到`TFTP`目录中
+> - 启动`DHCP`服务，提供地址分配
+> - `DHCP`服务分配IP地址
+> - `TFTP`传输启动文件
+> - `Server`端接收安装信息
+> - `Server`端发送`ISO`镜像与`Kickstart`文件
+>
+> **Client端**
+>
+> - 客户端以`PXE`模式启动
+> - 客户端获取`IP`地址
+> - 通过`TFTP`服务器获取启动文件
+> - 进入`Cobbler`安装选择界面
+> - 根据配置信息准备安装系统
+> - 加载`Kickstart`文件
+> - 传输系统安装的其它文件
+> - 进行安装系统
+>
+> 作者：别来无恙-
+>
+> 出处：https://www.cnblogs.com/yanjieli/p/11016825.html
+>
+> 版权：本作品采用「[署名-非商业性使用-相同方式共享 4.0 国际](https://creativecommons.org/licenses/by-nc-sa/4.0/)」许可协议进行许可。
+
+
 
 ## 1. 环境说明
 
@@ -176,6 +230,148 @@ SELINUXTYPE=targeted
 
 确保`getenforce`获取到在值是`Disabled`，如果不是的话，可以使用VIM打开配置文件`/etc/selinux/config`，将其第7行修改为`SELINUX=disabled`。修改完成后，使用命令`shutdown -r now`重启虚拟机。
 
+## 4. cobbler安装
+
+参考：[https://cobbler.readthedocs.io/en/latest/installation-guide.html](https://cobbler.readthedocs.io/en/latest/installation-guide.html)
+
+```
+httpd： 通过web服务检测管理cobbler
+rsync： 远程同步管理、同步dhcp
+xinetd：管理rsync、tftp-server服务
+tftp-server：tftp简单文件传输包，传输启动文件
+dhcp: DHCP服务分配IP地址
+pykickstart：无人值守安装模板，即应答文件
+cobbler：cobbler主包,cobbler的核心
+cobbler-web：cobbler支持web服务包（图形化界面）
+```
+
+安装：
+
+```sh
+[root@cobbler-master ~]# yum install httpd xinetd tftp-server dhcp  pykickstart cobbler cobbler-web -y
+... 省略
+Installed:
+  cobbler.x86_64 0:2.8.5-0.3.el7        cobbler-web.noarch 0:2.8.5-0.3.el7    
+  dhcp.x86_64 12:4.2.5-83.el7.centos.1  pykickstart.noarch 0:1.99.66.22-1.el7 
+  tftp-server.x86_64 0:5.2-22.el7       xinetd.x86_64 2:2.3.15-14.el7         
+
+Dependency Installed:
+  PyYAML.x86_64 0:3.10-11.el7                                                  
+  createrepo.noarch 0:0.9.9-28.el7                                             
+  deltarpm.x86_64 0:3.6-3.el7                                                  
+  genisoimage.x86_64 0:1.1.11-25.el7                                           
+  jbigkit-libs.x86_64 0:2.0-11.el7                                             
+  libjpeg-turbo.x86_64 0:1.2.90-8.el7                                          
+  libtiff.x86_64 0:4.0.3-35.el7                                                
+  libusal.x86_64 0:1.1.11-25.el7                                               
+  libwebp.x86_64 0:0.3.0-10.el7_9                                              
+  libxml2-python.x86_64 0:2.9.1-6.el7.5                                        
+  libyaml.x86_64 0:0.1.4-11.el7_0                                              
+  mod_ssl.x86_64 1:2.4.6-97.el7.centos                                         
+  mod_wsgi.x86_64 0:3.4-18.el7                                                 
+  mtools.x86_64 0:4.0.18-5.el7                                                 
+  python-backports.x86_64 0:1.0-8.el7                                          
+  python-backports-ssl_match_hostname.noarch 0:3.5.0.1-1.el7                   
+  python-chardet.noarch 0:2.2.1-3.el7                                          
+  python-cheetah.x86_64 0:2.4.4-5.el7.centos                                   
+  python-deltarpm.x86_64 0:3.6-3.el7                                           
+  python-django-bash-completion.noarch 0:1.11.27-1.el7                         
+  python-ipaddress.noarch 0:1.0.16-2.el7                                       
+  python-kitchen.noarch 0:1.1.1-5.el7                                          
+  python-netaddr.noarch 0:0.7.5-9.el7                                          
+  python-pillow.x86_64 0:2.0.0-21.gitd1c6db8.el7                               
+  python-pygments.noarch 0:1.4-10.el7                                          
+  python-setuptools.noarch 0:0.9.8-7.el7                                       
+  python2-django.noarch 0:1.11.27-1.el7                                        
+  python2-markdown.noarch 0:2.4.1-4.el7                                        
+  python2-pyyaml.noarch 0:3.10-0.el7                                           
+  python2-simplejson.x86_64 0:3.10.0-2.el7                                     
+  pytz.noarch 0:2016.10-2.el7                                                  
+  rsync.x86_64 0:3.1.2-10.el7                                                  
+  syslinux.x86_64 0:4.05-15.el7                                                
+  yum-utils.noarch 0:1.1.31-54.el7_8                                           
+
+Dependency Updated:
+  dhclient.x86_64 12:4.2.5-83.el7.centos.1                                     
+  dhcp-common.x86_64 12:4.2.5-83.el7.centos.1                                  
+  dhcp-libs.x86_64 12:4.2.5-83.el7.centos.1                                    
+
+Complete!
+[root@cobbler-master ~]# 
+```
+
+## 5. 启动cobblerd服务
+
+我们先启动httpd服务，再启动cobblerd服务。
+
+```sh
+# 启动服务
+[root@cobbler-master ~]# systemctl start httpd cobblerd
+
+# 添加开机启动
+[root@cobbler-master ~]# systemctl enable httpd cobblerd
+Created symlink from /etc/systemd/system/multi-user.target.wants/httpd.service to /usr/lib/systemd/system/httpd.service.
+Created symlink from /etc/systemd/system/multi-user.target.wants/cobblerd.service to /usr/lib/systemd/system/cobblerd.service.
+
+查看httpd和cobblerd服务状态
+[root@cobbler-master ~]# systemctl status httpd cobblerd
+● httpd.service - The Apache HTTP Server
+   Loaded: loaded (/usr/lib/systemd/system/httpd.service; enabled; vendor preset: disabled)
+   Active: active (running) since 六 2021-06-19 09:07:17 CST; 36s ago
+     Docs: man:httpd(8)
+           man:apachectl(8)
+ Main PID: 1683 (httpd)
+   Status: "Total requests: 0; Current requests/sec: 0; Current traffic:   0 B/sec"
+   CGroup: /system.slice/httpd.service
+           ├─1683 /usr/sbin/httpd -DFOREGROUND
+           ├─1687 (wsgi:cobbler_w -DFOREGROUND
+           ├─1688 /usr/sbin/httpd -DFOREGROUND
+           ├─1689 /usr/sbin/httpd -DFOREGROUND
+           ├─1690 /usr/sbin/httpd -DFOREGROUND
+           ├─1691 /usr/sbin/httpd -DFOREGROUND
+           └─1692 /usr/sbin/httpd -DFOREGROUND
+
+6月 19 09:07:17 cobbler-master systemd[1]: Starting The Apache HTTP Server...
+6月 19 09:07:17 cobbler-master httpd[1683]: AH00558: httpd: Could not reli...e
+6月 19 09:07:17 cobbler-master systemd[1]: Started The Apache HTTP Server.
+
+● cobblerd.service - Cobbler Helper Daemon
+   Loaded: loaded (/usr/lib/systemd/system/cobblerd.service; enabled; vendor preset: disabled)
+   Active: active (running) since 六 2021-06-19 09:07:17 CST; 36s ago
+ Main PID: 1684 (cobblerd)
+   CGroup: /system.slice/cobblerd.service
+           └─1684 /usr/bin/python2 -s /usr/bin/cobblerd -F
+
+6月 19 09:07:17 cobbler-master systemd[1]: Starting Cobbler Helper Daemon...
+6月 19 09:07:17 cobbler-master systemd[1]: Started Cobbler Helper Daemon.
+Hint: Some lines were ellipsized, use -l to show in full.
+[root@cobbler-master ~]# 
+```
+
+### 5.1 查看cobbler版本信息
+
+```sh
+[root@cobbler-master ~]# cobbler version
+Cobbler 2.8.5
+  source: ?, ?
+  build time: Tue Oct 15 01:59:43 2019
+[root@cobbler-master ~]# 
+```
+
+### 5.2 查看cobbler帮助信息
+
+```sh
+[root@cobbler-master ~]# cobbler --help
+usage
+=====
+cobbler <distro|profile|system|repo|image|mgmtclass|package|file> ... 
+        [add|edit|copy|getks*|list|remove|rename|report] [options|--help]
+cobbler <aclsetup|buildiso|import|list|replicate|report|reposync|sync|validateks|version|signature|get-loaders|hardlink> [options|--help]
+[root@cobbler-master ~]# 
+```
+
+
+
 
 
 
@@ -184,4 +380,5 @@ SELINUXTYPE=targeted
 
 - [EPEL镜像](https://mirrors.tuna.tsinghua.edu.cn/help/epel/)
 - [CentOS镜像](https://repo.huaweicloud.com/centos/)
+- [Cobbler自动化部署](https://www.cnblogs.com/yanjieli/p/11016825.html)
 
