@@ -1946,6 +1946,8 @@ Hint: Some lines were ellipsized, use -l to show in full.
 
 ## 11. 镜像配置
 
+参考： [https://cobbler.readthedocs.io/en/latest/quickstart-guide.html#download-an-iso-image](https://cobbler.readthedocs.io/en/latest/quickstart-guide.html#download-an-iso-image)
+
 ### 11.1 上传镜像
 
 上传镜像到cobbler服务器上。
@@ -1966,6 +1968,846 @@ CentOS-7-x86_64-Minimal-2009.iso
 ```
 
 说明文件上传成功。
+
+### 11.2 挂载镜像
+
+创建挂载点，不要挂载在`/tmp`目录或其子目录下。我们挂载在`/mnt/centos7.9`目录上。
+
+创建挂载目录：
+
+```sh
+[root@cobbler-master ~]# mkdir -p /mnt/centos7.9
+```
+
+挂载:
+
+```sh
+[root@cobbler-master ~]# mount -t iso9660 -o loop,ro /root/CentOS-7-x86_64-Minimal-2009.iso /mnt/centos7.9
+[root@cobbler-master ~]# df -h
+Filesystem               Size  Used Avail Use% Mounted on
+devtmpfs                 908M     0  908M   0% /dev
+tmpfs                    919M     0  919M   0% /dev/shm
+tmpfs                    919M  8.6M  911M   1% /run
+tmpfs                    919M     0  919M   0% /sys/fs/cgroup
+/dev/mapper/centos-root   37G  2.6G   35G   7% /
+/dev/sda1               1014M  150M  864M  15% /boot
+tmpfs                    184M     0  184M   0% /run/user/0
+/dev/loop0               973M  973M     0 100% /mnt/centos7.9
+```
+
+查看挂载后的文件数据：
+
+```sh
+[root@cobbler-master ~]# ls -lah /mnt/centos7.9/
+total 113K
+drwxr-xr-x   8 root root 2.0K 11月  3 2020 .
+drwxr-xr-x.  3 root root   23 6月  19 22:09 ..
+-rw-r--r--   2 root root   14 10月 30 2020 CentOS_BuildTag
+-rw-r--r--   2 root root   29 10月 27 2020 .discinfo
+drwxr-xr-x   3 root root 2.0K 10月 27 2020 EFI
+-rw-rw-r--  15 root root  227 8月  30 2017 EULA
+-rw-rw-r--  15 root root  18K 12月 10 2015 GPL
+drwxr-xr-x   3 root root 2.0K 10月 27 2020 images
+drwxr-xr-x   2 root root 2.0K 11月  3 2020 isolinux
+drwxr-xr-x   2 root root 2.0K 10月 27 2020 LiveOS
+drwxr-xr-x   2 root root  72K 11月  3 2020 Packages
+drwxr-xr-x   2 root root 4.0K 11月  3 2020 repodata
+-rw-rw-r--  15 root root 1.7K 12月 10 2015 RPM-GPG-KEY-CentOS-7
+-rw-rw-r--  15 root root 1.7K 12月 10 2015 RPM-GPG-KEY-CentOS-Testing-7
+-r--r--r--   1 root root 2.9K 11月  3 2020 TRANS.TBL
+-rw-r--r--   2 root root  354 10月 27 2020 .treeinfo
+[root@cobbler-master ~]# 
+```
+
+### 11.3 导入镜像
+
+使用命令`cobbler import `进行导入。
+
+查看命令帮助信息：
+
+```sh
+[root@cobbler-master ~]# cobbler import --help
+Usage: cobbler import [options]
+
+Options:
+  -h, --help            show this help message and exit
+  --arch=ARCH           OS architecture being imported
+  --breed=BREED         the breed being imported
+  --os-version=OS_VERSION
+                        the version being imported
+  --path=PATH           local path or rsync location
+  --name=NAME           name, ex 'RHEL-5'
+  --available-as=AVAILABLE_AS
+                        tree is here, don't mirror
+  --kickstart=KICKSTART_FILE
+                        assign this kickstart file
+  --rsync-flags=RSYNC_FLAGS
+                        pass additional flags to rsync
+[root@cobbler-master ~]# 
+```
+
+导入：
+
+```sh
+[root@cobbler-master ~]# cobbler import --name=centos7.9 --arch=x86_64 --path=/mnt/centos7.9
+task started: 2021-06-19_222128_import
+task started (id=Media import, time=Sat Jun 19 22:21:28 2021)
+Found a candidate signature: breed=redhat, version=rhel6
+Found a candidate signature: breed=redhat, version=rhel7
+Found a matching signature: breed=redhat, version=rhel7
+Adding distros from path /var/www/cobbler/ks_mirror/centos7.9-x86_64:
+creating new distro: centos7.9-x86_64
+trying symlink: /var/www/cobbler/ks_mirror/centos7.9-x86_64 -> /var/www/cobbler/links/centos7.9-x86_64
+creating new profile: centos7.9-x86_64
+associating repos
+checking for rsync repo(s)
+checking for rhn repo(s)
+checking for yum repo(s)
+starting descent into /var/www/cobbler/ks_mirror/centos7.9-x86_64 for centos7.9-x86_64
+processing repo at : /var/www/cobbler/ks_mirror/centos7.9-x86_64
+need to process repo/comps: /var/www/cobbler/ks_mirror/centos7.9-x86_64
+looking for /var/www/cobbler/ks_mirror/centos7.9-x86_64/repodata/*comps*.xml
+Keeping repodata as-is :/var/www/cobbler/ks_mirror/centos7.9-x86_64/repodata
+*** TASK COMPLETE ***
+[root@cobbler-master ~]# echo $?
+0
+[root@cobbler-master ~]# 
+```
+
+可以看到导入镜像成功了。
+
+### 11.4 查看导入后的镜像列表和配置列表信息
+
+使用以下命令进行查看：
+
+```sh
+$ cobbler distro list
+$ cobbler profile list
+```
+
+查看镜像列表和配置列表信息：
+
+```sh
+[root@cobbler-master ~]# cobbler distro list
+   centos7.9-x86_64
+[root@cobbler-master ~]# cobbler profile list
+   centos7.9-x86_64
+[root@cobbler-master ~]# 
+```
+
+查看详情：
+
+```sg
+# 获取帮助信息
+[root@cobbler-master ~]# cobbler distro report --help
+Usage: cobbler [options]
+
+Options:
+  -h, --help   show this help message and exit
+  --name=NAME  name of object
+  
+# 查看镜像信息  
+[root@cobbler-master ~]# cobbler distro report --name=centos7.9-x86_64
+Name                           : centos7.9-x86_64
+Architecture                   : x86_64
+TFTP Boot Files                : {}
+Breed                          : redhat
+Comment                        : 
+Fetchable Files                : {}
+Initrd                         : /var/www/cobbler/ks_mirror/centos7.9-x86_64/images/pxeboot/initrd.img
+Kernel                         : /var/www/cobbler/ks_mirror/centos7.9-x86_64/images/pxeboot/vmlinuz
+Kernel Options                 : {}
+Kernel Options (Post Install)  : {}
+Kickstart Metadata             : {'tree': 'http://@@http_server@@/cblr/links/centos7.9-x86_64'}
+Management Classes             : []
+OS Version                     : rhel7
+Owners                         : ['admin']
+Red Hat Management Key         : <<inherit>>
+Red Hat Management Server      : <<inherit>>
+Template Files                 : {}
+[root@cobbler-master ~]# 
+
+# 查看配置信息
+[root@cobbler-master ~]# cobbler profile report --name=centos7.9-x86_64
+Name                           : centos7.9-x86_64
+TFTP Boot Files                : {}
+Comment                        : 
+DHCP Tag                       : default
+Distribution                   : centos7.9-x86_64
+Enable gPXE?                   : 0
+Enable PXE Menu?               : 1
+Fetchable Files                : {}
+Kernel Options                 : {}
+Kernel Options (Post Install)  : {}
+Kickstart                      : /var/lib/cobbler/kickstarts/sample_end.ks
+Kickstart Metadata             : {}
+Management Classes             : []
+Management Parameters          : <<inherit>>
+Name Servers                   : []
+Name Servers Search Path       : []
+Owners                         : ['admin']
+Parent Profile                 : 
+Internal proxy                 : 
+Red Hat Management Key         : <<inherit>>
+Red Hat Management Server      : <<inherit>>
+Repos                          : []
+Server Override                : <<inherit>>
+Template Files                 : {}
+Virt Auto Boot                 : 1
+Virt Bridge                    : xenbr0
+Virt CPUs                      : 1
+Virt Disk Driver Type          : raw
+Virt File Size(GB)             : 5
+Virt Path                      : 
+Virt RAM (MB)                  : 512
+Virt Type                      : kvm
+
+[root@cobbler-master ~]# 
+```
+
+### 11.5 编辑ks自动应答文件
+
+从上面的配置信息，我们可以知道`Kickstart                      : /var/lib/cobbler/kickstarts/sample_end.ks`,ks文件存放在`/var/lib/cobbler/kickstarts/sample_end.ks`路径。
+
+复制一份ks文件为`centos7.9.ks`文件：
+
+```sh
+[root@cobbler-master ~]# ls /var/lib/cobbler/kickstarts/sample_end.ks
+/var/lib/cobbler/kickstarts/sample_end.ks
+[root@cobbler-master ~]# cp /var/lib/cobbler/kickstarts/sample_end.ks /var/lib/cobbler/kickstarts/centos7.9.ks
+[root@cobbler-master ~]# ls -lah /var/lib/cobbler/kickstarts/centos7.9.ks 
+-rw-r--r-- 1 root root 1.9K 6月  19 22:40 /var/lib/cobbler/kickstarts/centos7.9.ks
+[root@cobbler-master ~]# 
+```
+
+查看ks文件内容：
+
+```sh
+[root@cobbler-master ~]# cat -n /var/lib/cobbler/kickstarts/centos7.9.ks 
+     1	# This kickstart file should only be used with EL > 5 and/or Fedora > 7.
+     2	# For older versions please use the sample.ks kickstart file.
+     3	
+     4	#platform=x86, AMD64, or Intel EM64T
+     5	# System authorization information
+     6	auth  --useshadow  --enablemd5
+     7	# System bootloader configuration
+     8	bootloader --location=mbr
+     9	# Partition clearing information
+    10	clearpart --all --initlabel
+    11	# Use text mode install
+    12	text
+    13	# Firewall configuration
+    14	firewall --enabled
+    15	# Run the Setup Agent on first boot
+    16	firstboot --disable
+    17	# System keyboard
+    18	keyboard us
+    19	# System language
+    20	lang en_US
+    21	# Use network installation
+    22	url --url=$tree
+    23	# If any cobbler repo definitions were referenced in the kickstart profile, include them here.
+    24	$yum_repo_stanza
+    25	# Network information
+    26	$SNIPPET('network_config')
+    27	# Reboot after installation
+    28	reboot
+    29	
+    30	#Root password
+    31	rootpw --iscrypted $default_password_crypted
+    32	# SELinux configuration
+    33	selinux --disabled
+    34	# Do not configure the X Window System
+    35	skipx
+    36	# System timezone
+    37	timezone  America/New_York
+    38	# Install OS instead of upgrade
+    39	install
+    40	# Clear the Master Boot Record
+    41	zerombr
+    42	# Allow anaconda to partition the system as needed
+    43	autopart
+    44	
+    45	%pre
+    46	$SNIPPET('log_ks_pre')
+    47	$SNIPPET('kickstart_start')
+    48	$SNIPPET('pre_install_network_config')
+    49	# Enable installation monitoring
+    50	$SNIPPET('pre_anamon')
+    51	%end
+    52	
+    53	%packages
+    54	$SNIPPET('func_install_if_enabled')
+    55	%end
+    56	
+    57	%post --nochroot
+    58	$SNIPPET('log_ks_post_nochroot')
+    59	%end
+    60	
+    61	%post
+    62	$SNIPPET('log_ks_post')
+    63	# Start yum configuration
+    64	$yum_config_stanza
+    65	# End yum configuration
+    66	$SNIPPET('post_install_kernel_options')
+    67	$SNIPPET('post_install_network_config')
+    68	$SNIPPET('func_register_if_enabled')
+    69	$SNIPPET('download_config_files')
+    70	$SNIPPET('koan_environment')
+    71	$SNIPPET('redhat_register')
+    72	$SNIPPET('cobbler_register')
+    73	# Enable post-install boot notification
+    74	$SNIPPET('post_anamon')
+    75	# Start final steps
+    76	$SNIPPET('kickstart_done')
+    77	# End final steps
+    78	%end
+[root@cobbler-master ~]# 
+```
+
+我们对这个应答文件进行修改。
+
+
+
+kickstart 配置文件说明详见[https://blog.csdn.net/yanghua1012/article/details/80426659](https://blog.csdn.net/yanghua1012/article/details/80426659)。
+
+我们直接对该配置文件进行修改，并增加一些说明信息。
+
+修改后，查看配置应答文件：
+
+```sh
+[root@cobbler-master ~]# cat -n /var/lib/cobbler/kickstarts/centos7.9.ks 
+     1	# This kickstart file should only be used with EL > 5 and/or Fedora > 7.
+     2	# For older versions please use the sample.ks kickstart file.
+     3	# 这个应答文件只适用于RedHat 5或Fedora 7以上版本。
+     4	# 旧版本请使用sample.ks应答文件。
+     5	
+     6	#platform=x86, AMD64, or Intel EM64T
+     7	# System authorization information
+     8	# 系统认证信息
+     9	# --useshadow或—enableshadow    使用隐藏密码
+    10	# --enablemd5                   使用MD5加密方式
+    11	auth  --useshadow  --enablemd5
+    12	
+    13	# System bootloader configuration
+    14	# 系统引导程序配置，必须配置
+    15	# --location=    设定引导记录的位置； mbr：默认值
+    16	bootloader --location=mbr
+    17	
+    18	# Partition clearing information
+    19	# 分区清理信息
+    20	# 在建立新分区前清空系统上原有的分区表
+    21	# --all      擦除系统上原有所有分区
+    22	# --initlabel    初始化磁盘卷标为系统架构的默认卷标
+    23	clearpart --all --initlabel
+    24	
+    25	# 分区设置
+    26	# /boot 文件类型为xfs，分区最小值1024MB
+    27	# swap分区，文件类型为swap，分区最小值2048MB
+    28	# /分区，文件类型为xfs，将剩余可利用磁盘空间都分区给/分区
+    29	part /boot --fstype=xfs --size=1024
+    30	part swap --fstype=swap --size=2048
+    31	part / --fstype=xfs --grow --size=10240
+    32	
+    33	# Use text mode install
+    34	# 以文本方式进行kickstart安装；默认为图形界面
+    35	text
+    36	
+    37	# Firewall configuration
+    38	# 防火墙配置
+    39	# --enable        拒绝外部发起的任何主动连接
+    40	firewall --enabled
+    41	
+    42	# Run the Setup Agent on first boot
+    43	# 系统在第一次引导时启动设置代码
+    44	# --disable 不启动设置代理
+    45	firstboot --disable
+    46	
+    47	# System keyboard
+    48	# 系统键盘类型
+    49	# 使用us键盘
+    50	keyboard us
+    51	
+    52	# System language
+    53	# 系统语言，设置为en_US.UTF-8
+    54	lang en_US.UTF-8
+    55	
+    56	# Use network installation
+    57	# 使用网络安装器
+    58	url --url=$tree
+    59	
+    60	# If any cobbler repo definitions were referenced in the kickstart profile, include them here.
+    61	# 包含yum repo仓库
+    62	$yum_repo_stanza
+    63	
+    64	# Network information
+    65	$SNIPPET('network_config')
+    66	
+    67	# Reboot after installation
+    68	# 安装完成后重启
+    69	reboot
+    70	
+    71	#Root password
+    72	# 设置root账号加密密码
+    73	rootpw --iscrypted $default_password_crypted
+    74	
+    75	# SELinux configuration
+    76	# SELinux状态设置
+    77	# 设置为关闭状态
+    78	selinux --disabled
+    79	
+    80	# Do not configure the X Window System
+    81	# 忽略X Window系统设置
+    82	skipx
+    83	
+    84	# System timezone
+    85	# 系统时区
+    86	# 设置为亚洲/上海
+    87	timezone  Asia/Shanghai
+    88	
+    89	# Install OS instead of upgrade
+    90	# 安装全新系统而不是在现有系统上进行升级
+    91	install
+    92	
+    93	# Clear the Master Boot Record
+    94	# 任何磁盘上的无效分区表都将被初始化
+    95	zerombr
+    96	
+    97	# Allow anaconda to partition the system as needed
+    98	# 自动创建分区
+    99	autopart
+   100	
+   101	# 脚本，在安装前运行
+   102	%pre
+   103	$SNIPPET('log_ks_pre')
+   104	$SNIPPET('kickstart_start')
+   105	$SNIPPET('pre_install_network_config')
+   106	# Enable installation monitoring
+   107	$SNIPPET('pre_anamon')
+   108	%end
+   109	
+   110	# 设定需要安装的软件包及包组
+   111	%packages
+   112	$SNIPPET('func_install_if_enabled')
+   113	dos2unix
+   114	tree
+   115	net-tools
+   116	lrzsz
+   117	gcc
+   118	golang
+   119	python3
+   120	httpd
+   121	sysstat
+   122	ntp
+   123	%end
+   124	
+   125	# 脚本。在安装后运行
+   126	%post --nochroot
+   127	$SNIPPET('log_ks_post_nochroot')
+   128	%end
+   129	
+   130	%post
+   131	$SNIPPET('log_ks_post')
+   132	# Start yum configuration
+   133	$yum_config_stanza
+   134	# End yum configuration
+   135	$SNIPPET('post_install_kernel_options')
+   136	$SNIPPET('post_install_network_config')
+   137	$SNIPPET('func_register_if_enabled')
+   138	$SNIPPET('download_config_files')
+   139	$SNIPPET('koan_environment')
+   140	$SNIPPET('redhat_register')
+   141	$SNIPPET('cobbler_register')
+   142	# Enable post-install boot notification
+   143	$SNIPPET('post_anamon')
+   144	# Start final steps
+   145	$SNIPPET('kickstart_done')
+   146	# End final steps
+   147	%end
+[root@cobbler-master ~]# 
+```
+
+### 11.6 编辑`centos7.9`镜像所使用的`kickstart`文件
+
+查看当前ks配置信息：
+
+```sh
+[root@cobbler-master ~]# cobbler profile report --name=centos7.9-x86_64 |grep 'Kickstart.*ks$'
+Kickstart                      : /var/lib/cobbler/kickstarts/sample_end.ks
+```
+
+更新一下：
+
+```sh
+[root@cobbler-master ~]# cobbler profile edit --name=centos7.9-x86_64 --kickstart="/var/lib/cobbler/kickstarts/centos7.9.ks"
+[root@cobbler-master ~]# cobbler profile report --name=centos7.9-x86_64 |grep 'Kickstart.*ks$'
+Kickstart                      : /var/lib/cobbler/kickstarts/centos7.9.ks
+```
+
+可以看到应答文件配置已经更新成功。
+
+### 11.7 重启服务并同步配置
+
+重启所有服务，并同步配置：
+
+```sh
+[root@cobbler-master ~]# systemctl restart xinetd rsyncd dhcpd httpd cobblerd
+[root@cobbler-master ~]# echo $?
+0
+[root@cobbler-master ~]# cobbler check
+No configuration problems found.  All systems go.
+[root@cobbler-master ~]# cobbler sync
+task started: 2021-06-19_234928_sync
+task started (id=Sync, time=Sat Jun 19 23:49:28 2021)
+running pre-sync triggers
+cleaning trees
+removing: /var/www/cobbler/images/centos7.9-x86_64
+removing: /var/lib/tftpboot/pxelinux.cfg/default
+removing: /var/lib/tftpboot/grub/images
+removing: /var/lib/tftpboot/grub/grub-x86.efi
+removing: /var/lib/tftpboot/grub/grub-x86_64.efi
+removing: /var/lib/tftpboot/grub/efidefault
+removing: /var/lib/tftpboot/images/centos7.9-x86_64
+removing: /var/lib/tftpboot/s390x/profile_list
+copying bootloaders
+trying hardlink /var/lib/cobbler/loaders/grub-x86.efi -> /var/lib/tftpboot/grub/grub-x86.efi
+trying hardlink /var/lib/cobbler/loaders/grub-x86_64.efi -> /var/lib/tftpboot/grub/grub-x86_64.efi
+copying distros to tftpboot
+copying files for distro: centos7.9-x86_64
+trying hardlink /var/www/cobbler/ks_mirror/centos7.9-x86_64/images/pxeboot/vmlinuz -> /var/lib/tftpboot/images/centos7.9-x86_64/vmlinuz
+trying hardlink /var/www/cobbler/ks_mirror/centos7.9-x86_64/images/pxeboot/initrd.img -> /var/lib/tftpboot/images/centos7.9-x86_64/initrd.img
+copying images
+generating PXE configuration files
+generating PXE menu structure
+copying files for distro: centos7.9-x86_64
+trying hardlink /var/www/cobbler/ks_mirror/centos7.9-x86_64/images/pxeboot/vmlinuz -> /var/www/cobbler/images/centos7.9-x86_64/vmlinuz
+trying hardlink /var/www/cobbler/ks_mirror/centos7.9-x86_64/images/pxeboot/initrd.img -> /var/www/cobbler/images/centos7.9-x86_64/initrd.img
+Writing template files for centos7.9-x86_64
+rendering DHCP files
+generating /etc/dhcp/dhcpd.conf
+rendering TFTPD files
+generating /etc/xinetd.d/tftp
+processing boot_files for distro: centos7.9-x86_64
+cleaning link caches
+running post-sync triggers
+running python triggers from /var/lib/cobbler/triggers/sync/post/*
+running python trigger cobbler.modules.sync_post_restart_services
+running: dhcpd -t -q
+received on stdout: 
+received on stderr: 
+running: service dhcpd restart
+received on stdout: 
+received on stderr: Redirecting to /bin/systemctl restart dhcpd.service
+
+running shell triggers from /var/lib/cobbler/triggers/sync/post/*
+running python triggers from /var/lib/cobbler/triggers/change/*
+running python trigger cobbler.modules.manage_genders
+running python trigger cobbler.modules.scm_track
+running shell triggers from /var/lib/cobbler/triggers/change/*
+*** TASK COMPLETE ***
+[root@cobbler-master ~]# echo $?
+0
+[root@cobbler-master ~]# 
+```
+
+我们再次尝试开机`cobbler-node1`虚拟机，看能否自动安装系统。
+
+此时，还是异常。
+
+然后，我尝试打开`https://192.168.2.20/cblr/svc/op/ks/profile/centos7.9-x86_64`,查看应答文件,发现提示异常：
+
+```
+# This kickstart had errors that prevented it from being rendered correctly.
+# The cobbler.log should have information relating to this failure.
+```
+
+说明应答文件出现问题。
+
+我们打开`/var/log/cobbler/cobbler.log`
+
+可以看到有以下异常：
+
+```sh
+Sun Jun 20 00:19:21 2021 - INFO | Exception value: 'ascii' codec can't decode byte 0xe8 in position 162: ordinal not in range(128)
+```
+
+我们把应答文件里面所有中文移除掉，再查看文件：
+
+```sh
+[root@cobbler-master ~]# cat -n /var/lib/cobbler/kickstarts/centos7.9.ks 
+     1	# This kickstart file should only be used with EL > 5 and/or Fedora > 7.
+     2	# For older versions please use the sample.ks kickstart file.
+     3	
+     4	#platform=x86, AMD64, or Intel EM64T
+     5	# System authorization information
+     6	auth  --useshadow  --enablemd5
+     7	
+     8	# System bootloader configuration
+     9	bootloader --location=mbr
+    10	
+    11	# Partition clearing information
+    12	clearpart --all --initlabel
+    13	
+    14	part /boot --fstype=xfs --size=1024
+    15	part swap --fstype=swap --size=2048
+    16	part / --fstype=xfs --grow --size=10240
+    17	
+    18	# Use text mode install
+    19	text
+    20	
+    21	# Firewall configuration
+    22	firewall --enabled
+    23	
+    24	# Run the Setup Agent on first boot
+    25	firstboot --disable
+    26	
+    27	# System keyboard
+    28	keyboard us
+    29	
+    30	# System language
+    31	lang en_US.UTF-8
+    32	
+    33	# Use network installation
+    34	url --url=$tree
+    35	
+    36	# If any cobbler repo definitions were referenced in the kickstart profile, include them here.
+    37	$yum_repo_stanza
+    38	
+    39	# Network information
+    40	$SNIPPET('network_config')
+    41	
+    42	# Reboot after installation
+    43	reboot
+    44	
+    45	#Root password
+    46	rootpw --iscrypted $default_password_crypted
+    47	
+    48	# SELinux configuration
+    49	selinux --disabled
+    50	
+    51	# Do not configure the X Window System
+    52	skipx
+    53	
+    54	# System timezone
+    55	timezone  Asia/Shanghai
+    56	
+    57	# Install OS instead of upgrade
+    58	install
+    59	
+    60	# Clear the Master Boot Record
+    61	zerombr
+    62	
+    63	# Allow anaconda to partition the system as needed
+    64	autopart
+    65	
+    66	%pre
+    67	$SNIPPET('log_ks_pre')
+    68	$SNIPPET('kickstart_start')
+    69	$SNIPPET('pre_install_network_config')
+    70	# Enable installation monitoring
+    71	$SNIPPET('pre_anamon')
+    72	%end
+    73	
+    74	%packages
+    75	$SNIPPET('func_install_if_enabled')
+    76	dos2unix
+    77	tree
+    78	net-tools
+    79	lrzsz
+    80	gcc
+    81	golang
+    82	python3
+    83	httpd
+    84	sysstat
+    85	ntp
+    86	%end
+    87	
+    88	%post --nochroot
+    89	$SNIPPET('log_ks_post_nochroot')
+    90	%end
+    91	
+    92	%post
+    93	$SNIPPET('log_ks_post')
+    94	# Start yum configuration
+    95	$yum_config_stanza
+    96	# End yum configuration
+    97	$SNIPPET('post_install_kernel_options')
+    98	$SNIPPET('post_install_network_config')
+    99	$SNIPPET('func_register_if_enabled')
+   100	$SNIPPET('download_config_files')
+   101	$SNIPPET('koan_environment')
+   102	$SNIPPET('redhat_register')
+   103	$SNIPPET('cobbler_register')
+   104	# Enable post-install boot notification
+   105	$SNIPPET('post_anamon')
+   106	# Start final steps
+   107	$SNIPPET('kickstart_done')
+   108	# End final steps
+   109	%end
+[root@cobbler-master ~]# 
+```
+
+再重启服务，并同步配置：
+
+```sh
+[root@cobbler-master ~]# systemctl restart xinetd rsyncd dhcpd httpd cobblerd
+[root@cobbler-master ~]# cobbler sync
+task started: 2021-06-20_002657_sync
+task started (id=Sync, time=Sun Jun 20 00:26:57 2021)
+running pre-sync triggers
+cleaning trees
+removing: /var/www/cobbler/images/centos7.9-x86_64
+removing: /var/lib/tftpboot/pxelinux.cfg/default
+removing: /var/lib/tftpboot/grub/images
+removing: /var/lib/tftpboot/grub/grub-x86.efi
+removing: /var/lib/tftpboot/grub/grub-x86_64.efi
+removing: /var/lib/tftpboot/grub/efidefault
+removing: /var/lib/tftpboot/images/centos7.9-x86_64
+removing: /var/lib/tftpboot/s390x/profile_list
+copying bootloaders
+trying hardlink /var/lib/cobbler/loaders/grub-x86.efi -> /var/lib/tftpboot/grub/grub-x86.efi
+trying hardlink /var/lib/cobbler/loaders/grub-x86_64.efi -> /var/lib/tftpboot/grub/grub-x86_64.efi
+copying distros to tftpboot
+copying files for distro: centos7.9-x86_64
+trying hardlink /var/www/cobbler/ks_mirror/centos7.9-x86_64/images/pxeboot/vmlinuz -> /var/lib/tftpboot/images/centos7.9-x86_64/vmlinuz
+trying hardlink /var/www/cobbler/ks_mirror/centos7.9-x86_64/images/pxeboot/initrd.img -> /var/lib/tftpboot/images/centos7.9-x86_64/initrd.img
+copying images
+generating PXE configuration files
+generating PXE menu structure
+copying files for distro: centos7.9-x86_64
+trying hardlink /var/www/cobbler/ks_mirror/centos7.9-x86_64/images/pxeboot/vmlinuz -> /var/www/cobbler/images/centos7.9-x86_64/vmlinuz
+trying hardlink /var/www/cobbler/ks_mirror/centos7.9-x86_64/images/pxeboot/initrd.img -> /var/www/cobbler/images/centos7.9-x86_64/initrd.img
+Writing template files for centos7.9-x86_64
+rendering DHCP files
+generating /etc/dhcp/dhcpd.conf
+rendering TFTPD files
+generating /etc/xinetd.d/tftp
+processing boot_files for distro: centos7.9-x86_64
+cleaning link caches
+running post-sync triggers
+running python triggers from /var/lib/cobbler/triggers/sync/post/*
+running python trigger cobbler.modules.sync_post_restart_services
+running: dhcpd -t -q
+received on stdout: 
+received on stderr: 
+running: service dhcpd restart
+received on stdout: 
+received on stderr: Redirecting to /bin/systemctl restart dhcpd.service
+
+running shell triggers from /var/lib/cobbler/triggers/sync/post/*
+running python triggers from /var/lib/cobbler/triggers/change/*
+running python trigger cobbler.modules.manage_genders
+running python trigger cobbler.modules.scm_track
+running shell triggers from /var/lib/cobbler/triggers/change/*
+*** TASK COMPLETE ***
+[root@cobbler-master ~]# echo $?
+0
+[root@cobbler-master ~]# 
+```
+
+再次在浏览器中打开应答文件，可以发现没有提示异常。
+
+重新启动`cobbler_node1`虚拟机。仍然提示异常：
+
+![](https://meizhaohui.gitee.io/imagebed/img/cobbler-node1_Oracle_VM_VirtualBox_012.png)
+
+在VMware中安装虚拟机，尝试开机启动也会提示异常：
+
+![](https://meizhaohui.gitee.io/imagebed/img/CentOS7test_VMware_Workstation_013.png)
+
+我们尝试手动连接一下TFTP。
+
+在cobbler服务器上面测试，可以看到可以快速下载下来：
+
+```sh
+[root@cobbler-master ~]# tftp 192.168.2.20
+tftp> get images/centos7.9-x86_64/initrd.img
+tftp> quit
+[root@cobbler-master ~]# 
+```
+
+但在宿主机上面下载，则会提示超时：
+
+```sh
+meizhaohui@ubuntu:~$ tftp 192.168.2.20
+tftp> ?
+Commands may be abbreviated.  Commands are:
+
+connect 	connect to remote tftp
+mode    	set file transfer mode
+put     	send file
+get     	receive file
+quit    	exit tftp
+verbose 	toggle verbose mode
+trace   	toggle packet tracing
+status  	show current status
+binary  	set mode to octet
+ascii   	set mode to netascii
+rexmt   	set per-packet retransmission timeout
+timeout 	set total retransmission timeout
+?       	print help information
+tftp> get images/centos7.9-x86_64/initrd.img
+Transfer timed out.
+
+tftp> quit
+meizhaohui@ubuntu:~$ 
+```
+
+说明TFTP服务还是有问题的。
+
+查看TFTP的日志文件`/var/log/messages`:
+
+```sh
+[root@cobbler-master ~]# tail  /var/log/messages
+Jun 21 00:04:14 cobbler-master in.tftpd[2145]: RRQ from 192.168.2.113 filename images/centos7.9-x86_64/initrd.img
+Jun 21 00:04:15 cobbler-master in.tftpd[2144]: Client 192.168.2.113 finished images/centos7.9-x86_64/initrd.img
+Jun 21 00:04:15 cobbler-master in.tftpd[2144]: Client 192.168.2.113 timed out
+Jun 21 00:04:19 cobbler-master in.tftpd[2146]: RRQ from 192.168.2.113 filename images/centos7.9-x86_64/initrd.img
+Jun 21 00:04:20 cobbler-master in.tftpd[2145]: Client 192.168.2.113 finished images/centos7.9-x86_64/initrd.img
+Jun 21 00:04:20 cobbler-master in.tftpd[2145]: Client 192.168.2.113 timed out
+Jun 21 00:04:25 cobbler-master in.tftpd[2146]: Client 192.168.2.113 finished images/centos7.9-x86_64/initrd.img
+Jun 21 00:04:25 cobbler-master in.tftpd[2146]: Client 192.168.2.113 timed out
+Jun 21 00:05:01 cobbler-master in.tftpd[2148]: RRQ from 192.168.2.20 filename images/centos7.9-x86_64/initrd.img
+Jun 21 00:05:02 cobbler-master in.tftpd[2148]: Client 192.168.2.20 finished images/centos7.9-x86_64/initrd.img
+```
+
+可以看到，本cobbler服务器上面下载`images/centos7.9-x86_64/initrd.img`能够正常下载下来，但是通过宿主机`192.168.2.113`下载`images/centos7.9-x86_64/initrd.img`就出现超时问题`timed out`，进一步验证了TFTP服务有问题。
+
+而此时通过检查可以看防火墙和SELinux都是关闭状态：
+
+```sh
+[root@cobbler-master ~]# systemctl status firewalld
+● firewalld.service - firewalld - dynamic firewall daemon
+   Loaded: loaded (/usr/lib/systemd/system/firewalld.service; disabled; vendor preset: enabled)
+   Active: inactive (dead)
+     Docs: man:firewalld(1)
+
+6月 20 21:40:13 cobbler-master systemd[1]: Starting firewalld - dynamic firewall daemon...
+6月 20 21:40:15 cobbler-master systemd[1]: Started firewalld - dynamic firewall daemon.
+6月 20 21:40:16 cobbler-master firewalld[657]: WARNING: AllowZoneDrifting is enabled. This...w.
+6月 20 21:43:53 cobbler-master systemd[1]: Stopping firewalld - dynamic firewall daemon...
+6月 20 21:43:53 cobbler-master systemd[1]: Stopped firewalld - dynamic firewall daemon.
+Hint: Some lines were ellipsized, use -l to show in full.
+[root@cobbler-master ~]# getenforce 
+Disabled
+```
+
+我们在宿主机上面再看一下防火墙相关配置：
+
+```sh
+meizhaohui@ubuntu:~$ sudo ufw status
+[sudo] password for meizhaohui: 
+Status: active
+
+```
+
+
+
+
+
+![](https://meizhaohui.gitee.io/imagebed/img/start_error_again.png)
+
+
 
 
 
