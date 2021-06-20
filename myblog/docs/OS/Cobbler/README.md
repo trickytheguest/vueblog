@@ -2717,6 +2717,10 @@ running shell triggers from /var/lib/cobbler/triggers/change/*
 
 我们尝试手动连接一下TFTP。
 
+我们可以Web浏览器中访问 [https://192.168.2.20/cobbler/](https://192.168.2.20/cobbler/) 查看FTP的数据：
+
+![](https://meizhaohui.gitee.io/imagebed/img/ftp_data.png)
+
 在cobbler服务器上面测试，可以看到可以快速下载下来：
 
 ```sh
@@ -2795,17 +2799,52 @@ Disabled
 我们在宿主机上面再看一下防火墙相关配置：
 
 ```sh
+# 检查宿主机状态，发现宿主机防火墙开启了
 meizhaohui@ubuntu:~$ sudo ufw status
 [sudo] password for meizhaohui: 
 Status: active
 
+# 关闭宿主机的防火墙
+meizhaohui@ubuntu:~$ sudo ufw disable
+Firewall stopped and disabled on system startup
+meizhaohui@ubuntu:~$ sudo ufw status
+Status: inactive
+
+# 再次连接到tftp,尝试下来，发现能够正常下载，说明现在tftp服务是正常的呢！
+meizhaohui@ubuntu:~$ tftp 192.168.2.20
+tftp> get images/centos7.9-x86_64/initrd.img
+Received 55129656 bytes in 5.1 seconds
+tftp> quit
+meizhaohui@ubuntu:~$ 
 ```
 
+此时，可以看到，能够正常下载文件了。
+
+说明是因为宿主机的防火墙开启导致安装新的系统时，新系统不能下载FTP的数据。
 
 
 
+我们再次尝试在VMware和VirtualBox中启动系统。
 
-![](https://meizhaohui.gitee.io/imagebed/img/start_error_again.png)
+注意，我们在VirtualBox或VMware中配置的新系统都使用桥接网络：
+
+![](https://meizhaohui.gitee.io/imagebed/img/Selection_015.png)
+
+启动`cobbler_node1`虚拟机：
+
+![](https://meizhaohui.gitee.io/imagebed/img/cobbler-node1_Oracle_VM_VirtualBox_016.png)
+
+由于我长时间没有选择，系统自动从`local`启动，而我们`local`本地没有启动程序，出现异常：
+
+![](https://meizhaohui.gitee.io/imagebed/img/cobbler-node1_Oracle_VM_VirtualBox_017.png)
+
+我们关闭系统，重新启动：
+
+![](https://meizhaohui.gitee.io/imagebed/img/cobbler-node1_Oracle_VM_VirtualBox_018.png)
+
+终于看到安装界面了，此时我们选择我们的系统centos7.9开始安装。
+
+
 
 
 
