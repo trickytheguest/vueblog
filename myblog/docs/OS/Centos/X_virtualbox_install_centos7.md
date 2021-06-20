@@ -456,7 +456,7 @@ ONBOOT=yes
 [root@localhost network-scripts]# sed -i 's/BOOTPROTO=dhcp/BOOTPROTO=static/g' ifcfg-enp0s3
 
 # 尝试在文件最后增加一行，表示IP信息
-[root@localhost network-scripts]# sed '$aIPARR=192.168.56.3' ifcfg-enp0s3
+[root@localhost network-scripts]# sed '$aIPADDR=192.168.56.3' ifcfg-enp0s3
 TYPE=Ethernet 
 PROXY_METHOD=none
 BROWSER_ONLY=no  
