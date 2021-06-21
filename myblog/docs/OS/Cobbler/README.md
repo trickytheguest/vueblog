@@ -807,7 +807,7 @@ Restart cobblerd and then run 'cobbler sync' to apply changes.
 
 
 
-搓着处理`default_password_crypted`配置的问题。
+接着处理`default_password_crypted`配置的问题。
 
 #### 6.2.2 修改`default_password_crypted`配置
 
@@ -2843,6 +2843,84 @@ meizhaohui@ubuntu:~$
 ![](https://meizhaohui.gitee.io/imagebed/img/cobbler-node1_Oracle_VM_VirtualBox_018.png)
 
 终于看到安装界面了，此时我们选择我们的系统centos7.9开始安装。
+
+
+
+但是还没有完成，重新启动虚拟机时，在后台日志中可以看到异常：
+
+```sh
+[root@cobbler-master cobbler]# tail -f  /var/log/messages
+Jun 21 22:08:45 cobbler-master dhcpd: DHCPOFFER on 192.168.2.224 to 00:50:56:38:96:30 via enp0s3
+Jun 21 22:08:46 cobbler-master dhcpd: DHCPREQUEST for 192.168.2.224 (192.168.2.20) from 00:50:56:38:96:30 via enp0s3
+Jun 21 22:08:46 cobbler-master dhcpd: DHCPACK on 192.168.2.224 to 00:50:56:38:96:30 via enp0s3
+Jun 21 22:08:46 cobbler-master xinetd[1663]: START: tftp pid=1729 from=192.168.2.224
+Jun 21 22:08:46 cobbler-master in.tftpd[1730]: RRQ from 192.168.2.224 filename pxelinux.0
+Jun 21 22:08:46 cobbler-master in.tftpd[1730]: Error code 0: TFTP Aborted
+Jun 21 22:08:46 cobbler-master in.tftpd[1731]: RRQ from 192.168.2.224 filename pxelinux.0
+Jun 21 22:08:46 cobbler-master in.tftpd[1731]: Client 192.168.2.224 finished pxelinux.0
+Jun 21 22:08:46 cobbler-master dhcpd: DHCPREQUEST for 192.168.2.224 (192.168.2.20) from 00:50:56:38:96:30 via enp0s3
+Jun 21 22:08:46 cobbler-master dhcpd: DHCPACK on 192.168.2.224 to 00:50:56:38:96:30 via enp0s3
+```
+
+其中有一个`Error code 0: TFTP Aborted`,安装系统直接没有反应，不进行后续操作。
+
+## 12. 使用VMWare进行测试安装
+
+我们在virtualbox里面搭建虚拟机，发现一直测试不成功。我们尝试在VMware中新建一个虚拟机，并快捷搭建cobbler系统，看看是不是因为虚拟软件的不同导致不能启动。以下步骤只是简单的写出主要步骤。
+
+- 步骤1: VMware中创建CentOS7.9虚拟机。
+- 步骤2: 安装相关软件包。
+
+```sh
+# 安装基础工具
+yum install vim wget -y
+
+# 更新yum源
+wget -O /etc/yum.repos.d/CentOS-Base.repo https://repo.huaweicloud.com/repository/conf/CentOS-7-reg.repo
+cat > /etc/yum.repos.d/epel.repo << EOF
+[epel]
+name=Extra Packages for Enterprise Linux 7 - \$basearch
+baseurl=https://mirrors.tuna.tsinghua.edu.cn/epel/7/\$basearch
+#mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=epel-7&arch=\$basearch
+failovermethod=priority
+enabled=1
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7
+
+[epel-debuginfo]
+name=Extra Packages for Enterprise Linux 7 - \$basearch - Debug
+baseurl=https://mirrors.tuna.tsinghua.edu.cn/epel/7/\$basearch/debug
+#mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=epel-debug-7&arch=\$basearch
+failovermethod=priority
+enabled=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7
+gpgcheck=1
+
+[epel-source]
+name=Extra Packages for Enterprise Linux 7 - \$basearch - Source
+baseurl=https://mirrors.tuna.tsinghua.edu.cn/epel/7/SRPMS
+#mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=epel-source-7&arch=\$basearch
+failovermethod=priority
+enabled=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7
+gpgcheck=1
+EOF
+
+# 关闭SELinux
+setenforce 0
+sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config 
+cat /etc/selinux/config |sed -n 7p
+
+# 关闭防火墙
+systemctl disable firewalld
+systemctl stop firewalld
+systemctl status firewalld
+
+# cobbler相关软件安装
+yum install httpd xinetd debmirror fence-agents tftp-server dhcp  pykickstart cobbler cobbler-web -y
+```
+
+
 
 
 
