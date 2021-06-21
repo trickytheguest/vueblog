@@ -4285,5 +4285,199 @@ $ atof.out '-123' "-12.345" "+123.01" +01234.5
 
 
 
+本节使用逆波兰法表示具有加(+)减(-)乘(*)除(/)四则运算的计算器程序。
 
+这里参考 [C程序设计语言（第二版） 4-3 逆波兰计算器](https://blog.csdn.net/carolaif/article/details/83672283) 的代码，增加一些注释，以便于理解：
 
+```c
+$ cat calc.c
+/*
+ *      Filename: calc.c
+ *        Author: Zhaohui Mei<mzh.whut@gmail.com>
+ *   Description: 逆波兰法计算器程序
+ *   Create Time: 2021-06-18 06:47:58
+ * Last Modified: 2021-06-22 07:32:33
+ */
+
+#include <ctype.h> /* 提供isdigit()函数 */
+#include <stdio.h>
+#include <stdlib.h> /* 提供atof()函数 */
+
+#define MAXOP 100   /* max size of operand or operator 操作数或运算符的最大长度 */
+#define NUMBER '0'  /* signal that a number was found 标识找到一个数*/
+#define MAXVAL 100  /* maximum depth of val stack 栈的最大深度 */
+#define BUFSIZE 100 /* 用于ungetch函数的缓冲区 */
+
+int getop(char[]);    // 获取下一个运算符或数值操作数
+
+void push(double);    // 压入栈
+double pop(void);     // 弹出并返回栈顶的值
+
+int getch(void);      // 取一个字符
+void ungetch(int);    // 把字符压回到输入中
+
+int sp = 0;         /* next free stack position 下一个空闲栈位置 */
+double val[MAXVAL]; /* value stack  值栈 */
+char buf[BUFSIZE];  /* buffer for ungetch 用于ungetch函数的缓冲区*/
+int bufp = 0;       /* next free position in buf  buf中下一个空闲位置 */
+
+int main(void)
+{
+    int type;         // 类型
+    double op2;       // 减法或除法中第二个操作数
+    char s[MAXOP];    // 字符串数组
+
+    //从键盘输入的内容，是以' '为单位，依次从缓存读入到数组s[],
+    //又由getop(s[])从s中读出，返回给type.
+    //例如，从键盘输入 -2 1 +
+    //数组s的几个不同的状态分别是:
+    // s[0]='-' s[1]='2'  s[2]='\n'(即10)
+    // s[0]='1' s[2]='\n'
+    // s[0]='+' s[2]='\n'
+    while((type = getop(s)) != EOF)
+    {
+        switch(type)
+        {
+        case NUMBER:    // 如果是数字，则压入到栈中
+            push(atof(s));
+            break;
+        case '+':    // 如果是加法操作符，则先弹出两个操作数，然后再压入
+            push(pop( ) + pop( ));
+            break;
+        case '*':    // 如果是乘法操作符，则先弹出两个操作数，然后再压入
+            push(pop( ) * pop( ));
+            break;
+        case '-':    // 如果是减法，则先弹出第二个操作数作为减数，再弹出第一个操作数作为被减数,然后再压入
+            op2 = pop( );
+            push(pop( ) - op2);
+            break;
+        case '/':    // 如果是除法，则先弹出第二操作数作为除数，如果除数不为0，则再弹出第一个操作数作为除数，然后再压入
+            op2 = pop( );
+            if (op2 != 0.0)
+                push(pop( ) / op2);
+            else
+                printf("error: zero divisor\n");    // 除数为0,抛出异常
+            break;
+        case '%':    // 如果是取模，则需要将各操作数先转换成整数
+            op2 = pop( );
+            if (op2)
+                push((int) pop( ) % (int) op2);
+            else
+                printf("\nError: Division by zero!");    // 除数为0，抛出异常
+            break;
+        case '\n':    // 如果是回车，则直接输出最后一个操作数
+            printf("\t%.8g\n", pop( ));
+            break;
+        case 'q':    // 如果输入q，则退出程序
+            return EXIT_SUCCESS;
+        default:    // 未知命令，抛出异常
+            printf("error: unknown command %s\n", s);
+            break;
+        }
+    }
+    return EXIT_SUCCESS;    // stdlib.h中定义的成功退出标识
+}
+
+// 压入
+void push(double f)
+{
+	if (sp < MAXVAL)
+		  val[sp++] = f;
+	else
+      printf("error: stack full, can't push %g\n", f);    // 栈满了，抛出异常
+}
+
+/* pop:  pop and return top value from stack */
+// 弹出并返回栈顶的值
+double pop(void)
+{
+	if (sp > 0)
+		return val[--sp];
+    else {
+        printf("error: stack empty\n");    // 栈空，抛出异常
+        return 0.0;
+    }
+}
+
+// 获取下一个运算符或数值操作数
+int getop(char s[])
+{
+// 小数点标识
+#define PERIOD '.'
+    int i = 0;
+    int c;
+    int next;
+
+    /* Skip whitespace */
+    while((s[0] = c = getch()) == ' ' || c == '\t')
+        ;
+    s[1] = '\0';
+
+    /* Not a number but may contain a unary minus. */
+	 if(!isdigit(c) && c != PERIOD && c != '-')
+        return c;
+
+    if(c == '-') //如果当前读入的c是'-'
+    {
+        next = getch(); //判断下一个输入字符next
+        if(!isdigit(next) && next != PERIOD)
+        {
+           return c; //如果next不是数字并且不是小数点，则c为操作符
+        }
+        c = next; //否则，既next是数字
+    }
+    else
+    {
+        c = getch();
+    }
+    /*收集整数部分*/
+    while(isdigit(s[++i] = c)) //则把c保存到数组s[]中
+        c = getch( );
+    if(c == PERIOD)
+		/* 收集小数部分*/
+        while(isdigit(s[++i] = c = getch()))
+            ;
+    s[i] = '\0';
+    if(c != EOF)
+        ungetch(c);    // 重新把字符圧回到输入中
+    return NUMBER;
+}
+
+// 取一个字符
+int getch(void)  /* get a (possibly pushed-back) character */
+{
+	return (bufp > 0) ? buf[--bufp] : getchar();
+}
+
+// 把字符压回到输入中
+void ungetch(int c)   /* push character back on input */
+{
+	if (bufp >= BUFSIZE)
+		  printf("ungetch: too many characters\n");
+	else
+		  buf[bufp++] = c;
+}
+
+```
+
+编译并运行：
+
+```sh
+$ calc.out
+2 3 +
+	     5
+2 3 -
+
+	     -1
+2 3 *
+	     6
+2 3 /
+	     0.66666667
+2 3 %
+	     2
+2 3 4
+	     4
+q
+```
+
+可以看到，能够进行四则运算了。说明程序可以正常使用。
