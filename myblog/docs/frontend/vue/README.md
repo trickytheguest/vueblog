@@ -9,3 +9,5 @@
 7. [v-for循环列表](./v-for.md)
 8. [事件处理](./events.md)
 9. [表单输入绑定](./forms.md)
+9. [组件基础](./components.md)
+
