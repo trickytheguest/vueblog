@@ -4296,7 +4296,7 @@ $ cat calc.c
  *        Author: Zhaohui Mei<mzh.whut@gmail.com>
  *   Description: 逆波兰法计算器程序
  *   Create Time: 2021-06-18 06:47:58
- * Last Modified: 2021-06-22 07:32:33
+ * Last Modified: 2021-06-26 21:57:47
  */
 
 #include <ctype.h> /* 提供isdigit()函数 */
@@ -4381,18 +4381,18 @@ int main(void)
 // 压入
 void push(double f)
 {
-	if (sp < MAXVAL)
-		  val[sp++] = f;
-	else
-      printf("error: stack full, can't push %g\n", f);    // 栈满了，抛出异常
+    if (sp < MAXVAL)
+        val[sp++] = f;
+    else
+        printf("error: stack full, can't push %g\n", f);    // 栈满了，抛出异常
 }
 
 /* pop:  pop and return top value from stack */
 // 弹出并返回栈顶的值
 double pop(void)
 {
-	if (sp > 0)
-		return val[--sp];
+    if (sp > 0)
+        return val[--sp];
     else {
         printf("error: stack empty\n");    // 栈空，抛出异常
         return 0.0;
@@ -4414,7 +4414,7 @@ int getop(char s[])
     s[1] = '\0';
 
     /* Not a number but may contain a unary minus. */
-	 if(!isdigit(c) && c != PERIOD && c != '-')
+    if (!isdigit(c) && c != PERIOD && c != '-')
         return c;
 
     if(c == '-') //如果当前读入的c是'-'
@@ -4422,7 +4422,7 @@ int getop(char s[])
         next = getch(); //判断下一个输入字符next
         if(!isdigit(next) && next != PERIOD)
         {
-           return c; //如果next不是数字并且不是小数点，则c为操作符
+            return c;    //如果next不是数字并且不是小数点，则c为操作符
         }
         c = next; //否则，既next是数字
     }
@@ -4434,7 +4434,7 @@ int getop(char s[])
     while(isdigit(s[++i] = c)) //则把c保存到数组s[]中
         c = getch( );
     if(c == PERIOD)
-		/* 收集小数部分*/
+        /* 收集小数部分*/
         while(isdigit(s[++i] = c = getch()))
             ;
     s[i] = '\0';
@@ -4446,16 +4446,16 @@ int getop(char s[])
 // 取一个字符
 int getch(void)  /* get a (possibly pushed-back) character */
 {
-	return (bufp > 0) ? buf[--bufp] : getchar();
+    return (bufp > 0) ? buf[--bufp] : getchar();
 }
 
 // 把字符压回到输入中
 void ungetch(int c)   /* push character back on input */
 {
-	if (bufp >= BUFSIZE)
-		  printf("ungetch: too many characters\n");
-	else
-		  buf[bufp++] = c;
+    if (bufp >= BUFSIZE)
+        printf("ungetch: too many characters\n");
+    else
+        buf[bufp++] = c;
 }
 
 ```
