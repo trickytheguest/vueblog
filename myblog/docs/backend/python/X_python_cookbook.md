@@ -75,3 +75,105 @@ deque([5, 2, 3], maxlen=3)
 ### 1.4 找到最大或最小的N个元素
 
 使用堆队列算法`heapq`模块。
+
+参考：
+
+- [heapq — Heap queue algorithm](https://docs.python.org/3.6/library/heapq.html)
+- [heapq — 堆队列算法](https://docs.python.org/zh-cn/3.6/library/heapq.html)
+
+> 这个模块提供了堆队列算法的实现，也称为优先队列算法。
+>
+> 堆是一个二叉树，它的每个父节点的值都只会小于或等于所有孩子节点（的值）。 它使用了数组来实现：从零开始计数，对于所有的 *k* ，都有 `heap[k] <= heap[2*k+1]` 和 `heap[k] <= heap[2*k+2]`。 为了便于比较，不存在的元素被认为是无限大。 堆最有趣的特性在于最小的元素总是在根结点：`heap[0]`。
+
+提供了以下函数。
+
+- `heapq.heappush(heap, item)`,将值压入到堆中。
+- `heapq.heappop(heap)`，弹出堆中最小的元素。使用 `heap[0]` ，可以只访问最小的元素而不弹出它。
+- `heapq.heapify(x)`，将列表x原地转换成堆。
+- `heapq.nlargest(n, iterable, key=None)`, 从 iterable 所定义的数据集中返回前 n 个最大的元素。 如果提供了 key 则其应指定一个单参数的函数，用于从每个元素中提取比较键 (例如 key=str.lower)。 等价于: `sorted(iterable, key=key, reverse=True)[:n]`。
+- `heapq.nsmallest(n, iterable, key=None)`, 从 iterable 所定义的数据集中返回前 n 个最小元素组成的列表。 如果提供了 key 则其应指定一个单参数的函数，用于从 iterable 的每个元素中提取比较键 (例如 key=str.lower)。 等价于: `sorted(iterable, key=key)[:n]`。
+
+示例：
+
+```python
+>>> import heapq
+
+>>> data = [3, 2, 6, 5, 4, 7, 1]
+
+# 将列表原地转换成堆
+>>> heapq.heapify(data)
+>>> data
+[1, 2, 3, 5, 4, 7, 6]
+
+# 获取堆中最大的三个元素
+>>> heapq.nlargest(3, data)
+[7, 6, 5]
+
+# 获取堆中最小的三个元素
+>>> heapq.nsmallest(3, data)
+[1, 2, 3]
+```
+
+
+
+向堆中插入压入数据：
+
+```python
+>>> h = []
+>>> heapq.heappush(h, 3)
+>>> h
+[3]
+>>> heapq.heappush(h, 2)
+>>> h
+[2, 3]
+>>> heapq.heappush(h, 6)
+>>> h
+[2, 3, 6]
+>>> heapq.heappush(h, 5)
+>>> h
+[2, 3, 6, 5]
+```
+
+
+
+从堆中弹出数据,会弹出最小数据：
+
+```python
+>>> heapq.heappop(h)
+2
+>>> h
+[3, 5, 6]
+>>> heapq.heappop(h)
+3
+>>> h
+[5, 6]
+>>> heapq.heappop(h)
+5
+>>> h
+[6]
+>>> heapq.heappop(h)
+6
+
+# 此时堆中已经为空
+>>> h
+[]
+>>>
+
+# 再次弹出抛出异常
+>>> heapq.heappop(h)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+IndexError: index out of range
+```
+
+注意事项：
+
+- `heap[0]`最是返回最小那个元素。直接调用`heap[0]`不会弹出元素。
+- 如果只是简单找到最小或最大元素，则使用`min`或`max`函数会更快。
+- 如果需要找N个最小值或最大值，N值与元素个数本身的大小差不多时，通常更快的方法是先对数据进行排序，然后进行切片操作，如`sorted(items)[:N]`。
+
+
+
+### 1.5 优先级队列
+
+实现一个队列，并按给的优先级对元素进行排序，且每次弹出时都会返回优先级最高的那个元素。
