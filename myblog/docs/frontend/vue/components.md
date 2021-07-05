@@ -500,3 +500,173 @@
 
 ![](https://meizhaohui.gitee.io/imagebed/img/20210705202739.png)
 
+
+
+### 3.4 监听子组件事件
+
+在上述博客示例的基础上，假如我们现在要增加一个博文默认字号的属性，并增加一个按钮，可以动态改变博文字号的按钮。可以按如下方式进行修改代码。
+
+- 步骤1，在`app`的`data数据中增加一个`postFontSize`属性。
+- 步骤2，在组件模板中修改`div`的样式，动态绑定样式。
+- 步骤3， 更新组件模板的，增加一个`button`按钮。
+
+修改后代码如下：
+
+```html
+<!DOCTYPE html>
+<!-- bolg_component.html -->
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>组件基础-向组件中传递属性</title>
+    <!-- 开发环境版本，包含了有帮助的命令行警告 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <!-- 调用组件，标签名称就是组件的名称 -->
+      <!-- em是相对长度单位。相对于当前对象内文本的字体尺寸。 -->
+      <!-- 任意浏览器的默认字体高都是16px。所有未经调整的浏览器都符合: 1em=16px -->
+      <div v-bind:style="{ fontSize: postFontSize + 'em' }">
+        <blog-post v-for="post in posts" v-bind:key="post.id" v-bind:post="post">
+      </div>
+
+      </blog-post>
+    </div>
+
+    <!-- script脚本包裹了一段js代码 -->
+    <script>
+      // 定义一个名为 blog-post 的新组件
+      Vue.component('blog-post', {
+        // data必须是一个函数
+        data: function() {
+          return {
+            count: 0
+          }
+        },
+        props: ['post'],
+        // 组件的模板
+        template: '<div><h3>{{ post.title }}</h3><button>Enlarge</button><div v-html="post.content"></div></div>'
+      })
+      var app = new Vue({
+        // 此处的el属性必须保留，否则组件无法正常使用
+        el: '#app',
+        data: {
+          posts: [{
+              id: 1,
+              title: 'My journey with Vue',
+              content: 'content Vue 1...',
+            },
+            {
+              id: 2,
+              title: 'Blogging with Vue',
+              content: 'content Vue 2...',
+            },
+            {
+              id: 3,
+              title: 'Why Vue is so fun',
+              content: 'content Vue 3...',
+            }
+          ],
+          postFontSize: 1,
+        }
+      })
+    </script>
+  </body>
+</html>
+
+```
+
+此时，页面显示如下：
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210705205312.png)
+
+此此点击"Enlarge"按钮，没有任何反应。说明不起作用。
+
+
+
+当点击这个按钮时，我们需要告诉父级组件放大所有博文的文本。
+
+-  Vue 实例提供了一个自定义事件的系统来解决这个问题。父级组件可以像处理 native DOM 事件一样通过 `v-on` 监听子组件实例的任意事件。
+- 同时子组件可以通过调用内建的 [**`$emit`** 方法](https://cn.vuejs.org/v2/api/#vm-emit)并传入事件名称来触发一个事件。
+
+这样，我们可以定义一个自定义事件`enlarge-text`,并在父组件中通过`v-on:enlarge-text`来监听这个自定义事件。同时，我们在子组件中通过` v-on:click="$emit('enlarge-text')"`来触发一个`enlarge-text`事件。这样父组件就能够接收该事件，并动态更新`postFontSize`的值。
+
+修改后的代码如下：
+
+```html
+<!DOCTYPE html>
+<!-- bolg_component.html -->
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>组件基础-向组件中传递属性</title>
+    <!-- 开发环境版本，包含了有帮助的命令行警告 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <!-- 调用组件，标签名称就是组件的名称 -->
+      <!-- em是相对长度单位。相对于当前对象内文本的字体尺寸。 -->
+      <!-- 任意浏览器的默认字体高都是16px。所有未经调整的浏览器都符合: 1em=16px -->
+      <div v-bind:style="{ fontSize: postFontSize + 'em' }">
+        <blog-post v-for="post in posts" v-bind:key="post.id" v-bind:post="post"
+          v-on:enlarge-text="postFontSize += 0.1">
+        </blog-post>
+      </div>
+    </div>
+
+    <!-- script脚本包裹了一段js代码 -->
+    <script>
+      // 定义一个名为 blog-post 的新组件
+      Vue.component('blog-post', {
+        // data必须是一个函数
+        data: function() {
+          return {
+            count: 0
+          }
+        },
+        props: ['post'],
+        // 组件的模板
+        template: `
+          <div>
+            <h3>{{ post.title }}</h3>
+            <button v-on:click="$emit('enlarge-text')">Enlarge</button>
+            <div v-html="post.content"></div>
+          </div>
+        `
+      })
+      var app = new Vue({
+        // 此处的el属性必须保留，否则组件无法正常使用
+        el: '#app',
+        data: {
+          posts: [{
+              id: 1,
+              title: 'My journey with Vue',
+              content: 'content Vue 1...',
+            },
+            {
+              id: 2,
+              title: 'Blogging with Vue',
+              content: 'content Vue 2...',
+            },
+            {
+              id: 3,
+              title: 'Why Vue is so fun',
+              content: 'content Vue 3...',
+            }
+          ],
+          postFontSize: 1,
+        }
+      })
+    </script>
+  </body>
+</html>
+
+```
+
+当我们点击按钮时，可以发现字体的数字大小会动态更新：
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210705211154.png)
+
+此时已经变成`style="font-size: 1.3em;"`了。可以发现字体已经明显变大了。
