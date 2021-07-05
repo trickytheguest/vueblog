@@ -345,3 +345,158 @@
 - 子组件中的data数据，不是通过父组件传递的，是子组件私有的，是可读可写的。
 - 子组件中的所有 props中的数据，都是通过父组件传递给子组件的，是只读的。
 
+### 3.3 组件单个根元素
+
+如果我们将`blog-post`的`template`模板修改成以下内容：
+
+```javascript
+ // 组件的模板
+ template: '<h3>{{ title }} {{ count + 1 }} <br> </h3><h3>num:{{ num + 2 }}</h3>'
+```
+
+然后再打开页面，会提示"Component template should contain exactly one root element. If you are using v-if on multiple elements, use v-else-if to chain them instead."异常：
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210705195032.png)
+
+即组件模板蛤能包含一个根元素。不能使用多个根元素。
+
+
+
+当我们的博客变得越来越复杂的时候，我们的博文不只需要标题和内容，还需要发布日期、评论等等。为每个相关的信息定义一个 prop 会变得很麻烦。
+
+如当我仅增加一个博客的内容的属性，则修改代码如下：
+
+```html
+<!DOCTYPE html>
+<!-- bolg_component.html -->
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>组件基础-向组件中传递属性</title>
+    <!-- 开发环境版本，包含了有帮助的命令行警告 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <!-- 调用组件，标签名称就是组件的名称 -->
+      <blog-post v-for="post in posts" v-bind:id="post.id" v-bind:title="post.title" v-bind:content="post.content">
+      </blog-post>
+    </div>
+
+    <!-- script脚本包裹了一段js代码 -->
+    <script>
+      // 定义一个名为 blog-post 的新组件
+      Vue.component('blog-post', {
+        // data必须是一个函数
+        data: function() {
+          return {
+            count: 0
+          }
+        },
+        props: ['title', 'content'],
+        // 组件的模板
+        template: '<div><h3>{{ title }}</h3><div v-html="content"></div></div>'
+      })
+      var app = new Vue({
+        // 此处的el属性必须保留，否则组件无法正常使用
+        el: '#app',
+        data: {
+          posts: [{
+              id: 1,
+              title: 'My journey with Vue',
+              content: 'content Vue 1...',
+            },
+            {
+              id: 2,
+              title: 'Blogging with Vue',
+              content: 'content Vue 2...',
+            },
+            {
+              id: 3,
+              title: 'Why Vue is so fun',
+              content: 'content Vue 3...',
+            }
+          ]
+        }
+      })
+    </script>
+  </body>
+</html>
+
+```
+
+可以看到，增加`content`属性时，修改修改`props`中定义的列表，增加一个`content`元素，另外需要更新`v-for`循环中增加`v-bind:content="post.content"`。
+
+可以看出，增加一个新的属性，有多个位置需要更新。显示比较麻烦。
+
+
+
+因此，当存在多个属性时，建议将`post`对象作为一个属性传递给组件模板。对代码进行重构。
+
+重构后的代码如下：
+
+```html
+<!DOCTYPE html>
+<!-- bolg_component.html -->
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>组件基础-向组件中传递属性</title>
+    <!-- 开发环境版本，包含了有帮助的命令行警告 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <!-- 调用组件，标签名称就是组件的名称 -->
+      <blog-post v-for="post in posts" v-bind:key="post.id" v-bind:post="post">
+      </blog-post>
+    </div>
+
+    <!-- script脚本包裹了一段js代码 -->
+    <script>
+      // 定义一个名为 blog-post 的新组件
+      Vue.component('blog-post', {
+        // data必须是一个函数
+        data: function() {
+          return {
+            count: 0
+          }
+        },
+        props: ['post'],
+        // 组件的模板
+        template: '<div><h3>{{ post.title }}</h3><div v-html="post.content"></div></div>'
+      })
+      var app = new Vue({
+        // 此处的el属性必须保留，否则组件无法正常使用
+        el: '#app',
+        data: {
+          posts: [{
+              id: 1,
+              title: 'My journey with Vue',
+              content: 'content Vue 1...',
+            },
+            {
+              id: 2,
+              title: 'Blogging with Vue',
+              content: 'content Vue 2...',
+            },
+            {
+              id: 3,
+              title: 'Why Vue is so fun',
+              content: 'content Vue 3...',
+            }
+          ]
+        }
+      })
+    </script>
+  </body>
+</html>
+
+```
+
+重构后，可以发现，如果要新增`post`对象的其他属性到模板中，只用修改`template`中的定义就可以，不需要更新`<blog-post v-for="post in posts" v-bind:id="post.id" v-bind:post="post">`处的调用代码。
+
+页面效果如下：
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210705202739.png)
+
