@@ -177,3 +177,82 @@ IndexError: index out of range
 ### 1.5 优先级队列
 
 实现一个队列，并按给的优先级对元素进行排序，且每次弹出时都会返回优先级最高的那个元素。
+
+实现代码：
+
+```python
+"""
+filename: priority_queue.py
+function: 实现优先级队列,并按给的优先级对元素进行排序，且每次弹出时都会返回优先级最高的那个元素。
+"""
+
+import heapq
+
+
+class PriorityQueue:
+    def __init__(self):
+        self._queue = []
+        self._index = 0
+
+    def push(self, item, priority):
+        """压入数据"""
+        # 由于heapq是小堆，使用-priority 将正优先级数转换成一个更小的数据
+        # 将self._index用于对于相同优先级的元素按压入顺序排列
+        heapq.heappush(self._queue, (-priority, self._index, item))
+        self._index += 1
+
+    def pop(self):
+        """弹出数据"""
+        return heapq.heappop(self._queue)[-1]
+
+    @property
+    def queue(self):
+        return self._queue
+
+
+class Item:
+    def __init__(self, name):
+        self.name = name
+
+    def __repr__(self):
+        return "Item('%s')" % self.name
+
+
+if __name__ == '__main__':
+    q = PriorityQueue()
+    q.push(Item('foo'), 1)
+    print(q.queue)
+    q.push(Item('boo'), 5)
+    print(q.queue)
+    q.push(Item('spam'), 4)
+    print(q.queue)
+    q.push(Item('grok'), 1)
+    print(q.queue)
+    q.push(Item('grok1'), 6)
+    print(q.queue)
+    print('弹出')
+    print(q.pop())
+    print(q.pop())
+    print(q.pop())
+    print(q.pop())
+    print(q.pop())
+
+```
+
+运行输出：
+
+```sh
+$ /usr/bin/python3 priority_queue.py
+[(-1, 0, Item('foo'))]
+[(-5, 1, Item('boo')), (-1, 0, Item('foo'))]
+[(-5, 1, Item('boo')), (-1, 0, Item('foo')), (-4, 2, Item('spam'))]
+[(-5, 1, Item('boo')), (-1, 0, Item('foo')), (-4, 2, Item('spam')), (-1, 3, Item('grok'))]
+[(-6, 4, Item('grok1')), (-5, 1, Item('boo')), (-4, 2, Item('spam')), (-1, 3, Item('grok')), (-1, 0, Item('foo'))]
+弹出
+Item('grok1')
+Item('boo')
+Item('spam')
+Item('foo')
+Item('grok')
+```
+
