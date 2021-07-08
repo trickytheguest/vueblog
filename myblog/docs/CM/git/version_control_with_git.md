@@ -288,3 +288,12 @@ Date:   Thu Apr 7 15:13:13 2005 -0700
 ### 1.5 名字有何含义
 
 - git是愚蠢无用的人的意思！
+
+
+
+## 第2章 安装Git
+
+- Git支持Windows、Linux、MacOS等多种操作系统。
+- windows和MacOS上面直接可以下载Git的二进制安装包进行安装。
+- Linux系统上面可以使用包管理器进行安装。如ubuntu系统安装`apt-get install git`，CentOS系统安装`yum install git`等。
+- 也可以通过源码编译安装，但相对麻烦一些。
