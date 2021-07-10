@@ -297,3 +297,69 @@ Date:   Thu Apr 7 15:13:13 2005 -0700
 - windows和MacOS上面直接可以下载Git的二进制安装包进行安装。MacOS上面安装可参考 [Download for macOS](https://git-scm.com/download/mac)。
 - Linux系统上面可以使用包管理器进行安装。如ubuntu系统安装`apt-get install git`，CentOS系统安装`yum install git`等。可参考 [Download for Linux and Unix](https://git-scm.com/download/linux)。
 - 也可以通过源码编译安装，但相对麻烦一些。
+
+为了不影响我的电脑的git环境，我在docker ubuntu容器中安装git。你也可以直接在自己的电脑上进行测试。
+
+- 下载镜像
+
+```sh
+[mzh@MacBookPro ~ ]$ docker pull ubuntu
+```
+
+- 启动ubuntu容器
+
+```sh
+[mzh@MacBookPro ~ ]$ docker run --privileged --name ubuntu -it -d ubuntu /bin/bash
+```
+
+- 进入到容器中,注dkin是快捷命令
+
+```sh
+# alias dkin='dockerin'
+# function dockerin()
+# {
+#     docker exec -it $1 /bin/bash
+# }
+[mzh@MacBookPro ~ ]$ dkin ubuntu
+```
+
+- 查看ubuntu系统版本信息
+
+```sh
+root@4144e8c22fff:/# cat /etc/issue
+Ubuntu 20.04 LTS \n \l
+```
+
+- 在容器中创建用户mei
+```sh
+root@4144e8c22fff:/# useradd mei -d /home/mei -s /bin/bash -m
+```
+
+- 安装必备软件vim git
+
+```sh
+root@4144e8c22fff:/# apt-get install vim git -y
+```
+
+- 查看git版本
+
+```sh
+root@4144e8c22fff:/# git --version
+git version 2.25.1
+```
+
+
+- 切换到用户mei
+
+```sh
+root@4144e8c22fff:/# su mei
+mei@4144e8c22fff:/$ cd
+mei@4144e8c22fff:~$ pwd
+/home/mei
+mei@4144e8c22fff:~$ git --version
+git version 2.25.1
+```
+
+后续我们就在该环境下进行测试操作。
+
+## 第3章 起步
