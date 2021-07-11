@@ -18,7 +18,7 @@
 
 - Git设计优良，能够胜任世界范围内大规模的软件开发工程。
 
-- 在Git诞生之前，Linux内核开发过程中使用BitKeeper来作为版本控制系统，但在2005年，BitKeeper所有方对他们的免费的BitKeeper加入了额外的限制，Linux社区意识到，使用BitKeeper不再是一个长期可行的解决方案。Linus本人开始寻找替代品。这次，他回避使用商业解决方案，在自由软件包中寻找。但是，当是现有的VCS存在一些缺陷。Linus没能找到的有关特性有：
+- 在Git诞生之前，Linux内核开发过程中使用BitKeeper来作为版本控制系统，但在2005年，BitKeeper所有方对他们的免费的BitKeeper加入了额外的限制，Linux社区意识到，使用BitKeeper不再是一个长期可行的解决方案。Linus本人开始寻找替代品。这次，他回避使用商业解决方案，在自由软件包中寻找。但是，当时现有的VCS存在一些缺陷。Linus没能找到的有关特性有：
 
     - 有助于分布式开发。需要允许并行开发，各人可以在自己的版本库中独立且同时地开发，而不需要与中心版本库时刻同步。
     - 能够胜任上千开发人员的规模。Linus深知，每个Linux版本都凝聚了数以千计的开发人员的心血，所以新的VCS需要支持非常多的开发人员。
@@ -402,7 +402,7 @@ git version 2.25.1
 
 ### 3.1 Git命令行
 
-Git简单易用，只要需要在命令行输入`git`，Git就会不带任何参数地列出它的选项和最常用的子命令：
+Git简单易用，只需要在命令行输入`git`，Git就会不带任何参数地列出它的选项和最常用的子命令：
 
 ```sh
 mei@4144e8c22fff:~$ git
@@ -900,3 +900,109 @@ $ git commit -m "Fixed a type."
 $ git commit --message="Fixed a type."
 ```
 
+注意，有些选项只有一种形式。
+
+
+
+- 祼双破折号的使用
+
+可以使用祼双破折号的约定来分离一系列参数。
+
+例如，使用双破折号来分离命令行的控制部分与操作数部分，如文件名。
+
+```sh
+$ git diff -w master origin -- tools/Makefile
+```
+
+你也可能需要使用双破折号分离并显示标识文件名，否则会认为它们是命令的另一部分。如，如果你碰巧有一个文件名和一个标签都叫做`main.c`，然后你会看到不同的行为：
+
+```sh
+# 检出main.c标签
+$ git checkout main.c
+
+# 检出文件main.c
+$ git checkout -- main.c
+```
+
+为了测试这种不同的行为，我们在码云上面创建一个测试仓库 [https://gitee.com/meizhaohui/testgit](https://gitee.com/meizhaohui/testgit) , 并在其中创建一个`main.c`的标签，并增加一个`main.c`文件。
+
+配置完成后，我们尝试使用`https`形式下载代码：
+
+```sh
+mei@4144e8c22fff:~$ git clone https://gitee.com/meizhaohui/testgit.git
+Cloning into 'testgit'...
+Username for 'https://gitee.com': meizhaohui
+Password for 'https://meizhaohui@gitee.com':
+remote: Enumerating objects: 8, done.
+remote: Counting objects: 100% (8/8), done.
+remote: Compressing objects: 100% (8/8), done.
+remote: Total 8 (delta 1), reused 0 (delta 0), pack-reused 0
+Unpacking objects: 100% (8/8), 1.64 KiB | 129.00 KiB/s, done.
+mei@4144e8c22fff:~$
+```
+
+此时需要输入用户名和密码。
+
+
+
+测试使用破折号与不使用的区别：
+
+```sh
+mei@4144e8c22fff:~$ ls
+testgit
+mei@4144e8c22fff:~$ cd testgit/
+mei@4144e8c22fff:~/testgit$ ls
+README.en.md  README.md  main.c
+mei@4144e8c22fff:~/testgit$ git remote -v
+origin	https://gitee.com/meizhaohui/testgit.git (fetch)
+origin	https://gitee.com/meizhaohui/testgit.git (push)
+
+# 使用双破折号，不会切换分支，只是尝试检出文件
+mei@4144e8c22fff:~/testgit$ git checkout -- main.c
+mei@4144e8c22fff:~/testgit$ ls
+README.en.md  README.md  main.c
+
+# 分支信息是master
+mei@4144e8c22fff:~/testgit$ git branch
+* master
+mei@4144e8c22fff:~/testgit$ git checkout main.c
+Note: switching to 'main.c'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by switching back to a branch.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -c with the switch command. Example:
+
+  git switch -c <new-branch-name>
+
+Or undo this operation with:
+
+  git switch -
+
+Turn off this advice by setting config variable advice.detachedHead to false
+
+HEAD is now at 31d636a Initial commit
+
+# 修改一下配置
+mei@4144e8c22fff:~/testgit$ git config advice.detachedHead false
+
+# 检出main.c标签
+mei@4144e8c22fff:~/testgit$ git checkout main.c
+HEAD is now at 31d636a Initial commit
+
+# 此时可以发现文件发生了变化
+mei@4144e8c22fff:~/testgit$ ls
+README.en.md  README.md
+mei@4144e8c22fff:~/testgit$
+
+# 当前分支也发生变化
+mei@4144e8c22fff:~/testgit$ git branch
+* (HEAD detached at main.c)
+  master
+mei@4144e8c22fff:~/testgit$ git tag
+main.c
+```
+
+该示例可以说明，是否使用双破折号，命令的效果不一样！
