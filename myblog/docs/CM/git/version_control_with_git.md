@@ -360,6 +360,11 @@ not required on a system that users do not log into.
 
 To restore this content, including manpages, you can run the 'unminimize'
 command. You will still need to ensure the 'man-db' package is installed.
+
+# 安装man-db包
+root@4144e8c22fff:/# apt-get install man-db -y
+
+# unminimize取消最小化
 root@4144e8c22fff:/# unminimize
 This system has been minimized by removing packages and content that are
 not required on a system that users do not log into.
@@ -630,7 +635,268 @@ git version 2.25.1
 
 Git子命令都可以通过使用`git help subcommand`、`git --help subcommand`或者`git subcommand --help`来查看帮助文档信息。
 
-```sh
+我们尝试获取`clone`子命令的帮助信息：
 
+```sh
+# 方式一，git help subcommand
+mei@4144e8c22fff:~$ git help clone|head -n 25|awk NF
+GIT-CLONE(1)                                                              Git Manual                                                             GIT-CLONE(1)
+NAME
+       git-clone - Clone a repository into a new directory
+SYNOPSIS
+       git clone [--template=<template_directory>]
+                 [-l] [-s] [--no-hardlinks] [-q] [-n] [--bare] [--mirror]
+                 [-o <name>] [-b <name>] [-u <upload-pack>] [--reference <repository>]
+                 [--dissociate] [--separate-git-dir <git dir>]
+                 [--depth <depth>] [--[no-]single-branch] [--no-tags]
+                 [--recurse-submodules[=<pathspec>]] [--[no-]shallow-submodules]
+                 [--[no-]remote-submodules] [--jobs <n>] [--sparse] [--] <repository>
+                 [<directory>]
+DESCRIPTION
+       Clones a repository into a newly created directory, creates remote-tracking branches for each branch in the cloned repository (visible using git
+       branch --remotes), and creates and checks out an initial branch that is forked from the cloned repository's currently active branch.
+       After the clone, a plain git fetch without arguments will update all the remote-tracking branches, and a git pull without arguments will in addition
+       merge the remote master branch into the current master branch, if any (this is untrue when "--single-branch" is given; see below).
+       This default configuration is achieved by creating references to the remote branch heads under refs/remotes/origin and by initializing
+       remote.origin.url and remote.origin.fetch configuration variables.
+mei@4144e8c22fff:~$
+
+# 方式二，git --help subcommand
+mei@4144e8c22fff:~$ git --help clone|head -n 25|awk NF
+GIT-CLONE(1)                                                              Git Manual                                                             GIT-CLONE(1)
+NAME
+       git-clone - Clone a repository into a new directory
+SYNOPSIS
+       git clone [--template=<template_directory>]
+                 [-l] [-s] [--no-hardlinks] [-q] [-n] [--bare] [--mirror]
+                 [-o <name>] [-b <name>] [-u <upload-pack>] [--reference <repository>]
+                 [--dissociate] [--separate-git-dir <git dir>]
+                 [--depth <depth>] [--[no-]single-branch] [--no-tags]
+                 [--recurse-submodules[=<pathspec>]] [--[no-]shallow-submodules]
+                 [--[no-]remote-submodules] [--jobs <n>] [--sparse] [--] <repository>
+                 [<directory>]
+DESCRIPTION
+       Clones a repository into a newly created directory, creates remote-tracking branches for each branch in the cloned repository (visible using git
+       branch --remotes), and creates and checks out an initial branch that is forked from the cloned repository's currently active branch.
+       After the clone, a plain git fetch without arguments will update all the remote-tracking branches, and a git pull without arguments will in addition
+       merge the remote master branch into the current master branch, if any (this is untrue when "--single-branch" is given; see below).
+       This default configuration is achieved by creating references to the remote branch heads under refs/remotes/origin and by initializing
+       remote.origin.url and remote.origin.fetch configuration variables.
+       
+# 方式三，git subcommand --help
+mei@4144e8c22fff:~$ git clone --help|head -n 25|awk NF
+GIT-CLONE(1)                                                              Git Manual                                                             GIT-CLONE(1)
+NAME
+       git-clone - Clone a repository into a new directory
+SYNOPSIS
+       git clone [--template=<template_directory>]
+                 [-l] [-s] [--no-hardlinks] [-q] [-n] [--bare] [--mirror]
+                 [-o <name>] [-b <name>] [-u <upload-pack>] [--reference <repository>]
+                 [--dissociate] [--separate-git-dir <git dir>]
+                 [--depth <depth>] [--[no-]single-branch] [--no-tags]
+                 [--recurse-submodules[=<pathspec>]] [--[no-]shallow-submodules]
+                 [--[no-]remote-submodules] [--jobs <n>] [--sparse] [--] <repository>
+                 [<directory>]
+DESCRIPTION
+       Clones a repository into a newly created directory, creates remote-tracking branches for each branch in the cloned repository (visible using git
+       branch --remotes), and creates and checks out an initial branch that is forked from the cloned repository's currently active branch.
+       After the clone, a plain git fetch without arguments will update all the remote-tracking branches, and a git pull without arguments will in addition
+       merge the remote master branch into the current master branch, if any (this is untrue when "--single-branch" is given; see below).
+       This default configuration is achieved by creating references to the remote branch heads under refs/remotes/origin and by initializing
+       remote.origin.url and remote.origin.fetch configuration variables.
+mei@4144e8c22fff:~$
+```
+
+可以看到，三种方式都可以获取到帮助信息。
+
+- 带连字符的命令
+
+从历史上来看，Git是作为一套简单的、独特的、独立的命令提供的，并按照UNIX工具包的哲学来开发的：打造小的、可互操作的工具。每条命令都留有一个带连字符的名字，如`git-commit`和`git-log`。而现在开发人员之间的趋势是使用一条简单的可执行的`git`命令并附加上子命令。但话虽如此，`git-commit`和`git commit`形式上是相同的。
+
+```sh
+root@4144e8c22fff:~# find / -name 'git-commit'
+/usr/lib/git-core/git-commit
+root@4144e8c22fff:~# ls -lah /usr/lib/git-core/
+total 26M
+drwxr-xr-x 3 root root  24K Jul 10 00:51 .
+drwxr-xr-x 1 root root 4.0K Jul 11 15:02 ..
+-rwxr-xr-x 1 root root 3.0M Mar  4 13:01 git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-add -> git
+-rwxr-xr-x 1 root root  46K Mar  4 13:01 git-add--interactive
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-am -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-annotate -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-apply -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-archive -> git
+-rwxr-xr-x 1 root root 8.1K Mar  4 13:01 git-bisect
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-bisect--helper -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-blame -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-branch -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-bundle -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-cat-file -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-check-attr -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-check-ignore -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-check-mailmap -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-check-ref-format -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-checkout -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-checkout-index -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-cherry -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-cherry-pick -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-clean -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-clone -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-column -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-commit -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-commit-graph -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-commit-tree -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-config -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-count-objects -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-credential -> git
+-rwxr-xr-x 1 root root 1.7M Mar  4 13:01 git-credential-cache
+-rwxr-xr-x 1 root root 1.7M Mar  4 13:01 git-credential-cache--daemon
+-rwxr-xr-x 1 root root 1.7M Mar  4 13:01 git-credential-store
+-rwxr-xr-x 1 root root 1.8M Mar  4 13:01 git-daemon
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-describe -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-diff -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-diff-files -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-diff-index -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-diff-tree -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-difftool -> git
+-rwxr-xr-x 1 root root 2.2K Mar  4 13:01 git-difftool--helper
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-env--helper -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-fast-export -> git
+-rwxr-xr-x 1 root root 1.8M Mar  4 13:01 git-fast-import
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-fetch -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-fetch-pack -> git
+-rwxr-xr-x 1 root root  16K Mar  4 13:01 git-filter-branch
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-fmt-merge-msg -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-for-each-ref -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-format-patch -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-fsck -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-fsck-objects -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-gc -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-get-tar-commit-id -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-grep -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-hash-object -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-help -> git
+-rwxr-xr-x 1 root root 1.8M Mar  4 13:01 git-http-backend
+-rwxr-xr-x 1 root root 1.8M Mar  4 13:01 git-http-fetch
+-rwxr-xr-x 1 root root 1.8M Mar  4 13:01 git-http-push
+-rwxr-xr-x 1 root root 1.8M Mar  4 13:01 git-imap-send
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-index-pack -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-init -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-init-db -> git
+-rwxr-xr-x 1 root root  22K Mar  4 13:01 git-instaweb
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-interpret-trailers -> git
+-rwxr-xr-x 1 root root  17K Mar  4 13:01 git-legacy-stash
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-log -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-ls-files -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-ls-remote -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-ls-tree -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-mailinfo -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-mailsplit -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-merge -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-merge-base -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-merge-file -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-merge-index -> git
+-rwxr-xr-x 1 root root 2.5K Mar  4 13:01 git-merge-octopus
+-rwxr-xr-x 1 root root 3.7K Mar  4 13:01 git-merge-one-file
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-merge-ours -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-merge-recursive -> git
+-rwxr-xr-x 1 root root  944 Mar  4 13:01 git-merge-resolve
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-merge-subtree -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-merge-tree -> git
+-rwxr-xr-x 1 root root  11K Mar  4 13:01 git-mergetool
+-rw-r--r-- 1 root root 9.0K Mar  4 13:01 git-mergetool--lib
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-mktag -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-mktree -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-multi-pack-index -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-mv -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-name-rev -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-notes -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-pack-objects -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-pack-redundant -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-pack-refs -> git
+-rw-r--r-- 1 root root 2.6K Mar  4 13:01 git-parse-remote
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-patch-id -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-prune -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-prune-packed -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-pull -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-push -> git
+-rwxr-xr-x 1 root root 3.7K Mar  4 13:01 git-quiltimport
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-range-diff -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-read-tree -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-rebase -> git
+-rw-r--r-- 1 root root  29K Mar  4 13:01 git-rebase--preserve-merges
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-receive-pack -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-reflog -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-remote -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-remote-ext -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-remote-fd -> git
+lrwxrwxrwx 1 root root   15 Mar  4 13:01 git-remote-ftp -> git-remote-http
+lrwxrwxrwx 1 root root   15 Mar  4 13:01 git-remote-ftps -> git-remote-http
+-rwxr-xr-x 1 root root 1.8M Mar  4 13:01 git-remote-http
+lrwxrwxrwx 1 root root   15 Mar  4 13:01 git-remote-https -> git-remote-http
+-rwxr-xr-x 1 root root 1.8M Mar  4 13:01 git-remote-testsvn
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-repack -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-replace -> git
+-rwxr-xr-x 1 root root 4.1K Mar  4 13:01 git-request-pull
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-rerere -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-reset -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-restore -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-rev-list -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-rev-parse -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-revert -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-rm -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-send-pack -> git
+-rw-r--r-- 1 root root 2.4K Mar  4 13:01 git-sh-i18n
+-rwxr-xr-x 1 root root 1.7M Mar  4 13:01 git-sh-i18n--envsubst
+-rw-r--r-- 1 root root  17K Mar  4 13:01 git-sh-prompt
+-rw-r--r-- 1 root root 9.1K Mar  4 13:01 git-sh-setup
+-rwxr-xr-x 1 root root 1.7M Mar  4 13:01 git-shell
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-shortlog -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-show -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-show-branch -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-show-index -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-show-ref -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-sparse-checkout -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-stage -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-stash -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-status -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-stripspace -> git
+-rwxr-xr-x 1 root root  26K Mar  4 13:01 git-submodule
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-submodule--helper -> git
+-rwxr-xr-x 1 root root  18K Mar  4 13:01 git-subtree
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-switch -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-symbolic-ref -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-tag -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-unpack-file -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-unpack-objects -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-update-index -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-update-ref -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-update-server-info -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-upload-archive -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-upload-pack -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-var -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-verify-commit -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-verify-pack -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-verify-tag -> git
+-rwxr-xr-x 1 root root 4.3K Mar  4 13:01 git-web--browse
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-whatchanged -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-worktree -> git
+lrwxrwxrwx 1 root root    3 Mar  4 13:01 git-write-tree -> git
+drwxr-xr-x 2 root root 4.0K Jul 10 00:51 mergetools
+```
+
+可以看到大部分的`git`连字符命令都软链接到了`git`命令。
+
+- 短选项与长选项
+
+Git的命令能够理解短选项和长选项。如，`git commit`命令将下面两条命令视为等价的。
+
+```sh
+# 短选项
+$ git commit -m "Fixed a type."
+
+# 长选项
+$ git commit --message="Fixed a type."
 ```
 
