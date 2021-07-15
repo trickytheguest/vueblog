@@ -1006,3 +1006,76 @@ main.c
 ```
 
 该示例可以说明，是否使用双破折号，命令的效果不一样！
+
+### 3.2 Git使用快速入门
+
+为了实际见识Git的操作，我们新建一个版本库，添加一些内容，然后管理一些修订版本。
+
+- `git init`将目录转换成Git版本库。
+
+```sh
+mei@4144e8c22fff:~$ mkdir public_html
+mei@4144e8c22fff:~$ cd public_html/
+mei@4144e8c22fff:~/public_html$ echo 'My website is alive!' > index.html
+mei@4144e8c22fff:~/public_html$ git init
+Initialized empty Git repository in /home/mei/public_html/.git/
+mei@4144e8c22fff:~/public_html$ ls -lah
+total 16K
+drwxrwxr-x 3 mei mei 4.0K Jul 15 13:00 .
+drwxr-xr-x 4 mei mei 4.0K Jul 15 12:59 ..
+drwxrwxr-x 7 mei mei 4.0K Jul 15 13:00 .git
+-rw-rw-r-- 1 mei mei   21 Jul 15 13:00 index.html
+```
+
+可以看到`git init`会创建一个隐藏目录，在项目的顶层目录，名为`.git`。Git把所有修订信息都放在这唯一的顶层`.git`目录中。隐藏在`.git`目录内的版本库由Git维护。
+
+- `git add`将文件添加到版本库中。
+- `git status`查看当前状态。
+
+```sh
+On branch master
+
+No commits yet
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	index.html
+
+nothing added to commit but untracked files present (use "git add" to track)
+mei@4144e8c22fff:~/public_html$ git add index.html
+mei@4144e8c22fff:~/public_html$ git status
+On branch master
+
+No commits yet
+
+Changes to be committed:
+  (use "git rm --cached <file>..." to unstage)
+	new file:   index.html
+
+mei@4144e8c22fff:~/public_html$
+```
+
+此时，Git会将`index.html`文件暂存(Staged)起来，这是提交之前的中间步骤。
+
+- `git commit`提交。
+
+```sh
+mei@4144e8c22fff:~/public_html$ git commit -m"Initial contents of public_html"
+
+*** Please tell me who you are.
+
+Run
+
+  git config --global user.email "you@example.com"
+  git config --global user.name "Your Name"
+
+to set your account's default identity.
+Omit --global to set the identity only in this repository.
+
+fatal: unable to auto-detect email address (got 'mei@4144e8c22fff.(none)')
+mei@4144e8c22fff:~/public_html$
+```
+
+可以看到，直接使用`git commit`提交，不提供用户名和邮箱信息时，Git不知道你是谁，因此必须指定姓名和邮箱地址。
+
+虽然我们可以通过在`git commit`中指定`--author`参数。
