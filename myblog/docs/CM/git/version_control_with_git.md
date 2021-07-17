@@ -1391,7 +1391,30 @@ mei@4144e8c22fff:~$ git clone public_html my_website
 Cloning into 'my_website'...
 done.
 mei@4144e8c22fff:~$
+mei@4144e8c22fff:~$ cd my_website/
+mei@4144e8c22fff:~/my_website$ git log
+commit b7dc13619a73fa49fe7ea0b9284bcb277717a984 (HEAD -> master, origin/master, origin/HEAD)
+Author: Zhaohui Mei <mzh@hellogitlab.com>
+Date:   Sat Jul 17 01:44:07 2021 +0000
+
+    Convert to HTML
+
+commit daa3d7d538f64637f2b475015ed6858324f17223
+Author: Zhaohui Mei <mzh.whut@gmail.com>
+Date:   Sat Jul 17 01:20:00 2021 +0000
+
+    Initial contents of public_html
+mei@4144e8c22fff:~/my_website$ ls
+index.html
+mei@4144e8c22fff:~/my_website$ cat index.html
+<html>
+<body>
+My website is alive!
+</body>
+</html>
 ```
+
+可以看到`my_website`中的文件内容与`public_html`文件夹里面完全一样，日志信息也是一样的。
 
 更通用的是，我们使用`git clone`命令来下载远程的Git仓库代码。如：
 
@@ -1419,6 +1442,285 @@ mei@4144e8c22fff:~$
 ```
 
 通过该方式下载了Git的源码！一个Git源码的版本库副本就在本地创建好了！！
+
+
+
+### 3.8 配置文件
+
+- `/etc/gitconfig`， 系统级配置文件，不一定存在，可通过`git config --system`来修改，优先级最低。
+- `~/.gitconfig`，用户级配置文件，可用`git config --global`来修改，优先级比系统级配置文件高。
+- `.git/config`,版本库特定的配置文件，可以通过`git config --local`来修改，优先级最高。
+
+```sh
+# 查看系统级配置信息
+mei@4144e8c22fff:~/public_html$ git config --system --list
+fatal: unable to read config file '/etc/gitconfig': No such file or directory
+
+# 查看用户级配置信息
+mei@4144e8c22fff:~/public_html$ git config --global --list
+user.email=mzh@hellogitlab.com
+user.name=Zhaohui Mei
+
+# 查看版本库配置信息
+mei@4144e8c22fff:~/public_html$ git config --local --list
+core.repositoryformatversion=0
+core.filemode=true
+core.bare=false
+core.logallrefupdates=true
+```
+
+尝试修改版本库特定配置信息：
+
+```sh
+# 查看版本库配置文件内容
+mei@4144e8c22fff:~/public_html$ cat .git/config
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+mei@4144e8c22fff:~/public_html$ 	
+
+# 查看版本库配置项
+mei@4144e8c22fff:~/public_html$ git config --local --list
+core.repositoryformatversion=0
+core.filemode=true
+core.bare=false
+core.logallrefupdates=true
+mei@4144e8c22fff:~/public_html$ 
+
+# 更新版本库配置项信息
+mei@4144e8c22fff:~/public_html$ git config --local user.name meizhaohui
+
+# 查看版本库配置项
+mei@4144e8c22fff:~/public_html$ git config --local --list
+core.repositoryformatversion=0
+core.filemode=true
+core.bare=false
+core.logallrefupdates=true
+user.name=meizhaohui
+mei@4144e8c22fff:~/public_html$ 
+
+# 查看版本库配置文件
+mei@4144e8c22fff:~/public_html$ cat .git/config
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+[user]
+	name = meizhaohui
+```
+
+可以发现版本库配置文件中已经增加了配置内容。
+
+
+
+查看用户级配置文件内容：
+
+```sh
+mei@4144e8c22fff:~$ cat ~/.gitconfig
+[user]
+	email = mzh@hellogitlab.com
+	name = Zhaohui Mei
+mei@4144e8c22fff:~$
+```
+
+配置帮助信息：
+
+```sh
+mei@4144e8c22fff:~$ git config
+usage: git config [<options>]
+
+Config file location
+    --global              use global config file
+    --system              use system config file
+    --local               use repository config file
+    --worktree            use per-worktree config file
+    -f, --file <file>     use given config file
+    --blob <blob-id>      read config from given blob object
+
+Action
+    --get                 get value: name [value-regex]
+    --get-all             get all values: key [value-regex]
+    --get-regexp          get values for regexp: name-regex [value-regex]
+    --get-urlmatch        get value specific for the URL: section[.var] URL
+    --replace-all         replace all matching variables: name value [value_regex]
+    --add                 add a new variable: name value
+    --unset               remove a variable: name [value-regex]
+    --unset-all           remove all matches: name [value-regex]
+    --rename-section      rename section: old-name new-name
+    --remove-section      remove a section: name
+    -l, --list            list all
+    -e, --edit            open an editor
+    --get-color           find the color configured: slot [default]
+    --get-colorbool       find the color setting: slot [stdout-is-tty]
+
+Type
+    -t, --type <>         value is given this type
+    --bool                value is "true" or "false"
+    --int                 value is decimal number
+    --bool-or-int         value is --bool or --int
+    --path                value is a path (file or directory name)
+    --expiry-date         value is an expiry date
+
+Other
+    -z, --null            terminate values with NUL byte
+    --name-only           show variable names only
+    --includes            respect include directives on lookup
+    --show-origin         show origin of config (file, standard input, blob, command line)
+    --default <value>     with --get, use default value when missing entry
+
+mei@4144e8c22fff:~$
+```
+
+直接使用`git config`可以获取配置相关的简短的帮助信息，如果使用`git config --help`可以获取配置的详细帮助信息。
+
+```sh
+mei@4144e8c22fff:~$ git config --help|head
+GIT-CONFIG(1)                                                             Git Manual                                                            GIT-CONFIG(1)
+
+NAME
+       git-config - Get and set repository or global options
+
+SYNOPSIS
+       git config [<file-option>] [--type=<type>] [--show-origin] [-z|--null] name [value [value_regex]]
+       git config [<file-option>] [--type=<type>] --add name value
+       git config [<file-option>] [--type=<type>] --replace-all name value [value_regex]
+       git config [<file-option>] [--type=<type>] [--show-origin] [-z|--null] --get name [value_regex]
+mei@4144e8c22fff:~$
+mei@4144e8c22fff:~$ git config --help|wc
+   3515   31555  230642
+```
+
+可以看到，`git config`有3515行的帮助信息！！非常详细。
+
+- 移除配置项`git config --unset`。
+
+我们可以使用`git config --unset`命令来移除某些不需要的配置项。如我们将刚才在版本库级别配置的用户名给移除掉：
+
+```sh
+mei@4144e8c22fff:~/public_html$ git config --local --list
+core.repositoryformatversion=0
+core.filemode=true
+core.bare=false
+core.logallrefupdates=true
+user.name=meizhaohui
+mei@4144e8c22fff:~/public_html$ git config --local --unset user.name
+mei@4144e8c22fff:~/public_html$ git config --local --list
+core.repositoryformatversion=0
+core.filemode=true
+core.bare=false
+core.logallrefupdates=true
+mei@4144e8c22fff:~/public_html$
+mei@4144e8c22fff:~/public_html$ cat .git/config
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+```
+
+可以看到，配置文件中的配置内容被清理掉，从命令行中查看配置项列表中`user.name`也被清除掉了。
+
+### 3.9 设置别名
+
+正如Linux操作系统中可以使用别名一样，我们在Git中也可以使用别名。如果你经常输入一条常用而复杂的Git命令，你可以考虑为它设置一个简单的Git别名，或者使用Linux别名。
+
+- 不使用别名时，执行命令
+
+```sh
+mei@4144e8c22fff:~/public_html$ git log --graph --abbrev-commit --pretty=oneline
+* b7dc136 (HEAD -> master) Convert to HTML
+* daa3d7d Initial contents of public_html
+```
+
+可以发现命令比较长，还容易打错。
+
+- 通过Git设置别名
+
+我们如果想将上面的长命令设置一个`git simple`的简单命令，则可以按如下方式操作：
+
+```sh
+# 第一步，看别名是否被占用
+mei@4144e8c22fff:~/public_html$ git simple
+git: 'simple' is not a git command. See 'git --help'.
+
+# 可以发现上述simple命令没有被占用
+# 设置别名，注意，别名中引号内部不需要git开头
+mei@4144e8c22fff:~/public_html$ git config --global alias.simple 'log --graph --abbrev-commit --pretty=oneline'
+
+# 查看配置项
+mei@4144e8c22fff:~/public_html$ git config --global --list
+user.email=mzh@hellogitlab.com
+user.name=Zhaohui Mei
+alias.simple=log --graph --abbrev-commit --pretty=oneline
+
+# 使用别名查看提交信息
+mei@4144e8c22fff:~/public_html$ git simple
+* b7dc136 (HEAD -> master) Convert to HTML
+* daa3d7d Initial contents of public_html
+```
+
+要以看到别名设置后，马上就可以使用了。
+
+
+
+- 通过Linux alias设置别名
+
+我们也可以通过Linux `alias`命令来设置别名。如我经常使用`git status`查看当前版本库的状态，我们可以设置一个别名`gs`:
+
+```
+mei@4144e8c22fff:~/public_html$ git status
+On branch master
+nothing to commit, working tree clean
+mei@4144e8c22fff:~/public_html$ alias gs='git status'
+mei@4144e8c22fff:~/public_html$ gs
+On branch master
+nothing to commit, working tree clean
+```
+
+如果想让`alias`配置的命令永久有效，则可以在`~/.bashrc`配置中加入上述命令。
+
+我们也可以为`git log --graph --abbrev-commit --pretty=oneline`命令设置一个别名`gg`。
+
+使用`vim ~/.bashrc`编译配置文件，在最后增加以下别名：
+
+```sh
+alias v.='vim ~/.bashrc'
+alias s.='source ~/.bashrc && echo "Reload OK"'
+alias gs='git status'
+alias gg='git log --graph --abbrev-commit --pretty=oneline'
+```
+
+退出后，查看配置文件：
+
+```sh
+mei@4144e8c22fff:~/public_html$ tail -n 4 ~/.bashrc
+alias v.='vim ~/.bashrc'
+alias s.='source ~/.bashrc && echo "Reload OK"'
+alias gs='git status'
+alias gg='git log --graph --abbrev-commit --pretty=oneline'
+```
+
+使用`source ~/.bashrc`重新加载配置文件。
+
+```sh
+mei@4144e8c22fff:~/public_html$ source ~/.bashrc
+mei@4144e8c22fff:~/public_html$ s.
+Reload OK
+mei@4144e8c22fff:~/public_html$ gg
+* b7dc136 (HEAD -> master) Convert to HTML
+* daa3d7d Initial contents of public_html
+mei@4144e8c22fff:~/public_html$ gs
+On branch master
+nothing to commit, working tree clean
+mei@4144e8c22fff:~/public_html$
+```
+
+此时，可以看到，使用`alias`配置的更简单的命令已经生效了！
+
+这两种方式都可以配置命令的别名。我更喜欢使用Linux `alias`命令来配置别名，可以配置更简短的别名，相比Git的别名，我可以少输入`git `等字符！
 
 
 
