@@ -1078,4 +1078,369 @@ mei@4144e8c22fff:~/public_html$
 
 可以看到，直接使用`git commit`提交，不提供用户名和邮箱信息时，Git不知道你是谁，因此必须指定姓名和邮箱地址。
 
-虽然我们可以通过在`git commit`中指定`--author`参数。
+通过`git commit`的帮助文档我们可以知道，可以指定`--author`参数来强制更新作者信息：
+
+```sh
+mei@4144e8c22fff:~/public_html$ git commit --help|grep -A 2 "\-\-author"
+                  [--allow-empty-message] [--no-verify] [-e] [--author=<author>]
+                  [--date=<date>] [--cleanup=<mode>] [--[no-]status]
+                  [-i | -o] [--pathspec-from-file=<file> [--pathspec-file-nul]]
+--
+       --author=<author>
+           Override the commit author. Specify an explicit author using the standard A U Thor <author@example.com> format. Otherwise <author> is assumed to
+           be a pattern and is used to search for an existing commit by that author (i.e. rev-list --all -i --author=<author>); the commit author is then
+           copied from the first such commit found.
+
+mei@4144e8c22fff:~/public_html$
+```
+
+我们尝试在提交时使用`--author`参数：
+
+```sh
+mei@4144e8c22fff:~/public_html$ git commit -m"Initial contents of public_html" --author="Zhaohui Mei <mzh.whut@gmail.com>"
+
+*** Please tell me who you are.
+
+Run
+
+  git config --global user.email "you@example.com"
+  git config --global user.name "Your Name"
+
+to set your account's default identity.
+Omit --global to set the identity only in this repository.
+
+fatal: unable to auto-detect email address (got 'mei@4144e8c22fff.(none)')
+```
+
+可以看到，在Git新版本中，直接使用`--author`参数仍然会提示异常。
+
+### 3.3 配置提交作者信息
+
+~~虽然我们可以通过在`git commit`中指定`--author`参数，~~但更常用的方法是，在全局指定用户名和邮箱信息，正如上面提示的信息那样，使用以下命令：
+
+```sh
+  git config --global user.email "you@example.com"
+  git config --global user.name "Your Name"
+```
+
+我们在全局配置一下作者信息，如我的邮箱地址是`mzh@hellogitlab.com`，用户名是`Zhaohui Mei`，则全局配置命令如下：
+
+```sh
+# 配置邮箱
+mei@4144e8c22fff:~$ git config --global user.email "mzh@hellogitlab.com"
+# 配置用户名
+mei@4144e8c22fff:~$ git config --global user.name "Zhaohui Mei"
+# 查看全局配置信息
+mei@4144e8c22fff:~$ git config --global --list
+user.email=mzh@hellogitlab.com
+user.name=Zhaohui Mei
+```
+
+此时，我们再尝试使用`git commit`来`--author`参数提交：
+
+```sh
+mei@4144e8c22fff:~/public_html$ git commit -m"Initial contents of public_html" --author="Zhaohui Mei <mzh.whut@gmail.com>"
+[master (root-commit) daa3d7d] Initial contents of public_html
+ Author: Zhaohui Mei <mzh.whut@gmail.com>
+ 1 file changed, 1 insertion(+)
+ create mode 100644 index.html
+ 
+# 查看提交日志信息 
+mei@4144e8c22fff:~/public_html$ git log -n 1
+commit daa3d7d538f64637f2b475015ed6858324f17223 (HEAD -> master)
+Author: Zhaohui Mei <mzh.whut@gmail.com>
+Date:   Sat Jul 17 01:20:00 2021 +0000
+
+    Initial contents of public_html
+mei@4144e8c22fff:~/public_html$
+```
+
+可以看到，已经正常提交成功了，并且作者信息使用的是命令行参数中指定的作者信息，而不是默认全局的用户名和邮箱信息。
+
+
+
+为了验证是否可以通过`GIT_AUTHOR_NAME`和`GIT_AUTHOR_EMAIL`环境变量的方式来设置用户名和邮箱信息，我们先将全局配置的用户名和邮箱信息给移除掉：
+
+```sh
+# 查看全局配置信息
+mei@4144e8c22fff:~$ git config --global --list
+user.email=mzh@hellogitlab.com
+user.name=Zhaohui Mei
+
+# 删除全局配置项
+mei@4144e8c22fff:~$ git config --global --unset user.email
+mei@4144e8c22fff:~$ git config --global --unset user.name
+
+# 再次查看全局配置信息
+mei@4144e8c22fff:~$ git config --global --list
+```
+
+可以看到现在已经没有全局配置项了。
+
+
+
+我们对`index.html`进行一些修改：
+
+```sh
+# 查看修改后的文件内容
+mei@4144e8c22fff:~/public_html$ cat index.html
+<html>
+<body>
+My website is alive!
+</body>
+</html>
+mei@4144e8c22fff:~/public_html$ 
+
+# 查看修改差异
+mei@4144e8c22fff:~/public_html$ git diff
+diff --git a/index.html b/index.html
+index 34217e9..8638631 100644
+--- a/index.html
++++ b/index.html
+@@ -1 +1,5 @@
++<html>
++<body>
+ My website is alive!
++</body>
++</html>
+```
+
+此时，我们再次进行提交，但在提交时，指定一下`GIT_AUTHOR_NAME`和`GIT_AUTHOR_EMAIL`环境变量：
+
+```sh
+mei@4144e8c22fff:~/public_html$ GIT_AUTHOR_EMAIL="mzh.whut@gmail.com" && GIT_AUTHOR_NAME="meizhaohui" && git commit -m"Convert to HTML" index.html
+
+*** Please tell me who you are.
+
+Run
+
+  git config --global user.email "you@example.com"
+  git config --global user.name "Your Name"
+
+to set your account's default identity.
+Omit --global to set the identity only in this repository.
+
+fatal: unable to auto-detect email address (got 'mei@4144e8c22fff.(none)')
+mei@4144e8c22fff:~/public_html$ git commit -m"Convert to HTML" index.html
+
+*** Please tell me who you are.
+
+Run
+
+  git config --global user.email "you@example.com"
+  git config --global user.name "Your Name"
+
+to set your account's default identity.
+Omit --global to set the identity only in this repository.
+
+fatal: unable to auto-detect email address (got 'mei@4144e8c22fff.(none)')
+```
+
+此时，可以看到，提交失败，仍然提示需要配置全局用户名和邮箱。因此我按上面的方式再次把全局用户名和邮箱配置好：
+
+```sh
+mei@4144e8c22fff:~$ git config --global user.email "mzh@hellogitlab.com"
+mei@4144e8c22fff:~$ git config --global user.name "Zhaohui Mei"
+mei@4144e8c22fff:~$ git config --global --list
+user.email=mzh@hellogitlab.com
+user.name=Zhaohui Mei
+```
+
+再次使用环境变量的方式进行提交：
+
+```sh
+mei@4144e8c22fff:~/public_html$ GIT_AUTHOR_EMAIL="mzh.whut@gmail.com" && GIT_AUTHOR_NAME="meizhaohui" && git commit -m"Convert to HTML" index.html
+[master b7dc136] Convert to HTML
+ 1 file changed, 4 insertions(+)
+mei@4144e8c22fff:~/public_html$ git log -n 1
+commit b7dc13619a73fa49fe7ea0b9284bcb277717a984 (HEAD -> master)
+Author: Zhaohui Mei <mzh@hellogitlab.com>
+Date:   Sat Jul 17 01:44:07 2021 +0000
+
+    Convert to HTML
+mei@4144e8c22fff:~/public_html$ echo $GIT_AUTHOR_NAME
+meizhaohui
+mei@4144e8c22fff:~/public_html$ echo $GIT_AUTHOR_EMAIL
+mzh.whut@gmail.com
+```
+
+此处可以看到，设定的环境变量在提交过程中没有起作用，因为日志信息中作者信息是`Author: Zhaohui Mei <mzh@hellogitlab.com>`，与我们设定的环境变量不一样。
+
+### 3.4 查看提交信息
+
+- `git log`命令会产生版本库里一系列单独提交的历史信息。
+
+我们刚才已经进行了两次提交，我们查看一下：
+
+```sh
+mei@4144e8c22fff:~/public_html$ git log
+commit b7dc13619a73fa49fe7ea0b9284bcb277717a984 (HEAD -> master)
+Author: Zhaohui Mei <mzh@hellogitlab.com>
+Date:   Sat Jul 17 01:44:07 2021 +0000
+
+    Convert to HTML
+
+commit daa3d7d538f64637f2b475015ed6858324f17223
+Author: Zhaohui Mei <mzh.whut@gmail.com>
+Date:   Sat Jul 17 01:20:00 2021 +0000
+
+    Initial contents of public_html
+mei@4144e8c22fff:~/public_html$
+```
+
+条目按时间逆序罗列出来(*严格来说，它们不是按照时间顺序，而是提交的拓扑顺序排列*)，每条信息显示了提交作者的名字和邮箱地址，提交日期，哟赶紧去的日志信息以及提交的内部识别码(也就是commit id)。
+
+- `git show <commit_id>`命令可以查看特定提交的更加详细的信息。
+
+```sh
+mei@4144e8c22fff:~/public_html$ git show
+commit b7dc13619a73fa49fe7ea0b9284bcb277717a984 (HEAD -> master)
+Author: Zhaohui Mei <mzh@hellogitlab.com>
+Date:   Sat Jul 17 01:44:07 2021 +0000
+
+    Convert to HTML
+
+diff --git a/index.html b/index.html
+index 34217e9..8638631 100644
+--- a/index.html
++++ b/index.html
+@@ -1 +1,5 @@
++<html>
++<body>
+ My website is alive!
++</body>
++</html>
+mei@4144e8c22fff:~/public_html$ git show daa3d7d538f64637f2b475015ed6858324f17223
+commit daa3d7d538f64637f2b475015ed6858324f17223
+Author: Zhaohui Mei <mzh.whut@gmail.com>
+Date:   Sat Jul 17 01:20:00 2021 +0000
+
+    Initial contents of public_html
+
+diff --git a/index.html b/index.html
+new file mode 100644
+index 0000000..34217e9
+--- /dev/null
++++ b/index.html
+@@ -0,0 +1 @@
++My website is alive!
+mei@4144e8c22fff:~/public_html$
+```
+
+如果在`git show`命令中未指定commit_id，则会显示最近一次提交的详细信息。
+
+- `git show-branch`,查看当前开发分支简洁的单行摘要信息。
+
+```sh
+mei@4144e8c22fff:~/public_html$ git show-branch
+[master] Convert to HTML
+mei@4144e8c22fff:~/public_html$ git show-branch --more=10
+[master] Convert to HTML
+[master^] Initial contents of public_html
+mei@4144e8c22fff:~/public_html$
+mei@4144e8c22fff:~/public_html$ git branch
+* master
+```
+
+不带参数时，默认只列出最新的提交。`--more=10`参数表示额外显示10个版本。
+
+### 3.5 查看提交差异
+
+- `git diff`命令可以查看差异信息。
+
+```sh
+mei@4144e8c22fff:~/public_html$ git log |grep ^commit
+commit b7dc13619a73fa49fe7ea0b9284bcb277717a984
+commit daa3d7d538f64637f2b475015ed6858324f17223
+mei@4144e8c22fff:~/public_html$ git diff daa3d7d538f64637f2b475015ed6858324f17223 b7dc13619a73fa49fe7ea0b9284bcb277717a984
+diff --git a/index.html b/index.html
+index 34217e9..8638631 100644
+--- a/index.html
++++ b/index.html
+@@ -1 +1,5 @@
++<html>
++<body>
+ My website is alive!
++</body>
++</html>
+mei@4144e8c22fff:~/public_html$
+```
+
+比较两个版本时，将较早的版本放在命令行的前面，较新的版本放在命令行的后面。
+
+这个输出与`diff`程序的输出非常相似。
+
+不要担心那些十六进制数字，Git提供了许多更短、更简单的方式来执行这样的命令，而无须产生这样大而复杂的数字。
+
+### 3.6 版本为内文件的删除和重命名
+
+- `git rm filename`删除文件。
+- `git mv filename1 filename2`重命名文件。
+
+任何一情况下，暂存的变更必须随后进行提交。
+
+### 3.7 创建版本库副本
+
+- 可以使用`git clone`命令创建版本库的一个完整的副本，或叫克隆。这使得世界各地的人可以通过Git在相同的文件上从事他们喜欢的项目，并保持与其他版本库同步。
+
+我们可以在主目录创建一个`public_html`的副本，命名为`my_website`：
+
+```sh
+mei@4144e8c22fff:~/public_html$ cd
+mei@4144e8c22fff:~$ git clone public_html my_website
+Cloning into 'my_website'...
+done.
+mei@4144e8c22fff:~$
+```
+
+更通用的是，我们使用`git clone`命令来下载远程的Git仓库代码。如：
+
+```sh
+mei@4144e8c22fff:~$ git clone git@gitee.com:meizhaohui/git.git
+Cloning into 'git'...
+The authenticity of host 'gitee.com (180.97.125.228)' can't be established.
+ECDSA key fingerprint is SHA256:FQGC9Kn/eye1W8icdBgrQp+KkGYoFgbVr17bmjey0Wc.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added 'gitee.com,180.97.125.228' (ECDSA) to the list of known hosts.
+git@gitee.com: Permission denied (publickey).
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+mei@4144e8c22fff:~$ git clone https://gitee.com/meizhaohui/git.git
+Cloning into 'git'...
+remote: Enumerating objects: 309613, done.
+remote: Counting objects: 100% (309613/309613), done.
+remote: Compressing objects: 100% (76164/76164), done.
+remote: Total 309613 (delta 231105), reused 309613 (delta 231105), pack-reused 0
+Receiving objects: 100% (309613/309613), 163.07 MiB | 6.58 MiB/s, done.
+Resolving deltas: 100% (231105/231105), done.
+mei@4144e8c22fff:~$
+```
+
+通过该方式下载了Git的源码！一个Git源码的版本库副本就在本地创建好了！！
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
