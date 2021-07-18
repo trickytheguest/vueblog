@@ -6,6 +6,8 @@
 
 ## 1. 安装
 
+## 1.1 服务端安装
+
 可参考 [Apache Subversion Binary Packages](https://subversion.apache.org/packages.html) 进行安装。
 
 我们的系统信息：
@@ -364,6 +366,51 @@ ii  subversion-tools   1.13.0-3                amd64        Assorted tools relat
 root@4144e8c22fff:~#
 ```
 可以看到，以上各包都安装成功了。
+
+
+
+一般我们是将SVN系统安装在Linux操作系统上面，也可以安装到MacOS或Windows系统上。可参考官方文档。
+
+MacOS系统：
+
+> Mac OS X [¶](https://subversion.apache.org/packages.html#osx)
+>
+>- An old version of Subversion is shipped with MacOS X. See the [open source section of Apple's web site](https://www.apple.com/opensource/) for more information.
+>
+>- [Fink](https://pdb.finkproject.org/pdb/package.php/svn) (requires [Fink](https://www.finkproject.org/))
+>
+>- [Homebrew](https://brew.sh/)
+>
+>    ```
+>    $ brew options subversion
+>    $ brew install (OPTIONS) subversion
+>    ```
+>
+>- [MacPorts](https://www.macports.org/ports.php?by=name&substr=subversion) (requires [MacPorts](https://www.macports.org/))
+>
+>- [WANdisco](https://www.wandisco.com/subversion/download#osx) (client and server; supported and certified by [WANdisco](https://www.wandisco.com/subversion/); *requires registration*)
+
+
+
+Windows系统：
+
+> Windows [¶](https://subversion.apache.org/packages.html#windows)
+>
+>- [CollabNet](https://www.collab.net/downloads/subversion/) (supported and certified by [CollabNet](https://www.collab.net/subversion); *requires registration*)
+>- [SlikSVN](https://www.sliksvn.com/en/download) (32- and 64-bit client MSI; maintained by [Bert Huijben](mailto:rhuijben@open.collab.net), [SharpSvn project](https://sharpsvn.open.collab.net/))
+>- [TortoiseSVN](https://tortoisesvn.net/downloads/) (optionally installs 32- and 64-bit command line tools and svnserve; supported and maintained by the [TortoiseSVN project](https://tortoisesvn.net/))
+>- [VisualSVN](https://www.visualsvn.com/downloads/) (32- and 64-bit client and server; supported and maintained by [VisualSVN](https://www.visualsvn.com/))
+>- [WANdisco](https://www.wandisco.com/subversion/download#windows) (32- and 64-bit client and server; supported and certified by [WANdisco](https://www.wandisco.com/subversion/); *requires registration*)
+
+
+
+## 1.2 客户端安装
+
+一般在Linux系统安装服务端时会自动安装客户端`svn`工具。在Windows系统上面，可以去 [https://tortoisesvn.net/downloads.zh.html](https://tortoisesvn.net/downloads.zh.html) 下载TortoiseSVN客户端安装使用。
+
+
+
+
 
 ## 2. svn命令行初步使用
 
