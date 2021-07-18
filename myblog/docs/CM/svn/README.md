@@ -390,6 +390,17 @@ MacOS系统：
 >
 >- [WANdisco](https://www.wandisco.com/subversion/download#osx) (client and server; supported and certified by [WANdisco](https://www.wandisco.com/subversion/); *requires registration*)
 
+如果brew安装失败，可以在Wandisco源中下载安装包，下载地址：[http://opensource.wandisco.com/osx/1.11/1.11.1/](http://opensource.wandisco.com/osx/1.11/1.11.1/)
+
+```sh
+# 下载服务端
+$ wget http://opensource.wandisco.com/osx/1.11/1.11.1/Subversion-1.11.1_10.14.x.pkg
+# 下载客户端
+$ wget http://opensource.wandisco.com/osx/1.11/1.11.1/Subversion-Client-1.11.1_10.14.x.pkg
+```
+
+下载完成后双击安装即可。安装完成后，执行`export PATH=/opt/subversion/bin:$PATH`，将`/opt/subversion/bin`加入到环境变量中即可。
+
 
 
 Windows系统：
@@ -402,13 +413,11 @@ Windows系统：
 >- [VisualSVN](https://www.visualsvn.com/downloads/) (32- and 64-bit client and server; supported and maintained by [VisualSVN](https://www.visualsvn.com/))
 >- [WANdisco](https://www.wandisco.com/subversion/download#windows) (32- and 64-bit client and server; supported and certified by [WANdisco](https://www.wandisco.com/subversion/); *requires registration*)
 
-
+可以直接在Wandisco源下载安装包：[http://opensource.wandisco.com/Windows/1.14/](http://opensource.wandisco.com/Windows/1.14/)
 
 ## 1.2 客户端安装
 
 一般在Linux系统安装服务端时会自动安装客户端`svn`工具。在Windows系统上面，可以去 [https://tortoisesvn.net/downloads.zh.html](https://tortoisesvn.net/downloads.zh.html) 下载TortoiseSVN客户端安装使用。
-
-
 
 
 
