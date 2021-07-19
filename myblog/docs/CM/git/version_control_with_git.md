@@ -1830,6 +1830,173 @@ Git放在对象库中的对象只有4种类型：块blob，目录树tree，提�
 
 
 
+### 4.3 Git在工作时的概念
+
+我们来创建一个新的版本库，并更详细的检查内容文件和对象库。
+
+#### 4.3.1 创建版本库
+
+- 使用`git init`创建一个空的版本库。
+
+```sh
+# 创建目录
+mei@4144e8c22fff:~$ mkdir hello
+
+# 切换到hello目录下
+mei@4144e8c22fff:~$ cd hello/
+
+# 创建一个空的版本库
+mei@4144e8c22fff:~/hello$ git init
+Initialized empty Git repository in /home/mei/hello/.git/
+
+# 查看当前目录的所有文件
+mei@4144e8c22fff:~/hello$ find .|sort
+.
+./.git
+./.git/HEAD
+./.git/branches
+./.git/config
+./.git/description
+./.git/hooks
+./.git/hooks/applypatch-msg.sample
+./.git/hooks/commit-msg.sample
+./.git/hooks/fsmonitor-watchman.sample
+./.git/hooks/post-update.sample
+./.git/hooks/pre-applypatch.sample
+./.git/hooks/pre-commit.sample
+./.git/hooks/pre-merge-commit.sample
+./.git/hooks/pre-push.sample
+./.git/hooks/pre-rebase.sample
+./.git/hooks/pre-receive.sample
+./.git/hooks/prepare-commit-msg.sample
+./.git/hooks/update.sample
+./.git/info
+./.git/info/exclude
+./.git/objects
+./.git/objects/info
+./.git/objects/pack
+./.git/refs
+./.git/refs/heads
+./.git/refs/tags
+mei@4144e8c22fff:~/hello$
+```
+
+可以看到，`.git`目录包含很多内容，这些文件是基于模板目录显示的，根据需要可以进行调整。根据使用的Git的版本，实际列表可能看起来会有一点不同。例如，旧版本的Git不对`.git/hooks`文件夹中的文件使用`.sample`后缀。
+
+- 在一般情况下，不需要查看或者操作`.git`目录下的文件。认为这些隐藏的文件是Git底层(plumbing)或者配置的一部分。Git有一小部分命令来处理这些隐藏的文件，但是你很少会用到它们。
+
+最初，除了几个占位符之外，`.git/objects`目录（用来存放所有Git对象的目录）是空的。
+
+```sh
+mei@4144e8c22fff:~/hello$ find .git/objects
+.git/objects
+.git/objects/pack
+.git/objects/info
+```
+
+现在，让我们来小心地创建一个简单的对象。
+
+```sh
+# 创建一个hello.txt文件
+mei@4144e8c22fff:~/hello$ echo 'hello world' > hello.txt
+
+# 将文件加入到暂存区
+mei@4144e8c22fff:~/hello$ git add .
+```
+
+此时再次查看`.git/objects`目录：
+
+```sh
+mei@4144e8c22fff:~/hello$ find .git/objects
+.git/objects
+.git/objects/pack
+.git/objects/3b
+.git/objects/3b/18e512dba79e4c8300dd08aeb37f8e728b8dad
+.git/objects/info
+```
+
+可以发现已经发生变化了！
+
+
+
+#### 4.3.1 扩展 Git是如何计算散列值的？
+
+参考：
+
+- [How does git compute file hashes?](https://stackoverflow.com/questions/7225313/how-does-git-compute-file-hashes)
+
+- [Git Tip of the Week: Objects](https://alblue.bandlem.com/2011/08/git-tip-of-week-objects.html)
+
+Git计算散列值的方法：
+
+```
+ Commit Hash (SHA1) = SHA1("blob " + <size_of_file> + "\0" + <contents_of_file>)
+```
+
+文本 "blob "是一个常量前缀，"\0" 也是一个常量并且是 NULL 字符。 <size_of_file>是文件长度 和 <contents_of_file>是文件内容， 因文件而异。
+
+- 即Git会在文件内容前面添加一些字符，包含`blob `前缀，文件长度，"\0" ，以及文件内容。
+
+
+
+我们来测试一下。
+
+```sh
+# 方式1，计算散列值
+mei@4144e8c22fff:~/hello$ echo -e 'blob 12\0hello world'|shasum
+3b18e512dba79e4c8300dd08aeb37f8e728b8dad  -
+
+# 方式2，计算散列值，注意printf最后的\n
+mei@4144e8c22fff:~/hello$ printf "blob 12\0hello world\n"|openssl dgst --sha1
+(stdin)= 3b18e512dba79e4c8300dd08aeb37f8e728b8dad
+
+# 方式3，计算散列值，使用git内置命令
+mei@4144e8c22fff:~/hello$ echo 'hello world'|git hash-object --stdin
+3b18e512dba79e4c8300dd08aeb37f8e728b8dad
+
+# 注意，如果字符后面不带换行符，计算出现的hash值与git实际的hash值不一样
+mei@4144e8c22fff:~/hello$ echo -n 'hello world'|git hash-object --stdin
+95d09f2b10159347eece71399a7e2e907ea3df4f
+```
+
+
+
+也可以直接在linux定义以下函数：
+
+```sh
+git-hash-object-test () { # substitute when the `git` command is not available
+    local type=blob
+    [ "$1" = "-t" ] && shift && type=$1 && shift
+    # depending on eol/autocrlf settings, you may want to substitute CRLFs by LFs
+    # by using `perl -pe 's/\r$//g'` instead of `cat` in the next 2 commands
+    local size=$(cat $1 | wc -c | sed 's/ .*$//')
+    ( echo -en "$type $size\0"; cat "$1" ) | sha1sum | sed 's/ .*$//'
+}
+```
+
+测试：
+
+```sh
+mei@4144e8c22fff:~/hello$ git-hash-object-test hello.txt
+3b18e512dba79e4c8300dd08aeb37f8e728b8dad
+```
+
+可以看到，与上述获取到正确的结果相同。说明这个函数也是可以正常使用的。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
