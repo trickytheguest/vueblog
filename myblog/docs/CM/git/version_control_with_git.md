@@ -1954,6 +1954,10 @@ mei@4144e8c22fff:~/hello$ printf "blob 12\0hello world\n"|openssl dgst --sha1
 mei@4144e8c22fff:~/hello$ echo 'hello world'|git hash-object --stdin
 3b18e512dba79e4c8300dd08aeb37f8e728b8dad
 
+# 方式4，直接使用git内置命令来计算文件的散列值
+mei@4144e8c22fff:~/hello$ git hash-object hello.txt
+3b18e512dba79e4c8300dd08aeb37f8e728b8dad
+
 # 注意，如果字符后面不带换行符，计算出现的hash值与git实际的hash值不一样
 mei@4144e8c22fff:~/hello$ echo -n 'hello world'|git hash-object --stdin
 95d09f2b10159347eece71399a7e2e907ea3df4f
@@ -1982,6 +1986,100 @@ mei@4144e8c22fff:~/hello$ git-hash-object-test hello.txt
 ```
 
 可以看到，与上述获取到正确的结果相同。说明这个函数也是可以正常使用的。
+
+
+
+空文件的散列值：
+
+```sh
+# 创建空文件
+mei@4144e8c22fff:~/hello$ touch empty
+
+# 通过git自带命令计算空文件的散列值
+mei@4144e8c22fff:~/hello$ git hash-object empty
+e69de29bb2d1d6434b8b29ae775ad8c2e48c5391
+
+# 通过自定义命令计算空文件的散列值
+mei@4144e8c22fff:~/hello$ git-hash-object-test empty
+e69de29bb2d1d6434b8b29ae775ad8c2e48c5391
+```
+
+
+
+#### 4.3.2  对象、散列和blob
+
+当为hello.txt创建一个对象的时候，Git并不关心hello.txt的文件名。Git只关心文件里面的内容。
+
+计算blob的SHA1散列值，把散列值的十六进制表示作为文件名放进对象库中。
+
+- 两个不同blob产生相同SHA1散列值的机会十分渺茫。当这种情况发生的时候，称为一次碰撞。
+- SHA1是安全散列加密算法。
+- 对于160位数，你有2^160或者大约10^48种可能的SHA1散列值。这个数是极其巨大的，即使你雇用一万亿人来每秒产生一万亿信新的唯一blob对象，持续一万亿年，你也只有10^43个blob对象。
+- 160位的SHA1散列值对应20个字节，这需要40个字节的十六进制来表示。
+- Git在前两个数字后面插入一个`/`以提高文件系统效率（如果你把太多的文件放在同一个目录中，一些文件系统会变慢。使SHA1的第一个字节成为一个目录是一个很简单的办法，可以为所有均匀分布的可能对象创建一个固定的、256路分区的命令空间）。
+- Git没有对文件的内容做很多事情，可以在任何时候使用散列值把它从对象库里提取出来。
+
+查看对象库对应的文件内容：
+
+```sh
+mei@4144e8c22fff:~/hello$ git cat-file -p 3b18e512dba79e4c8300dd08aeb37f8e728b8dad
+hello world
+mei@4144e8c22fff:~/hello$
+```
+
+查看`git cat-file`的帮助信息:
+
+```sh
+mei@4144e8c22fff:~/hello$ git cat-file -h
+usage: git cat-file (-t [--allow-unknown-type] | -s [--allow-unknown-type] | -e | -p | <type> | --textconv | --filters) [--path=<path>] <object>
+   or: git cat-file (--batch | --batch-check) [--follow-symlinks] [--textconv | --filters]
+
+<type> can be one of: blob, tree, commit, tag
+    -t                    show object type
+    -s                    show object size
+    -e                    exit with zero when there's no error
+    -p                    pretty-print object's content
+    --textconv            for blob objects, run textconv on object's content
+    --filters             for blob objects, run filters on object's content
+    --path <blob>         use a specific path for --textconv/--filters
+    --allow-unknown-type  allow -s and -t to work with broken/corrupt objects
+    --buffer              buffer --batch output
+    --batch[=<format>]    show info and content of objects fed from the standard input
+    --batch-check[=<format>]
+                          show info about objects fed from the standard input
+    --follow-symlinks     follow in-tree symlinks (used with --batch or --batch-check)
+    --batch-all-objects   show all objects with --batch or --batch-check
+    --unordered           do not order --batch-all-objects output
+
+mei@4144e8c22fff:~/hello$
+```
+
+
+
+Git知道手动输入40个字符是很不切实际的，因此它提供了一个命令通过对象的唯一前缀来查找对象的散列值。
+
+```sh
+mei@4144e8c22fff:~/hello$ git rev-parse 3b18
+3b18e512dba79e4c8300dd08aeb37f8e728b8dad
+mei@4144e8c22fff:~/hello$ git rev-parse 3b18e5
+3b18e512dba79e4c8300dd08aeb37f8e728b8dad
+```
+
+
+
+#### 4.4.3  文件和树
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
