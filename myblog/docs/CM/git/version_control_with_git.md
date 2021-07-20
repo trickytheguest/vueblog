@@ -2002,6 +2002,9 @@ e69de29bb2d1d6434b8b29ae775ad8c2e48c5391
 # 通过自定义命令计算空文件的散列值
 mei@4144e8c22fff:~/hello$ git-hash-object-test empty
 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391
+
+# 将空文件empty删除掉
+mei@4144e8c22fff:~/hello$ rm empty
 ```
 
 
@@ -2025,11 +2028,23 @@ e69de29bb2d1d6434b8b29ae775ad8c2e48c5391
 mei@4144e8c22fff:~/hello$ git cat-file -p 3b18e512dba79e4c8300dd08aeb37f8e728b8dad
 hello world
 mei@4144e8c22fff:~/hello$
+
+# 查看该对象的类型，返回的是blob，说明是一个blob块对象
+mei@4144e8c22fff:~/hello$ git cat-file -t 3b18e5
+blob
 ```
+
+- `git cat-file`查看存储库对象的内容。
 
 查看`git cat-file`的帮助信息:
 
 ```sh
+mei@4144e8c22fff:~/hello$ git cat-file --help|head -n 5
+GIT-CAT-FILE(1)                                                           Git Manual                                                          GIT-CAT-FILE(1)
+
+NAME
+       git-cat-file - Provide content or type and size information for repository objects
+mei@4144e8c22fff:~/hello$
 mei@4144e8c22fff:~/hello$ git cat-file -h
 usage: git cat-file (-t [--allow-unknown-type] | -s [--allow-unknown-type] | -e | -p | <type> | --textconv | --filters) [--path=<path>] <object>
    or: git cat-file (--batch | --batch-check) [--follow-symlinks] [--textconv | --filters]
@@ -2069,9 +2084,135 @@ mei@4144e8c22fff:~/hello$ git rev-parse 3b18e5
 
 #### 4.4.3  文件和树
 
+既然`hello world`那个blob块已经安置在对象库里了，那么它的文件名又发生了什么事呢？如果不能通过文件名找到文件Git就太没用了。
 
+- 正如前面提到的，Git通过另一种叫做 **目录树tree** 的对象来跟踪文件的路径名。当使用`git add`命令时，Git会给添加的每个文件的内容创建一个对象，但它并不会马上为树创建一个对象。相反，索引更新了，索引位于`.git/index`中，它跟踪文件的路径名和相应的blob。
+- 每次执行命令(比如,`git add`、`git rm`或者`git mv`)的时候，Git会用新的路径名和blob信息来更新索引。
+- 任何时间都可以从当前索引创建一个树对象。只要通过底层的`git write-tree`命令来捕获索引当前信息的快照就可以了。
 
+目前，该索引只包含一个文件，`hello.txt`：
 
+```sh
+mei@4144e8c22fff:~/hello$ git ls-files --stage
+100644 3b18e512dba79e4c8300dd08aeb37f8e728b8dad 0	hello.txt
+```
+
+- `git ls-files`显示索引中的文件信息。
+
+查看命令`git ls-files`的帮助信息:
+
+```
+mei@4144e8c22fff:~/hello$ git ls-files --help|head -n 5
+GIT-LS-FILES(1)                                                           Git Manual                                                          GIT-LS-FILES(1)
+
+NAME
+       git-ls-files - Show information about files in the index and the working tree
+
+mei@4144e8c22fff:~/hello$
+mei@4144e8c22fff:~/hello$ git ls-files -h
+usage: git ls-files [<options>] [<file>...]
+
+    -z                    paths are separated with NUL character
+    -t                    identify the file status with tags
+    -v                    use lowercase letters for 'assume unchanged' files
+    -f                    use lowercase letters for 'fsmonitor clean' files
+    -c, --cached          show cached files in the output (default)
+    -d, --deleted         show deleted files in the output
+    -m, --modified        show modified files in the output
+    -o, --others          show other files in the output
+    -i, --ignored         show ignored files in the output
+    -s, --stage           show staged contents' object name in the output
+    -k, --killed          show files on the filesystem that need to be removed
+    --directory           show 'other' directories' names only
+    --eol                 show line endings of files
+    --empty-directory     don't show empty directories
+    -u, --unmerged        show unmerged files in the output
+    --resolve-undo        show resolve-undo information
+    -x, --exclude <pattern>
+                          skip files matching pattern
+    -X, --exclude-from <file>
+                          exclude patterns are read from <file>
+    --exclude-per-directory <file>
+                          read additional per-directory exclude patterns in <file>
+    --exclude-standard    add the standard git exclusions
+    --full-name           make the output relative to the project top directory
+    --recurse-submodules  recurse through submodules
+    --error-unmatch       if any <file> is not in the index, treat this as an error
+    --with-tree <tree-ish>
+                          pretend that paths removed since <tree-ish> are still present
+    --abbrev[=<n>]        use <n> digits to display SHA-1s
+    --debug               show debugging data
+
+mei@4144e8c22fff:~/hello$
+```
+
+我们在执行底层命令`git write-tree`前，再次查看`.git/object`目录下有哪些文件：
+
+```sh
+mei@4144e8c22fff:~/hello$ find .git/objects/
+.git/objects/
+.git/objects/pack
+.git/objects/3b
+.git/objects/3b/18e512dba79e4c8300dd08aeb37f8e728b8dad
+.git/objects/info
+```
+
+- `git write-tree` 根据当前索引创建一个树对象。
+
+查看`git write-tree`帮助信息：
+
+```sh
+# git-write-tree - Create a tree object from the current index
+mei@4144e8c22fff:~/hello$ git write-tree -h
+usage: git write-tree [--missing-ok] [--prefix=<prefix>/]
+
+    --missing-ok          allow missing objects
+    --prefix <prefix>/    write tree object for a subdirectory <prefix>
+```
+
+创建树对象：
+
+```sh
+mei@4144e8c22fff:~/hello$ git write-tree
+68aba62e560c0ebc3396e8ae9335232cd93a3f60
+```
+
+查看`.git/object`目录下有哪些文件：
+
+```sh
+mei@4144e8c22fff:~/hello$ find .git/objects/
+.git/objects/
+.git/objects/68
+.git/objects/68/aba62e560c0ebc3396e8ae9335232cd93a3f60
+.git/objects/pack
+.git/objects/3b
+.git/objects/3b/18e512dba79e4c8300dd08aeb37f8e728b8dad
+.git/objects/info
+```
+
+可以发现多出了`68`文件夹，以及`aba62e560c0ebc3396e8ae9335232cd93a3f60`文件。
+
+查看该对象的内容：
+
+```sh
+# 查看对象的类型，返回tree，说明该对象是一个树对象
+mei@4144e8c22fff:~/hello$ git cat-file -t 68aba62
+tree
+
+# 查看树对象的内容
+mei@4144e8c22fff:~/hello$ git cat-file -p 68aba62
+100644 blob 3b18e512dba79e4c8300dd08aeb37f8e728b8dad	hello.txt
+
+# 索引中的内容
+mei@4144e8c22fff:~/hello$ git ls-files --stage
+100644 3b18e512dba79e4c8300dd08aeb37f8e728b8dad 0	hello.txt
+```
+
+可以看到树对象68aba62已经捕获了索引中的信息。
+
+第一个数100644是对象的文件属性的八进制表示。
+
+`3b18e512dba79e4c8300dd08aeb37f8e728b8dad`是`hello world`的blob的对象名，`hello.txt`是与该blob关联的名字。
 
 
 
