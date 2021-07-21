@@ -2214,9 +2214,106 @@ mei@4144e8c22fff:~/hello$ git ls-files --stage
 
 `3b18e512dba79e4c8300dd08aeb37f8e728b8dad`是`hello world`的blob的对象名，`hello.txt`是与该blob关联的名字。
 
+- `git ls-tree`显示树对象内容。
+
+也可以使用`git ls-tree`来显示树对象的内容：
+
+```sh
+mei@4144e8c22fff:~/hello$ git ls-tree --help|head -n 5|awk NF
+GIT-LS-TREE(1)                                                            Git Manual                                                           GIT-LS-TREE(1)
+NAME
+       git-ls-tree - List the contents of a tree object
+mei@4144e8c22fff:~/hello$ git ls-tree -h
+usage: git ls-tree [<options>] <tree-ish> [<path>...]
+
+    -d                    only show trees
+    -r                    recurse into subtrees
+    -t                    show trees when recursing
+    -z                    terminate entries with NUL byte
+    -l, --long            include object size
+    --name-only           list only filenames
+    --name-status         list only filenames
+    --full-name           use full path names
+    --full-tree           list entire tree; not just current directory (implies --full-name)
+    --abbrev[=<n>]        use <n> digits to display SHA-1s
+
+mei@4144e8c22fff:~/hello$
+```
+
+我们查看一下树对象`68aba62e560c0ebc3396e8ae9335232cd93a3f60`的内容：
+
+```sh
+mei@4144e8c22fff:~/hello$ git ls-tree 68aba62e560c0ebc3396e8ae9335232cd93a3f60
+100644 blob 3b18e512dba79e4c8300dd08aeb37f8e728b8dad	hello.txt
+mei@4144e8c22fff:~/hello$
+```
+
+#### 4.4.3 扩展 Git是如何生成树对象的散列值的？
 
 
 
+参考：[Git工程开发实践（二）——Git内部实现机制](https://blog.51cto.com/u_9291927/2173002)
+
+树对象的SHA1散列值计算方法如下：
+
+```
+tree <content length><NUL><file mode> <filename><NUL><item sha>
+```
+
+说明：content length是生成的内容长度，NUL是`\0`字符，file mode是文件模式，如`100644`，filename是文件名，item sha是blob对象散列值的二进制形式。
+
+我们来看一下树对象`68aba62e560c0ebc3396e8ae9335232cd93a3f60`这个散列值是如何计算出来的。
+
+当前索引中的内容：
+
+```sh
+mei@4144e8c22fff:~/hello$ git ls-files --stage
+100644 3b18e512dba79e4c8300dd08aeb37f8e728b8dad 0	hello.txt
+mei@4144e8c22fff:~/hello$
+```
+
+对该行进行处理，生成树对象的散列值。
+
+首先使用`xxd`把blob块对象`3b18e512dba79e4c8300dd08aeb37f8e728b8dad`转换成二进制的形式，并将结果保存为sha1.txt以方便后面做追加操作。
+
+```sh
+mei@4144e8c22fff:~/hello$ echo -en '3b18e512dba79e4c8300dd08aeb37f8e728b8dad'|xxd -r -p > sha1.txt
+```
+
+构建content部分，并保存至文件content.txt：
+
+```sh
+mei@4144e8c22fff:~/hello$ echo -en "100644 hello.txt\0" | cat - sha1.txt > content.txt
+```
+
+计算content的长度：
+
+```sh
+mei@4144e8c22fff:~/hello$ cat content.txt |wc -c
+37
+```
+
+长度为37。
+
+生成SHA1散列值：
+
+```sh
+mei@4144e8c22fff:~/hello$ echo -en "tree 37\0" | cat - content.txt |shasum
+68aba62e560c0ebc3396e8ae9335232cd93a3f60  -
+mei@4144e8c22fff:~/hello$ echo -en "tree 37\0" | cat - content.txt |openssl dgst --sha1
+(stdin)= 68aba62e560c0ebc3396e8ae9335232cd93a3f60
+```
+
+得到树对象的散列值为`68aba62e560c0ebc3396e8ae9335232cd93a3f60`。
+
+而我们知道，通过`git write-tree`得到的树对象散列值如下：
+
+```sh
+mei@4144e8c22fff:~/hello$ git write-tree
+68aba62e560c0ebc3396e8ae9335232cd93a3f60
+```
+
+可以看到，我们通过命令行手动计算的散列值与`git write-tree`生成的树对象散列值是一样的！！！说明我们的计算方法是对。
 
 
 
