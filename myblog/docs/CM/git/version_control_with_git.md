@@ -2315,6 +2315,403 @@ mei@4144e8c22fff:~/hello$ git write-tree
 
 可以看到，我们通过命令行手动计算的散列值与`git write-tree`生成的树对象散列值是一样的！！！说明我们的计算方法是对的。
 
+以上只是验证了按这种方式计算的树对象的散列值刚好相同，后续还需要确认树对象的散列值的计算方法。
+
+
+
+#### 4.3.4 对Git使用SHA1的一点说明
+
+
+
+- 当我们多次对相同的索引计算其树对象的散列值时，其散列值是相同的。
+
+多次执行`git write-tree`:
+
+```sh
+mei@4144e8c22fff:~/hello$ git write-tree
+68aba62e560c0ebc3396e8ae9335232cd93a3f60
+mei@4144e8c22fff:~/hello$ git write-tree
+68aba62e560c0ebc3396e8ae9335232cd93a3f60
+mei@4144e8c22fff:~/hello$ git write-tree
+68aba62e560c0ebc3396e8ae9335232cd93a3f60
+```
+
+可以看到，返回的树对象的散列值保持不变。Git并不需要重新创建一个新的树对象。
+
+```sh
+mei@4144e8c22fff:~/hello$ find .git/objects/
+.git/objects/
+.git/objects/68
+.git/objects/68/aba62e560c0ebc3396e8ae9335232cd93a3f60
+.git/objects/pack
+.git/objects/3b
+.git/objects/3b/18e512dba79e4c8300dd08aeb37f8e728b8dad
+.git/objects/info
+```
+
+`.git/objects`中并没有新增对象。
+
+- 散列函数在数学意义上是一个真正的函数：对于一个给你写的输入，它的输出总是相同的。这样的散列函数也称为摘要。
+- 相同的散列值并不算碰撞，只有两个不同的对象产生一个相同的散列值时才算碰撞。
+
+
+
+#### 4.3.5 树层次结构
+
+- 只对单个文件的信息是很好管理的。但项目包含复杂而且深层嵌套的目录结构，并且会随着时间的推移而重构和移动。
+
+下面我们创建一个子目录，并包含hello.txt的一个完全相同的副本，让我们看看Git是如何处理的：
+
+```sh
+mei@4144e8c22fff:~/hello$ mkdir subdir && cp hello.txt subdir/
+mei@4144e8c22fff:~/hello$ find .git/objects/
+.git/objects/
+.git/objects/68
+.git/objects/68/aba62e560c0ebc3396e8ae9335232cd93a3f60
+.git/objects/pack
+.git/objects/3b
+.git/objects/3b/18e512dba79e4c8300dd08aeb37f8e728b8dad
+.git/objects/info
+mei@4144e8c22fff:~/hello$ git add subdir/hello.txt
+mei@4144e8c22fff:~/hello$ find .git/objects/
+.git/objects/
+.git/objects/68
+.git/objects/68/aba62e560c0ebc3396e8ae9335232cd93a3f60
+.git/objects/pack
+.git/objects/3b
+.git/objects/3b/18e512dba79e4c8300dd08aeb37f8e728b8dad
+.git/objects/info
+mei@4144e8c22fff:~/hello$
+```
+
+我们创建了子目录subdir，并将hello.txt复制了一份到subdir/目录中，在我们执行`git add`前后，`.git/object`中的对象并没有新增。
+
+此时查看索引中的内容：
+
+```sh
+mei@4144e8c22fff:~/hello$ git ls-files -s
+100644 3b18e512dba79e4c8300dd08aeb37f8e728b8dad 0	hello.txt
+100644 3b18e512dba79e4c8300dd08aeb37f8e728b8dad 0	subdir/hello.txt
+```
+
+可以看到，索引中增加了一行，包含了`subdir/hello.txt`相关的信息。此时我们创建一个对对象：
+
+```sh
+mei@4144e8c22fff:~/hello$ git write-tree
+492413269336d21fac079d4a4672e55d5d2147ac
+mei@4144e8c22fff:~/hello$ find .git/objects/
+.git/objects/
+.git/objects/68
+.git/objects/68/aba62e560c0ebc3396e8ae9335232cd93a3f60
+.git/objects/49
+.git/objects/49/2413269336d21fac079d4a4672e55d5d2147ac
+.git/objects/pack
+.git/objects/3b
+.git/objects/3b/18e512dba79e4c8300dd08aeb37f8e728b8dad
+.git/objects/info
+mei@4144e8c22fff:~/hello$
+```
+
+可以看到，创建了树对象`492413269336d21fac079d4a4672e55d5d2147ac`。
+
+查看一下树对象的内容：
+
+```sh
+mei@4144e8c22fff:~/hello$ git ls-tree 492413269336d21fac079d4a4672e55d5d2147ac
+100644 blob 3b18e512dba79e4c8300dd08aeb37f8e728b8dad	hello.txt
+040000 tree 68aba62e560c0ebc3396e8ae9335232cd93a3f60	subdir
+mei@4144e8c22fff:~/hello$ git cat-file -p 492413269336d21fac079d4a4672e55d5d2147ac
+100644 blob 3b18e512dba79e4c8300dd08aeb37f8e728b8dad	hello.txt
+040000 tree 68aba62e560c0ebc3396e8ae9335232cd93a3f60	subdir
+```
+
+通过两种方式查看到树对象的内容是一样的。
+
+新的顶级树包含两个条目：原始的hello.txt以及新的子目录，子目录是树而不是blob。subdir的对象名，是之前的树对象。
+
+
+
+#### 4.3.6 提交
+
+上一节我们已经将hello.txt添加到暂存区了，也通过`git write-tree`生成了树对象，下面也可以使用底层命令创建提交对象。
+
+- `git commit-tree`创建提交对象。
+
+```sh
+mei@4144e8c22fff:~/hello$ git commit-tree --help|head -n 5
+GIT-COMMIT-TREE(1)                                                        Git Manual                                                       GIT-COMMIT-TREE(1)
+
+NAME
+       git-commit-tree - Create a new commit object
+
+mei@4144e8c22fff:~/hello$ git commit-tree --help|head -n 5|awk NF
+GIT-COMMIT-TREE(1)                                                        Git Manual                                                       GIT-COMMIT-TREE(1)
+NAME
+       git-commit-tree - Create a new commit object
+mei@4144e8c22fff:~/hello$ git commit-tree -h
+usage: git commit-tree [(-p <parent>)...] [-S[<keyid>]] [(-m <message>)...] [(-F <file>)...] <tree>
+
+    -p <parent>           id of a parent commit object
+    -m <message>          commit message
+    -F <file>             read commit log message from file
+    -S, --gpg-sign[=<key-id>]
+                          GPG sign commit
+```
+
+通过查看帮助文档可知，`This is usually not what an end user wants to run directly. See git-commit(1) instead.`不推荐直接使用该命令来创建一个提交对象，而应使用`git commit`命令来代替。
+
+我们先使用这处方式来创建提交对象，后面再测试一次使用`git commit`来创建提交对象。
+
+```sh
+mei@4144e8c22fff:~/hello$ git commit-tree -m "Commit a file that says hello" 492413269336d21fac079d4a4672e55d5d2147ac
+174a235d644ebbcad3b9c8f4c817e0f048c15fe3
+mei@4144e8c22fff:~/hello$ find .git/objects/
+.git/objects/
+.git/objects/68
+.git/objects/68/aba62e560c0ebc3396e8ae9335232cd93a3f60
+.git/objects/49
+.git/objects/49/2413269336d21fac079d4a4672e55d5d2147ac
+.git/objects/pack
+.git/objects/3b
+.git/objects/3b/18e512dba79e4c8300dd08aeb37f8e728b8dad
+.git/objects/17
+.git/objects/17/4a235d644ebbcad3b9c8f4c817e0f048c15fe3
+.git/objects/info
+```
+
+可以看到，此时多出了一个对象`174a235d644ebbcad3b9c8f4c817e0f048c15fe3`，与教程中的对象值不一样。
+
+查看提交对象的内容：
+
+```sh
+mei@4144e8c22fff:~/hello$ git cat-file -p 174a235d644ebbcad3b9c8f4c817e0f048c15fe3
+tree 492413269336d21fac079d4a4672e55d5d2147ac
+author Zhaohui Mei <mzh@hellogitlab.com> 1626963401 +0800
+committer Zhaohui Mei <mzh@hellogitlab.com> 1626963401 +0800
+
+Commit a file that says hello
+mei@4144e8c22fff:~/hello$
+```
+
+查看对象的类型：
+
+```sh
+mei@4144e8c22fff:~/hello$ git cat-file -t 174a235d644ebbcad3b9c8f4c817e0f048c15fe3
+commit
+```
+
+可以看到`174a235d644ebbcad3b9c8f4c817e0f048c15fe3`是一个提交对象。
+
+如果你在计算机上按步骤操作，你会发现你生成的提交对象不一样。
+
+原因如下：
+
+- 这是不同的提交。提交包含你的名字和创建提交的时间，尽管这区别很微小，但依然是不同的。但你的提交却有相同的树。
+
+
+
+树对象和提交对象是分开的。不同的提交经常指向同一棵树。
+
+在实际生活中，你应跳过底层的`git write-tree`和`git commit-tree`命令的步骤。而是只使用`git commit`命令。成为一个快乐的Git用户，你不需要记住那些底层命令。
+
+- `git show --pretty=fuller COMMIT_ID`查看提交的详细细节。
+
+我们查看一下刚才的提交的详情：
+
+```sh
+mei@4144e8c22fff:~/hello$ git show --pretty=fuller 174a235d644ebbcad3b9c8f4c817e0f048c15fe3
+commit 174a235d644ebbcad3b9c8f4c817e0f048c15fe3
+Author:     Zhaohui Mei <mzh@hellogitlab.com>
+AuthorDate: Thu Jul 22 22:16:41 2021 +0800
+Commit:     Zhaohui Mei <mzh@hellogitlab.com>
+CommitDate: Thu Jul 22 22:16:41 2021 +0800
+
+    Commit a file that says hello
+
+diff --git a/hello.txt b/hello.txt
+new file mode 100644
+index 0000000..3b18e51
+--- /dev/null
++++ b/hello.txt
+@@ -0,0 +1 @@
++hello world
+diff --git a/subdir/hello.txt b/subdir/hello.txt
+new file mode 100644
+index 0000000..3b18e51
+--- /dev/null
++++ b/subdir/hello.txt
+@@ -0,0 +1 @@
++hello world
+mei@4144e8c22fff:~/hello$
+```
+
+- 一般情况下，作者和提交者是同一个人，也有一些情况下，他们是不同的。
+
+
+
+#### 4.3.6 扩展 提交
+
+现在，我们忘了那些底层的命令吧。
+
+我们直接在一行命令中重试之前的一系列操作，并使用`git commit`进行提交：
+
+```sh
+mei@4144e8c22fff:~$ mkdir hello && cd hello && git init && echo 'hello world' > hello.txt && git add hello.txt && mkdir subdir && cp hello.txt subdir/ && git add subdir/hello.txt && git commit -m"Commit a file that says hello"
+Initialized empty Git repository in /home/mei/hello/.git/
+[master (root-commit) 80d703a] Commit a file that says hello
+ 2 files changed, 2 insertions(+)
+ create mode 100644 hello.txt
+ create mode 100644 subdir/hello.txt
+mei@4144e8c22fff:~/hello$ git log
+commit 80d703ac7da69ce3e5c0c87c8173fb23c50b5105 (HEAD -> master)
+Author: Zhaohui Mei <mzh@hellogitlab.com>
+Date:   Thu Jul 22 23:04:51 2021 +0800
+
+    Commit a file that says hello
+mei@4144e8c22fff:~/hello$ find .git/objects/
+.git/objects/
+.git/objects/68
+.git/objects/68/aba62e560c0ebc3396e8ae9335232cd93a3f60
+.git/objects/49
+.git/objects/49/2413269336d21fac079d4a4672e55d5d2147ac
+.git/objects/pack
+.git/objects/3b
+.git/objects/3b/18e512dba79e4c8300dd08aeb37f8e728b8dad
+.git/objects/info
+.git/objects/80
+.git/objects/80/d703ac7da69ce3e5c0c87c8173fb23c50b5105
+mei@4144e8c22fff:~/hello$
+```
+
+可以看到，除了最后的提交对象不同我，其他对象与之前测试的结果是一样。
+
+此时，可以通过`git log`查看到提交日志信息：
+
+```sh
+mei@4144e8c22fff:~/hello$ git log
+commit 80d703ac7da69ce3e5c0c87c8173fb23c50b5105 (HEAD -> master)
+Author: Zhaohui Mei <mzh@hellogitlab.com>
+Date:   Thu Jul 22 23:04:51 2021 +0800
+
+    Commit a file that says hello
+```
+
+相应的，也可以看到分支情况：
+
+```sh
+mei@4144e8c22fff:~/hello$ git branch
+* master
+```
+
+查看提交详情：
+
+```sh
+mei@4144e8c22fff:~/hello$ git show --pretty=fuller 80d703ac7da69ce3e5c0c87c8173fb23c50b5105
+commit 80d703ac7da69ce3e5c0c87c8173fb23c50b5105 (HEAD -> master)
+Author:     Zhaohui Mei <mzh@hellogitlab.com>
+AuthorDate: Thu Jul 22 23:04:51 2021 +0800
+Commit:     Zhaohui Mei <mzh@hellogitlab.com>
+CommitDate: Thu Jul 22 23:04:51 2021 +0800
+
+    Commit a file that says hello
+
+diff --git a/hello.txt b/hello.txt
+new file mode 100644
+index 0000000..3b18e51
+--- /dev/null
++++ b/hello.txt
+@@ -0,0 +1 @@
++hello world
+diff --git a/subdir/hello.txt b/subdir/hello.txt
+new file mode 100644
+index 0000000..3b18e51
+--- /dev/null
++++ b/subdir/hello.txt
+@@ -0,0 +1 @@
++hello world
+```
+
+可以看到，除了提交时间不一样外，其他的内容与使用底层命令`git write-tree`和`git commit-tree`得到的结果是一样的。
+
+
+
+我们再来复盘一次使用底层命令进行操作推演：
+
+```sh
+mei@4144e8c22fff:~$ mkdir hello
+mei@4144e8c22fff:~$ cd hello
+mei@4144e8c22fff:~/hello$ git init
+Initialized empty Git repository in /home/mei/hello/.git/
+mei@4144e8c22fff:~/hello$ echo 'hello world' > hello.txt
+mei@4144e8c22fff:~/hello$ mkdir subdir
+mei@4144e8c22fff:~/hello$ cp hello.txt subdir/
+mei@4144e8c22fff:~/hello$ git add .
+mei@4144e8c22fff:~/hello$ gs
+On branch master
+
+No commits yet
+
+Changes to be committed:
+  (use "git rm --cached <file>..." to unstage)
+	new file:   hello.txt
+	new file:   subdir/hello.txt
+
+mei@4144e8c22fff:~/hello$ git branch
+mei@4144e8c22fff:~/hello$ git ls-files -s
+100644 3b18e512dba79e4c8300dd08aeb37f8e728b8dad 0	hello.txt
+100644 3b18e512dba79e4c8300dd08aeb37f8e728b8dad 0	subdir/hello.txt
+mei@4144e8c22fff:~/hello$ git write-tree
+492413269336d21fac079d4a4672e55d5d2147ac
+
+# ==========> 注意此处，写树对象后，查看分支情况和日志情况都是异常的！！！
+mei@4144e8c22fff:~/hello$ git branch
+mei@4144e8c22fff:~/hello$ git log
+fatal: your current branch 'master' does not have any commits yet
+mei@4144e8c22fff:~/hello$ git commit-tree -m"Commit a file that says hello" 492413269336d21fac079d4a4672e55d5d2147ac
+b938f3081d70bd52a2032ef3f870b3a0afc5e376
+mei@4144e8c22fff:~/hello$ git cat-file -p b938f3081d70bd52a2032ef3f870b3a0afc5e376
+tree 492413269336d21fac079d4a4672e55d5d2147ac
+author Zhaohui Mei <mzh@hellogitlab.com> 1626967226 +0800
+committer Zhaohui Mei <mzh@hellogitlab.com> 1626967226 +0800
+
+Commit a file that says hello
+
+# ==========> 注意此处，写提交对象后，查看分支情况和日志情况都是异常的！！！
+mei@4144e8c22fff:~/hello$ git log
+fatal: your current branch 'master' does not have any commits yet
+mei@4144e8c22fff:~/hello$ git branch
+mei@4144e8c22fff:~/hello$ find .git/objects/
+.git/objects/
+.git/objects/68
+.git/objects/68/aba62e560c0ebc3396e8ae9335232cd93a3f60
+.git/objects/49
+.git/objects/49/2413269336d21fac079d4a4672e55d5d2147ac
+.git/objects/pack
+.git/objects/3b
+.git/objects/3b/18e512dba79e4c8300dd08aeb37f8e728b8dad
+.git/objects/b9
+.git/objects/b9/38f3081d70bd52a2032ef3f870b3a0afc5e376
+.git/objects/info
+mei@4144e8c22fff:~/hello$
+```
+
+即，直接使用底次`git commit-tree`命令可以创建一个提交对象，但并没有提交数据！！！！没有提交记录！
+
+```sh
+mei@4144e8c22fff:~/hello$ git log b938f3081d70bd52a2032ef3f870b3a0afc5e376
+commit b938f3081d70bd52a2032ef3f870b3a0afc5e376
+Author: Zhaohui Mei <mzh@hellogitlab.com>
+Date:   Thu Jul 22 23:20:26 2021 +0800
+
+    Commit a file that says hello
+```
+
+可以看到，使用`git commit`提交与`git commit-tree`底层命令进行提交还是存在一些差异的！
+
+
+
+
+
 
 
 
