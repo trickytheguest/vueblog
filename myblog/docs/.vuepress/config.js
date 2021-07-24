@@ -17,6 +17,9 @@ module.exports = {
     port: 80,
     markdown: {
         lineNumbers: true, // 代码显示行号
+        toc: {
+            includeLevel: [1,2,3,4]
+        }
     },
     plugins: pluginConf,
     themeConfig: {

@@ -2776,11 +2776,13 @@ mei@4144e8c22fff:~/hello$ find .git/refs/
 
 分支与提交的关系：
 
-- git的分支必须指向一个commit,没有任何commit就没有任何分支。
+- Git的分支必须指向一个commit,没有任何commit就没有任何分支。提交第一个commit后Git自动创建master分支。
 
 
 
 正如我们上面操作的，在使用`git commit-tree`创建提交对象commit_id后，还需要使用`git branch master commit_id`来将提交对象与分支`master`绑定在一起。这样绑定后，就有了分支，也能查看`git log`日志信息了！！！
+
+也就是说，`git commit`命令在创建了提交对象后，又将提交对象与分支进行绑定了！绑定分支后，我们就可以直接查看到`git log`的日志信息。
 
 
 
