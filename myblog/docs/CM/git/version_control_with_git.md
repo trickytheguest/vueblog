@@ -2790,6 +2790,189 @@ mei@4144e8c22fff:~/hello$ find .git/refs/
 
 
 
+### 4.7 标签
+
+- Git还管理的一个对象是`标签`，尽管Git只实现了一种标签对象，但是有两种基本的标签类型。
+- 两种标签类型：轻量级的(lightweight)和带附注的(annotated)。
+- 轻量级标签只是一个提交对象的引用，通常被版本库视为私有的。这些标签并不会在版本库里创建永久的对象。
+- 带附注的标签则会创建一个对象。
+- Git在命名一个提交的时候对轻量级的标签和带标注的标签同等对待。
+- `git tag`命令来创建标签！
+
+先看看这个命令的帮助信息。
+
+```sh
+mei@4144e8c22fff:~$ git tag --help|head -n 4|awk NF
+GIT-TAG(1)                                                                Git Manual                                                               GIT-TAG(1)
+NAME
+       git-tag - Create, list, delete or verify a tag object signed with GPG
+mei@4144e8c22fff:~$ git tag -h
+usage: git tag [-a | -s | -u <key-id>] [-f] [-m <msg> | -F <file>]
+		<tagname> [<head>]
+   or: git tag -d <tagname>...
+   or: git tag -l [-n[<num>]] [--contains <commit>] [--no-contains <commit>] [--points-at <object>]
+		[--format=<format>] [--[no-]merged [<commit>]] [<pattern>...]
+   or: git tag -v [--format=<format>] <tagname>...
+
+    -l, --list            list tag names
+    -n[<n>]               print <n> lines of each tag message
+    -d, --delete          delete tags
+    -v, --verify          verify tags
+
+Tag creation options
+    -a, --annotate        annotated tag, needs a message
+    -m, --message <message>
+                          tag message
+    -F, --file <file>     read message from file
+    -e, --edit            force edit of tag message
+    -s, --sign            annotated and GPG-signed tag
+    --cleanup <mode>      how to strip spaces and #comments from message
+    -u, --local-user <key-id>
+                          use another key to sign the tag
+    -f, --force           replace the tag if exists
+    --create-reflog       create a reflog
+
+Tag listing options
+    --column[=<style>]    show tag list in columns
+    --contains <commit>   print only tags that contain the commit
+    --no-contains <commit>
+                          print only tags that don't contain the commit
+    --merged <commit>     print only tags that are merged
+    --no-merged <commit>  print only tags that are not merged
+    --sort <key>          field name to sort on
+    --points-at <object>  print only tags of the object
+    --format <format>     format to use for the output
+    --color[=<when>]      respect format colors
+    -i, --ignore-case     sorting and filtering are case insensitive
+
+mei@4144e8c22fff:~$
+```
+
+可以看到，使用`git tag`命令可以创建、删除、检验或者列出当前的标签。
+
+我们来创建一个`V1.0`的标签：
+
+```sh
+# 列出当前标签
+mei@4144e8c22fff:~/hello$ git tag --list
+# 不带任何参数时，也是列出当前标签
+mei@4144e8c22fff:~/hello$ git tag
+# 创建标签
+mei@4144e8c22fff:~/hello$ git tag -m"Tag version 1.0" V1.0
+# 再次列出当前的标签
+mei@4144e8c22fff:~/hello$ git tag --list
+V1.0
+mei@4144e8c22fff:~/hello$ git tag
+V1.0
+```
+
+此时，我们查看一下Git的对象文件：
+
+```sh
+mei@4144e8c22fff:~/hello$ find .git/objects/
+.git/objects/
+.git/objects/68
+.git/objects/68/aba62e560c0ebc3396e8ae9335232cd93a3f60
+.git/objects/49
+.git/objects/49/2413269336d21fac079d4a4672e55d5d2147ac
+.git/objects/38
+.git/objects/38/ab1e8230e171894dd47a24fb27bf2873322159
+.git/objects/pack
+.git/objects/3b
+.git/objects/3b/18e512dba79e4c8300dd08aeb37f8e728b8dad
+.git/objects/b9
+.git/objects/b9/38f3081d70bd52a2032ef3f870b3a0afc5e376
+.git/objects/info
+mei@4144e8c22fff:~/hello$
+```
+
+可以发现新增了对象数据。
+
+我们查看一下`V1.0`标签对象的SHA1值：
+
+```sh
+mei@4144e8c22fff:~/hello$ git rev-parse V1.0
+38ab1e8230e171894dd47a24fb27bf2873322159
+```
+
+这样获取到了标签对象的SHA1值为`38ab1e8230e171894dd47a24fb27bf2873322159`。
+
+我们查看一下该对象的内容和类型：
+
+```sh
+mei@4144e8c22fff:~/hello$ git cat-file -p 38ab1e8230e171894dd47a24fb27bf2873322159
+object b938f3081d70bd52a2032ef3f870b3a0afc5e376
+type commit
+tag V1.0
+tagger Zhaohui Mei <mzh@hellogitlab.com> 1627141359 +0800
+
+Tag version 1.0
+mei@4144e8c22fff:~/hello$ git cat-file -t 38ab1e8230e171894dd47a24fb27bf2873322159
+tag
+```
+
+标签指向对象`b938f3081d70bd52a2032ef3f870b3a0afc5e376`，是一个commit提交对象。正是我们在上一节的最后的提交对象。
+
+我们查看一下当前日志信息：
+
+```sh
+mei@4144e8c22fff:~/hello$ git log
+commit b938f3081d70bd52a2032ef3f870b3a0afc5e376 (HEAD -> master, tag: V1.0)
+Author: Zhaohui Mei <mzh@hellogitlab.com>
+Date:   Thu Jul 22 23:20:26 2021 +0800
+
+    Commit a file that says hello
+```
+
+可以看到对于提交对象`b938f3081d70bd52a2032ef3f870b3a0afc5e376`,其有一个标签，标签名为`V1.0`。
+
+- 通常情况下，Git通过某些分支来给特定的提交命名标签。
+
+
+
+查看标签的详情：
+
+```sh
+mei@4144e8c22fff:~/hello$ git show V1.0
+tag V1.0
+Tagger: Zhaohui Mei <mzh@hellogitlab.com>
+Date:   Sat Jul 24 23:42:39 2021 +0800
+
+Tag version 1.0
+
+commit b938f3081d70bd52a2032ef3f870b3a0afc5e376 (HEAD -> master, tag: V1.0)
+Author: Zhaohui Mei <mzh@hellogitlab.com>
+Date:   Thu Jul 22 23:20:26 2021 +0800
+
+    Commit a file that says hello
+
+diff --git a/hello.txt b/hello.txt
+new file mode 100644
+index 0000000..3b18e51
+--- /dev/null
++++ b/hello.txt
+@@ -0,0 +1 @@
++hello world
+diff --git a/subdir/hello.txt b/subdir/hello.txt
+new file mode 100644
+index 0000000..3b18e51
+--- /dev/null
++++ b/subdir/hello.txt
+@@ -0,0 +1 @@
++hello world
+mei@4144e8c22fff:~/hello$
+```
+
+
+
+
+
+
+
+
+
+
+
 
 
 
