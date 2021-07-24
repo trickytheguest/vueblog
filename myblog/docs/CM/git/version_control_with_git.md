@@ -1116,7 +1116,7 @@ fatal: unable to auto-detect email address (got 'mei@4144e8c22fff.(none)')
 
 ### 3.3 配置提交作者信息
 
-~~虽然我们可以通过在`git commit`中指定`--author`参数，~~但更常用的方法是，在全局指定用户名和邮箱信息，正如上面提示的信息那样，使用以下命令：
+虽然我们可以通过在`git commit`中指定`--author`参数，但更常用的方法是，在全局指定用户名和邮箱信息，正如上面提示的信息那样，使用以下命令：
 
 ```sh
   git config --global user.email "you@example.com"
@@ -1136,7 +1136,7 @@ user.email=mzh@hellogitlab.com
 user.name=Zhaohui Mei
 ```
 
-此时，我们再尝试使用`git commit`来`--author`参数提交：
+此时，我们再尝试使用`git commit`来设置`--author`参数提交：
 
 ```sh
 mei@4144e8c22fff:~/public_html$ git commit -m"Initial contents of public_html" --author="Zhaohui Mei <mzh.whut@gmail.com>"
@@ -1447,9 +1447,9 @@ mei@4144e8c22fff:~$
 
 ### 3.8 配置文件
 
-- `/etc/gitconfig`， 系统级配置文件，不一定存在，可通过`git config --system`来修改，优先级最低。
+- `/etc/gitconfig`，系统级配置文件，不一定存在，可通过`git config --system`来修改，优先级最低。
 - `~/.gitconfig`，用户级配置文件，可用`git config --global`来修改，优先级比系统级配置文件高。
-- `.git/config`,版本库特定的配置文件，可以通过`git config --local`来修改，优先级最高。
+- `.git/config`，版本库特定的配置文件，可以通过`git config --local`来修改，优先级最高。
 
 ```sh
 # 查看系统级配置信息
@@ -1746,7 +1746,9 @@ Git放在对象库中的对象只有4种类型：块blob，目录树tree，提�
 - 提交commit: 一个提交commit对象保存版本库中每一次变化的元数据，包括作者、提交者、提交日期和日志消息。每一个提交对象指向一个目录树对象，这个目录树对象在一张完整的快照中捕获提交时版本库的状态。最初的提交或者根提交(root commit)是没有父提交的。大多数提交都有一个父提交。
 - 标签tag: 一个标签对象分配一个任意的且人类可读的名字给一个特定对象，通常是一个提交对象。虽然像commit-id那样指的是一个确切且定义好的提交，但是一个更熟悉的标签名(如:v1.1.0)可能会更有意义。
 
-随意时间的推移，所有信息在对象库中会变化和增长，项目的编辑、添加和删除都会被跟踪和建模。为了有效地利用磁盘空间和网络带宽，Git把对象压缩并存储在打包文件*(pack file)*里，这些文件也在对象库里。
+随意时间的推移，所有信息在对象库中会变化和增长，项目的编辑、添加和删除都会被跟踪和建模。为了有效地利用磁盘空间和网络带宽，Git把对象压缩并存储在打包文件 *(pack file)* 里，这些文件也在对象库里。
+
+
 
 
 
@@ -1754,7 +1756,7 @@ Git放在对象库中的对象只有4种类型：块blob，目录树tree，提�
 
 - 索引是一个临时的、动态的二进制文件。它描述整个版本库的目录结构。
 - 索引捕获项目在某个时刻的整体结构的一个版本。
-- 项目的状态可以用一个提交和一棵目录树表示，它要以来自项目历史中的任意时刻，也可以是你正在开发的未来状态。
+- 项目的状态可以用一个提交和一棵目录树表示，它可以来自项目历史中的任意时刻，也可以是你正在开发的未来状态。
 - 工作原理：当你通过执行Git命令在索引中暂存stage变更，这些变更通常是添加、删除或者编辑某个文件或某些文件。索引会记录和保存那些变更，保障它们的安全直到你准备好提交了。还可以删除或者替换索引中的变更。索引支持一个由你主导的从复杂的版本库状态到一个可推测的更好状态的逐步过渡。
 
 
@@ -2017,7 +2019,7 @@ mei@4144e8c22fff:~/hello$ rm empty
 
 - 两个不同blob产生相同SHA1散列值的机会十分渺茫。当这种情况发生的时候，称为一次碰撞。
 - SHA1是安全散列加密算法。
-- 对于160位数，你有2^160或者大约10^48种可能的SHA1散列值。这个数是极其巨大的，即使你雇用一万亿人来每秒产生一万亿信新的唯一blob对象，持续一万亿年，你也只有10^43个blob对象。
+- 对于160位数，你有2^160或者大约10^48种可能的SHA1散列值。这个数是极其巨大的，即使你雇用一万亿人来每秒产生一万亿个新的唯一blob对象，持续一万亿年，你也只有10^43个blob对象。
 - 160位的SHA1散列值对应20个字节，这需要40个字节的十六进制来表示。
 - Git在前两个数字后面插入一个`/`以提高文件系统效率（如果你把太多的文件放在同一个目录中，一些文件系统会变慢。使SHA1的第一个字节成为一个目录是一个很简单的办法，可以为所有均匀分布的可能对象创建一个固定的、256路分区的命令空间）。
 - Git没有对文件的内容做很多事情，可以在任何时候使用散列值把它从对象库里提取出来。
@@ -2351,7 +2353,7 @@ mei@4144e8c22fff:~/hello$ find .git/objects/
 
 `.git/objects`中并没有新增对象。
 
-- 散列函数在数学意义上是一个真正的函数：对于一个给你写的输入，它的输出总是相同的。这样的散列函数也称为摘要。
+- 散列函数在数学意义上是一个真正的函数：对于一个给定的输入，它的输出总是相同的。这样的散列函数也称为摘要。
 - 相同的散列值并不算碰撞，只有两个不同的对象产生一个相同的散列值时才算碰撞。
 
 
@@ -2460,7 +2462,7 @@ usage: git commit-tree [(-p <parent>)...] [-S[<keyid>]] [(-m <message>)...] [(-F
 
 通过查看帮助文档可知，`This is usually not what an end user wants to run directly. See git-commit(1) instead.`不推荐直接使用该命令来创建一个提交对象，而应使用`git commit`命令来代替。
 
-我们先使用这处方式来创建提交对象，后面再测试一次使用`git commit`来创建提交对象。
+我们先使用这种方式来创建提交对象，后面再测试一次使用`git commit`来创建提交对象。
 
 ```sh
 mei@4144e8c22fff:~/hello$ git commit-tree -m "Commit a file that says hello" 492413269336d21fac079d4a4672e55d5d2147ac
@@ -2583,7 +2585,7 @@ mei@4144e8c22fff:~/hello$ find .git/objects/
 mei@4144e8c22fff:~/hello$
 ```
 
-可以看到，除了最后的提交对象不同我，其他对象与之前测试的结果是一样。
+可以看到，除了最后的提交对象不同外，其他对象与之前测试的结果是一样。
 
 此时，可以通过`git log`查看到提交日志信息：
 
@@ -2693,6 +2695,12 @@ mei@4144e8c22fff:~/hello$ find .git/objects/
 .git/objects/b9/38f3081d70bd52a2032ef3f870b3a0afc5e376
 .git/objects/info
 mei@4144e8c22fff:~/hello$
+
+# 查看.git/refs下的文件
+mei@4144e8c22fff:~/hello$ find .git/refs/
+.git/refs/
+.git/refs/heads
+.git/refs/tags
 ```
 
 即，直接使用底次`git commit-tree`命令可以创建一个提交对象，但并没有提交数据！！！！没有提交记录！
@@ -2707,6 +2715,74 @@ Date:   Thu Jul 22 23:20:26 2021 +0800
 ```
 
 可以看到，使用`git commit`提交与`git commit-tree`底层命令进行提交还是存在一些差异的！
+
+
+
+我们可以在 [git log and show on a bare repo](https://stackoverflow.com/questions/6214711/git-log-and-show-on-a-bare-repo)找到答案。
+
+其中，[Richard Hansen](https://stackoverflow.com/users/712605/richard-hansen)的答案告诉我们：
+
+ > Fix
+ >
+ >To get rid of the error message, you can do one of the following:
+ >
+ >- Change `HEAD` to point to a branch that does exist:
+ >
+ >    ```sh
+ >    git symbolic-ref HEAD refs/heads/some_other_branch
+ >    ```
+ >
+ >- Push a new `master` branch into the repository from somewhere else
+ >
+ >- Create a new `master` branch locally:
+ >
+ >    ```sh
+ >    git branch master some_existing_commit
+ >    ```
+
+为了消除这种错误消息，可以使用以上三种方法中的一种，我们使用第三种方式来解决。
+
+
+
+我们需要再执行一步命令`git branch master b938f3081d70bd52a2032ef3f870b3a0afc5e376`来创建一个分支：
+
+```sh
+# 创建分支
+mei@4144e8c22fff:~/hello$ git branch master b938f3081d70bd52a2032ef3f870b3a0afc5e376
+mei@4144e8c22fff:~/hello$ git branch
+* master
+mei@4144e8c22fff:~/hello$ git log
+commit b938f3081d70bd52a2032ef3f870b3a0afc5e376 (HEAD -> master)
+Author: Zhaohui Mei <mzh@hellogitlab.com>
+Date:   Thu Jul 22 23:20:26 2021 +0800
+
+    Commit a file that says hello
+    
+# 查看.git/refs下的文件
+mei@4144e8c22fff:~/hello$ find .git/refs/
+.git/refs/
+.git/refs/heads
+.git/refs/heads/master
+.git/refs/tags
+```
+
+总结：
+
+`git commit`与`git commit-tree`的区别：
+
+- `git commit-tree`命令基于一个tree树对象的hash id创建了一个commit提交对象。
+- `git commit`则是将暂存区的内容放到仓库。暂存区的通常通常是一个commit对象。`git commit`还额外做了其他的事情。
+
+
+分支与提交的关系：
+
+- git的分支必须指向一个commit,没有任何commit就没有任何分支。
+
+
+
+正如我们上面操作的，在使用`git commit-tree`创建提交对象commit_id后，还需要使用`git branch master commit_id`来将提交对象与分支`master`绑定在一起。这样绑定后，就有了分支，也能查看`git log`日志信息了！！！
+
+
 
 
 
