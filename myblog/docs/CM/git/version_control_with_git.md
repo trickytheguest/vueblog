@@ -2784,6 +2784,10 @@ mei@4144e8c22fff:~/hello$ find .git/refs/
 
 也就是说，`git commit`命令在创建了提交对象后，又将提交对象与分支进行绑定了！绑定分支后，我们就可以直接查看到`git log`的日志信息。
 
+按Git的建议，我们只用使用`git commit`去提交修改就行，没有必要去使用底层的`git commit-tree`命令！
+
+
+
 
 
 

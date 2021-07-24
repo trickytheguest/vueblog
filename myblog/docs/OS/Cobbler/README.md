@@ -2097,7 +2097,7 @@ $ cobbler profile list
 
 查看详情：
 
-```sg
+```sh
 # 获取帮助信息
 [root@cobbler-master ~]# cobbler distro report --help
 Usage: cobbler [options]
