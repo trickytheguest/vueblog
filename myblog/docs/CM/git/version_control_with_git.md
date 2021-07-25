@@ -3306,6 +3306,108 @@ something else
 
 
 
+### 5.6 使用`git mv`
+
+- 如果你需要移动或复命名文件，可以对旧文件使用`git rm`命令，然后使用`git add`命令添加新文件，或者可以直接使用`git mv`命令。
+
+`git mv`命令的帮助信息：
+
+```sh
+mei@4144e8c22fff:~/test-mv$ git mv --help|head -n 5|awk NF
+GIT-MV(1)                                                                 Git Manual                                                                GIT-MV(1)
+NAME
+       git-mv - Move or rename a file, a directory, or a symlink
+mei@4144e8c22fff:~/test-mv$ git mv -h
+usage: git mv [<options>] <source>... <destination>
+
+    -v, --verbose         be verbose
+    -n, --dry-run         dry run
+    -f, --force           force move/rename even if target exists
+    -k                    skip move/rename errors
+
+mei@4144e8c22fff:~/test-mv$
+```
+
+
+
+下面我们来测试一下`git mv`，创建一个版本库，并在版本库中添加一个`stuff`文件：
+
+```sh
+mei@4144e8c22fff:~$ mkdir test-mv
+mei@4144e8c22fff:~$ cd test-mv
+mei@4144e8c22fff:~/test-mv$ git init
+Initialized empty Git repository in /home/mei/test-mv/.git/
+mei@4144e8c22fff:~/test-mv$ echo 'something' > stuff
+mei@4144e8c22fff:~/test-mv$ gs
+On branch master
+
+No commits yet
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	stuff
+
+nothing added to commit but untracked files present (use "git add" to track)
+mei@4144e8c22fff:~/test-mv$ git add .
+mei@4144e8c22fff:~/test-mv$ git commit -m"add one file"
+[master (root-commit) c19762a] add one file
+ 1 file changed, 1 insertion(+)
+ create mode 100644 stuff
+mei@4144e8c22fff:~/test-mv$
+```
+
+现在文件stuff已经添加到版本库中了。我们将`stuff`命名为`newstuff`：
+
+```sh
+mei@4144e8c22fff:~/test-mv$ git mv stuff newstuff
+mei@4144e8c22fff:~/test-mv$ gs
+On branch master
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+	renamed:    stuff -> newstuff
+
+mei@4144e8c22fff:~/test-mv$ git commit -m"move stuff to newstuff"
+[master 0112e0c] move stuff to newstuff
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ rename stuff => newstuff (100%)
+```
+
+可以看到`git mv`操作会自动将修改添加到暂存区，不需要我们手动执行`git add`命令。
+
+
+
+- Git记得全部的历史记录，但是显示要限制于在命令中指定的文件名。`git log --follow`命令会让Git在日志中回溯并找到内容相关联的整个历史记录。
+
+可以看一下以下差别：
+
+```sh
+# 不使用--follow选项，只查看到了一条历史记录
+mei@4144e8c22fff:~/test-mv$ git log newstuff
+commit 0112e0cfa80c240542d2b96cddb93aa27ab8e3b9 (HEAD -> master)
+Author: Zhaohui Mei <mzh@hellogitlab.com>
+Date:   Mon Jul 26 07:11:41 2021 +0800
+
+    move stuff to newstuff
+    
+# 使用follow选项，可以看到文件重命名前的原始文件的提交记录，查看到两条历史记录了
+mei@4144e8c22fff:~/test-mv$ git log --follow newstuff
+commit 0112e0cfa80c240542d2b96cddb93aa27ab8e3b9 (HEAD -> master)
+Author: Zhaohui Mei <mzh@hellogitlab.com>
+Date:   Mon Jul 26 07:11:41 2021 +0800
+
+    move stuff to newstuff
+
+commit c19762a29fa408a7c7e1c7ed6b0fa125a756ce17
+Author: Zhaohui Mei <mzh@hellogitlab.com>
+Date:   Mon Jul 26 07:07:50 2021 +0800
+
+    add one file
+```
+
+我们可以在`git log`的帮助信息中查看到`--follow           Continue listing the history of a file beyond renames (works only for a single file).` 即，`--follow`选项，继续列出重命名之外的文件历史记录（仅适用于单个文件）。也就是说该选项会追溯单文件的整个历史记录。
+
+
+
 
 
 
