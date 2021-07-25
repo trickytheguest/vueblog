@@ -3406,6 +3406,10 @@ Date:   Mon Jul 26 07:07:50 2021 +0800
 
 我们可以在`git log`的帮助信息中查看到`--follow           Continue listing the history of a file beyond renames (works only for a single file).` 即，`--follow`选项，继续列出重命名之外的文件历史记录（仅适用于单个文件）。也就是说该选项会追溯单文件的整个历史记录。
 
+- VCS的经典问题之一就是文件重命名会导致它们丢失对文件历史记录的追踪。而Git即使经历过重命名，也仍然能保留历史记录信息。
+
+
+
 
 
 
