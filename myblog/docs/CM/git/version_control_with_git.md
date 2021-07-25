@@ -3129,6 +3129,132 @@ mei@4144e8c22fff:~/my_stuff$ git ls-files --stage
 
 
 
+#### 5.4.2 编写提交日志消息
+
+- 如果不通过命令行直接提供日志消息，Git会启用编辑器。并提示你写一个日志消息。
+- 编辑器的选取根据配置文件中的设定来确定。
+
+
+
+- 当系统安装有`nano`和`vim`时，Git默认会启动`nano`编辑器。
+
+```sh
+mei@4144e8c22fff:~$ nano --version|head -n 1
+ GNU nano, version 4.8
+mei@4144e8c22fff:~$ vim --version|head -n 1
+VIM - Vi IMproved 8.1 (2018 May 18, compiled Apr 15 2020 06:40:31)
+```
+
+如果我们在Git工作目录直接输入`git commit`则会进入到`nano`界面。而`nano`我们平时很少使用，更多的时候使用的是`vim`。
+
+我们修改一下编辑器。
+
+我们可以设置以下环境变量：
+
+```sh
+mei@4144e8c22fff:~/commit-all-example$ export GIT_EDITOR=vim
+mei@4144e8c22fff:~/commit-all-example$
+```
+
+此时，我们输入`git commit`则会打开vim编辑器。
+
+- Git不会处理空提交，即没有任何提交消息的提交！
+
+当我们直接退出编辑器时，会提示没有输入任何提交消息：
+
+```sh
+mei@4144e8c22fff:~/commit-all-example$ git commit
+Aborting commit due to empty commit message.
+```
+
+由于未输入任何消息，则放弃提交。
+
+
+
+另外，我们也可以通过在Git中设置编辑器。刚才我们已经使用`export GIT_EDITOR=vim`设置了默认的编辑器。
+
+我们使用`git config --global core.editor`来设置编辑器试一下。
+
+尝试全局设置编辑器：
+
+```sh
+mei@4144e8c22fff:~/commit-all-example$ git config --global core.editor 'nano'
+mei@4144e8c22fff:~/commit-all-example$ git config --global core.editor
+nano
+mei@4144e8c22fff:~/commit-all-example$ git commit
+Aborting commit due to empty commit message.
+```
+
+此时，虽然全局使用`nano`编辑器，但使用`git commit`时仍然打开了`vim`编辑器。说明使用Git的全局设置并未生效，而是使用了`export GIT_EDITOR=vim`的设置。
+
+
+
+我们再尝试设置存储库级别的编辑器：
+
+```sh
+mei@4144e8c22fff:~/commit-all-example$ git config --local core.editor 'nano'
+mei@4144e8c22fff:~/commit-all-example$ git config --local core.editor
+nano
+mei@4144e8c22fff:~/commit-all-example$ git commit
+Aborting commit due to empty commit message.
+```
+
+此时，使用的编辑器也是`vim`，说明本地设置未能生效。
+
+在3.3节中，提到以下知识：
+
+- 多个配置选项和环境变量常常是为了同一个目的出现的。如在编写提交日志消息的时候，编辑器的选择按照以下步骤的顺序确定：
+    - `GIT_EDITOR`环境变量。
+    - `core.editor`配置选项。
+    - `VISUAL`环境变量。
+    - `EDITOR`环境变量。
+    - `vi`命令。
+
+由于我们在前面设置了`GIT_EDITOR`环境变量为`vim`，因此Git会将vim作为编辑器。
+
+```sh
+# 删除环境变量GIT_EDITOR
+mei@4144e8c22fff:~/commit-all-example$ unset GIT_EDITOR
+mei@4144e8c22fff:~/commit-all-example$ git commit
+Aborting commit due to empty commit message.
+```
+
+当我们将环境变量`GIT_EDITOR`删除后，马上使用`git commit`进行提交时，编辑器就变成了`nano`。说明我们使用配置文件设置是正确的。
+
+假如我将编辑器设置成一个不存在的编辑器名称，会怎么样呢？
+
+```sh
+mei@4144e8c22fff:~/commit-all-example$ emacs
+bash: emacs: command not found
+mei@4144e8c22fff:~/commit-all-example$ git config --local core.editor emacs
+mei@4144e8c22fff:~/commit-all-example$ git config --local core.editor
+emacs
+mei@4144e8c22fff:~/commit-all-example$ git commit
+hint: Waiting for your editor to close the file... error: cannot run emacs: No such file or directory
+error: unable to start editor 'emacs'
+Please supply the message using either -m or -F option.
+mei@4144e8c22fff:~/commit-all-example$
+```
+
+可以看到，当编辑器程序不存在时，使用`git commit`将不能正常打开编辑器，将会提示异常。
+
+
+
+我们将编辑器修改为我们常用的`vim`。
+
+```sh
+mei@4144e8c22fff:~/commit-all-example$ git config --global core.editor vim
+mei@4144e8c22fff:~/commit-all-example$ git config --global core.editor
+vim
+mei@4144e8c22fff:~/commit-all-example$ git config --local core.editor vim
+mei@4144e8c22fff:~/commit-all-example$ git config --local core.editor
+vim
+mei@4144e8c22fff:~/commit-all-example$ git commit
+Aborting commit due to empty commit message.
+```
+
+这样后期Git都会使用vim作为默认的编辑器了！
+
 
 
 
