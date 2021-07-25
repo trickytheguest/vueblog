@@ -3257,6 +3257,55 @@ Aborting commit due to empty commit message.
 
 
 
+### 5.5 使用`git rm`
+
+- `git rm`会在版本库和工作目录中同时删除文件。
+- 从工作目录和索引中删除一个文件，并不会删除该文件在版本库中的历史记录。文件的任何版本，只要是提交到版本库的历史记录的一部分，就会留在对象库并优点历史记录。
+- `git rm`也是一条对索引进行操作的命令，所以它对没有添加到版本库或索引中的文件是不起作用的。
+- 要将一个文件由已暂存的转换成未暂存的，可以使用`git rm --cached`命令。
+- `git rm --cached`命令会删除索引中的文件并且把它保留在工作目录中。`git rm`会将文件从索引和工作目录中都删除。
+- 请谨慎使用`git rm --cached`命令，有可能你忘记将已经追踪的文件转换成了未追踪的状态了。
+- `git rm`在删除一个文件之前，会先进行检查以确保工作目录下的该文件的版本与当前分支中的最新版本是匹配的。这个验证可以防止文件的修改意外丢失。
+
+```sh
+mei@4144e8c22fff:~/commit-all-example$ git diff notyet
+diff --git a/notyet b/notyet
+index 3dfdc59..da34ada 100644
+--- a/notyet
++++ b/notyet
+@@ -1 +1,2 @@
+ something else
++new
+mei@4144e8c22fff:~/commit-all-example$ git rm notyet
+error: the following file has local modifications:
+    notyet
+(use --cached to keep the file, or -f to force removal)
+```
+
+可以看到`notyet`由于增加了一行`new`，在删除时，会提示本地该文件已经被修改了，不能直接删除。
+
+- 可以使用`git rm -f`强制删除文件。
+
+```sh
+mei@4144e8c22fff:~/commit-all-example$ git rm -f notyet
+rm 'notyet'
+```
+
+如果不小心删除了该文件，也可以从版本库中恢复回来：
+
+```sh
+# 恢复文件
+mei@4144e8c22fff:~/commit-all-example$ git checkout HEAD -- notyet
+mei@4144e8c22fff:~/commit-all-example$ ls
+notyet  ready  subdir
+mei@4144e8c22fff:~/commit-all-example$ cat notyet
+something else
+```
+
+
+
+
+
 
 
 
