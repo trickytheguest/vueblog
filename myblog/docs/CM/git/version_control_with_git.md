@@ -3003,7 +3003,117 @@ Git将所有文件分为3类：已追踪的、被忽略的以及未追踪的。
 
 
 
+### 5.3 使用`git add`暂存文件
 
+- `git add`命令将暂存一个文件。
+- 如果一个文件是未追踪的，那么`git add`就会将文件的状态转化成已追踪的。
+- 如果`git add`作用于一个目录，那么该目录下的文件和子目录都会递归暂存起来。
+
+
+
+查看`git add`的帮助信息：
+
+```sh
+mei@4144e8c22fff:~$ git add --help|head -n 5|awk NF
+GIT-ADD(1)                                                                Git Manual                                                               GIT-ADD(1)
+NAME
+       git-add - Add file contents to the index
+mei@4144e8c22fff:~/my_stuff$ git add -h
+usage: git add [<options>] [--] <pathspec>...
+
+    -n, --dry-run         dry run
+    -v, --verbose         be verbose
+
+    -i, --interactive     interactive picking
+    -p, --patch           select hunks interactively
+    -e, --edit            edit current diff and apply
+    -f, --force           allow adding otherwise ignored files
+    -u, --update          update tracked files
+    --renormalize         renormalize EOL of tracked files (implies -u)
+    -N, --intent-to-add   record only the fact that the path will be added later
+    -A, --all             add changes from all tracked and untracked files
+    --ignore-removal      ignore paths removed in the working tree (same as --no-all)
+    --refresh             don't add, only refresh the index
+    --ignore-errors       just skip files which cannot be added because of errors
+    --ignore-missing      check if - even missing - files are ignored in dry run
+    --chmod (+|-)x        override the executable bit of the listed files
+    --pathspec-from-file <file>
+                          read pathspec from file
+    --pathspec-file-nul   with --pathspec-from-file, pathspec elements are separated with NUL character
+```
+
+- 在Git的对象模型中，在发出`git add`命令时，每个文件的全部内容都将被复制到对象库中，并且按文件的SHA1名来索引。
+- 暂存一个文件也称作缓存(caching)一个文件。或者叫把文件放进索引。
+- 可以使用`git ls-files`命令查看隐藏在对象模型下的东西，并且可以找到那些暂存文件的SHA1值。
+
+```sh
+# 显示索引中文件信息
+mei@4144e8c22fff:~/my_stuff$ git ls-files --stage
+100644 0487f44090ad950f61955271cf0a2d6c6a83ad9a 0	.gitignore
+100644 534469f67ae5ce72a7a274faf30dee3c2ea1746d 0	data
+
+# 查看对象文件夹文件列表
+mei@4144e8c22fff:~/my_stuff$ find .git/objects/
+.git/objects/
+.git/objects/04
+.git/objects/04/87f44090ad950f61955271cf0a2d6c6a83ad9a
+.git/objects/pack
+.git/objects/53
+.git/objects/53/4469f67ae5ce72a7a274faf30dee3c2ea1746d
+.git/objects/info
+```
+
+
+
+- 使用`git hash-object file`命令可以直接计算文件的SHA1值，注意，目录不能hash。
+
+对文件进行修改：
+
+```sh
+# 编辑文件后，查看文件内容
+mei@4144e8c22fff:~/my_stuff$ cat data
+New data
+And some more data now
+mei@4144e8c22fff:~/my_stuff$
+
+# 查看文件的新的SHA1值
+mei@4144e8c22fff:~/my_stuff$ git hash-object data
+e476983f39f6e4f453f0fe4a859410f63b58b500
+
+# 可以发现文件生成了新的散列值，但在.git/objects目录下并没有增新的对象
+mei@4144e8c22fff:~/my_stuff$ find .git/objects/
+.git/objects/
+.git/objects/04
+.git/objects/04/87f44090ad950f61955271cf0a2d6c6a83ad9a
+.git/objects/pack
+.git/objects/53
+.git/objects/53/4469f67ae5ce72a7a274faf30dee3c2ea1746d
+.git/objects/info
+```
+
+将文件再加入到暂存区，然后再查看一下索引：
+
+```sh
+mei@4144e8c22fff:~/my_stuff$ git add data
+mei@4144e8c22fff:~/my_stuff$ find .git/objects/
+.git/objects/
+.git/objects/e4
+.git/objects/e4/76983f39f6e4f453f0fe4a859410f63b58b500
+.git/objects/04
+.git/objects/04/87f44090ad950f61955271cf0a2d6c6a83ad9a
+.git/objects/pack
+.git/objects/53
+.git/objects/53/4469f67ae5ce72a7a274faf30dee3c2ea1746d
+.git/objects/info
+mei@4144e8c22fff:~/my_stuff$ git ls-files
+.gitignore
+data
+mei@4144e8c22fff:~/my_stuff$ git ls-files --stage
+100644 0487f44090ad950f61955271cf0a2d6c6a83ad9a 0	.gitignore
+100644 e476983f39f6e4f453f0fe4a859410f63b58b500 0	data
+```
+
+可以看到文件已经暂存了，索引中的内容已经更新了。
 
 
 
