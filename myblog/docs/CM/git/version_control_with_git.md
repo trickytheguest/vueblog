@@ -3408,6 +3408,62 @@ Date:   Mon Jul 26 07:07:50 2021 +0800
 
 - VCS的经典问题之一就是文件重命名会导致它们丢失对文件历史记录的追踪。而Git即使经历过重命名，也仍然能保留历史记录信息。
 
+当我们再次进行重命名后，仍然是可以查找文件的源头历史：
+
+```sh
+mei@4144e8c22fff:~/test-mv$ mv newstuff otherstuff
+mei@4144e8c22fff:~/test-mv$ gs
+On branch master
+Changes not staged for commit:
+  (use "git add/rm <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	deleted:    newstuff
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	otherstuff
+
+no changes added to commit (use "git add" and/or "git commit -a")
+mei@4144e8c22fff:~/test-mv$ git add .
+mei@4144e8c22fff:~/test-mv$ gs
+On branch master
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+	renamed:    newstuff -> otherstuff
+
+mei@4144e8c22fff:~/test-mv$ git commit -m"move newstuff to otherstuff"
+[master ddb0ebd] move newstuff to otherstuff
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ rename newstuff => otherstuff (100%)
+mei@4144e8c22fff:~/test-mv$ git log otherstuff
+commit ddb0ebd315adbfbf9258158e01db826a6f23b19e (HEAD -> master)
+Author: Zhaohui Mei <mzh@hellogitlab.com>
+Date:   Mon Jul 26 19:14:27 2021 +0800
+
+    move newstuff to otherstuff
+mei@4144e8c22fff:~/test-mv$ git log --follow otherstuff
+commit ddb0ebd315adbfbf9258158e01db826a6f23b19e (HEAD -> master)
+Author: Zhaohui Mei <mzh@hellogitlab.com>
+Date:   Mon Jul 26 19:14:27 2021 +0800
+
+    move newstuff to otherstuff
+
+commit 0112e0cfa80c240542d2b96cddb93aa27ab8e3b9
+Author: Zhaohui Mei <mzh@hellogitlab.com>
+Date:   Mon Jul 26 07:11:41 2021 +0800
+
+    move stuff to newstuff
+
+commit c19762a29fa408a7c7e1c7ed6b0fa125a756ce17
+Author: Zhaohui Mei <mzh@hellogitlab.com>
+Date:   Mon Jul 26 07:07:50 2021 +0800
+
+    add one file
+mei@4144e8c22fff:~/test-mv$
+```
+
+经过了两次重命名后，`otherstuff`文件的历史记录仍然可以找到！
+
 
 
 
