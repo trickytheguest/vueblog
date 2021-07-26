@@ -3494,7 +3494,202 @@ mei@4144e8c22fff:~/test-mv$
 
 
 
+我们来测试一下`.gitignore`文件。创建一个版本库，并随意添加一些文件。
 
+```sh
+mei@4144e8c22fff:~$ mkdir test-ignore
+mei@4144e8c22fff:~$ cd test-ignore/
+mei@4144e8c22fff:~/test-ignore$ git init
+Initialized empty Git repository in /home/mei/test-ignore/.git/
+mei@4144e8c22fff:~/test-ignore$ touch test.py
+mei@4144e8c22fff:~/test-ignore$ mkdir app1
+mei@4144e8c22fff:~/test-ignore$ mkdir app2
+mei@4144e8c22fff:~/test-ignore$ cp test.py app1/
+mei@4144e8c22fff:~/test-ignore$ cp test.py app2/
+mei@4144e8c22fff:~/test-ignore$ touch main.c
+mei@4144e8c22fff:~/test-ignore$ touch main.o
+mei@4144e8c22fff:~/test-ignore$ touch app1/app1.o
+mei@4144e8c22fff:~/test-ignore$ touch app2/app2.o
+
+# 查看版本库上的文件，查看所有文件，但忽略.git文件夹
+mei@4144e8c22fff:~/test-ignore$ tree -a -I .git
+.
+|-- .gitignore
+|-- app1
+|   |-- app1.o
+|   `-- test.py
+|-- app2
+|   |-- app2.o
+|   `-- test.py
+|-- main.c
+|-- main.o
+`-- test.py
+
+2 directories, 8 files
+mei@4144e8c22fff:~/test-ignore$ gs
+On branch master
+
+No commits yet
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	app1/
+	app2/
+	main.c
+	main.o
+	test.py
+
+nothing added to commit but untracked files present (use "git add" to track)
+```
+
+忽略`test.py`文件：
+
+```sh
+mei@4144e8c22fff:~/test-ignore$ echo 'test.py' > .gitignore
+mei@4144e8c22fff:~/test-ignore$ gs
+On branch master
+
+No commits yet
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	.gitignore
+	app1/
+	app2/
+	main.c
+	main.o
+
+nothing added to commit but untracked files present (use "git add" to track)
+```
+
+可以使用以下命令来查看哪些文件被忽略：
+
+- `git status --ignored` 查看被忽略的文件。
+- `git check-ignore`命令查看文件是否被忽略。
+
+```sh
+# 使用git status查看被忽略的文件
+mei@4144e8c22fff:~/test-ignore$ git status --ignored
+On branch master
+
+No commits yet
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	.gitignore
+	app1/
+	app2/
+	main.c
+	main.o
+
+Ignored files:
+  (use "git add -f <file>..." to include in what will be committed)
+	app1/test.py
+	app2/test.py
+	test.py
+
+nothing added to commit but untracked files present (use "git add" to track)
+mei@4144e8c22fff:~/test-ignore$
+```
+
+可以看到，当我们仅在`.gitignore`中指定`test.py`时，Git会忽略所有目录中的`test.py`文件。
+
+我们也可以使用`git check-ignore`命令来检查一下。
+
+```sh
+mei@4144e8c22fff:~/test-ignore$ git check-ignore --help|head -n 5|awk NF
+GIT-CHECK-IGNORE(1)                                                       Git Manual                                                      GIT-CHECK-IGNORE(1)
+NAME
+       git-check-ignore - Debug gitignore / exclude files
+mei@4144e8c22fff:~/test-ignore$ git check-ignore -h
+usage: git check-ignore [<options>] <pathname>...
+   or: git check-ignore [<options>] --stdin
+
+    -q, --quiet           suppress progress reporting
+    -v, --verbose         be verbose
+
+    --stdin               read file names from stdin
+    -z                    terminate input and output records by a NUL character
+    -n, --non-matching    show non-matching input paths
+    --no-index            ignore index when checking
+```
+
+我们检查工作目录下的三个`test.py`文件：
+
+```sh
+mei@4144e8c22fff:~/test-ignore$ git check-ignore -v test.py && echo $?
+.gitignore:1:test.py	test.py
+0
+mei@4144e8c22fff:~/test-ignore$ git check-ignore -v app1/test.py && echo $?
+.gitignore:1:test.py	app1/test.py
+0
+mei@4144e8c22fff:~/test-ignore$ git check-ignore -v app2/test.py && echo $?
+.gitignore:1:test.py	app2/test.py
+0
+```
+
+可以看到`.gitignore`第一行的`test.py`同时匹配上了3个`test.py`，这三个文件都被忽略了！
+
+
+
+假如我们现在要忽略所有`.o`文件，则可以像下面这样操作。
+
+忽略所有`.o`文件：
+
+```sh
+mei@4144e8c22fff:~/test-ignore$ echo -e '# ignore object file\n*.o' >> .gitignore
+mei@4144e8c22fff:~/test-ignore$ cat .gitignore
+test.py
+# ignore object file
+*.o
+mei@4144e8c22fff:~/test-ignore$ gs
+On branch master
+
+No commits yet
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	.gitignore
+	main.c
+
+nothing added to commit but untracked files present (use "git add" to track)
+mei@4144e8c22fff:~/test-ignore$ git status --ignored
+On branch master
+
+No commits yet
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	.gitignore
+	main.c
+
+Ignored files:
+  (use "git add -f <file>..." to include in what will be committed)
+	app1/
+	app2/
+	main.o
+	test.py
+
+nothing added to commit but untracked files present (use "git add" to track)
+mei@4144e8c22fff:~/test-ignore$
+```
+
+现在由于我们加了了忽略`.o`文件，此时`app1`和`app2`文件都被忽略了。我们使用`git check-ignore`检查一下。
+
+```sh
+mei@4144e8c22fff:~/test-ignore$ git check-ignore -v app1/app1.o
+.gitignore:3:*.o	app1/app1.o
+mei@4144e8c22fff:~/test-ignore$ git check-ignore -v app2/app1.o
+.gitignore:3:*.o	app2/app1.o
+mei@4144e8c22fff:~/test-ignore$ git check-ignore -v main.o
+.gitignore:3:*.o	main.o
+```
+
+可以看到`.gitignore`的第3行`*.o`使用通配符匹配到了多个`.o`文件。
+
+
+
+一般我们仅在版本库顶层目录设置`.gitignore`，你也可以在子目录中设置`.gitignore`文件。
 
 
 
