@@ -3726,6 +3726,41 @@ mei@4144e8c22fff:~/test-ignore$ git check-ignore -v main.o
 
 #### 6.2.1 绝对提交名
 
+- 对提交来说，最严谨的名字是它的散列标识符。
+- 散列ID是个绝对名，这意味它只能表示唯一的一个提交。
+- 每一个提交的散列ID都是全局唯一的。不仅仅是对某个版本库，而且是对任意和所有版本库都是唯一的。
+- 由于输入一个40位十六进制的SHA1数字是一项繁琐且容易出错的工作，因此Git允许你使用版本库的对象库中唯一的前缀来缩短这个数字。
+
+
+
+下面是Git自己的版本库中的一个例子：
+
+```sh
+# 查看Git的最开始的3次提交
+mei@4144e8c22fff:~/git$ git log --reverse --oneline|head -n 3
+e83c516331 Initial revision of "git", the information manager from hell
+8bc9a0c769 Add copyright notices.
+e497ea2a9b Make read-tree actually unpack the whole tree.
+
+# 使用SHA1散列前缀来来看日志信息
+mei@4144e8c22fff:~/git$ git log --oneline e83c5
+e83c516331 Initial revision of "git", the information manager from hell
+mei@4144e8c22fff:~/git$ git log --oneline e83
+fatal: ambiguous argument 'e83': unknown revision or path not in the working tree.
+Use '--' to separate paths from revisions, like this:
+'git <command> [<revision>...] -- [<file>...]'
+mei@4144e8c22fff:~/git$
+
+# 第一次提交是林纳斯提交的
+mei@4144e8c22fff:~/git$ git log e83c5
+commit e83c5163316f89bfbde7d9ab23ca2e25604af290
+Author: Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu Apr 7 15:13:13 2005 -0700
+
+    Initial revision of "git", the information manager from hell
+mei@4144e8c22fff:~/git$
+```
+
 
 
 
