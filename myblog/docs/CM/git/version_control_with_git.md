@@ -3763,7 +3763,58 @@ mei@4144e8c22fff:~/git$
 
 
 
+#### 6.2.2 引用和符号引用
 
+- 引用(ref)是一个SHA1散列值，指向Git对象库中的对象。
+- 虽然一个引用可以指向任何Git对象，但是它通常指向提交对象。
+- 符号引用（symbolic reference）,或称为symref，间接指向Git对象。它们仍然是一个引用。
+- 本地特性分支名称、远程跟踪分支名称和标签名都是引用。
+- 引用都存储在版本库的`.git/refs/`目录中。目录中基本上有三种不同的命名空间代表不同的引用：`refs/heads/ref`代表本地分支，`refs/remotes/ref`代表远程跟踪分支，`refs/tags/ref`代表标签。
+
+例如，一个叫做`dev`的本地特性分支就是`refs/heads/dev`的缩写。因为远程追踪分支在`refs/remotes`命名空间中，所以`origin/master`实际上是`refs/remotes/origin/master`，标签`v1.0`就是`refs/tags/v1.0`的缩写。
+
+如果你有一个分支和一个标签使用相同的名称，Git会根据`git rev-parse`手册上的列表选取每个匹配项：
+
+>  <refname>, e.g. master, heads/master, refs/heads/master
+>            A symbolic ref name. E.g.  master typically means the commit object referenced by refs/heads/master. If you happen to have both heads/master and
+>            tags/master, you can explicitly say heads/master to tell Git which one you mean. When ambiguous, a <refname> is disambiguated by taking the first
+>            match in the following rules:
+>             1. If $GIT_DIR/<refname> exists, that is what you mean (this is usually useful only for HEAD, FETCH_HEAD, ORIG_HEAD, MERGE_HEAD and CHERRY_PICK_HEAD);
+>                        2. otherwise, refs/<refname> if it exists;      
+>                        3. otherwise, refs/tags/<refname> if it exists;    
+>                                   4. otherwise, refs/heads/<refname> if it exists;
+>                                   5. otherwise, refs/remotes/<refname> if it exists;
+>                                              6. otherwise, refs/remotes/<refname>/HEAD if it exists.
+
+- 使用`git init`初始化的版本库默认没有任何的符号引用。
+
+
+我们创建一个`test-ref`仓库，可以看到`.git/refs`目录下没有生成`ref`文件：
+
+```sh
+mei@4144e8c22fff:~$ mkdir test-ref
+mei@4144e8c22fff:~$ cd test-ref
+mei@4144e8c22fff:~/test-ref$ git init
+Initialized empty Git repository in /home/mei/test-ref/.git/
+mei@4144e8c22fff:~/test-ref$ find .git/refs/
+.git/refs/
+.git/refs/heads
+.git/refs/tags
+mei@4144e8c22fff:~/test-ref$ find .git/refs/ -exec ls -ld {} \;
+drwxrwxr-x 4 mei mei 4096 Jul 28 23:02 .git/refs/
+drwxrwxr-x 2 mei mei 4096 Jul 28 23:02 .git/refs/heads
+drwxrwxr-x 2 mei mei 4096 Jul 28 23:02 .git/refs/tags
+```
+
+- 从技术角度来说，Git的目录名`.git`这个名字是可以改变的，Git的内部文件都使用变量`$GIT_DIR`，而不是字面量`.git`。
+
+GIt中特殊的符号引用：
+
+- `HEAD`， HEAD始终指向当前分支的最近提交。当切换分支时，HEAD会更新为指向新分支的最近提交。
+- `ORIG_HEAD`，某些操作，如合并merge和复位reset,会把调整为新值之前的先前版本的HEAD记录到ORIG_HEAD中，可以使用ORIG_HEAD来恢复或回滚到之前的状态或者做一个比较。
+- `FETCH_HEAD`，当使用远程库时， `git fetch`命令将所有抓取分支的头记录到`.git/FETCH_HEAD`中，FETCH_HEAD是最近抓取fetch的分支HEAD的缩写。
+- `MERGE_HEAD`，当一个合并操作正在进行时，其他分支的头暂时记录在MERGE_HEAD中，换言之，MERGE_HEAD是正在合并进HEAD的提交。
+- 不使用使用这些特殊名称来创建你自己的分支。
 
 
 
