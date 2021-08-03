@@ -3775,16 +3775,18 @@ mei@4144e8c22fff:~/git$
 
 如果你有一个分支和一个标签使用相同的名称，Git会根据`git rev-parse`手册上的列表选取每个匹配项：
 
->  <refname>, e.g. master, heads/master, refs/heads/master
->            A symbolic ref name. E.g.  master typically means the commit object referenced by refs/heads/master. If you happen to have both heads/master and
->            tags/master, you can explicitly say heads/master to tell Git which one you mean. When ambiguous, a <refname> is disambiguated by taking the first
->            match in the following rules:
->             1. If $GIT_DIR/<refname> exists, that is what you mean (this is usually useful only for HEAD, FETCH_HEAD, ORIG_HEAD, MERGE_HEAD and CHERRY_PICK_HEAD);
->                        2. otherwise, refs/<refname> if it exists;      
->                        3. otherwise, refs/tags/<refname> if it exists;    
->                                   4. otherwise, refs/heads/<refname> if it exists;
->                                   5. otherwise, refs/remotes/<refname> if it exists;
->                                              6. otherwise, refs/remotes/<refname>/HEAD if it exists.
+```
+<refname>, e.g. master, heads/master, refs/heads/master
+    A symbolic ref name. E.g.  master typically means the commit object referenced by refs/heads/master. 
+    If you happen to have both heads/master and tags/master, you can explicitly say heads/master to tell Git which one you mean. 
+    When ambiguous, a <refname> is disambiguated by taking the first match in the following rules:
+    If $GIT_DIR/<refname> exists, that is what you mean (this is usually useful only for HEAD, FETCH_HEAD, ORIG_HEAD, MERGE_HEAD and CHERRY_PICK_HEAD);
+    otherwise, refs/<refname> if it exists;    
+    otherwise, refs/tags/<refname> if it exists;   
+    otherwise, refs/heads/<refname> if it exists;
+    otherwise, refs/remotes/<refname> if it exists;
+    otherwise, refs/remotes/<refname>/HEAD if it exists.
+```
 
 - 使用`git init`初始化的版本库默认没有任何的符号引用。
 
@@ -3815,6 +3817,50 @@ GIt中特殊的符号引用：
 - `FETCH_HEAD`，当使用远程库时， `git fetch`命令将所有抓取分支的头记录到`.git/FETCH_HEAD`中，FETCH_HEAD是最近抓取fetch的分支HEAD的缩写。
 - `MERGE_HEAD`，当一个合并操作正在进行时，其他分支的头暂时记录在MERGE_HEAD中，换言之，MERGE_HEAD是正在合并进HEAD的提交。
 - 不使用使用这些特殊名称来创建你自己的分支。
+
+
+
+
+
+#### 6.2.3 相对提交名
+
+- `master^`始终指的是在`master`分支中的倒数第二个提交。
+- 除了第一个根提交之外，每一个提交都来自至少一个比它更早的提交，这其中的直接祖先称作该提交的父提交。
+- 若一个提交存在多个父提交，那么它必定是由合并操作产生的。
+- 在同一代提交中，插入符号`^`是用来选择不同的父提交的。给定一个提交`C`，则`C^1`是其第一个父提交，`C^2`是其第二个父提交，`C^3`是其第三个父提交，依次类推。
+- 波浪线`~`用于返回父提交之前并选择上一代提交。`C~1`表示提交`C`的第一个父提交，`C~2`是祖父提交，`C~3`是曾祖父提交。
+- Git也支持其他形式的简写，如`C^`和`C~`两种形式的简写分别等同于`C^1`和`C~1`。
+
+
+
+提交历史图中可以看到类似的显示：
+
+```sh
+mei@4144e8c22fff:~/git$ git rev-parse master
+670b81a890388c60b7032a4f5b879f2ece8c4558
+mei@4144e8c22fff:~/git$ git show-branch --more=35|tail -10
+[master~14] Merge branch 'ah/setup-extensions-message-i18n-fix'
+[master~14^2] setup: split "extensions found" messages into singular and plural
+[master~15] Merge branch 'ah/fetch-reject-warning-grammofix'
+[master~15^2] fetch: improve grammar of "shallow roots" message
+[master~16] Merge branch 'jk/doc-color-pager'
+[master~16^2] doc: explain the use of color.pager
+[master~17] Merge branch 'tl/fix-packfile-uri-doc'
+[master~17^2] packfile-uri.txt: fix blobPackfileUri description
+[master~18] Merge branch 'ry/clarify-fast-forward-in-glossary'
+[master~18^2] docs: improve fast-forward in glossary content
+```
+
+查看相对提交的散列值：
+
+```sh
+mei@4144e8c22fff:~/git$ git rev-parse master~14
+ccf03789058e9fd2a6120d88a3ad1ceac478e5ab
+mei@4144e8c22fff:~/git$ git rev-parse master~14^2
+8013d7d9ee7674774f6dbdbaeab11ce173bee016
+```
+
+
 
 
 
