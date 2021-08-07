@@ -4014,6 +4014,58 @@ mei@4144e8c22fff:~/git$ git log --abbrev-commit --pretty=oneline --stat dev~12..
 
 Git提供多种机制来帮助你找到符合特定条件的提交。
 
+我们以Git源码进行测试。
+
+#### 6.4.1 使用`git bisect`查找bug是哪个提交引入的
+
+查看`git bisect`的帮助信息：
+
+```sh
+mei@4144e8c22fff:~/git$ git bisect --help|head -n 4|awk NF
+GIT-BISECT(1)                                         Git Manual                                        GIT-BISECT(1)
+NAME
+       git-bisect - Use binary search to find the commit that introduced a bug
+mei@4144e8c22fff:~/git$ git bisect -h
+usage: git bisect [help|start|bad|good|new|old|terms|skip|next|reset|visualize|view|replay|log|run]
+
+git bisect help
+	print this long help message.
+git bisect start [--term-{old,good}=<term> --term-{new,bad}=<term>]
+		 [--no-checkout] [<bad> [<good>...]] [--] [<pathspec>...]
+	reset bisect state and start bisection.
+git bisect (bad|new) [<rev>]
+	mark <rev> a known-bad revision/
+		a revision after change in a given property.
+git bisect (good|old) [<rev>...]
+	mark <rev>... known-good revisions/
+		revisions before change in a given property.
+git bisect terms [--term-good | --term-bad]
+	show the terms used for old and new commits (default: bad, good)
+git bisect skip [(<rev>|<range>)...]
+	mark <rev>... untestable revisions.
+git bisect next
+	find next bisection to test and check it out.
+git bisect reset [<commit>]
+	finish bisection search and go back to commit.
+git bisect (visualize|view)
+	show bisect status in gitk.
+git bisect replay <logfile>
+	replay bisection log.
+git bisect log
+	show bisect log.
+git bisect run <cmd>...
+	use <cmd>... to automatically bisect.
+
+Please use "git help bisect" to get the full man page.
+mei@4144e8c22fff:~/git$
+```
+
+可知，该命令是使用进制搜索查找引入错误的提交。
+
+通过`git bisect start`开始二分查找，然后指定一个旧的版本看哪个版本是`good`好的，再检查下一个是好是坏。
+
+
+
 
 
 
