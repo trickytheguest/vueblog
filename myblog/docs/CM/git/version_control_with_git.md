@@ -1372,7 +1372,7 @@ mei@4144e8c22fff:~/public_html$
 
 不要担心那些十六进制数字，Git提供了许多更短、更简单的方式来执行这样的命令，而无须产生这样大而复杂的数字。
 
-### 3.6 版本为内文件的删除和重命名
+### 3.6 版本库内文件的删除和重命名
 
 - `git rm filename`删除文件。
 - `git mv filename1 filename2`重命名文件。
@@ -3862,11 +3862,157 @@ mei@4144e8c22fff:~/git$ git rev-parse master~14^2
 
 
 
+### 6.3  提交历史记录
+
+#### 6.3.1 查看旧提交
+
+- 显示提交历史记录的主要命令是`git log`。
+- 在参数形式上，`git log`跟`git log HEAD`是一样的，输出每一个可从HEAD找到的历史记录中的提交日志信息。
+- 变更从HEAD提交开始显示，并从提交图中回溯。大致按时间逆序显示。
+
+为了和书上的显示结果保持一致，我们切换到`1fbb58b4153e90eda08c2b022ee32d90729582e6`这次提交，并绑定到`dev`分支上：
+
+```sh
+mei@4144e8c22fff:~/git$ git checkout -b dev 1fbb58b415
+Switched to a new branch 'dev'
+mei@4144e8c22fff:~/git$ git branch
+* dev
+  master
+```
+
+此时查看日志信息：
+
+```sh
+mei@4144e8c22fff:~/git$ git log
+commit 1fbb58b4153e90eda08c2b022ee32d90729582e6 (HEAD -> dev)
+Merge: 58949bb18a 76bb40cde0
+Author: Junio C Hamano <gitster@pobox.com>
+Date:   Thu May 15 01:31:15 2008 -0700
+
+    Merge git://repo.or.cz/git-gui
+
+    * git://repo.or.cz/git-gui:
+      git-gui: Delete branches with 'git branch -D' to clear config
+      git-gui: Setup branch.remote,merge for shorthand git-pull
+      git-gui: Update German translation
+      git-gui: Don't use '$$cr master' with aspell earlier than 0.60
+      git-gui: Report less precise object estimates for database compression
+
+commit 58949bb18a1610d109e64e997c41696e0dfe97c3
+Author: Chris Frey <cdfrey@foursquare.net>
+Date:   Wed May 14 19:22:18 2008 -0400
+
+    Documentation/git-prune.txt: document unpacked logic
+
+    Clarifies the git-prune man page, documenting that it only
+    prunes unpacked objects.
+
+    Signed-off-by: Chris Frey <cdfrey@foursquare.net>
+    Signed-off-by: Junio C Hamano <gitster@pobox.com>
+
+commit c7ea453618e41e05a06f05e3ab63d555d0ddd7d9
+Merge: 4b172de81b 08ba820fd7
+Author: Junio C Hamano <gitster@pobox.com>
+。。。省略
+```
 
 
 
+查看两个区间内的提交：
+
+```sh
+mei@4144e8c22fff:~/git$ git log --abbrev-commit --pretty=short dev~12..dev~10
+commit 6d9878cc60
+Author: Jeff King <peff@peff.net>
+
+    clone: bsd shell portability fix
+
+commit 30684dfaf8
+Author: Jeff King <peff@peff.net>
+
+    t5000: tar portability fix
+mei@4144e8c22fff:~/git$
+```
+
+这是查看dev分支上之前10次和第11次的提交。
+
+- `--abbrev-commit`参数用于显示缩写散列ID值。
+- `--pretty=short`用于调整每个提交的信息量，short表示简短的信息，还可以是`oneline`单行显示或`full`完整显示。
+
+```sh
+mei@4144e8c22fff:~/git$ git log --abbrev-commit --pretty=oneline dev~12..dev~10
+6d9878cc60 clone: bsd shell portability fix
+30684dfaf8 t5000: tar portability fix
+mei@4144e8c22fff:~/git$ git log --abbrev-commit --pretty=full dev~12..dev~10
+commit 6d9878cc60
+Author: Jeff King <peff@peff.net>
+Commit: Junio C Hamano <gitster@pobox.com>
+
+    clone: bsd shell portability fix
+
+    When using /bin/sh from FreeBSD 6.1, the value of $? is lost
+    when calling a function inside the 'trap' action. This
+    resulted in clone erroneously indicating success when it
+    should have reported failure.
+
+    As a workaround, we save the value of $? before calling any
+    functions.
+
+    Signed-off-by: Jeff King <peff@peff.net>
+    Signed-off-by: Junio C Hamano <gitster@pobox.com>
+
+commit 30684dfaf8
+Author: Jeff King <peff@peff.net>
+Commit: Junio C Hamano <gitster@pobox.com>
+
+    t5000: tar portability fix
+
+    The output of 'tar tv' varies from system to system. In
+    particular, the t5000 was expecting to parse the date from
+    something like:
+
+      -rw-rw-r-- root/root         0 2008-05-13 04:27 file
+
+    but FreeBSD's tar produces this:
+
+      -rw-rw-r--  0 root   root        0 May 13 04:27 file
+
+    Instead of relying on tar's output, let's just extract the
+    file using tar and stat the result using perl.
+
+    Signed-off-by: Jeff King <peff@peff.net>
+    Signed-off-by: Junio C Hamano <gitster@pobox.com>
+```
 
 
+
+- `--stat`参数可以列出提交中所更改的文件以及每个更改的文件中有多少行做了改动。
+
+```sh
+mei@4144e8c22fff:~/git$ git log --abbrev-commit --pretty=oneline --stat dev~12..dev~10
+6d9878cc60 clone: bsd shell portability fix
+ git-clone.sh | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+30684dfaf8 t5000: tar portability fix
+ t/t5000-tar-tree.sh | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+```
+
+`git log`中还有很多其他的参数，可以查看帮助文档。
+
+
+
+#### 6.3.2 提交图
+
+略。
+
+#### 6.3.3 提交范围
+
+略。
+
+### 6.4 查找提交
+
+Git提供多种机制来帮助你找到符合特定条件的提交。
 
 
 
