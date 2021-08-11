@@ -1,16 +1,31 @@
 # K8S集群部署
 
+## 1. 服务器基本配置
+
+我们先在VirtualBox中创建一个基本的CentOS7虚拟机。然后在该基础虚拟机上面进行一些配置。作为一个基础的虚拟机。
+
+
+
 在部署K8S集群前，先对服务器进行以下配置：
 
 完成基本的配置：
 1. 时间同步
+
 2. 时区设置
+
 3. 关闭防火墙
+
 4. 关闭SELinux
+
 5. 关闭SWAP
+
 6. 安装基本软件，如vim,jq,python,docker等
+
 7. vim配置
+
 8. 快捷命令配置
+
+9. 允许 iptables 检查桥接流量
 
 使用以下脚本：
 
@@ -37,7 +52,7 @@ echo "Install IUS yum"
 yum install -y https://repo.ius.io/ius-release-el7.rpm
 
 echo "Set yum tools"
-yum install -y yum-utils device-mapper-persistent-data lvm2
+yum install -y yum-utils device-mapper-persistent-data lvm2 lrzsz
 
 echo "Set Aliyun Docker yum mirror"
 yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
@@ -59,7 +74,6 @@ set ts=4
 set softtabstop=4
 set shiftwidth=4
 set fileencodings=utf-8,gbk,gb18030,gk2312
-syntax on
 set showcmd
 set clipboard+=unnamed
 set cursorline
@@ -97,6 +111,7 @@ function add_ip_parse(){
     simple=\$(echo "\${domain}"|awk -F'.' '{print \$1}')
     echo -e "\${ip}\t\${domain}\t\${simple}" >> /etc/hosts
 }
+alias ping='ping -c 3'
 EOF
 
 
@@ -137,10 +152,49 @@ systemctl enable chronyd
 systemctl start chronyd
 systemctl status chronyd
 
+echo "Set iptables"
+# 允许 iptables 检查桥接流量
+cat > /etc/modules-load.d/k8s.conf << EOF
+br_netfilter
+EOF
+
+cat > /etc/sysctl.d/k8s.conf << EOF
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+EOF
+
+# 使配置生效
+sysctl --system
+
 echo "Please use command 'setip' to change the IP and 'addhosts' to add new domain parse!!!"
 echo "Done!"
 
 ```
 
+## 2. 虚拟机配置
 
+我们在VirtualBox中复制几个刚才创建的虚拟机，并分别使用`setip`、`sethostname`命令修改虚拟机IP和主机名称，并设置节点名称解析。
+
+我计划设置一个master和两个节点,IP和域名对应关系如下：
+
+```
+192.168.2.60 master.mytest.com
+192.168.2.61 node1.mytest.com
+192.168.2.62 node2.mytest.com
+```
+
+设置后重启虚拟机，查看IP、主机名和名称解析:
+
+```sh
+[root@master ~]# hostname -I
+192.168.2.60 172.17.0.1 
+[root@master ~]# hostname 
+master.mytest.com
+[root@master ~]# cat /etc/hosts
+127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+192.168.2.60 master.mytest.com master kubeapi.mytest.com kubeapi
+192.168.2.61 node1.mytest.com node1
+192.168.2.62 node2.mytest.com node2
+```
 
