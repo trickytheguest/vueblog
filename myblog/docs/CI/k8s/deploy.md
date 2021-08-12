@@ -65,7 +65,7 @@ echo "Install IUS yum"
 yum install -y https://repo.ius.io/ius-release-el7.rpm
 
 echo "Set yum tools"
-yum install -y deltarpm yum-utils device-mapper-persistent-data lvm2 lrzsz net-tools
+yum install -y deltarpm yum-utils device-mapper-persistent-data lvm2 lrzsz net-tools wget
 
 echo "Set Aliyun Docker yum mirror"
 yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
@@ -733,5 +733,527 @@ kubeadm join kubeapi.mytest.com:6443 --token ntf08x.uaudrocid80akszx \
 
 执行集群初始化时，会经过多个步骤，各个步骤的解释，详见上面命令行操作中的备注信息。
 
-#### 3.4.3  检查k8s集群生成的文件(可忽略)
+#### 3.4.3  验证k8s集群初始化过程(可忽略)
+
+- 查看kubelet的配置文件
+
+```sh
+[root@master ~]# cat /var/lib/kubelet/kubeadm-flags.env
+KUBELET_KUBEADM_ARGS="--cgroup-driver=systemd --network-plugin=cni --pod-infra-container-image=registry.aliyuncs.com/google_containers/pause:3.2"
+[root@master ~]# 
+[root@master ~]# cat -n /var/lib/kubelet/config.yaml 
+     1  apiVersion: kubelet.config.k8s.io/v1beta1
+     2  authentication:
+     3    anonymous:
+     4      enabled: false
+     5    webhook:
+     6      cacheTTL: 0s
+     7      enabled: true
+     8    x509:
+     9      clientCAFile: /etc/kubernetes/pki/ca.crt
+    10  authorization:
+    11    mode: Webhook
+    12    webhook:
+    13      cacheAuthorizedTTL: 0s
+    14      cacheUnauthorizedTTL: 0s
+    15  clusterDNS:
+    16  - 10.96.0.10
+    17  clusterDomain: cluster.local
+    18  cpuManagerReconcilePeriod: 0s
+    19  evictionPressureTransitionPeriod: 0s
+    20  fileCheckFrequency: 0s
+    21  healthzBindAddress: 127.0.0.1
+    22  healthzPort: 10248
+    23  httpCheckFrequency: 0s
+    24  imageMinimumGCAge: 0s
+    25  kind: KubeletConfiguration
+    26  nodeStatusReportFrequency: 0s
+    27  nodeStatusUpdateFrequency: 0s
+    28  rotateCertificates: true
+    29  runtimeRequestTimeout: 0s
+    30  staticPodPath: /etc/kubernetes/manifests
+    31  streamingConnectionIdleTimeout: 0s
+    32  syncFrequency: 0s
+    33  volumeStatsAggPeriod: 0s
+[root@master ~]# 
+```
+
+- 查看证书列表
+
+```sh
+[root@master ~]# ls -lh /etc/kubernetes/pki/
+total 56K
+-rw-r--r-- 1 root root 1.3K Aug 12 16:11 apiserver.crt
+-rw-r--r-- 1 root root 1.1K Aug 12 16:11 apiserver-etcd-client.crt
+-rw------- 1 root root 1.7K Aug 12 16:11 apiserver-etcd-client.key
+-rw------- 1 root root 1.7K Aug 12 16:11 apiserver.key
+-rw-r--r-- 1 root root 1.1K Aug 12 16:11 apiserver-kubelet-client.crt
+-rw------- 1 root root 1.7K Aug 12 16:11 apiserver-kubelet-client.key
+-rw-r--r-- 1 root root 1.1K Aug 12 16:11 ca.crt
+-rw------- 1 root root 1.7K Aug 12 16:11 ca.key
+drwxr-xr-x 2 root root  162 Aug 12 16:11 etcd
+-rw-r--r-- 1 root root 1.1K Aug 12 16:11 front-proxy-ca.crt
+-rw------- 1 root root 1.7K Aug 12 16:11 front-proxy-ca.key
+-rw-r--r-- 1 root root 1.1K Aug 12 16:11 front-proxy-client.crt
+-rw------- 1 root root 1.7K Aug 12 16:11 front-proxy-client.key
+-rw------- 1 root root 1.7K Aug 12 16:11 sa.key
+-rw------- 1 root root  451 Aug 12 16:11 sa.pub
+[root@master ~]# ls -lh /etc/kubernetes/pki/etcd/
+total 32K
+-rw-r--r-- 1 root root 1017 Aug 12 16:11 ca.crt
+-rw------- 1 root root 1.7K Aug 12 16:11 ca.key
+-rw-r--r-- 1 root root 1.1K Aug 12 16:11 healthcheck-client.crt
+-rw------- 1 root root 1.7K Aug 12 16:11 healthcheck-client.key
+-rw-r--r-- 1 root root 1.2K Aug 12 16:11 peer.crt
+-rw------- 1 root root 1.7K Aug 12 16:11 peer.key
+-rw-r--r-- 1 root root 1.2K Aug 12 16:11 server.crt
+-rw------- 1 root root 1.7K Aug 12 16:11 server.key
+[root@master ~]# 
+```
+
+可以看到，生成了非常多的证书文件。
+
+- 查看kubeconfig配置文件
+
+```sh
+[root@master ~]# ls -lh /etc/kubernetes/
+total 32K
+-rw------- 1 root root 5.4K Aug 12 16:11 admin.conf
+-rw------- 1 root root 5.4K Aug 12 16:11 controller-manager.conf
+-rw------- 1 root root 1.9K Aug 12 16:11 kubelet.conf
+drwxr-xr-x 2 root root  113 Aug 12 16:11 manifests
+drwxr-xr-x 3 root root 4.0K Aug 12 16:11 pki
+-rw------- 1 root root 5.4K Aug 12 16:11 scheduler.conf
+[root@master ~]# 
+```
+
+由于`kubeadm init`最后让复制`/etc/kubernetes/admin.conf`配置文件，我们先备份一下该文件：
+
+```sh
+[root@master ~]# cp /etc/kubernetes/admin.conf{,.bak}
+[root@master ~]# ls -lh /etc/kubernetes/admin.conf*
+-rw------- 1 root root 5.4K Aug 12 16:11 /etc/kubernetes/admin.conf
+-rw------- 1 root root 5.4K Aug 12 17:26 /etc/kubernetes/admin.conf.bak
+[root@master ~]# 
+```
+
+- 查看kubelet状态
+
+```sh
+[root@master ~]# systemctl status kubelet
+● kubelet.service - kubelet: The Kubernetes Node Agent
+   Loaded: loaded (/usr/lib/systemd/system/kubelet.service; enabled; vendor preset: disabled)
+  Drop-In: /usr/lib/systemd/system/kubelet.service.d
+           └─10-kubeadm.conf
+   Active: active (running) since Thu 2021-08-12 16:11:34 CST; 1h 16min ago
+     Docs: https://kubernetes.io/docs/
+ Main PID: 8433 (kubelet)
+    Tasks: 15
+   Memory: 37.3M
+   CGroup: /system.slice/kubelet.service
+           └─8433 /usr/bin/kubelet --bootstrap-kubeconfig=/etc/kubernetes/bootstrap-kubelet.conf --kubeconfig=/etc/kubernetes/ku...
+
+Aug 12 17:27:12 master.mytest.com kubelet[8433]: W0812 17:27:12.080379    8433 cni.go:237] Unable to update cni config: no.../net.d
+Aug 12 17:27:12 master.mytest.com kubelet[8433]: E0812 17:27:12.654601    8433 kubelet.go:2212] Container runtime network ...alized
+Aug 12 17:27:17 master.mytest.com kubelet[8433]: W0812 17:27:17.082894    8433 cni.go:237] Unable to update cni config: no.../net.d
+Aug 12 17:27:17 master.mytest.com kubelet[8433]: E0812 17:27:17.668554    8433 kubelet.go:2212] Container runtime network ...alized
+Aug 12 17:27:22 master.mytest.com kubelet[8433]: W0812 17:27:22.092081    8433 cni.go:237] Unable to update cni config: no.../net.d
+Aug 12 17:27:22 master.mytest.com kubelet[8433]: E0812 17:27:22.683736    8433 kubelet.go:2212] Container runtime network ...alized
+Aug 12 17:27:27 master.mytest.com kubelet[8433]: W0812 17:27:27.093106    8433 cni.go:237] Unable to update cni config: no.../net.d
+Aug 12 17:27:27 master.mytest.com kubelet[8433]: E0812 17:27:27.701610    8433 kubelet.go:2212] Container runtime network ...alized
+Aug 12 17:27:32 master.mytest.com kubelet[8433]: W0812 17:27:32.093955    8433 cni.go:237] Unable to update cni config: no.../net.d
+Aug 12 17:27:32 master.mytest.com kubelet[8433]: E0812 17:27:32.715703    8433 kubelet.go:2212] Container runtime network ...alized
+Hint: Some lines were ellipsized, use -l to show in full.
+[root@master ~]# 
+[root@master ~]# ps -ef|grep 'bin/kubelet'|grep -v 'grep'
+root      8433     1  1 16:11 ?        00:01:26 /usr/bin/kubelet --bootstrap-kubeconfig=/etc/kubernetes/bootstrap-kubelet.conf --kubeconfig=/etc/kubernetes/kubelet.conf --config=/var/lib/kubelet/config.yaml --cgroup-driver=systemd --network-plugin=cni --pod-infra-container-image=registry.aliyuncs.com/google_containers/pause:3.2
+```
+
+
+
+这时，可以看到，`kubelet`服务已经启动了，通过进程可以发现，`kubelet`启动时，使用了`kubeadm init`初始化生成的多个配置文件。
+
+
+
+#### 3.4.4 复制配置文件并验证
+
+在我们复制`/etc/kubernetes/admin.conf`前，我们先执行一条命令`kubectl get nodes`:
+
+```sh
+[root@master ~]# kubectl get nodes
+The connection to the server localhost:8080 was refused - did you specify the right host or port?
+[root@master ~]# 
+```
+
+此时，可以看到，不能正常获取到集群的节点信息。
+
+执行这三条命令：
+
+```sh
+ mkdir -p $HOME/.kube
+ sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+ sudo chown $(id -u):$(id -g) $HOME/.kube/config
+```
+
+我们是`root`用户，直接在master上面执行：
+
+```sh
+[root@master ~]# mkdir -p $HOME/.kube
+[root@master ~]# sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+[root@master ~]# sudo chown $(id -u):$(id -g) $HOME/.kube/config
+[root@master ~]# ls -lah .kube/config 
+-rw------- 1 root root 5.4K Aug 12 17:40 .kube/config
+[root@master ~]# 
+```
+
+此时再次查看节点信息:
+
+```sh
+[root@master ~]# kubectl get nodes
+NAME                STATUS     ROLES    AGE   VERSION
+master.mytest.com   NotReady   master   90m   v1.18.20
+[root@master ~]# 
+```
+
+此时，可以看到，当前的master节点的状态是`NotReady`，即未就绪状态。
+
+
+
+此时，我们查看一下日志信息：
+
+```sh
+[root@master ~]# tail /var/log/messages 
+Aug 12 17:44:12 master kubelet: E0812 17:44:12.357037    8433 kubelet.go:2212] Container runtime network not ready: NetworkReady=false reason:NetworkPluginNotReady message:docker: network plugin is not ready: cni config uninitialized
+Aug 12 17:44:12 master kubelet: W0812 17:44:12.617353    8433 cni.go:237] Unable to update cni config: no networks found in /etc/cni/net.d
+Aug 12 17:44:17 master kubelet: E0812 17:44:17.373716    8433 kubelet.go:2212] Container runtime network not ready: NetworkReady=false reason:NetworkPluginNotReady message:docker: network plugin is not ready: cni config uninitialized
+Aug 12 17:44:17 master kubelet: W0812 17:44:17.624174    8433 cni.go:237] Unable to update cni config: no networks found in /etc/cni/net.d
+Aug 12 17:44:22 master kubelet: E0812 17:44:22.389514    8433 kubelet.go:2212] Container runtime network not ready: NetworkReady=false reason:NetworkPluginNotReady message:docker: network plugin is not ready: cni config uninitialized
+Aug 12 17:44:22 master kubelet: W0812 17:44:22.630131    8433 cni.go:237] Unable to update cni config: no networks found in /etc/cni/net.d
+Aug 12 17:44:27 master kubelet: E0812 17:44:27.407339    8433 kubelet.go:2212] Container runtime network not ready: NetworkReady=false reason:NetworkPluginNotReady message:docker: network plugin is not ready: cni config uninitialized
+Aug 12 17:44:27 master kubelet: W0812 17:44:27.630585    8433 cni.go:237] Unable to update cni config: no networks found in /etc/cni/net.d
+Aug 12 17:44:32 master kubelet: E0812 17:44:32.423892    8433 kubelet.go:2212] Container runtime network not ready: NetworkReady=false reason:NetworkPluginNotReady message:docker: network plugin is not ready: cni config uninitialized
+Aug 12 17:44:32 master kubelet: W0812 17:44:32.631120    8433 cni.go:237] Unable to update cni config: no networks found in /etc/cni/net.d
+```
+
+
+
+可以看到`NetworkPluginNotReady`信息，即kubernetes的网络插件没有准备好。因此，我们需要先安装一下kubernates的网络插件。
+
+此时，查看Pod的信息：
+
+```sh
+[root@master ~]# kubectl get pods -A
+NAMESPACE     NAME                                        READY   STATUS    RESTARTS   AGE
+kube-system   coredns-7ff77c879f-fbdl7                    0/1     Pending   0          95m
+kube-system   coredns-7ff77c879f-zkx44                    0/1     Pending   0          95m
+kube-system   etcd-master.mytest.com                      1/1     Running   0          96m
+kube-system   kube-apiserver-master.mytest.com            1/1     Running   0          96m
+kube-system   kube-controller-manager-master.mytest.com   1/1     Running   0          96m
+kube-system   kube-proxy-nzmm4                            1/1     Running   0          95m
+kube-system   kube-scheduler-master.mytest.com            1/1     Running   0          96m
+[root@master ~]# 
+```
+
+可以看到`coredns`也处于`pending`状态。
+
+下一步就是要安装网络插件。
+
+
+
+### 3.5 安装网络插件
+
+> Kubernetes系统上Pod网络的实现依赖于第三方插件进行，这类插件有近数十种之多，较为著名的有flannel、calico、canal和kube-router等，简单易用的实现是为CoreOS提供的flannel项目。下面的命令用于在线部署flannel至Kubernetes系统之上：
+>
+> ~]# kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+
+我们先下载一下这个文件，看看文件内容。
+
+```sh
+# 下载
+[root@master ~]# wget https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+--2021-08-12 17:54:03--  https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+Resolving raw.githubusercontent.com (raw.githubusercontent.com)... 185.199.111.133, 185.199.108.133, 185.199.109.133, ...
+Connecting to raw.githubusercontent.com (raw.githubusercontent.com)|185.199.111.133|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 4813 (4.7K) [text/plain]
+Saving to: ‘kube-flannel.yml’
+
+100%[=========================================================================================>] 4,813       8.32KB/s   in 0.6s   
+
+2021-08-12 17:54:04 (8.32 KB/s) - ‘kube-flannel.yml’ saved [4813/4813]
+
+[root@master ~]# 
+```
+
+查看`kube-flannel.yml`文件内容：
+
+```sh
+[root@master ~]# cat kube-flannel.yml 
+---
+apiVersion: policy/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: psp.flannel.unprivileged
+  annotations:
+    seccomp.security.alpha.kubernetes.io/allowedProfileNames: docker/default
+    seccomp.security.alpha.kubernetes.io/defaultProfileName: docker/default
+    apparmor.security.beta.kubernetes.io/allowedProfileNames: runtime/default
+    apparmor.security.beta.kubernetes.io/defaultProfileName: runtime/default
+spec:
+  privileged: false
+  volumes:
+  - configMap
+  - secret
+  - emptyDir
+  - hostPath
+  allowedHostPaths:
+  - pathPrefix: "/etc/cni/net.d"
+  - pathPrefix: "/etc/kube-flannel"
+  - pathPrefix: "/run/flannel"
+  readOnlyRootFilesystem: false
+  # Users and groups
+  runAsUser:
+    rule: RunAsAny
+  supplementalGroups:
+    rule: RunAsAny
+  fsGroup:
+    rule: RunAsAny
+  # Privilege Escalation
+  allowPrivilegeEscalation: false
+  defaultAllowPrivilegeEscalation: false
+  # Capabilities
+  allowedCapabilities: ['NET_ADMIN', 'NET_RAW']
+  defaultAddCapabilities: []
+  requiredDropCapabilities: []
+  # Host namespaces
+  hostPID: false
+  hostIPC: false
+  hostNetwork: true
+  hostPorts:
+  - min: 0
+    max: 65535
+  # SELinux
+  seLinux:
+    # SELinux is unused in CaaSP
+    rule: 'RunAsAny'
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: flannel
+rules:
+- apiGroups: ['extensions']
+  resources: ['podsecuritypolicies']
+  verbs: ['use']
+  resourceNames: ['psp.flannel.unprivileged']
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - get
+- apiGroups:
+  - ""
+  resources:
+  - nodes
+  verbs:
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - nodes/status
+  verbs:
+  - patch
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: flannel
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: flannel
+subjects:
+- kind: ServiceAccount
+  name: flannel
+  namespace: kube-system
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: flannel
+  namespace: kube-system
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: kube-flannel-cfg
+  namespace: kube-system
+  labels:
+    tier: node
+    app: flannel
+data:
+  cni-conf.json: |
+    {
+      "name": "cbr0",
+      "cniVersion": "0.3.1",
+      "plugins": [
+        {
+          "type": "flannel",
+          "delegate": {
+            "hairpinMode": true,
+            "isDefaultGateway": true
+          }
+        },
+        {
+          "type": "portmap",
+          "capabilities": {
+            "portMappings": true
+          }
+        }
+      ]
+    }
+  net-conf.json: |
+    {
+      "Network": "10.244.0.0/16",
+      "Backend": {
+        "Type": "vxlan"
+      }
+    }
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: kube-flannel-ds
+  namespace: kube-system
+  labels:
+    tier: node
+    app: flannel
+spec:
+  selector:
+    matchLabels:
+      app: flannel
+  template:
+    metadata:
+      labels:
+        tier: node
+        app: flannel
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/os
+                operator: In
+                values:
+                - linux
+      hostNetwork: true
+      priorityClassName: system-node-critical
+      tolerations:
+      - operator: Exists
+        effect: NoSchedule
+      serviceAccountName: flannel
+      initContainers:
+      - name: install-cni
+        image: quay.io/coreos/flannel:v0.14.0
+        command:
+        - cp
+        args:
+        - -f
+        - /etc/kube-flannel/cni-conf.json
+        - /etc/cni/net.d/10-flannel.conflist
+        volumeMounts:
+        - name: cni
+          mountPath: /etc/cni/net.d
+        - name: flannel-cfg
+          mountPath: /etc/kube-flannel/
+      containers:
+      - name: kube-flannel
+        image: quay.io/coreos/flannel:v0.14.0
+        command:
+        - /opt/bin/flanneld
+        args:
+        - --ip-masq
+        - --kube-subnet-mgr
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "50Mi"
+          limits:
+            cpu: "100m"
+            memory: "50Mi"
+        securityContext:
+          privileged: false
+          capabilities:
+            add: ["NET_ADMIN", "NET_RAW"]
+        env:
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        volumeMounts:
+        - name: run
+          mountPath: /run/flannel
+        - name: flannel-cfg
+          mountPath: /etc/kube-flannel/
+      volumes:
+      - name: run
+        hostPath:
+          path: /run/flannel
+      - name: cni
+        hostPath:
+          path: /etc/cni/net.d
+      - name: flannel-cfg
+        configMap:
+          name: kube-flannel-cfg
+[root@master ~]# 
+```
+
+通过下面的命令，可知，该配置文件中使用的是``镜像仓库，是国外的镜像仓库，下载会比较慢，我们换成Docker的镜像仓库，由于我们配置了加速源，可以很快的下载下来。
+
+```sh
+[root@master ~]# grep -n 'image' kube-flannel.yml 
+169:        image: quay.io/coreos/flannel:v0.14.0
+183:        image: quay.io/coreos/flannel:v0.14.0
+```
+
+我们将这两行进行替换掉，使用`lizhenliang/flannel`镜像。
+
+备份并替换：
+
+```sh
+[root@master ~]# cp kube-flannel.yml{,.bak}
+[root@master ~]# ls kube-flannel.yml*
+kube-flannel.yml  kube-flannel.yml.bak
+[root@master ~]# sed -n 's@image: quay.io/coreos/flannel@image: lizhenliang/flannel@gp' kube-flannel.yml
+        image: lizhenliang/flannel:v0.14.0
+        image: lizhenliang/flannel:v0.14.0
+[root@master ~]# sed -i 's@image: quay.io/coreos/flannel@image: lizhenliang/flannel@g' kube-flannel.yml
+[root@master ~]# grep -n 'image' kube-flannel.yml 
+169:        image: lizhenliang/flannel:v0.14.0
+183:        image: lizhenliang/flannel:v0.14.0
+```
+
+可以看到，文件已经替换成功。
+
+然后，直接运行，使用命令`kubectl apply -f kube-flannel.yml`来安装网络插件：
+
+```sh
+[root@master ~]# kubectl apply -f kube-flannel.yml
+podsecuritypolicy.policy/psp.flannel.unprivileged created
+clusterrole.rbac.authorization.k8s.io/flannel created
+clusterrolebinding.rbac.authorization.k8s.io/flannel created
+serviceaccount/flannel created
+configmap/kube-flannel-cfg created
+daemonset.apps/kube-flannel-ds created
+[root@master ~]# echo $?
+0
+[root@master ~]# 
+```
 
