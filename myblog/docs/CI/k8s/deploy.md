@@ -1312,3 +1312,134 @@ ae903b4033d9   registry.aliyuncs.com/google_containers/pause:3.2   "/pause"     
 
 可以看到运行了很多`pause`容器，这个容器有什么作用？后续研究。
 
+
+
+### 3.6 添加集群节点
+
+上面我们已经知道master节点已经能够正常工作了。现在我们只用在各节点上面运行`kubeadm init`时生成的将节点加入集群的命令：
+
+```sh
+kubeadm join kubeapi.mytest.com:6443 --token ntf08x.uaudrocid80akszx \
+    --discovery-token-ca-cert-hash sha256:e60ab1ae8fcc0f8b8d3d2256c59738723a7ad04bee1aa0c0a1d8256bc62b4293
+```
+
+我们在node1和node2节点上面分别运行以上命令。
+
+在node1节点执行：
+
+```sh
+[root@node1 ~]# kubeadm join kubeapi.mytest.com:6443 --token ntf08x.uaudrocid80akszx \
+>     --discovery-token-ca-cert-hash sha256:e60ab1ae8fcc0f8b8d3d2256c59738723a7ad04bee1aa0c0a1d8256bc62b4293
+W0812 18:33:16.483466   15374 join.go:346] [preflight] WARNING: JoinControlPane.controlPlane settings will be ignored when control-plane flag is not set.
+[preflight] Running pre-flight checks
+        [WARNING SystemVerification]: this Docker version is not on the list of validated versions: 20.10.8. Latest validated version: 19.03
+[preflight] Reading configuration from the cluster...
+[preflight] FYI: You can look at this config file with 'kubectl -n kube-system get cm kubeadm-config -oyaml'
+[kubelet-start] Downloading configuration for the kubelet from the "kubelet-config-1.18" ConfigMap in the kube-system namespace
+[kubelet-start] Writing kubelet configuration to file "/var/lib/kubelet/config.yaml"
+[kubelet-start] Writing kubelet environment file with flags to file "/var/lib/kubelet/kubeadm-flags.env"
+[kubelet-start] Starting the kubelet
+[kubelet-start] Waiting for the kubelet to perform the TLS Bootstrap...
+
+This node has joined the cluster:
+* Certificate signing request was sent to apiserver and a response was received.
+* The Kubelet was informed of the new secure connection details.
+
+Run 'kubectl get nodes' on the control-plane to see this node join the cluster.
+
+[root@node1 ~]# echo $?
+0
+[root@node1 ~]# 
+```
+
+再在node2节点执行：
+
+```sh
+[root@node2 ~]# kubeadm join kubeapi.mytest.com:6443 --token ntf08x.uaudrocid80akszx \
+>     --discovery-token-ca-cert-hash sha256:e60ab1ae8fcc0f8b8d3d2256c59738723a7ad04bee1aa0c0a1d8256bc62b4293
+W0812 18:34:17.352493   14951 join.go:346] [preflight] WARNING: JoinControlPane.controlPlane settings will be ignored when control-plane flag is not set.
+[preflight] Running pre-flight checks
+        [WARNING SystemVerification]: this Docker version is not on the list of validated versions: 20.10.8. Latest validated version: 19.03
+[preflight] Reading configuration from the cluster...
+[preflight] FYI: You can look at this config file with 'kubectl -n kube-system get cm kubeadm-config -oyaml'
+[kubelet-start] Downloading configuration for the kubelet from the "kubelet-config-1.18" ConfigMap in the kube-system namespace
+[kubelet-start] Writing kubelet configuration to file "/var/lib/kubelet/config.yaml"
+[kubelet-start] Writing kubelet environment file with flags to file "/var/lib/kubelet/kubeadm-flags.env"
+[kubelet-start] Starting the kubelet
+[kubelet-start] Waiting for the kubelet to perform the TLS Bootstrap...
+
+This node has joined the cluster:
+* Certificate signing request was sent to apiserver and a response was received.
+* The Kubelet was informed of the new secure connection details.
+
+Run 'kubectl get nodes' on the control-plane to see this node join the cluster.
+
+[root@node2 ~]# echo $?
+0
+[root@node2 ~]# 
+```
+
+可以看到，在node1和node2节点上面都执行成功了。
+
+
+
+我们现在在master上面查看一下集群节点的相关状态信息。
+
+```sh
+[root@master ~]# kubectl get nodes
+NAME                STATUS   ROLES    AGE     VERSION
+master.mytest.com   Ready    master   144m    v1.18.20
+node1.mytest.com    Ready    <none>   2m30s   v1.18.20
+node2.mytest.com    Ready    <none>   89s     v1.18.20
+[root@master ~]# kubectl get nodes -o wide
+NAME                STATUS   ROLES    AGE     VERSION    INTERNAL-IP     EXTERNAL-IP   OS-IMAGE                KERNEL-VERSION           CONTAINER-RUNTIME
+master.mytest.com   Ready    master   144m    v1.18.20   192.168.56.60   <none>        CentOS Linux 7 (Core)   3.10.0-1062.el7.x86_64   docker://20.10.8
+node1.mytest.com    Ready    <none>   2m45s   v1.18.20   192.168.56.61   <none>        CentOS Linux 7 (Core)   3.10.0-1062.el7.x86_64   docker://20.10.8
+node2.mytest.com    Ready    <none>   104s    v1.18.20   192.168.56.62   <none>        CentOS Linux 7 (Core)   3.10.0-1062.el7.x86_64   docker://20.10.8
+[root@master ~]# 
+```
+
+查看Pod信息：
+
+```sh
+[root@master ~]# kubectl get pods -A
+NAMESPACE     NAME                                        READY   STATUS    RESTARTS   AGE
+kube-system   coredns-7ff77c879f-fbdl7                    1/1     Running   0          146m
+kube-system   coredns-7ff77c879f-zkx44                    1/1     Running   0          146m
+kube-system   etcd-master.mytest.com                      1/1     Running   0          146m
+kube-system   kube-apiserver-master.mytest.com            1/1     Running   0          146m
+kube-system   kube-controller-manager-master.mytest.com   1/1     Running   0          146m
+kube-system   kube-flannel-ds-2pqx7                       1/1     Running   0          3m34s
+kube-system   kube-flannel-ds-b722r                       1/1     Running   0          28m
+kube-system   kube-flannel-ds-lhbps                       1/1     Running   0          4m35s
+kube-system   kube-proxy-4sfq6                            1/1     Running   0          3m34s
+kube-system   kube-proxy-nzmm4                            1/1     Running   0          146m
+kube-system   kube-proxy-vll68                            1/1     Running   0          4m35s
+kube-system   kube-scheduler-master.mytest.com            1/1     Running   0          146m
+[root@master ~]# kubectl get pods -A -o wide
+NAMESPACE     NAME                                        READY   STATUS    RESTARTS   AGE     IP              NODE                NOMINATED NODE   READINESS GATES
+kube-system   coredns-7ff77c879f-fbdl7                    1/1     Running   0          146m    10.244.0.3      master.mytest.com   <none>           <none>
+kube-system   coredns-7ff77c879f-zkx44                    1/1     Running   0          146m    10.244.0.2      master.mytest.com   <none>           <none>
+kube-system   etcd-master.mytest.com                      1/1     Running   0          146m    192.168.56.60   master.mytest.com   <none>           <none>
+kube-system   kube-apiserver-master.mytest.com            1/1     Running   0          146m    192.168.56.60   master.mytest.com   <none>           <none>
+kube-system   kube-controller-manager-master.mytest.com   1/1     Running   0          146m    192.168.56.60   master.mytest.com   <none>           <none>
+kube-system   kube-flannel-ds-2pqx7                       1/1     Running   0          3m43s   192.168.56.62   node2.mytest.com    <none>           <none>
+kube-system   kube-flannel-ds-b722r                       1/1     Running   0          28m     192.168.56.60   master.mytest.com   <none>           <none>
+kube-system   kube-flannel-ds-lhbps                       1/1     Running   0          4m44s   192.168.56.61   node1.mytest.com    <none>           <none>
+kube-system   kube-proxy-4sfq6                            1/1     Running   0          3m43s   192.168.56.62   node2.mytest.com    <none>           <none>
+kube-system   kube-proxy-nzmm4                            1/1     Running   0          146m    192.168.56.60   master.mytest.com   <none>           <none>
+kube-system   kube-proxy-vll68                            1/1     Running   0          4m44s   192.168.56.61   node1.mytest.com    <none>           <none>
+kube-system   kube-scheduler-master.mytest.com            1/1     Running   0          146m    192.168.56.60   master.mytest.com   <none>           <none>
+[root@master ~]# 
+```
+
+这样，我们的集群就安装配置成功了！
+
+
+
+我们将三台虚拟机关机，然后创建备份快照。快照名称为`k8s_1`，描述信息为`k8s集群部署完成，nodes和pods都正常运行，未添加其他实际应用。`
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210812221324.png)
+
+
+
