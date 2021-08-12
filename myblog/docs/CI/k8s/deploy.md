@@ -1443,3 +1443,303 @@ kube-system   kube-scheduler-master.mytest.com            1/1     Running   0   
 
 
 
+
+
+## 4. Kubernetes集群第一个应用
+
+我们已经成功安装配置了k8s集群，现在是时候在集群上面部署应用了。我们来部署Kubernetes Dashboard这个UI系统。
+
+可参考：
+
+- [Kubernetes Dashboard](https://github.com/kubernetes/dashboard)
+- [kubernetesui/dashboard](https://registry.hub.docker.com/r/kubernetesui/dashboard)
+
+按官方帮助信息，只需要执行命令：
+
+```sh
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.3.1/aio/deploy/recommended.yaml
+```
+
+即可。
+
+我们先手动下载`recommended.yaml`文件：
+
+```sh
+[root@master ~]# wget https://raw.githubusercontent.com/kubernetes/dashboard/v2.3.1/aio/deploy/recommended.yaml
+--2021-08-12 23:04:15--  https://raw.githubusercontent.com/kubernetes/dashboard/v2.3.1/aio/deploy/recommended.yaml
+Resolving raw.githubusercontent.com (raw.githubusercontent.com)... 185.199.111.133, 185.199.110.133, 185.199.108.133, ...
+Connecting to raw.githubusercontent.com (raw.githubusercontent.com)|185.199.111.133|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 7552 (7.4K) [text/plain]
+Saving to: ‘recommended.yaml’
+
+100%[=============================================================================================================================>] 7,552       --.-K/s   in 0s      
+
+2021-08-12 23:04:16 (44.1 MB/s) - ‘recommended.yaml’ saved [7552/7552]
+
+[root@master ~]# 
+```
+
+我们查看一下`recommended.yaml`文件的`service`配置：
+
+```sh
+[root@master ~]# ls -la recommended.yaml 
+-rw-r--r-- 1 root root 7552 Aug 12 23:04 recommended.yaml
+[root@master ~]# cat -n recommended.yaml|sed  -n '30,46p'
+    30  ---
+    31  
+    32  kind: Service
+    33  apiVersion: v1
+    34  metadata:
+    35    labels:
+    36      k8s-app: kubernetes-dashboard
+    37    name: kubernetes-dashboard
+    38    namespace: kubernetes-dashboard
+    39  spec:
+    40    ports:
+    41      - port: 443
+    42        targetPort: 8443
+    43    selector:
+    44      k8s-app: kubernetes-dashboard
+    45  
+    46  ---
+[root@master ~]# 
+```
+
+我们备份yaml文件并增加一下：
+
+```sh
+[root@master ~]# cp recommended.yaml{,.bak}
+[root@master ~]# ls -la recommended.yaml*
+-rw-r--r-- 1 root root 7552 Aug 12 23:04 recommended.yaml
+-rw-r--r-- 1 root root 7552 Aug 12 23:22 recommended.yaml.bak
+[root@master ~]# vi recommended.yaml
+[root@master ~]# cat -n recommended.yaml|sed  -n '30,47p'
+    30  ---
+    31  
+    32  kind: Service
+    33  apiVersion: v1
+    34  metadata:
+    35    labels:
+    36      k8s-app: kubernetes-dashboard
+    37    name: kubernetes-dashboard
+    38    namespace: kubernetes-dashboard
+    39  spec:
+    40    type: NodePort
+    41    ports:
+    42      - port: 443
+    43        targetPort: 8443
+    44    selector:
+    45      k8s-app: kubernetes-dashboard
+    46  
+    47  ---
+[root@master ~]# 
+[root@master ~]# diff recommended.yaml recommended.yaml.bak 
+40d39
+<   type: NodePort
+[root@master ~]#
+```
+
+第40行的`type:NodePort`是新增的内容。
+
+
+
+然后，我们使用命令`kubectl apply -f recommended.yaml`创建应用：
+
+```sh
+[root@master ~]# kubectl apply -f recommended.yaml
+namespace/kubernetes-dashboard created
+serviceaccount/kubernetes-dashboard created
+service/kubernetes-dashboard created
+secret/kubernetes-dashboard-certs created
+secret/kubernetes-dashboard-csrf created
+secret/kubernetes-dashboard-key-holder created
+configmap/kubernetes-dashboard-settings created
+role.rbac.authorization.k8s.io/kubernetes-dashboard created
+clusterrole.rbac.authorization.k8s.io/kubernetes-dashboard created
+rolebinding.rbac.authorization.k8s.io/kubernetes-dashboard created
+clusterrolebinding.rbac.authorization.k8s.io/kubernetes-dashboard created
+deployment.apps/kubernetes-dashboard created
+service/dashboard-metrics-scraper created
+deployment.apps/dashboard-metrics-scraper created
+[root@master ~]# 
+```
+
+查看Pod信息：
+
+```sh
+[root@master ~]# kubectl get pods -A
+NAMESPACE              NAME                                         READY   STATUS    RESTARTS   AGE
+kube-system            coredns-7ff77c879f-fbdl7                     1/1     Running   1          7h16m
+kube-system            coredns-7ff77c879f-zkx44                     1/1     Running   1          7h16m
+kube-system            etcd-master.mytest.com                       1/1     Running   1          7h16m
+kube-system            kube-apiserver-master.mytest.com             1/1     Running   1          7h16m
+kube-system            kube-controller-manager-master.mytest.com    1/1     Running   1          7h16m
+kube-system            kube-flannel-ds-2pqx7                        1/1     Running   1          4h54m
+kube-system            kube-flannel-ds-b722r                        1/1     Running   1          5h18m
+kube-system            kube-flannel-ds-lhbps                        1/1     Running   1          4h55m
+kube-system            kube-proxy-4sfq6                             1/1     Running   1          4h54m
+kube-system            kube-proxy-nzmm4                             1/1     Running   1          7h16m
+kube-system            kube-proxy-vll68                             1/1     Running   1          4h55m
+kube-system            kube-scheduler-master.mytest.com             1/1     Running   1          7h16m
+kubernetes-dashboard   dashboard-metrics-scraper-78f5d9f487-grsqn   1/1     Running   0          50s
+kubernetes-dashboard   kubernetes-dashboard-6bc5cb8879-wswsl        1/1     Running   0          50s
+[root@master ~]#
+[root@master ~]# kubectl get pods -n kubernetes-dashboard
+NAME                                         READY   STATUS    RESTARTS   AGE
+dashboard-metrics-scraper-78f5d9f487-grsqn   1/1     Running   0          4m22s
+kubernetes-dashboard-6bc5cb8879-wswsl        1/1     Running   0          4m22s
+```
+
+可以看到`kubernetes-dashboard`已经正常运行。
+
+
+
+查看对应的Service信息：
+
+```sh
+[root@master ~]# kubectl get services -n kubernetes-dashboard
+NAME                        TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)         AGE
+dashboard-metrics-scraper   ClusterIP   10.96.169.151   <none>        8000/TCP        3m56s
+kubernetes-dashboard        NodePort    10.102.68.190   <none>        443:31934/TCP   3m57s
+[root@master ~]# 
+```
+
+查看对应的Pod在哪个节点上运行的：
+
+```sh
+[root@master ~]# kubectl get pods -n kubernetes-dashboard -o wide
+NAME                                         READY   STATUS    RESTARTS   AGE     IP           NODE               NOMINATED NODE   READINESS GATES
+dashboard-metrics-scraper-78f5d9f487-grsqn   1/1     Running   0          7m18s   10.244.2.2   node2.mytest.com   <none>           <none>
+kubernetes-dashboard-6bc5cb8879-wswsl        1/1     Running   0          7m18s   10.244.1.2   node1.mytest.com   <none>           <none>
+[root@master ~]# kubectl get services -n kubernetes-dashboard -o wide
+NAME                        TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)         AGE     SELECTOR
+dashboard-metrics-scraper   ClusterIP   10.96.169.151   <none>        8000/TCP        7m37s   k8s-app=dashboard-metrics-scraper
+kubernetes-dashboard        NodePort    10.102.68.190   <none>        443:31934/TCP   7m38s   k8s-app=kubernetes-dashboard
+[root@master ~]# 
+```
+
+可以知道`kubernetes-dashboard`运行在节点node1上面。其对应的端口号是`31934`。
+
+为了能在我们宿主机上面能够访问集群中的应用，我们在宿主机上面也配置一下域名解析。
+
+```sh
+$ tail -n 5 /etc/hosts
+# k8s
+192.168.56.60 master.mytest.com master kubeapi.mytest.com kubeapi
+192.168.56.61 node1.mytest.com node1
+192.168.56.62 node2.mytest.com node2
+```
+
+现在我们在宿主机上面访问`node1.mytest.com:31934`  [http://node1.mytest.com:31934/](http://node1.mytest.com:31934/) 看看会看到什么。
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210812234800.png)
+
+可以看到，页面返回的信息是"Client sent an HTTP request to an HTTPS server."，提示需要使用`https`方式访问。
+
+我们改成https方式访问，访问链接 [https://node1.mytest.com:31934/](https://node1.mytest.com:31934/)，此时看到的界面如下：
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210812235059.png)
+
+我们选择`高级`,并"接受风险并继续"，看到如下页面：
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210812235850.png)
+
+
+
+可以看到，可以通过两种方式进行登陆。我们使用token的方式登陆。
+
+
+
+下面先来生成token。
+
+- 创建service account
+
+```sh
+[root@master ~]# kubectl create serviceaccount dashboard-admin -n kube-system
+serviceaccount/dashboard-admin created
+```
+
+- service account账户绑定到集群角色cluster-admin
+
+```sh
+[root@master ~]# kubectl create clusterrolebinding dashboard-admin --clusterrole=cluster-admin --serviceaccount=kube-system:dashboard-admin  
+clusterrolebinding.rbac.authorization.k8s.io/dashboard-admin created
+[root@master ~]# 
+```
+
+- 获取secret的名称
+
+```sh
+[root@master ~]# kubectl get secret -n kube-system|head -n 1; kubectl get secret -n kube-system|grep 'dash'
+NAME                                             TYPE                                  DATA   AGE
+dashboard-admin-token-4kkdc                      kubernetes.io/service-account-token   3      9m20s
+[root@master ~]# kubectl get secret -n kube-system|grep 'dash'|awk '{print $1}'
+dashboard-admin-token-4kkdc
+```
+
+- 获取token值
+
+```sh
+[root@master ~]# kubectl describe secrets -n kube-system dashboard-admin-token-4kkdc 
+Name:         dashboard-admin-token-4kkdc
+Namespace:    kube-system
+Labels:       <none>
+Annotations:  kubernetes.io/service-account.name: dashboard-admin
+              kubernetes.io/service-account.uid: a666ccfc-13d5-49c8-bdbd-9f725b01fcbb
+
+Type:  kubernetes.io/service-account-token
+
+Data
+====
+ca.crt:     1025 bytes
+namespace:  11 bytes
+token:      eyJhbGciOiJSUzI1NiIsImtpZCI6IjhLTWpoZUpQbGtxSUgxTnFMdGRJY2lVNlNBeU1XNzNqaXpfU1l4RkY5cmMifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJkYXNoYm9hcmQtYWRtaW4tdG9rZW4tNGtrZGMiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiZGFzaGJvYXJkLWFkbWluIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQudWlkIjoiYTY2NmNjZmMtMTNkNS00OWM4LWJkYmQtOWY3MjViMDFmY2JiIiwic3ViIjoic3lzdGVtOnNlcnZpY2VhY2NvdW50Omt1YmUtc3lzdGVtOmRhc2hib2FyZC1hZG1pbiJ9.hg8xgiYKLH5tyZ8W7UvTRDYXv0vhGphGOxbCuLA4Yn_LbFbrMdmNTqcZQT-kgsS7RMVMgK9NWYZtv9szzhPwdWoLTkTcTLtyECHwhXOk6usSFlCVA8CI_2qj8l4zUty0MLEHSGF_jTcZsvio8UH8dCxCbPPx5Ks3ZcEfw-nMm6rA4hRqH1dQ0YhTk_VC01dv81x17W9SOwsAZoXOpUUFelhxBHIE8iChUmOxtjUvPjmXYn2sOJ_F7cF6PAG_HZQv4y0Gg8uwUMWlNy6fRrKIIOdfcPbSv8fYH486y1C9uc8YXI7p2DQx5nU5qDQtWslGc_9kftGzW-vzypzrzWsGXw
+[root@master ~]# 
+```
+
+`token`行的内容就是最后需要的数据。将其复制粘贴到Web界面的输入框中。
+
+然后，我们就可以进入到DashBoard界面了。
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210813003529.png)
+
+此时，在界面上面看到没有任何Pod。
+
+我们可以快速创建一个Pod。
+
+如，创建一个Nginx的Pod:
+
+```sh
+[root@master ~]# kubectl create deployment myweb --image=nginx
+deployment.apps/myweb created
+[root@master ~]# kubectl get pods 
+NAME                     READY   STATUS    RESTARTS   AGE
+myweb-544b6f5455-2hs9m   1/1     Running   0          60s
+[root@master ~]# 
+```
+
+此时，在DashBoard界面上面会自动显示出刚才创建的myweb这个Pod：
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210813004324.png)
+
+至此，k8s集群以及其基本应用的尝试已经完成了。
+
+
+
+后续，再在集群上面进行深入的学习。
+
+
+
+学习过程中存在的疑问：
+
+- docker pause镜像的作用？
+- k8s是如何选择在哪个节点上面运行Pod的？
+- k8s为什么不能在master上面运行自己的Pod？
+- Pod是什么？
+- k8s可以使用非自签名证书吗？
+- 如何访问k8s的服务，如Web页面，怎么样确定端口号的？
+
+
+
+问题比较多，后面一点一点的总结分析。
