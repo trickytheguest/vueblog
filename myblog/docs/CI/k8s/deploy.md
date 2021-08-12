@@ -1,23 +1,36 @@
 # K8S集群部署
 
-## 1. 服务器基本配置
+## 1. 虚拟机基本配置
 
 我们先在VirtualBox中创建一个基本的CentOS7虚拟机。然后在该基础虚拟机上面进行一些配置。作为一个基础的虚拟机。
+
+### 1.1 虚拟机硬件配置
+
+虚拟机使用双网卡：
+
+- 网卡1，仅主机(Host-Only)网络。
+- 网卡2，网络地址转换(NAT)。
+
+内存大小：2048MB。
+
+处理器数量：2 CPU。
+
+虚拟分配空间： 20 GB。
 
 
 
 在部署K8S集群前，先对服务器进行以下配置：
 
 完成基本的配置：
-1. 时间同步
+1. 时间同步，使用`chronyd`服务同步时间。
 
-2. 时区设置
+2. 时区设置，设置为亚洲/上海。
 
-3. 关闭防火墙
+3. 关闭防火墙，关闭`firewalld`e服务。
 
-4. 关闭SELinux
+4. 关闭SELinux，设置`SELINUX=disabled`。
 
-5. 关闭SWAP
+5. 关闭SWAP，使用`swapoff -a`关闭SWAP。
 
 6. 安装基本软件，如vim,jq,python,docker等
 
@@ -52,7 +65,7 @@ echo "Install IUS yum"
 yum install -y https://repo.ius.io/ius-release-el7.rpm
 
 echo "Set yum tools"
-yum install -y yum-utils device-mapper-persistent-data lvm2 lrzsz
+yum install -y deltarpm yum-utils device-mapper-persistent-data lvm2 lrzsz net-tools
 
 echo "Set Aliyun Docker yum mirror"
 yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
@@ -112,6 +125,7 @@ function add_ip_parse(){
     echo -e "\${ip}\t\${domain}\t\${simple}" >> /etc/hosts
 }
 alias ping='ping -c 3'
+alias ip='hostname -I'
 EOF
 
 
@@ -122,11 +136,12 @@ echo "Start Docker"
 sed -i.bak '/ExecStart=\/usr\/bin\/dockerd/aExecStartPost=/usr/sbin/iptables -P FORWARD ACCEPT' /usr/lib/systemd/system/docker.service
 systemctl daemon-reload
 systemctl enable docker
+systemctl start docker
 echo "Config Docker mirror"
 cat >> /etc/docker/daemon.json << EOF
 {"registry-mirrors":["https://reg-mirror.qiniu.com/"]}
 EOF
-systemctl start docker
+systemctl restart docker
 systemctl status docker
 
 echo "Stop Firewall"
@@ -178,23 +193,28 @@ echo "Done!"
 我计划设置一个master和两个节点,IP和域名对应关系如下：
 
 ```
-192.168.2.60 master.mytest.com
-192.168.2.61 node1.mytest.com
-192.168.2.62 node2.mytest.com
+192.168.56.60 master.mytest.com
+192.168.56.61 node1.mytest.com
+192.168.56.62 node2.mytest.com
 ```
 
 设置后重启虚拟机，查看IP、主机名和名称解析:
 
 ```sh
 [root@master ~]# hostname -I
-192.168.2.60 172.17.0.1 
+192.168.56.60 172.17.0.1 
 [root@master ~]# hostname 
 master.mytest.com
 [root@master ~]# cat /etc/hosts
 127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
 ::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
-192.168.2.60 master.mytest.com master kubeapi.mytest.com kubeapi
-192.168.2.61 node1.mytest.com node1
-192.168.2.62 node2.mytest.com node2
+192.168.56.60 master.mytest.com master kubeapi.mytest.com kubeapi
+192.168.56.61 node1.mytest.com node1
+192.168.56.62 node2.mytest.com node2
 ```
 
+此时，对k8s测试虚拟机进行备份，生成相应的快照。快照名称为`k8s_0`，并且描述信息为"k8s安装k8s前，配置好各节点IP和域名"。这样后面做测试时，可以快速恢复到该快照，不需要重新安装系统配置网络等。
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210812135252.png)
+
+启动三台虚拟机。
