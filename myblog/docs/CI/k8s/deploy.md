@@ -1257,3 +1257,58 @@ daemonset.apps/kube-flannel-ds created
 [root@master ~]# 
 ```
 
+
+
+命令正常执行。我们再看一下节点和Pod状态：
+
+```sh
+[root@master ~]# kubectl get nodes
+NAME                STATUS   ROLES    AGE    VERSION
+master.mytest.com   Ready    master   120m   v1.18.20
+[root@master ~]# kubectl get pods -A
+NAMESPACE     NAME                                        READY   STATUS    RESTARTS   AGE
+kube-system   coredns-7ff77c879f-fbdl7                    1/1     Running   0          120m
+kube-system   coredns-7ff77c879f-zkx44                    1/1     Running   0          120m
+kube-system   etcd-master.mytest.com                      1/1     Running   0          120m
+kube-system   kube-apiserver-master.mytest.com            1/1     Running   0          120m
+kube-system   kube-controller-manager-master.mytest.com   1/1     Running   0          120m
+kube-system   kube-flannel-ds-b722r                       1/1     Running   0          2m14s
+kube-system   kube-proxy-nzmm4                            1/1     Running   0          120m
+kube-system   kube-scheduler-master.mytest.com            1/1     Running   0          120m
+[root@master ~]# 
+```
+
+此时，可以看到，节点已经变成`Ready`就绪状态，并且所有的Pod都是`Running`运行状态。
+
+
+
+现在查看一下正常运行的容器：
+
+```sh
+[root@master ~]# docker ps
+CONTAINER ID   IMAGE                                               COMMAND                  CREATED         STATUS         PORTS     NAMES
+37b88f5b0af3   67da37a9a360                                        "/coredns -conf /etc…"   3 minutes ago   Up 3 minutes             k8s_coredns_coredns-7ff77c879f-zkx44_kube-system_1f5d8bfd-d4ff-4efa-b70d-f98d7538675e_0
+53c4440c7b72   67da37a9a360                                        "/coredns -conf /etc…"   3 minutes ago   Up 3 minutes             k8s_coredns_coredns-7ff77c879f-fbdl7_kube-system_9cd6f3f4-b234-45d3-906f-37afb75dc5c4_0
+a5505760cae2   registry.aliyuncs.com/google_containers/pause:3.2   "/pause"                 3 minutes ago   Up 3 minutes             k8s_POD_coredns-7ff77c879f-zkx44_kube-system_1f5d8bfd-d4ff-4efa-b70d-f98d7538675e_0
+0fe8b36cf268   registry.aliyuncs.com/google_containers/pause:3.2   "/pause"                 3 minutes ago   Up 3 minutes             k8s_POD_coredns-7ff77c879f-fbdl7_kube-system_9cd6f3f4-b234-45d3-906f-37afb75dc5c4_0
+b257627cbd18   8522d622299c                                        "/opt/bin/flanneld -…"   4 minutes ago   Up 4 minutes             k8s_kube-flannel_kube-flannel-ds-b722r_kube-system_a0f30718-ec8e-4931-8e95-0bc33d464945_0
+e20aa5d56136   registry.aliyuncs.com/google_containers/pause:3.2   "/pause"                 4 minutes ago   Up 4 minutes             k8s_POD_kube-flannel-ds-b722r_kube-system_a0f30718-ec8e-4931-8e95-0bc33d464945_0
+fbb59a9fcd3d   27f8b8d51985                                        "/usr/local/bin/kube…"   2 hours ago     Up 2 hours               k8s_kube-proxy_kube-proxy-nzmm4_kube-system_92c5af10-9aa3-49a8-9d2f-ed46045d09f3_0
+ae903b4033d9   registry.aliyuncs.com/google_containers/pause:3.2   "/pause"                 2 hours ago     Up 2 hours               k8s_POD_kube-proxy-nzmm4_kube-system_92c5af10-9aa3-49a8-9d2f-ed46045d09f3_0
+4195620f0212   a05a1a79adaa                                        "kube-scheduler --au…"   2 hours ago     Up 2 hours               k8s_kube-scheduler_kube-scheduler-master.mytest.com_kube-system_c871ae39a802385d75a9bc63229003c0_0
+33246821314b   7d8d2960de69                                        "kube-apiserver --ad…"   2 hours ago     Up 2 hours               k8s_kube-apiserver_kube-apiserver-master.mytest.com_kube-system_c58a587dd1f416378a0cec08a0e83e51_0
+1a5b0f255ca2   303ce5db0e90                                        "etcd --advertise-cl…"   2 hours ago     Up 2 hours               k8s_etcd_etcd-master.mytest.com_kube-system_9c3f6e582e1acc630efb5ee84d994008_0
+01521565d76a   registry.aliyuncs.com/google_containers/pause:3.2   "/pause"                 2 hours ago     Up 2 hours               k8s_POD_kube-scheduler-master.mytest.com_kube-system_c871ae39a802385d75a9bc63229003c0_0
+029f7c6b66d0   e7c545a60706                                        "kube-controller-man…"   2 hours ago     Up 2 hours               k8s_kube-controller-manager_kube-controller-manager-master.mytest.com_kube-system_912a1414f7cd245daf8395f4c4899e74_0
+6f8255098622   registry.aliyuncs.com/google_containers/pause:3.2   "/pause"                 2 hours ago     Up 2 hours               k8s_POD_kube-apiserver-master.mytest.com_kube-system_c58a587dd1f416378a0cec08a0e83e51_0
+05a46b32c721   registry.aliyuncs.com/google_containers/pause:3.2   "/pause"                 2 hours ago     Up 2 hours               k8s_POD_etcd-master.mytest.com_kube-system_9c3f6e582e1acc630efb5ee84d994008_0
+2cca357c6e5c   registry.aliyuncs.com/google_containers/pause:3.2   "/pause"                 2 hours ago     Up 2 hours               k8s_POD_kube-controller-manager-master.mytest.com_kube-system_912a1414f7cd245daf8395f4c4899e74_0
+[root@master ~]# docker ps |wc -l
+17
+[root@master ~]# 
+```
+
+可以看到，此时已经运行了17个容器了。
+
+可以看到运行了很多`pause`容器，这个容器有什么作用？后续研究。
+
