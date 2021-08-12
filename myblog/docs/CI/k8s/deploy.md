@@ -17,16 +17,16 @@
 
 虚拟分配空间： 20 GB。
 
+### 1.2 虚拟机软件配置
 
-
-在部署K8S集群前，先对服务器进行以下配置：
+CentOS系统安装成功后，在部署K8S集群前，先对虚拟机进行以下配置：
 
 完成基本的配置：
 1. 时间同步，使用`chronyd`服务同步时间。
 
 2. 时区设置，设置为亚洲/上海。
 
-3. 关闭防火墙，关闭`firewalld`e服务。
+3. 关闭防火墙，关闭`firewalld`服务。
 
 4. 关闭SELinux，设置`SELINUX=disabled`。
 
@@ -188,6 +188,16 @@ echo "Done!"
 
 ## 2. 虚拟机配置
 
+虚拟机系统信息：
+
+```sh
+[root@master ~]# cat /etc/centos-release
+CentOS Linux release 7.7.1908 (Core)
+[root@master ~]# 
+```
+
+
+
 我们在VirtualBox中复制几个刚才创建的虚拟机，并分别使用`setip`、`sethostname`命令修改虚拟机IP和主机名称，并设置节点名称解析。
 
 我计划设置一个master和两个节点,IP和域名对应关系如下：
@@ -218,3 +228,235 @@ master.mytest.com
 ![](https://meizhaohui.gitee.io/imagebed/img/20210812135252.png)
 
 启动三台虚拟机。
+
+
+
+## 3. 安装k8s集群
+
+### 3.1 修改Docker的CGroup的驱动
+
+**提示：以下操作需要在本示例中的所有3台虚拟机上分别进行。**
+
+参考： [部署v1.20版的Kubernetes集群](https://mp.weixin.qq.com/s/dMygLTxvdUEieQsaQ2RGLA)
+
+kubelet需要让docker容器引擎使用systemd作为CGroup的驱动，其默认值为cgroupfs，因而，我们还需要编辑docker的配置文件/etc/docker/daemon.json，添加内容`"exec-opts": ["native.cgroupdriver=systemd"]`。添加完成后，查看docker的配置文件：
+
+```sh
+[root@master ~]# cat /etc/docker/daemon.json 
+{
+    "registry-mirrors": ["https://reg-mirror.qiniu.com/"],
+    "exec-opts": ["native.cgroupdriver=systemd"]
+}
+[root@master ~]# 
+```
+
+修改后，重启docker服务：
+
+```sh
+[root@master ~]# systemctl restart docker
+[root@master ~]# systemctl status docker
+● docker.service - Docker Application Container Engine
+   Loaded: loaded (/usr/lib/systemd/system/docker.service; enabled; vendor preset: disabled)
+   Active: active (running) since Thu 2021-08-12 14:38:00 CST; 8s ago
+     Docs: https://docs.docker.com
+  Process: 32491 ExecStartPost=/usr/sbin/iptables -P FORWARD ACCEPT (code=exited, status=0/SUCCESS)
+ Main PID: 32361 (dockerd)
+    Tasks: 8
+   Memory: 31.9M
+   CGroup: /system.slice/docker.service
+           └─32361 /usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock
+
+Aug 12 14:38:00 master.mytest.com dockerd[32361]: time="2021-08-12T14:38:00.291438542+08:00" level=info msg="ccResolverWra...e=grpc
+Aug 12 14:38:00 master.mytest.com dockerd[32361]: time="2021-08-12T14:38:00.291447604+08:00" level=info msg="ClientConn sw...e=grpc
+Aug 12 14:38:00 master.mytest.com dockerd[32361]: time="2021-08-12T14:38:00.302327988+08:00" level=info msg="[graphdriver]...rlay2"
+Aug 12 14:38:00 master.mytest.com dockerd[32361]: time="2021-08-12T14:38:00.307250795+08:00" level=info msg="Loading conta...tart."
+Aug 12 14:38:00 master.mytest.com dockerd[32361]: time="2021-08-12T14:38:00.412650926+08:00" level=info msg="Default bridg...dress"
+Aug 12 14:38:00 master.mytest.com dockerd[32361]: time="2021-08-12T14:38:00.456379139+08:00" level=info msg="Loading conta...done."
+Aug 12 14:38:00 master.mytest.com dockerd[32361]: time="2021-08-12T14:38:00.473722675+08:00" level=info msg="Docker daemon...0.10.8
+Aug 12 14:38:00 master.mytest.com dockerd[32361]: time="2021-08-12T14:38:00.473786016+08:00" level=info msg="Daemon has co...ation"
+Aug 12 14:38:00 master.mytest.com systemd[1]: Started Docker Application Container Engine.
+Aug 12 14:38:00 master.mytest.com dockerd[32361]: time="2021-08-12T14:38:00.495967020+08:00" level=info msg="API listen on....sock"
+Hint: Some lines were ellipsized, use -l to show in full.
+[root@master ~]# 
+```
+
+### 3.2 添加kubernetes的YUM源
+
+参考：[Kubernetes 镜像](https://developer.aliyun.com/mirror/kubernetes?spm=a2c6h.13651102.0.0.3e221b118BVyvx)
+
+在三台虚拟机上执行以下命令：
+
+```sh
+cat <<EOF > /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg https://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg
+EOF
+```
+
+然后查看一下`/etc/yum.repos.d/kubernetes.repo`文件：
+
+```sh
+[root@master ~]# cat /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg https://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg
+[root@master ~]# 
+```
+
+由于官网未开放同步方式, 可能会有索引gpg检查失败的情况, 这时请用 `yum install -y --nogpgcheck kubelet kubeadm kubectl` 安装。
+
+### 3.3 安装kubectl、kubelet和kubeadm
+
+由于kubernetes官方更新比较快，2021年8月份已经发布到v1.22版本了，为了便于后期能够在网上搜索资料，我不用最新版本的，使用`v1.18`版本。
+
+我们先看一下仓库中有哪些版本：
+
+```sh
+[root@master ~]# yum search kubelet --showduplicates|tail -n 40
+kubelet-1.18.10-0.x86_64 : Container cluster management
+kubelet-1.18.12-0.x86_64 : Container cluster management
+kubelet-1.18.13-0.x86_64 : Container cluster management
+kubelet-1.18.14-0.x86_64 : Container cluster management
+kubelet-1.18.15-0.x86_64 : Container cluster management
+kubelet-1.18.16-0.x86_64 : Container cluster management
+kubelet-1.18.17-0.x86_64 : Container cluster management
+kubelet-1.18.18-0.x86_64 : Container cluster management
+kubelet-1.18.19-0.x86_64 : Container cluster management
+kubelet-1.18.20-0.x86_64 : Container cluster management
+kubelet-1.19.0-0.x86_64 : Container cluster management
+kubelet-1.19.1-0.x86_64 : Container cluster management
+kubelet-1.19.2-0.x86_64 : Container cluster management
+kubelet-1.19.3-0.x86_64 : Container cluster management
+kubelet-1.19.4-0.x86_64 : Container cluster management
+kubelet-1.19.5-0.x86_64 : Container cluster management
+kubelet-1.19.6-0.x86_64 : Container cluster management
+kubelet-1.19.7-0.x86_64 : Container cluster management
+kubelet-1.19.8-0.x86_64 : Container cluster management
+kubelet-1.19.9-0.x86_64 : Container cluster management
+kubelet-1.19.10-0.x86_64 : Container cluster management
+kubelet-1.19.11-0.x86_64 : Container cluster management
+kubelet-1.19.12-0.x86_64 : Container cluster management
+kubelet-1.19.13-0.x86_64 : Container cluster management
+kubelet-1.20.0-0.x86_64 : Container cluster management
+kubelet-1.20.1-0.x86_64 : Container cluster management
+kubelet-1.20.2-0.x86_64 : Container cluster management
+kubelet-1.20.4-0.x86_64 : Container cluster management
+kubelet-1.20.5-0.x86_64 : Container cluster management
+kubelet-1.20.6-0.x86_64 : Container cluster management
+kubelet-1.20.7-0.x86_64 : Container cluster management
+kubelet-1.20.8-0.x86_64 : Container cluster management
+kubelet-1.20.9-0.x86_64 : Container cluster management
+kubelet-1.21.0-0.x86_64 : Container cluster management
+kubelet-1.21.1-0.x86_64 : Container cluster management
+kubelet-1.21.2-0.x86_64 : Container cluster management
+kubelet-1.21.3-0.x86_64 : Container cluster management
+kubelet-1.22.0-0.x86_64 : Container cluster management
+
+  Name and summary matches only, use "search all" for everything.
+[root@master ~]# 
+```
+
+我们安装`kubelet-1.18.20`这个版本。使用相同的方法，可以知道，`kubeadm`和`kubelet`也有相同的版本。
+
+我们直接安装指定版本的kubernetes软件包：
+
+```sh
+[root@master ~]# yum install -y --nogpgcheck kubectl-1.18.20 kubelet-1.18.20 kubeadm-1.18.20
+Loaded plugins: fastestmirror
+Loading mirror speeds from cached hostfile
+Resolving Dependencies
+--> Running transaction check
+---> Package kubeadm.x86_64 0:1.18.20-0 will be installed
+--> Processing Dependency: kubernetes-cni >= 0.8.6 for package: kubeadm-1.18.20-0.x86_64
+--> Processing Dependency: cri-tools >= 1.13.0 for package: kubeadm-1.18.20-0.x86_64
+---> Package kubectl.x86_64 0:1.18.20-0 will be installed
+---> Package kubelet.x86_64 0:1.18.20-0 will be installed
+--> Processing Dependency: socat for package: kubelet-1.18.20-0.x86_64
+--> Processing Dependency: conntrack for package: kubelet-1.18.20-0.x86_64
+--> Running transaction check
+---> Package conntrack-tools.x86_64 0:1.4.4-7.el7 will be installed
+--> Processing Dependency: libnetfilter_cttimeout.so.1(LIBNETFILTER_CTTIMEOUT_1.1)(64bit) for package: conntrack-tools-1.4.4-7.el7.x86_64
+--> Processing Dependency: libnetfilter_cttimeout.so.1(LIBNETFILTER_CTTIMEOUT_1.0)(64bit) for package: conntrack-tools-1.4.4-7.el7.x86_64
+--> Processing Dependency: libnetfilter_cthelper.so.0(LIBNETFILTER_CTHELPER_1.0)(64bit) for package: conntrack-tools-1.4.4-7.el7.x86_64
+--> Processing Dependency: libnetfilter_queue.so.1()(64bit) for package: conntrack-tools-1.4.4-7.el7.x86_64
+--> Processing Dependency: libnetfilter_cttimeout.so.1()(64bit) for package: conntrack-tools-1.4.4-7.el7.x86_64
+--> Processing Dependency: libnetfilter_cthelper.so.0()(64bit) for package: conntrack-tools-1.4.4-7.el7.x86_64
+---> Package cri-tools.x86_64 0:1.13.0-0 will be installed
+---> Package kubernetes-cni.x86_64 0:0.8.7-0 will be installed
+---> Package socat.x86_64 0:1.7.3.2-2.el7 will be installed
+--> Running transaction check
+---> Package libnetfilter_cthelper.x86_64 0:1.0.0-11.el7 will be installed
+---> Package libnetfilter_cttimeout.x86_64 0:1.0.0-7.el7 will be installed
+---> Package libnetfilter_queue.x86_64 0:1.0.2-2.el7_2 will be installed
+--> Finished Dependency Resolution
+
+Dependencies Resolved
+
+===================================================================================================================================
+ Package                                 Arch                    Version                         Repository                   Size
+===================================================================================================================================
+Installing:
+ kubeadm                                 x86_64                  1.18.20-0                       kubernetes                  8.8 M
+ kubectl                                 x86_64                  1.18.20-0                       kubernetes                  9.5 M
+ kubelet                                 x86_64                  1.18.20-0                       kubernetes                   21 M
+Installing for dependencies:
+ conntrack-tools                         x86_64                  1.4.4-7.el7                     base                        187 k
+ cri-tools                               x86_64                  1.13.0-0                        kubernetes                  5.1 M
+ kubernetes-cni                          x86_64                  0.8.7-0                         kubernetes                   19 M
+ libnetfilter_cthelper                   x86_64                  1.0.0-11.el7                    base                         18 k
+ libnetfilter_cttimeout                  x86_64                  1.0.0-7.el7                     base                         18 k
+ libnetfilter_queue                      x86_64                  1.0.2-2.el7_2                   base                         23 k
+ socat                                   x86_64                  1.7.3.2-2.el7                   base                        290 k
+
+Transaction Summary
+===================================================================================================================================
+Install  3 Packages (+7 Dependent packages)
+
+Total download size: 63 M
+Installed size: 266 M
+。。。省略
+Installed:
+  kubeadm.x86_64 0:1.18.20-0                 kubectl.x86_64 0:1.18.20-0                 kubelet.x86_64 0:1.18.20-0                
+
+Dependency Installed:
+  conntrack-tools.x86_64 0:1.4.4-7.el7                             cri-tools.x86_64 0:1.13.0-0                                     
+  kubernetes-cni.x86_64 0:0.8.7-0                                  libnetfilter_cthelper.x86_64 0:1.0.0-11.el7                     
+  libnetfilter_cttimeout.x86_64 0:1.0.0-7.el7                      libnetfilter_queue.x86_64 0:1.0.2-2.el7_2                       
+  socat.x86_64 0:1.7.3.2-2.el7                                    
+
+Complete!
+[root@master ~]# 
+```
+
+查看kubernetes软件安装情况：
+
+```sh
+[root@master ~]# rpm -qa|grep kube
+kubelet-1.18.20-0.x86_64
+kubectl-1.18.20-0.x86_64
+kubernetes-cni-0.8.7-0.x86_64
+kubeadm-1.18.20-0.x86_64
+[root@master ~]# kubelet --version
+Kubernetes v1.18.20
+[root@master ~]# kubeadm version -o=short
+v1.18.20
+[root@master ~]# kubectl version --short=true
+Client Version: v1.18.20
+The connection to the server localhost:8080 was refused - did you specify the right host or port?
+[root@master ~]#
+```
+
+可以看到，kubernetes相关的几个命令都能正常使用，并且版本也是我们指定的`v1.18.20`。
+
+
+
+使用命令`yum install -y --nogpgcheck kubectl-1.18.20 kubelet-1.18.20 kubeadm-1.18.20`在各节点上安装相应的软件包。
