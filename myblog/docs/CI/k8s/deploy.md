@@ -460,3 +460,278 @@ The connection to the server localhost:8080 was refused - did you specify the ri
 
 
 使用命令`yum install -y --nogpgcheck kubectl-1.18.20 kubelet-1.18.20 kubeadm-1.18.20`在各节点上安装相应的软件包。
+
+这样我们的kubernetes软件包就安装完成了。
+
+
+
+另外，我们设置一下`kubelet`开机启动：
+
+```sh
+[root@master ~]# systemctl enable kubelet
+Created symlink from /etc/systemd/system/multi-user.target.wants/kubelet.service to /usr/lib/systemd/system/kubelet.service.
+[root@master ~]# 
+```
+
+此时不要直接启动`kubelet`，因为其配置文件还没有生成。
+
+
+
+### 3.4 在master上进行集群初始化
+
+现在我们只用在master虚拟机上面进行集群的初始化。
+
+> 该步骤开始尝试构建Kubernetes集群的master节点，配置完成后，各worker节点直接加入到集群中的即可。需要特别说明的是，由kubeadm部署的Kubernetes集群上，集群核心组件kube-apiserver、kube-controller-manager、kube-scheduler和etcd等均会以静态Pod的形式运行，它们所依赖的镜像文件默认来自于gcr.io这一Registry服务之上。但我们无法直接访问该服务，常用的解决办法有如下两种，本示例将选择使用更易于使用的后一种方式。
+>
+> - 使用能够到达该服务的代理服务；
+> - 使用国内的镜像服务器上的服务，例如gcr.azk8s.cn/google_containers和registry.aliyuncs.com/google_containers等 。
+
+#### 3.4.1 拉取镜像
+
+在运行初始化命令之前先运行如下命令单独获取相关的镜像文件，而后再运行后面的`kubeadm init`命令，以便于观察到镜像文件的下载过程。
+
+查看镜像列表：
+
+```sh
+kubeadm config images list --image-repository registry.aliyuncs.com/google_containers
+```
+
+执行：
+
+```sh
+[root@master ~]# kubeadm config images list --image-repository registry.aliyuncs.com/google_containers
+I0812 15:40:30.984989   29210 version.go:255] remote version is much newer: v1.22.0; falling back to: stable-1.18
+W0812 15:40:33.317410   29210 configset.go:202] WARNING: kubeadm cannot validate component configs for API groups [kubelet.config.k8s.io kubeproxy.config.k8s.io]
+registry.aliyuncs.com/google_containers/kube-apiserver:v1.18.20
+registry.aliyuncs.com/google_containers/kube-controller-manager:v1.18.20
+registry.aliyuncs.com/google_containers/kube-scheduler:v1.18.20
+registry.aliyuncs.com/google_containers/kube-proxy:v1.18.20
+registry.aliyuncs.com/google_containers/pause:3.2
+registry.aliyuncs.com/google_containers/etcd:3.4.3-0
+registry.aliyuncs.com/google_containers/coredns:1.6.7
+[root@master ~]# 
+```
+
+可以看到，该镜像仓库中有多个镜像。
+
+
+
+拉取镜像文件：
+
+```sh
+kubeadm config images pull --image-repository registry.aliyuncs.com/google_containers
+```
+
+执行：
+
+```sh
+# 在拉取镜像前，查看docker的镜像列表
+[root@master ~]# docker images
+REPOSITORY   TAG       IMAGE ID   CREATED   SIZE
+
+# 拉取镜像
+[root@master ~]# kubeadm config images pull  --image-repository registry.aliyuncs.com/google_containers
+I0812 15:44:28.995830   12325 version.go:255] remote version is much newer: v1.22.0; falling back to: stable-1.18
+W0812 15:44:31.565048   12325 configset.go:202] WARNING: kubeadm cannot validate component configs for API groups [kubelet.config.k8s.io kubeproxy.config.k8s.io]
+[config/images] Pulled registry.aliyuncs.com/google_containers/kube-apiserver:v1.18.20
+[config/images] Pulled registry.aliyuncs.com/google_containers/kube-controller-manager:v1.18.20
+[config/images] Pulled registry.aliyuncs.com/google_containers/kube-scheduler:v1.18.20
+[config/images] Pulled registry.aliyuncs.com/google_containers/kube-proxy:v1.18.20
+[config/images] Pulled registry.aliyuncs.com/google_containers/pause:3.2
+[config/images] Pulled registry.aliyuncs.com/google_containers/etcd:3.4.3-0
+[config/images] Pulled registry.aliyuncs.com/google_containers/coredns:1.6.7
+
+# 查看命令是否正常退出
+[root@master ~]# echo $?
+0
+
+# 再次查看docker的镜像
+[root@master ~]# docker images
+REPOSITORY                                                        TAG        IMAGE ID       CREATED         SIZE
+registry.aliyuncs.com/google_containers/kube-proxy                v1.18.20   27f8b8d51985   8 weeks ago     117MB
+registry.aliyuncs.com/google_containers/kube-apiserver            v1.18.20   7d8d2960de69   8 weeks ago     173MB
+registry.aliyuncs.com/google_containers/kube-scheduler            v1.18.20   a05a1a79adaa   8 weeks ago     96.1MB
+registry.aliyuncs.com/google_containers/kube-controller-manager   v1.18.20   e7c545a60706   8 weeks ago     162MB
+registry.aliyuncs.com/google_containers/pause                     3.2        80d28bedfe5d   18 months ago   683kB
+registry.aliyuncs.com/google_containers/coredns                   1.6.7      67da37a9a360   18 months ago   43.8MB
+registry.aliyuncs.com/google_containers/etcd                      3.4.3-0    303ce5db0e90   21 months ago   288MB
+[root@master ~]# docker images|wc -l
+8
+[root@master ~]# 
+```
+
+可以看到docker的镜像已经拉取到本地了。
+
+
+
+#### 3.4.2 集群初始化
+
+执行以下命令：
+
+```sh
+kubeadm init \
+    --kubernetes-version=v1.18.20 \
+    --apiserver-advertise-address=192.168.56.60 \
+    --image-repository registry.aliyuncs.com/google_containers \
+    --control-plane-endpoint kubeapi.mytest.com \
+    --pod-network-cidr=10.244.0.0/16 \
+    --service-cidr=10.96.0.0/12 \
+    --token-ttl=0
+```
+
+> 命令中的各选项简单说明如下： 
+>
+> - --image-repository：指定要使用的镜像仓库，默认为gcr.io；
+>
+> - --kubernetes-version：kubernetes程序组件的版本号，它必须要与安装的kubelet程序包的版本号相同；
+>
+> - --control-plane-endpoint：控制平面的固定访问端点，可以是IP地址或DNS名称，会被用于集群管理员及集群组件的kubeconfig配置文件的API Server的访问地址；单控制平面部署时可以不使用该选项；
+>
+> - --pod-network-cidr：Pod网络的地址范围，其值为CIDR格式的网络地址，通常，Flannel网络插件的默认为10.244.0.0/16，Project Calico插件的默认值为192.168.0.0/16；
+>
+> - --service-cidr：Service的网络地址范围，其值为CIDR格式的网络地址，默认为10.96.0.0/12；通常，仅Flannel一类的网络插件需要手动指定该地址；
+>
+> - --apiserver-advertise-address：apiserver通告给其他组件的IP地址，一般应该为Master节点的用于集群内部通信的IP地址，0.0.0.0表示节点上所有可用地址；
+>
+> - --token-ttl：共享令牌（token）的过期时长，默认为24小时，0表示永不过期；为防止不安全存储等原因导致的令牌泄露危及集群安全，建议为其设定过期时长。未设定该选项时，在token过期后，若期望再向集群中加入其它节点，可以使用如下命令重新创建token，并生成节点加入命令。
+>
+>     ```sh
+>     kubeadm token create --print-join-command
+>     ```
+
+执行：
+
+```sh
+[root@master ~]# kubeadm init \
+>     --kubernetes-version=v1.18.20 \
+>     --apiserver-advertise-address=192.168.56.60 \
+>     --image-repository registry.aliyuncs.com/google_containers  \
+>     --control-plane-endpoint kubeapi.mytest.com \
+>     --pod-network-cidr=10.244.0.0/16 \
+>     --service-cidr=10.96.0.0/12 \
+>     --token-ttl=0
+W0812 16:11:06.680875    6714 configset.go:202] WARNING: kubeadm cannot validate component configs for API groups [kubelet.config.k8s.io kubeproxy.config.k8s.io]
+[init] Using Kubernetes version: v1.18.20
+
+# 梅朝辉注释： 步骤1：进行预检查，看环境是否满足要求，如CPU需要2核、SWAP需要关闭等等
+# 此处提示一个警告，该版本的Docker未经过验证
+[preflight] Running pre-flight checks
+        [WARNING SystemVerification]: this Docker version is not on the list of validated versions: 20.10.8. Latest validated version: 19.03
+
+# 梅朝辉注释： 步骤2：下载k8s集群需要的镜像
+# 我们在上一节已经拉取了镜像，此处初始化就会缩短时间，通过提前拉取镜像，可以看到镜像是否能够拉取成功
+# 避免在集群初始化时出现异常
+[preflight] Pulling images required for setting up a Kubernetes cluster
+[preflight] This might take a minute or two, depending on the speed of your internet connection
+[preflight] You can also perform this action in beforehand using 'kubeadm config images pull'
+
+# 梅朝辉注释： 步骤3：启动kubelet组件，并准备kubelet的配置文件
+[kubelet-start] Writing kubelet environment file with flags to file "/var/lib/kubelet/kubeadm-flags.env"
+[kubelet-start] Writing kubelet configuration to file "/var/lib/kubelet/config.yaml"
+[kubelet-start] Starting the kubelet
+
+# 梅朝辉注释： 步骤4： 生成证书,存放在/etc/kubernetes/pki目录下
+[certs] Using certificateDir folder "/etc/kubernetes/pki"
+[certs] Generating "ca" certificate and key
+[certs] Generating "apiserver" certificate and key
+[certs] apiserver serving cert is signed for DNS names [master.mytest.com kubernetes kubernetes.default kubernetes.default.svc kubernetes.default.svc.cluster.local kubeapi.mytest.com] and IPs [10.96.0.1 192.168.56.60]
+[certs] Generating "apiserver-kubelet-client" certificate and key
+[certs] Generating "front-proxy-ca" certificate and key
+[certs] Generating "front-proxy-client" certificate and key
+[certs] Generating "etcd/ca" certificate and key
+[certs] Generating "etcd/server" certificate and key
+[certs] etcd/server serving cert is signed for DNS names [master.mytest.com localhost] and IPs [192.168.56.60 127.0.0.1 ::1]
+[certs] Generating "etcd/peer" certificate and key
+[certs] etcd/peer serving cert is signed for DNS names [master.mytest.com localhost] and IPs [192.168.56.60 127.0.0.1 ::1]
+[certs] Generating "etcd/healthcheck-client" certificate and key
+[certs] Generating "apiserver-etcd-client" certificate and key
+[certs] Generating "sa" key and public key
+
+
+# 梅朝辉注释： 步骤5：生成kubeconfig配置文件
+[kubeconfig] Using kubeconfig folder "/etc/kubernetes"
+[kubeconfig] Writing "admin.conf" kubeconfig file
+[kubeconfig] Writing "kubelet.conf" kubeconfig file
+[kubeconfig] Writing "controller-manager.conf" kubeconfig file
+[kubeconfig] Writing "scheduler.conf" kubeconfig file
+
+# 梅朝辉注释： 步骤6：控制面板，以静态Pod的形式启动APIServer和Controller-Manager
+[control-plane] Using manifest folder "/etc/kubernetes/manifests"
+[control-plane] Creating static Pod manifest for "kube-apiserver"
+[control-plane] Creating static Pod manifest for "kube-controller-manager"
+W0812 16:11:12.395441    6714 manifests.go:225] the default kube-apiserver authorization-mode is "Node,RBAC"; using "Node,RBAC"
+[control-plane] Creating static Pod manifest for "kube-scheduler"
+W0812 16:11:12.396611    6714 manifests.go:225] the default kube-apiserver authorization-mode is "Node,RBAC"; using "Node,RBAC"
+
+# 梅朝辉注释： 步骤7：以静态Pod的形式启动etcd
+[etcd] Creating static Pod manifest for local etcd in "/etc/kubernetes/manifests"
+
+# 梅朝辉注释： 步骤8： 等待控制面板启动
+[wait-control-plane] Waiting for the kubelet to boot up the control plane as static Pods from directory "/etc/kubernetes/manifests". This can take up to 4m0s
+
+# 梅朝辉注释：所有控制面板组件都是健康的
+[apiclient] All control plane components are healthy after 20.512808 seconds
+
+# 梅朝辉注释： 步骤9： 存储kubelet配置文件到ConfigMap中 
+[upload-config] Storing the configuration used in ConfigMap "kubeadm-config" in the "kube-system" Namespace
+[kubelet] Creating a ConfigMap "kubelet-config-1.18" in namespace kube-system with the configuration for the kubelets in the cluster
+
+# 梅朝辉注释：证书上传，忽略
+[upload-certs] Skipping phase. Please see --upload-certs
+
+# 梅朝辉注释：步骤10： 给master节点添加标签，标记污点，后续创建Pod时，不会分配到master节点上
+[mark-control-plane] Marking the node master.mytest.com as control-plane by adding the label "node-role.kubernetes.io/master=''"
+[mark-control-plane] Marking the node master.mytest.com as control-plane by adding the taints [node-role.kubernetes.io/master:NoSchedule]
+
+# 梅朝辉注释：步骤11： 引导TOKEN，配置bootstrap tls，给节点自动颁发证书
+[bootstrap-token] Using token: ntf08x.uaudrocid80akszx
+[bootstrap-token] Configuring bootstrap tokens, cluster-info ConfigMap, RBAC Roles
+[bootstrap-token] configured RBAC rules to allow Node Bootstrap tokens to get nodes
+[bootstrap-token] configured RBAC rules to allow Node Bootstrap tokens to post CSRs in order for nodes to get long term certificate credentials
+[bootstrap-token] configured RBAC rules to allow the csrapprover controller automatically approve CSRs from a Node Bootstrap Token
+[bootstrap-token] configured RBAC rules to allow certificate rotation for all node client certificates in the cluster
+[bootstrap-token] Creating the "cluster-info" ConfigMap in the "kube-public" namespace
+[kubelet-finalize] Updating "/etc/kubernetes/kubelet.conf" to point to a rotatable kubelet client certificate and key
+
+# 梅朝辉注释：步骤12： 安装插件，CoreDNS为K8S集群中做内部解析的，Kube-Proxy是负责Pod的网络的 
+[addons] Applied essential addon: CoreDNS
+[addons] Applied essential addon: kube-proxy
+
+# 梅朝辉注释：k8s控制平面初始化成功
+Your Kubernetes control-plane has initialized successfully!
+
+# 梅朝辉注释：用户需要执行的步骤1：复制配置文件,使得可以使用kubectl命令。
+# 如果不拷贝，则不能使用`kubectl get node`查看集群节点信息，此时是直接没有权限的
+To start using your cluster, you need to run the following as a regular user:
+
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+You should now deploy a pod network to the cluster.
+Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+  https://kubernetes.io/docs/concepts/cluster-administration/addons/
+
+# 梅朝辉注释：用户可选的步骤1：添加其他控制平面节点，这样可以将集群升级为高可用。
+You can now join any number of control-plane nodes by copying certificate authorities
+and service account keys on each node and then running the following as root:
+
+  kubeadm join kubeapi.mytest.com:6443 --token ntf08x.uaudrocid80akszx \
+    --discovery-token-ca-cert-hash sha256:e60ab1ae8fcc0f8b8d3d2256c59738723a7ad04bee1aa0c0a1d8256bc62b4293 \
+    --control-plane 
+
+
+# 梅朝辉注释：用户需要执行的步骤2：在节点中执行命令，将节点加入到集群中，注意，该需要需要在node节点中执行
+Then you can join any number of worker nodes by running the following on each as root:
+
+kubeadm join kubeapi.mytest.com:6443 --token ntf08x.uaudrocid80akszx \
+    --discovery-token-ca-cert-hash sha256:e60ab1ae8fcc0f8b8d3d2256c59738723a7ad04bee1aa0c0a1d8256bc62b4293 
+[root@master ~]# echo $?
+0
+[root@master ~]# 
+```
+
+执行集群初始化时，会经过多个步骤，各个步骤的解释，详见上面命令行操作中的备注信息。
+
+#### 3.4.3  检查k8s集群生成的文件(可忽略)
+
