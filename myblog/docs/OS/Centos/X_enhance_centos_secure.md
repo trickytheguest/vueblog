@@ -11,11 +11,11 @@
 - 安装`DenyHosts`防暴力破解软件
 - 安装`ClamAV`反病毒软件
 
-## 修改用户密码为高强度密码
+## 1. 修改用户密码为高强度密码
 
 - 所谓的高强度密码，就是包含了`大小写`、`数字`、`符号`的密码。
 
-### 安装自动产生密码的软件`pygen`
+### 1.1 安装自动产生密码的软件`pygen`
 
 ```sh
 [root@hellogitlab ~]# yum install pwgen -y 
@@ -65,7 +65,7 @@ Installed:
 Complete!
 ```
 
-### 生成20个超级难记的密码
+### 1.2 生成20个超级难记的密码
 
 ```sh
 [root@hellogitlab ~]# pwgen -cnys 14 -n 20
@@ -102,9 +102,9 @@ passwd: all authentication tokens updated successfully.
 - 通过`echo "tJD8OTl,2z13EL" |passwd root --stdin`设置`root`用户密码,`--stdin`表明从标准输入中读入密码信息。
 - `history |tail -n 2`查看历史记录，可以看到`echo "tJD8OTl,2z13EL" |passwd root --stdin`这条命令没有被记录。
 
-## 创建`sudo`用户
+## 2. 创建`sudo`用户
 
-### 创建用户
+### 2.1 创建用户
 
 新建普通用户"meizhaohui"
 
@@ -112,7 +112,7 @@ passwd: all authentication tokens updated successfully.
 [root@hellogitlab ~]# useradd meizhaohui
 ```
 
-### 设置密码
+### 2.1 设置密码
 
 输入两次密码：
 
@@ -127,7 +127,7 @@ Retype new password:
 passwd: all authentication tokens updated successfully.
 ```
 
-### 修改授权文件
+### 2.2 修改授权文件
 
 - 查看授权文件位置
 
@@ -172,7 +172,7 @@ mode of ‘/etc/sudoers’ changed from 0640 (rw-r-----) to 0440 (r--r-----)
 -r--r----- 1 root root 4.3K Oct 31 21:17 /etc/sudoers
 ```
 
-### 测试`sudo`用户是否具备`sudo`权限
+### 2.3 测试`sudo`用户是否具备`sudo`权限
 
 - 使用"meizhaohui"账号登陆系统，并尝试查看`/etc/sudoers`文件内容
 
@@ -197,7 +197,7 @@ head: cannot open ‘/etc/sudoers’ for reading: Permission denied
 
 可以发现，不使用`sudo`命令时，无法查看文件内容，显示"`Permission denied`"，表明没有权限；使用`sudo`命令时，可以查看文件内容。说明`sudo`用户配置正确。
 
-## 修改`ssh`默认端口
+## 3. 修改`ssh`默认端口
 
 - `SSH`是建立在应用层和传输层基础上的一种安全协议。`SSH`传输数据是加密的，可以有效防止传输过程被截取数据保障安全。
 - `SSH`默认端口值是`22`，最大可以是`65535`。
@@ -214,7 +214,7 @@ head: cannot open ‘/etc/sudoers’ for reading: Permission denied
 
 可以发现17行中显示端口号是`22`。
 
-### 修改端口号
+### 3.1 修改端口号
 
 ```sh
 [root@hellogitlab ~]# sed -i 's/#Port 22/Port 10000/g' /etc/ssh/sshd_config
@@ -222,7 +222,7 @@ head: cannot open ‘/etc/sudoers’ for reading: Permission denied
 Port 10000
 ```
 
-### 重启`SSH`服务
+### 3.2 重启`SSH`服务
 
 ```sh
 [root@hellogitlab ~]# systemctl restart sshd
@@ -248,7 +248,7 @@ tcp        0      0 0.0.0.0:10000           0.0.0.0:*               LISTEN      
 
 可以发现`SSH`服务在端口号已经变成`10000`了。
 
-### 防火墙放行`10000`端口
+### 3.3 防火墙放行`10000`端口
 
 - 查看当前防火墙放行规则信息
 
@@ -314,7 +314,7 @@ public
 - 使用`22`端口连接时提示`The remote system refused the connection.`异常。
 - 使用`10000`端口连接时，可以正常连接到服务器，说明配置正确。
 
-## 禁用`root`账户远程登陆
+## 4. 禁用`root`账户远程登陆
 
 - 查看用户手册
 
@@ -354,7 +354,7 @@ PermitRootLogin no
 
 可以发现配置文件修改成功。
 
-### 重启`SSH`服务并退出`root`账号远程连接
+- 重启`SSH`服务并退出`root`账号远程连接
 
 ```sh
 [root@hellogitlab ~]# systemctl restart sshd
@@ -377,7 +377,7 @@ logout
 ```
 
 
-### 测试使用`root`账号远程连接
+- 测试使用`root`账号远程连接
 
 再次使用`root`账号远程连接时，提示`password authentication failed`
 
@@ -416,9 +416,19 @@ data
 - 可以看到`22`端口不能访问，并且不能使用`ssh root@106.54.98.83 -p 10000`方式连接到服务器。
 - 可以看到可以能`su root`命令切换到`root`账号里，同时也可以使用`sudo ls /root`来执行一些需要使用`root`账号才能完成的事情。说明我们的配置正确。
 
-## 安装`DenyHosts`防暴力破解软件
+## 5. 安装`DenyHosts`防暴力破解软件
 
-待补。
+denyhosts官方地址：[https://github.com/denyhosts/denyhosts](https://github.com/denyhosts/denyhosts)
+
+推荐使用3.0版本，下载地址：[https://github.com/denyhosts/denyhosts/archive/refs/tags/v3.0.tar.gz](https://github.com/denyhosts/denyhosts/archive/refs/tags/v3.0.tar.gz)
+
+> ## What is DenyHosts?
+>
+> DenyHosts is a script intended to be run by Linux system administrators to help  thwart SSH server attacks (also known as dictionary based attacks and brute force  attacks).
+>
+> If you've ever looked at your ssh log (/var/log/secure on Redhat, /var/log/auth.log on Mandrake, etc...) you may be  alarmed to see how many hackers attempted to gain access to your server.  Hopefully, none of them were successful (but  then again, how would you know?).  Wouldn't it be better to automatically prevent that attacker from continuing to gain  entry into your system?
+
+DenyHosts用于SSH防暴力破解。当远程用户多次登陆失败时，用户的IP将会被加入到黑名单中，不允许再次登陆。只有将该IP从黑名单移除后才能再次登陆。
 
 ## 安装`ClamAV`反病毒软件
 
