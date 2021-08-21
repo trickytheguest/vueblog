@@ -422,7 +422,7 @@ denyhosts官方地址：[https://github.com/denyhosts/denyhosts](https://github.
 
 推荐使用3.0版本，下载地址：[https://github.com/denyhosts/denyhosts/archive/refs/tags/v3.0.tar.gz](https://github.com/denyhosts/denyhosts/archive/refs/tags/v3.0.tar.gz)
 
-> ## What is DenyHosts?
+> What is DenyHosts?
 >
 > DenyHosts is a script intended to be run by Linux system administrators to help  thwart SSH server attacks (also known as dictionary based attacks and brute force  attacks).
 >
@@ -612,7 +612,7 @@ total 216M
 -rw-r--r-- 1 clamupdate clamupdate 161M Aug 20 23:23 main.cvd
 ```
 
-- 设置本雪socket文件
+- 设置本地socket文件
 
 去掉`#LocalSocket /run/clamd.scan/clamd.sock`行的`#`:
 
