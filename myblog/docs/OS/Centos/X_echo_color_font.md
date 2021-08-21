@@ -50,7 +50,7 @@ $ echo -e "\033[32m绿色文字\033[0m"
 
 ```sh
 $ echo -e "\033[31m红字\033[32m绿字\033[0m" # 输出红字和绿字
-```    
+```
 
 ![red_green_font.png](https://meizhaohui.gitee.io/imagebed/img/red_green_font.png)
 
@@ -60,7 +60,7 @@ $ echo -e "\033[31m红字\033[32m绿字\033[0m" # 输出红字和绿字
 ```sh
 $ echo -e "\033[31m红字\033[43;32m绿字带黄色背景\033[0m" # 输出红字和带黄色背景的绿字
 ```
-   
+
 ![red_green_font_yellow_background.png](https://meizhaohui.gitee.io/imagebed/img/red_green_font_yellow_background.png) 
 
 
@@ -69,7 +69,7 @@ $ echo -e "\033[31m红字\033[43;32m绿字带黄色背景\033[0m" # 输出红字
 ```sh
 $ echo -e "\033[4;47;31m带下划线的白色背景的红字\033[0m\033[1;41;32m高亮的红色背景的绿字\033[0m"
 ```
-  
+
 ![underline_highlight1](https://meizhaohui.gitee.io/imagebed/img/underline_highlight1.png)
 
 
@@ -79,7 +79,7 @@ $ echo -e "\033[4;47;31m带下划线的白色背景的红字\033[0m\033[1;41;32m
 ```sh
 $ echo -e "\033[4m\033[47m\033[31m带下划线的白色背景的红字\033[0m \033[1m\033[41m\033[32m高亮的红色背景的绿字\033[0m"
 ```
-    
+
 ![underline_highlight2](https://meizhaohui.gitee.io/imagebed/img/underline_highlight2.png)    
 
 
@@ -153,7 +153,7 @@ set_clear=”\033[0m”
 set_bold=”\033[1m”
 set_underline=”\033[4m”
 set_flash=”\033[5m”
-```    
+```
 
 输入完成后，先按`Esc`键，再按`:`键，并输入`wq`保存退出。
 
@@ -161,8 +161,8 @@ set_flash=”\033[5m”
 
 ```sh
 [meizhaohui@localhost ~]$ source ~/.bashrc
-```    
-    
+```
+
 此时按如下命令输入相应的字体:
 
 ```sh
@@ -195,6 +195,120 @@ echo -e "${bg_red}${fg_green}${set_bold}红色背景粗体的绿色字${set_clea
 ```
 
 ![red_back_bold_green.PNG](https://meizhaohui.gitee.io/imagebed/img/red_back_bold_green.PNG)    
+
+## 日志颜色控制
+
+当我们编写Shell脚本时，需要将日志信息保存起来，我们也可以使用`echo`命令输出带颜色的字体，方便查看日志信息。
+
+如，我们将以下代码加入到`~/.bashrc`文件中，并重新加载，使其生效。
+
+```sh
+#################################################
+# Get now date string.
+# 当前日期字符串
+#################################################
+function now_date() {
+    format=$1
+    if [[ "${format}" ]]; then
+        now=$(date +"${format}")
+    else
+        now=$(date +"%Y%m%d_%H%M%S")
+    fi
+
+    echo "${now}"
+}
+
+#################################################
+# Basic log function.
+# 基本日志，输出时间戳
+# ex: [2021/08/15 19:16:10]
+#################################################
+function echo_log() {
+    now=$(date +"[%Y/%m/%d %H:%M:%S]")
+    echo -e "\033[1;$1m${now}$2\033[0m"
+}
+
+#################################################
+# Debug log message.
+# 调试日志，黑色
+#################################################
+function msg_debug() {
+    echo_log 30 "[Debug] ====> $*"
+}
+
+#################################################
+# Error log message.
+# 异常日志，红色
+#################################################
+function msg_error() {
+    echo_log 31 "[Error] ====> $*"
+}
+
+#################################################
+# Success log message.
+# 成功日志，绿色
+#################################################
+function msg_success() {
+    echo_log 32 "[Success] ====> $*"
+}
+
+#################################################
+# Warning log message.
+# 警告日志，黄色
+#################################################
+function msg_warn() {
+    echo_log 33 "[Warning] ====> $*"
+}
+
+#################################################
+# Information log message.
+# 一般消息日志，蓝色
+#################################################
+function msg_info() {
+    echo_log 34 "[Info] ====> $*"
+}
+```
+
+然后，在命令行就可以打印不同样式的消息了。
+
+```sh
+[meizhaohui@hellogitlab ~]$ msg_debug 'debug message'
+[2021/08/21 12:35:45][Debug] ====> debug message
+[meizhaohui@hellogitlab ~]$ msg_info "info message"
+[2021/08/21 12:35:47][Info] ====> info message
+[meizhaohui@hellogitlab ~]$ msg_warn 'warn message'
+[2021/08/21 12:35:58][Warning] ====> warn message
+[meizhaohui@hellogitlab ~]$ msg_error 'error message'
+[2021/08/21 12:36:16][Error] ====> error message
+[meizhaohui@hellogitlab ~]$ msg_success 'success message'
+[2021/08/21 12:36:25][Success] ====> success message
+```
+
+实际效果如下：
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210821123847.png)
+
+可以看到，这种效果非常漂亮。后面我们可以把相应的消息写入到日志文件中，后期查看日志文件内容时，也可以看到有颜色的日志信息。
+
+请看以下示例：
+
+```sh
+[meizhaohui@hellogitlab ~]$ msg_info "info message" >> log.txt
+[meizhaohui@hellogitlab ~]$ msg_warn 'warn message' >> log.txt
+[meizhaohui@hellogitlab ~]$ msg_success 'success message' >> log.txt
+[meizhaohui@hellogitlab ~]$ cat log.txt
+[2021/08/21 12:40:14][Info] ====> info message
+[2021/08/21 12:40:27][Warning] ====> warn message
+[2021/08/21 12:40:37][Success] ====> success message
+[meizhaohui@hellogitlab ~]$
+```
+
+效果如下：
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210821124157.png)
+
+
+
 
 
 参考文献：
