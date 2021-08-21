@@ -156,7 +156,7 @@ See the manpage for more options.
 
 ### 2.1 按tutorial教程进行简单测试
 
-
+#### 2.1.1 获取原始数据
 
 GitHub提供JSON API,我们从`jq`仓库获取最新的3个提交。
 
@@ -404,7 +404,11 @@ GitHub提供JSON API,我们从`jq`仓库获取最新的3个提交。
 [meizhaohui@hellogitlab ~]$
 ```
 
-此时，可以看到，GitHub返回格式化好的json。 对于不这样的服务器，通过`jq`将通过管道漂亮打印出结果。 最简单的`jq`程序是表达式`.`,它取得了输入，并将其与输出保持不变。
+此时，可以看到，GitHub返回格式化好的json。 对于不这样的服务器，通过`jq`将通过管道漂亮打印出结果。 
+
+#### 2.1.2 美化json输出
+
+最简单的`jq`程序是表达式`.`,它取得了输入，并将其与输出保持不变。
 
 ```sh
 [meizhaohui@hellogitlab ~]$ curl -s 'https://api.github.com/repos/stedolan/jq/commits?per_page=3'|jq '.'
@@ -663,6 +667,8 @@ GitHub提供JSON API,我们从`jq`仓库获取最新的3个提交。
 
 
 
+#### 2.1.3 获取单一子元素
+
 获取第一个提交。
 
 ```sh
@@ -749,6 +755,8 @@ GitHub提供JSON API,我们从`jq`仓库获取最新的3个提交。
 [meizhaohui@hellogitlab ~]$
 ```
 
+#### 2.1.4 元素过滤
+
 有很多信息我们不关心，我们可以过滤出我们关心的字段。
 
 如我们只关心`commit`信息：
@@ -803,4 +811,99 @@ GitHub提供JSON API,我们从`jq`仓库获取最新的3个提交。
 
 ![](https://meizhaohui.gitee.io/imagebed/img/20210821172451.png)
 
-可以看到，我们在`jq`命令内部的管道中，通过类似`message`/`name`或`CommitMessage`/`CommitterName`等来定义最后要显示的字段的名称，而通过`.commit.message`或`.commit.committer.name`来获取`json`数据中的关键信息。
+可以看到，我们在`jq`命令内部的管道中，通过类似`message`/`name`或`CommitMessage`/`CommitterName`等来定义最后要显示的字段的名称，而通过`.commit.message`或`.commit.committer.name`来获取`json`数据中的关键信息。你可以通过`.`点号来访问嵌套属性，如`.commit.committer.name`。
+
+#### 2.1.5 对所有元素进行过滤
+
+对所有元素进行过滤。
+
+获取所有的提交的提交消息和提交人信息。
+
+```sh
+[meizhaohui@hellogitlab ~]$ cat data.json |jq '.[] | {message: .commit.message, name: .commit.committer.name}'
+{
+  "message": "Fix msys2 installation on AppVeyor\n\nRef: https://www.msys2.org/news/#2020-06-29-new-packagers",
+  "name": "William Langford"
+}
+{
+  "message": "Fix incorrect if empty string example",
+  "name": "William Langford"
+}
+{
+  "message": "update the version available through Chocolatey",
+  "name": "William Langford"
+}
+[meizhaohui@hellogitlab ~]$
+```
+
+> `.[]` returns each element of the array returned in the response, one at a time, which are all fed into `{message: .commit.message, name: .commit.committer.name}`.
+
+`.[]`返回列表中的每一个元素，一次返回一个，并送入到后面的过滤器中。
+
+
+
+在`jq`中数据是以流的形式进行传输的，每个`jq`表达式对其输入流的每个值进行操作，然后在输出流中可以生成任何数量的值。
+
+只需要将`json`值与空格分开来序列化，这是一种`cat`友好的格式。你可以将两个`json`流合并到一起，并形成一个有效的`json`流。
+
+
+
+#### 2.1.6 生成单个数组
+
+如果您想将输出作为单个数组，您可以通过将过滤器包装在方括号中来告诉 `jq`收集所有结果。
+
+你可以像下面这样：
+
+```sh
+[meizhaohui@hellogitlab ~]$ cat data.json |jq '[.[] | {message: .commit.message, name: .commit.committer.name}]'
+[
+  {
+    "message": "Fix msys2 installation on AppVeyor\n\nRef: https://www.msys2.org/news/#2020-06-29-new-packagers",
+    "name": "William Langford"
+  },
+  {
+    "message": "Fix incorrect if empty string example",
+    "name": "William Langford"
+  },
+  {
+    "message": "update the version available through Chocolatey",
+    "name": "William Langford"
+  }
+]
+```
+
+可以看到，已经将结果集中的三个对象放在数组中了。
+
+
+
+#### 2.1.7 获取子元素的列表
+
+每一个提交都有可能有多个父提交。现在我们来获取每个提交的父提交的散列值。
+
+```sh
+[meizhaohui@hellogitlab ~]$ cat data.json |jq '[.[] | {message: .commit.message, name: .commit.committer.name, parents: [.parents[].sha]}]'
+[
+  {
+    "message": "Fix msys2 installation on AppVeyor\n\nRef: https://www.msys2.org/news/#2020-06-29-new-packagers",
+    "name": "William Langford",
+    "parents": [
+      "cc4efc49e1eedb98289347bf264c50c5c8656e7c"
+    ]
+  },
+  {
+    "message": "Fix incorrect if empty string example",
+    "name": "William Langford",
+    "parents": [
+      "e615bdc407ddcb82f1d78f1651464ad28e287954"
+    ]
+  },
+  {
+    "message": "update the version available through Chocolatey",
+    "name": "William Langford",
+    "parents": [
+      "9600a5c78141051adc08362b9c5446a15ae4d9a4"
+    ]
+  }
+]
+```
+
