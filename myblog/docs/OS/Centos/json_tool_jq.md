@@ -96,7 +96,7 @@ Complete!
 
 
 
-## 2. 使用
+## 2. 基本使用
 
 查看`jq`的版本信息和帮助信息：
 
@@ -906,4 +906,40 @@ GitHub提供JSON API,我们从`jq`仓库获取最新的3个提交。
   }
 ]
 ```
+
+
+
+## 3. jq手册页
+
+你可以访问 [https://stedolan.github.io/jq/manual/](https://stedolan.github.io/jq/manual/) 获取在线手册页，也可以使用`man jq`命令获取`jq`的手册页。
+
+- `jq`程序是一个过滤器，对输入流进入处理，然后返回输出流。
+- `jq`有很多内置的过滤器。
+- 可以对过滤器进行多种方式的组合。
+
+
+
+下面我们一点点的来了解`jq`手册页中的内容，从简单的开始入手。
+
+### 3.1  调用`jq`
+
+> jq filters run on a stream of JSON data. The input to jq is parsed as a sequence of whitespace-separated JSON values which are passed through the provided filter one at a time. The output(s) of the filter are written to standard out, again as a sequence of whitespace-separated JSON data.
+
+- `jq`过滤器运行在JSON数据流上。输入流是以`whitespace`分隔的JSON序列，输出流是以`whitespace`分隔的JSON序列，并输出到标准输出。
+- 注意，在使用`jq`时，请使用单引号`'`进行引用，不要使用双引号，如`jq "foo"`将被理解为`jq foo`，此时会提示`foo`未定义。
+
+#### 3.1.1 查看`jq`版本信息
+
+```sh
+$ jq --version
+jq-1.6
+```
+
+#### 3.1.2 忽略参数
+
+现阶段有些参数不明白什么意思。此处记录一下。
+
+- `--seq `：使用 application/json-seq MIME 类型方案在 jq 的输入和输出中分隔 JSON 文本。
+- `--stream`: 以流形式解析输入。
+- 
 
