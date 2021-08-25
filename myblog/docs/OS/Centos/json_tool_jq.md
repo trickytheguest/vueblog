@@ -15,7 +15,7 @@ jq 是一个轻量级而且灵活的命令行 JSON 解析器，类似用于 JSON
 查看`jq`包的信息：
 
 ```sh
-[meizhaohui@hellogitlab ~]$ yum info jq
+$ yum info jq
 Loaded plugins: fastestmirror, langpacks
 Repository epel is listed more than once in the configuration
 Repository google-chrome is listed more than once in the configuration
@@ -47,13 +47,13 @@ Description : lightweight and flexible command-line JSON processor
             :  program to do so is often shorter and simpler than
             :  you'd expect.
 
-[meizhaohui@hellogitlab ~]$
+$
 ```
 
 安装：
 
 ```sh
-[meizhaohui@hellogitlab ~]$ sudo yum install -y jq
+$ sudo yum install -y jq
 Loaded plugins: fastestmirror, langpacks
 Repository epel is listed more than once in the configuration
 Repository google-chrome is listed more than once in the configuration
@@ -91,7 +91,7 @@ Installed:
   jq.x86_64 0:1.6-2.el7
 
 Complete!
-[meizhaohui@hellogitlab ~]$
+$
 ```
 
 
@@ -101,9 +101,9 @@ Complete!
 查看`jq`的版本信息和帮助信息：
 
 ```sh
-[meizhaohui@hellogitlab ~]$ jq --version
+$ jq --version
 jq-1.6
-[meizhaohui@hellogitlab ~]$ jq --help
+$ jq --help
 jq - commandline JSON processor [version 1.6]
 
 Usage:	jq [options] <jq filter> [file...]
@@ -151,7 +151,7 @@ Named arguments are also available as $ARGS.named[], while
 positional arguments are available as $ARGS.positional[].
 
 See the manpage for more options.
-[meizhaohui@hellogitlab ~]$
+$
 ```
 
 ### 2.1 按tutorial教程进行简单测试
@@ -161,7 +161,7 @@ See the manpage for more options.
 GitHub提供JSON API,我们从`jq`仓库获取最新的3个提交。
 
 ```sh
-[meizhaohui@hellogitlab ~]$ curl -s 'https://api.github.com/repos/stedolan/jq/commits?per_page=3'
+$ curl -s 'https://api.github.com/repos/stedolan/jq/commits?per_page=3'
 [
   {
     "sha": "d18b2d078c2383d9472d0a0a226e07009025574f",
@@ -401,7 +401,7 @@ GitHub提供JSON API,我们从`jq`仓库获取最新的3个提交。
     ]
   }
 ]
-[meizhaohui@hellogitlab ~]$
+$
 ```
 
 此时，可以看到，GitHub返回格式化好的json。 对于不这样的服务器，通过`jq`将通过管道漂亮打印出结果。 
@@ -411,7 +411,7 @@ GitHub提供JSON API,我们从`jq`仓库获取最新的3个提交。
 最简单的`jq`程序是表达式`.`,它取得了输入，并将其与输出保持不变。
 
 ```sh
-[meizhaohui@hellogitlab ~]$ curl -s 'https://api.github.com/repos/stedolan/jq/commits?per_page=3'|jq '.'
+$ curl -s 'https://api.github.com/repos/stedolan/jq/commits?per_page=3'|jq '.'
 [
   {
     "sha": "d18b2d078c2383d9472d0a0a226e07009025574f",
@@ -651,7 +651,7 @@ GitHub提供JSON API,我们从`jq`仓库获取最新的3个提交。
     ]
   }
 ]
-[meizhaohui@hellogitlab ~]$
+$
 ```
 
 此时，我们可以看到，虽然结果相同，但现在的输出结果中，已经美化过了，变得非常漂亮了。
@@ -661,8 +661,8 @@ GitHub提供JSON API,我们从`jq`仓库获取最新的3个提交。
 为了加快我们测试，我先将`curl`请求的结果保存到本地文件中。
 
 ```sh
-[meizhaohui@hellogitlab ~]$ curl -s 'https://api.github.com/repos/stedolan/jq/commits?per_page=3' > data.json
-[meizhaohui@hellogitlab ~]$
+$ curl -s 'https://api.github.com/repos/stedolan/jq/commits?per_page=3' > data.json
+$
 ```
 
 
@@ -672,7 +672,7 @@ GitHub提供JSON API,我们从`jq`仓库获取最新的3个提交。
 获取第一个提交。
 
 ```sh
-[meizhaohui@hellogitlab ~]$ cat data.json |jq '.[0]'
+$ cat data.json |jq '.[0]'
 {
   "sha": "d18b2d078c2383d9472d0a0a226e07009025574f",
   "node_id": "MDY6Q29tbWl0NTEwMTE0MTpkMThiMmQwNzhjMjM4M2Q5NDcyZDBhMGEyMjZlMDcwMDkwMjU1NzRm",
@@ -752,7 +752,7 @@ GitHub提供JSON API,我们从`jq`仓库获取最新的3个提交。
     }
   ]
 }
-[meizhaohui@hellogitlab ~]$
+$
 ```
 
 #### 2.1.4 元素过滤
@@ -762,7 +762,7 @@ GitHub提供JSON API,我们从`jq`仓库获取最新的3个提交。
 如我们只关心`commit`信息：
 
 ```sh
-[meizhaohui@hellogitlab ~]$ cat data.json |jq '.[0].commit'
+$ cat data.json |jq '.[0].commit'
 {
   "author": {
     "name": "itchyny",
@@ -788,23 +788,13 @@ GitHub提供JSON API,我们从`jq`仓库获取最新的3个提交。
     "payload": null
   }
 }
-[meizhaohui@hellogitlab ~]$
+$
 ```
 
 现在如果我们只关心第一个提交的`message`和提交人的`name`姓名信息，则可以这样：
 
 ```sh
-[meizhaohui@hellogitlab ~]$ cat data.json |jq '.[0] | {message: .commit.message, name: .commit.committer.name}'
-{
-  "message": "Fix msys2 installation on AppVeyor\n\nRef: https://www.msys2.org/news/#2020-06-29-new-packagers",
-  "name": "William Langford"
-}
-[meizhaohui@hellogitlab ~]$ cat data.json |jq '.[0] | {CommitMessage: .commit.message, CommitterName: .commit.committer.name}'
-{
-  "CommitMessage": "Fix msys2 installation on AppVeyor\n\nRef: https://www.msys2.org/news/#2020-06-29-new-packagers",
-  "CommitterName": "William Langford"
-}
-[meizhaohui@hellogitlab ~]$
+$ cat data.json |jq '.[0] | {message: .commit.message, name: .commit.committer.name}'{  "message": "Fix msys2 installation on AppVeyor\n\nRef: https://www.msys2.org/news/#2020-06-29-new-packagers",  "name": "William Langford"}$ cat data.json |jq '.[0] | {CommitMessage: .commit.message, CommitterName: .commit.committer.name}'{  "CommitMessage": "Fix msys2 installation on AppVeyor\n\nRef: https://www.msys2.org/news/#2020-06-29-new-packagers",  "CommitterName": "William Langford"}$
 ```
 
 效果如下图：
@@ -820,20 +810,7 @@ GitHub提供JSON API,我们从`jq`仓库获取最新的3个提交。
 获取所有的提交的提交消息和提交人信息。
 
 ```sh
-[meizhaohui@hellogitlab ~]$ cat data.json |jq '.[] | {message: .commit.message, name: .commit.committer.name}'
-{
-  "message": "Fix msys2 installation on AppVeyor\n\nRef: https://www.msys2.org/news/#2020-06-29-new-packagers",
-  "name": "William Langford"
-}
-{
-  "message": "Fix incorrect if empty string example",
-  "name": "William Langford"
-}
-{
-  "message": "update the version available through Chocolatey",
-  "name": "William Langford"
-}
-[meizhaohui@hellogitlab ~]$
+$ cat data.json |jq '.[] | {message: .commit.message, name: .commit.committer.name}'{  "message": "Fix msys2 installation on AppVeyor\n\nRef: https://www.msys2.org/news/#2020-06-29-new-packagers",  "name": "William Langford"}{  "message": "Fix incorrect if empty string example",  "name": "William Langford"}{  "message": "update the version available through Chocolatey",  "name": "William Langford"}$
 ```
 
 > `.[]` returns each element of the array returned in the response, one at a time, which are all fed into `{message: .commit.message, name: .commit.committer.name}`.
@@ -855,21 +832,7 @@ GitHub提供JSON API,我们从`jq`仓库获取最新的3个提交。
 你可以像下面这样：
 
 ```sh
-[meizhaohui@hellogitlab ~]$ cat data.json |jq '[.[] | {message: .commit.message, name: .commit.committer.name}]'
-[
-  {
-    "message": "Fix msys2 installation on AppVeyor\n\nRef: https://www.msys2.org/news/#2020-06-29-new-packagers",
-    "name": "William Langford"
-  },
-  {
-    "message": "Fix incorrect if empty string example",
-    "name": "William Langford"
-  },
-  {
-    "message": "update the version available through Chocolatey",
-    "name": "William Langford"
-  }
-]
+$ cat data.json |jq '[.[] | {message: .commit.message, name: .commit.committer.name}]'[  {    "message": "Fix msys2 installation on AppVeyor\n\nRef: https://www.msys2.org/news/#2020-06-29-new-packagers",    "name": "William Langford"  },  {    "message": "Fix incorrect if empty string example",    "name": "William Langford"  },  {    "message": "update the version available through Chocolatey",    "name": "William Langford"  }]
 ```
 
 可以看到，已经将结果集中的三个对象放在数组中了。
@@ -881,7 +844,7 @@ GitHub提供JSON API,我们从`jq`仓库获取最新的3个提交。
 每一个提交都有可能有多个父提交。现在我们来获取每个提交的父提交的散列值。
 
 ```sh
-[meizhaohui@hellogitlab ~]$ cat data.json |jq '[.[] | {message: .commit.message, name: .commit.committer.name, parents: [.parents[].sha]}]'
+$ cat data.json |jq '[.[] | {message: .commit.message, name: .commit.committer.name, parents: [.parents[].sha]}]'
 [
   {
     "message": "Fix msys2 installation on AppVeyor\n\nRef: https://www.msys2.org/news/#2020-06-29-new-packagers",
@@ -931,15 +894,312 @@ GitHub提供JSON API,我们从`jq`仓库获取最新的3个提交。
 #### 3.1.1 查看`jq`版本信息
 
 ```sh
-$ jq --version
-jq-1.6
+$ jq --versionjq-1.6
 ```
 
-#### 3.1.2 忽略参数
+#### 3.1.2 查看帮助信息
+
+可以通过`man jq`查看`jq`的手册页，也可以使用`jq --help`获取简单的帮助信息。
+
+```sh
+$ jq --helpjq - commandline JSON processor [version 1.6]Usage:	jq [options] <jq filter> [file...]	jq [options] --args <jq filter> [strings...]	jq [options] --jsonargs <jq filter> [JSON_TEXTS...]jq is a tool for processing JSON inputs, applying the given filter toits JSON text inputs and producing the filter's results as JSON onstandard output.The simplest filter is ., which copies jq's input to its outputunmodified (except for formatting, but note that IEEE754 is usedfor number representation internally, with all that that implies).For more advanced filters see the jq(1) manpage ("man jq")and/or https://stedolan.github.io/jqExample:	$ echo '{"foo": 0}' | jq .	{		"foo": 0	}Some of the options include:  -c               compact instead of pretty-printed output;  -n               use `null` as the single input value;  -e               set the exit status code based on the output;  -s               read (slurp) all inputs into an array; apply filter to it;  -r               output raw strings, not JSON texts;  -R               read raw strings, not JSON texts;  -C               colorize JSON;  -M               monochrome (don't colorize JSON);  -S               sort keys of objects on output;  --tab            use tabs for indentation;  --arg a v        set variable $a to value <v>;  --argjson a v    set variable $a to JSON value <v>;  --slurpfile a f  set variable $a to an array of JSON texts read from <f>;  --rawfile a f    set variable $a to a string consisting of the contents of <f>;  --args           remaining arguments are string arguments, not files;  --jsonargs       remaining arguments are JSON arguments, not files;  --               terminates argument processing;Named arguments are also available as $ARGS.named[], whilepositional arguments are available as $ARGS.positional[].See the manpage for more options.$
+```
+
+
+
+#### 3.1.3  忽略参数
 
 现阶段有些参数不明白什么意思。此处记录一下。
 
 - `--seq `：使用 application/json-seq MIME 类型方案在 jq 的输入和输出中分隔 JSON 文本。
 - `--stream`: 以流形式解析输入。
-- 
+
+
+
+#### 3.1.4 将JSON数据一次读入到数组中
+
+- `--slurp`/`-s`参数可以一次将JSON数据读入到数组中。
+
+请看以下示例。
+
+我们先准备一个测试用的JSON文件`test.json`，文件内容如下：
+
+```json
+{"name":"网站","num":3,"sites":["Google", "Runoob", "Taobao"]}
+```
+
+测试数据来源: [https://www.runoob.com/json/js-json-arrays.html](https://www.runoob.com/json/js-json-arrays.html)
+
+先不使用参数，直接输出，看看效果：
+
+```sh
+$ cat test.json |jq{  "name": "网站",  "num": 3,  "sites": [    "Google",    "Runoob",    "Taobao"  ]}$
+```
+
+使用`-s`或`--slurp`参数，查看输出结果：
+
+```sh
+$ cat test.json |jq -s[  {    "name": "网站",    "num": 3,    "sites": [      "Google",      "Runoob",      "Taobao"    ]  }]$ cat test.json |jq --slurp[  {    "name": "网站",    "num": 3,    "sites": [      "Google",      "Runoob",      "Taobao"    ]  }]$
+```
+
+可以看到，在输出结果中多出了第一行的`[`和最后一行的`]`。
+
+使用`-s`参数一次将JSON数据加入到数组(array)中，形成一个大的数组(array)。
+
+
+
+
+
+#### 3.1.5 不解析JSON数据
+
+- `--raw-input`/`-R`: 可以使用该参数以字符串形式显示，不解析JSON数据。如果如`-s`参数一起使用，则输出一行长的字符串。
+
+测试如下：
+
+```sh
+$ cat test.json |jq -R
+"{"
+"\"name\":\"网站\","
+"\"num\":3,"
+"\"sites\":[\"Google\", \"Runoob\", \"Taobao\"]"
+"}"
+""
+$ cat test.json |jq --raw-input
+"{"
+"\"name\":\"网站\","
+"\"num\":3,"
+"\"sites\":[\"Google\", \"Runoob\", \"Taobao\"]"
+"}"
+""
+$
+```
+
+可以看到，数据没有当JSON字符解析。
+
+
+
+与`-s`参数一起使用：
+
+```sh
+$ cat test.json |jq -sR
+"{\n\"name\":\"网站\",\n\"num\":3,\n\"sites\":[\"Google\", \"Runoob\", \"Taobao\"]\n}\n\n"
+```
+
+此时仅显示了一个单行的长字符串。
+
+
+
+#### 3.1.6 不解析任何输入流
+
+- `--null-input`/`-n`:  不解析任何输入流，用`null`作为输入，当将`jq`作为简单的计算器的时候，这比较有用。
+
+我们测试一下：
+
+```sh
+$ cat test.json|jq -n
+null
+$ echo ''|jq -n
+null
+
+# 加法
+$ echo ''|jq -n '2+3'
+5
+
+# 减法
+$ echo ''|jq -n '2-3'
+-1
+
+# 乘法
+$ echo ''|jq -n '2 * 3'
+6
+$ echo ''|jq --null-input '2 * 3'
+6
+
+# 除法
+$ echo ''|jq -n '2 / 3'
+0.6666666666666666
+
+# 取模
+$ echo ''|jq -n '4 % 4'
+0
+$ echo ''|jq -n '5 % 4'
+1
+$ echo ''|jq -n '6 % 4'
+2
+```
+
+可以看到，使用`jq`进行了简单的加减乘除运算，取模运算。
+
+
+
+#### 3.1.7 输出紧凑的数据
+
+- `--compact-output`/ `-c`:默认情况下，JQ漂亮打印JSON输出。 使用此选项将导致更紧凑的输出，而是将每个JSON对象放在一行输出。 
+
+```sh
+$ cat test.json |jq
+{
+  "name": "网站",
+  "num": 3,
+  "sites": [
+    "Google",
+    "Runoob",
+    "Taobao"
+  ]
+}
+$ cat test.json |jq -c
+{"name":"网站","num":3,"sites":["Google","Runoob","Taobao"]}
+$ cat test.json |jq --compact-output
+{"name":"网站","num":3,"sites":["Google","Runoob","Taobao"]}
+$
+```
+
+可以看到，使用`-c`参数输出的数据更加紧凑。而默认情况下，输出的JSON数据会更加漂亮。
+
+
+
+#### 3.1.8 使用Tab作为缩进
+
+- `--tab`: 默认情况下，使用2个空格作为缩进，可以使用`--tab`参数使用Tab作为缩进。
+
+```sh
+$ cat test.json |jq --tab
+{
+	"name": "网站",
+	"num": 3,
+	"sites": [
+		"Google",
+		"Runoob",
+		"Taobao"
+	]
+}
+```
+
+说明：由于markdown显示的问题，请看以下图片中的效果：
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210825204936.png)
+
+
+
+#### 3.1.9 设置缩进的空格数
+
+- `--indent n`: 默认情况下，使用2个空格作为缩进，你可以通过使用本参数，设置n的值，以n个空格作为缩进。注意n不能超过7。
+
+```sh
+$ cat test.json |jq --indent 1
+{
+ "name": "网站",
+ "num": 3,
+ "sites": [
+  "Google",
+  "Runoob",
+  "Taobao"
+ ]
+}
+$ cat test.json |jq --indent 2
+{
+  "name": "网站",
+  "num": 3,
+  "sites": [
+    "Google",
+    "Runoob",
+    "Taobao"
+  ]
+}
+$ cat test.json |jq --indent 3
+{
+   "name": "网站",
+   "num": 3,
+   "sites": [
+      "Google",
+      "Runoob",
+      "Taobao"
+   ]
+}
+$ cat test.json |jq --indent 4
+{
+    "name": "网站",
+    "num": 3,
+    "sites": [
+        "Google",
+        "Runoob",
+        "Taobao"
+    ]
+}
+$ cat test.json |jq --indent 5
+{
+     "name": "网站",
+     "num": 3,
+     "sites": [
+          "Google",
+          "Runoob",
+          "Taobao"
+     ]
+}
+$ cat test.json |jq --indent 6
+{
+      "name": "网站",
+      "num": 3,
+      "sites": [
+            "Google",
+            "Runoob",
+            "Taobao"
+      ]
+}
+$ cat test.json |jq --indent 7
+{
+       "name": "网站",
+       "num": 3,
+       "sites": [
+              "Google",
+              "Runoob",
+              "Taobao"
+       ]
+}
+$ cat test.json |jq --indent 8
+jq: --indent takes a number between -1 and 7
+Use jq --help for help with command-line options,
+or see the jq manpage, or online docs  at https://stedolan.github.io/jq
+$ cat test.json |jq --indent 0
+{"name":"网站","num":3,"sites":["Google","Runoob","Taobao"]}
+$ cat test.json |jq --indent -1
+{
+	"name": "网站",
+	"num": 3,
+	"sites": [
+		"Google",
+		"Runoob",
+		"Taobao"
+	]
+}
+$ cat test.json |jq --indent -1|cat -A
+{$
+^I"name": "M-gM-=M-^QM-gM-+M-^Y",$
+^I"num": 3,$
+^I"sites": [$
+^I^I"Google",$
+^I^I"Runoob",$
+^I^I"Taobao"$
+^I]$
+}$
+$
+```
+
+可以看到：
+
+- 当设置`--indent 0`时，与参数`-c`作用相当，按紧凑形式输出。
+- 当设置`--indent -1`时，与参数`--tab`作用相当，按Tab形式输出。
+- 当设置`--indent 2`时，与默认设置相同。
+
+我们可以设置`--indent 4`缩进为4个空格，这种更漂亮美观。
+
+
+
+
+
+
+
+
+
+
 
