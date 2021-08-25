@@ -913,6 +913,7 @@ $ jq --helpjq - commandline JSON processor [version 1.6]Usage:	jq [options] <jq 
 
 - `--seq `：使用 application/json-seq MIME 类型方案在 jq 的输入和输出中分隔 JSON 文本。
 - `--stream`: 以流形式解析输入。
+- `--unbuffered`: 如果有慢速数据源输入到`jq`的话，打印每个JSON对象后刷新输出。
 
 
 
@@ -1075,7 +1076,9 @@ $ cat test.json |jq --tab
 }
 ```
 
-说明：由于markdown显示的问题，请看以下图片中的效果：
+说明：由于markdown显示的问题，上面控制台输出是异常的。
+
+请看以下图片中的效果：
 
 ![](https://meizhaohui.gitee.io/imagebed/img/20210825204936.png)
 
@@ -1195,7 +1198,277 @@ $
 
 
 
+#### 3.1.10 颜色开关设置
 
+- `--color-output` / `-C` and `--monochrome-output` / `-M`: 默认情况下，`jq
+`会输出彩色的JSON数据到终端，你可以使用`-C`参数来强制使用彩色输出，即使你使用了管道或者输出到文件。也可以使用`-M`参数来关掉彩色输出，这样就是单色输出了。
+
+```sh
+$ cat test.json |jq
+{
+  "name": "网站",
+  "num": 3,
+  "sites": [
+    "Google",
+    "Runoob",
+    "Taobao"
+  ]
+}
+$ cat test.json |jq -M
+{
+  "name": "网站",
+  "num": 3,
+  "sites": [
+    "Google",
+    "Runoob",
+    "Taobao"
+  ]
+}
+$ cat test.json |jq --monochrome-output
+{
+  "name": "网站",
+  "num": 3,
+  "sites": [
+    "Google",
+    "Runoob",
+    "Taobao"
+  ]
+}
+```
+
+在控制台看不出效果，请看以下效果图：
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210825212233.png)
+
+可以看到，使用`-M`参数已经关掉了彩色输出。
+
+
+
+我们也可以使用`-C`参数，设置一直保持彩色输出。
+
+```sh
+$ cat test.json |jq
+{
+  "name": "网站",
+  "num": 3,
+  "sites": [
+    "Google",
+    "Runoob",
+    "Taobao"
+  ]
+}
+
+# 在jq输出后，再使用管道后，再次查看时没有彩色输出
+$ cat test.json |jq|cat
+{
+  "name": "网站",
+  "num": 3,
+  "sites": [
+    "Google",
+    "Runoob",
+    "Taobao"
+  ]
+}
+
+# 在jq -C输出后，再使用管道后，再次查看时仍然有彩色输出
+$ cat test.json |jq -C|cat
+{
+  "name": "网站",
+  "num": 3,
+  "sites": [
+    "Google",
+    "Runoob",
+    "Taobao"
+  ]
+}
+$ cat test.json |jq -C|cat|grep num
+  "num": 3,
+$ cat test.json |jq -C|cat|grep name
+  "name": "网站",
+$
+```
+
+效果图如下：
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210825212453.png)
+
+
+
+同样，我们可以将彩色输出写入到文件中。
+
+```sh
+$ cat test.json |jq -C > out.json
+$ cat out.json
+{
+  "name": "网站",
+  "num": 3,
+  "sites": [
+    "Google",
+    "Runoob",
+    "Taobao"
+  ]
+}
+$
+```
+
+此时，可以看到，直接查看`out.json`的内容时，就有彩色输出：
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210825212928.png)
+
+可以通过配置环境变量`JQ_COLORS`来改变默认的颜色输出。请参考后续章节。
+
+
+
+#### 3.1.11  以ASCII码输出数据
+
+- `--ascii-output` / `-a`: JQ通常将非ASCII编码的字符输出为UTF-8，即使输入作为转义序列指定的输入（如`\u03bc`）。 使用此选项，您可以强制JQ生成纯ASCII输出，每个非ASCII字符用等效的转义序列替换。 
+
+```sh
+$ echo '"\u03bc"'|jq
+"μ"
+$ echo '"\u03bc"'|jq -a
+"\u03bc"
+$ echo '"\u03bc"'|jq --ascii-output
+"\u03bc"
+$ cat test.json |jq
+{
+  "name": "网站",
+  "num": 3,
+  "sites": [
+    "Google",
+    "Runoob",
+    "Taobao"
+  ]
+}
+$ cat test.json |jq -a
+{
+  "name": "\u7f51\u7ad9",
+  "num": 3,
+  "sites": [
+    "Google",
+    "Runoob",
+    "Taobao"
+  ]
+}
+$
+```
+
+可以看到，像拉丁字母和中文都被转义成转义序列了。
+
+
+
+#### 3.1.12 对对象的键进行排序
+
+- `--sort-keys` / `-S`: 该参数可以对所有对象的字段(键)进行升序排序。
+
+假设我们的`data1.json`内容如下：
+
+```json
+[
+  {
+    "name": "网站",
+    "inum": 1,
+    "sites": [
+      "Google",
+      "Runoob",
+      "Taobao"
+    ]
+  },
+  {
+    "tame": "网站",
+    "anum": 2,
+    "sites": [
+      "Google",
+      "Runoob",
+      "Taobao"
+    ]
+  },
+  {
+    "name": "网站",
+    "nbum": 3,
+    "osites": [
+      "Google",
+      "Runoob",
+      "Taobao"
+    ]
+  }
+]
+```
+
+现在我们对其输出时使用`-S`参数，注意是大写`S`。
+
+```sh
+$ cat test1.json |jq
+[
+  {
+    "name": "网站",
+    "inum": 1,
+    "sites": [
+      "Google",
+      "Runoob",
+      "Taobao"
+    ]
+  },
+  {
+    "tame": "网站",
+    "anum": 2,
+    "sites": [
+      "Google",
+      "Runoob",
+      "Taobao"
+    ]
+  },
+  {
+    "name": "网站",
+    "nbum": 3,
+    "osites": [
+      "Google",
+      "Runoob",
+      "Taobao"
+    ]
+  }
+]
+```
+
+默认情况下，并没有对字段进行排序，原样显示出来。
+
+使用`-S`参数：
+
+```sh
+$ cat test1.json |jq -S
+[
+  {
+    "inum": 1,
+    "name": "网站",
+    "sites": [
+      "Google",
+      "Runoob",
+      "Taobao"
+    ]
+  },
+  {
+    "anum": 2,
+    "sites": [
+      "Google",
+      "Runoob",
+      "Taobao"
+    ],
+    "tame": "网站"
+  },
+  {
+    "name": "网站",
+    "nbum": 3,
+    "osites": [
+      "Google",
+      "Runoob",
+      "Taobao"
+    ]
+  }
+]
+$
+```
+
+可以看到，每个对象中的字段名称已经排序了。
 
 
 
