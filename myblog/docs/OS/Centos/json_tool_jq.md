@@ -810,7 +810,19 @@ $ cat data.json |jq '.[0] | {message: .commit.message, name: .commit.committer.n
 获取所有的提交的提交消息和提交人信息。
 
 ```sh
-$ cat data.json |jq '.[] | {message: .commit.message, name: .commit.committer.name}'{  "message": "Fix msys2 installation on AppVeyor\n\nRef: https://www.msys2.org/news/#2020-06-29-new-packagers",  "name": "William Langford"}{  "message": "Fix incorrect if empty string example",  "name": "William Langford"}{  "message": "update the version available through Chocolatey",  "name": "William Langford"}$
+$ cat data.json |jq '.[] | {message: .commit.message, name: .commit.committer.name}'
+{
+  "message": "Fix msys2 installation on AppVeyor\n\nRef: https://www.msys2.org/news/#2020-06-29-new-packagers",
+  "name": "William Langford"
+}
+{
+  "message": "Fix incorrect if empty string example",
+  "name": "William Langford"
+}
+{
+  "message": "update the version available through Chocolatey",
+  "name": "William Langford"
+}
 ```
 
 > `.[]` returns each element of the array returned in the response, one at a time, which are all fed into `{message: .commit.message, name: .commit.committer.name}`.
@@ -832,7 +844,21 @@ $ cat data.json |jq '.[] | {message: .commit.message, name: .commit.committer.na
 你可以像下面这样：
 
 ```sh
-$ cat data.json |jq '[.[] | {message: .commit.message, name: .commit.committer.name}]'[  {    "message": "Fix msys2 installation on AppVeyor\n\nRef: https://www.msys2.org/news/#2020-06-29-new-packagers",    "name": "William Langford"  },  {    "message": "Fix incorrect if empty string example",    "name": "William Langford"  },  {    "message": "update the version available through Chocolatey",    "name": "William Langford"  }]
+$ cat data.json |jq '[.[] | {message: .commit.message, name: .commit.committer.name}]'
+[
+  {
+    "message": "Fix msys2 installation on AppVeyor\n\nRef: https://www.msys2.org/news/#2020-06-29-new-packagers",
+    "name": "William Langford"
+  },
+  {
+    "message": "Fix incorrect if empty string example",
+    "name": "William Langford"
+  },
+  {
+    "message": "update the version available through Chocolatey",
+    "name": "William Langford"
+  }
+]
 ```
 
 可以看到，已经将结果集中的三个对象放在数组中了。
@@ -894,7 +920,8 @@ $ cat data.json |jq '[.[] | {message: .commit.message, name: .commit.committer.n
 #### 3.1.1 查看`jq`版本信息
 
 ```sh
-$ jq --versionjq-1.6
+$ jq --version
+jq-1.6
 ```
 
 #### 3.1.2 查看帮助信息
@@ -902,7 +929,55 @@ $ jq --versionjq-1.6
 可以通过`man jq`查看`jq`的手册页，也可以使用`jq --help`获取简单的帮助信息。
 
 ```sh
-$ jq --helpjq - commandline JSON processor [version 1.6]Usage:	jq [options] <jq filter> [file...]	jq [options] --args <jq filter> [strings...]	jq [options] --jsonargs <jq filter> [JSON_TEXTS...]jq is a tool for processing JSON inputs, applying the given filter toits JSON text inputs and producing the filter's results as JSON onstandard output.The simplest filter is ., which copies jq's input to its outputunmodified (except for formatting, but note that IEEE754 is usedfor number representation internally, with all that that implies).For more advanced filters see the jq(1) manpage ("man jq")and/or https://stedolan.github.io/jqExample:	$ echo '{"foo": 0}' | jq .	{		"foo": 0	}Some of the options include:  -c               compact instead of pretty-printed output;  -n               use `null` as the single input value;  -e               set the exit status code based on the output;  -s               read (slurp) all inputs into an array; apply filter to it;  -r               output raw strings, not JSON texts;  -R               read raw strings, not JSON texts;  -C               colorize JSON;  -M               monochrome (don't colorize JSON);  -S               sort keys of objects on output;  --tab            use tabs for indentation;  --arg a v        set variable $a to value <v>;  --argjson a v    set variable $a to JSON value <v>;  --slurpfile a f  set variable $a to an array of JSON texts read from <f>;  --rawfile a f    set variable $a to a string consisting of the contents of <f>;  --args           remaining arguments are string arguments, not files;  --jsonargs       remaining arguments are JSON arguments, not files;  --               terminates argument processing;Named arguments are also available as $ARGS.named[], whilepositional arguments are available as $ARGS.positional[].See the manpage for more options.$
+$ jq --help
+jq - commandline JSON processor [version 1.6]
+
+Usage:	jq [options] <jq filter> [file...]
+	jq [options] --args <jq filter> [strings...]
+	jq [options] --jsonargs <jq filter> [JSON_TEXTS...]
+
+jq is a tool for processing JSON inputs, applying the given filter to
+its JSON text inputs and producing the filter's results as JSON on
+standard output.
+
+The simplest filter is ., which copies jq's input to its output
+unmodified (except for formatting, but note that IEEE754 is used
+for number representation internally, with all that that implies).
+
+For more advanced filters see the jq(1) manpage ("man jq")
+and/or https://stedolan.github.io/jq
+
+Example:
+
+	$ echo '{"foo": 0}' | jq .
+	{
+		"foo": 0
+	}
+
+Some of the options include:
+  -c               compact instead of pretty-printed output;
+  -n               use `null` as the single input value;
+  -e               set the exit status code based on the output;
+  -s               read (slurp) all inputs into an array; apply filter to it;
+  -r               output raw strings, not JSON texts;
+  -R               read raw strings, not JSON texts;
+  -C               colorize JSON;
+  -M               monochrome (don't colorize JSON);
+  -S               sort keys of objects on output;
+  --tab            use tabs for indentation;
+  --arg a v        set variable $a to value <v>;
+  --argjson a v    set variable $a to JSON value <v>;
+  --slurpfile a f  set variable $a to an array of JSON texts read from <f>;
+  --rawfile a f    set variable $a to a string consisting of the contents of <f>;
+  --args           remaining arguments are string arguments, not files;
+  --jsonargs       remaining arguments are JSON arguments, not files;
+  --               terminates argument processing;
+
+Named arguments are also available as $ARGS.named[], while
+positional arguments are available as $ARGS.positional[].
+
+See the manpage for more options.
+$
 ```
 
 
@@ -934,13 +1009,33 @@ $ jq --helpjq - commandline JSON processor [version 1.6]Usage:	jq [options] <jq 
 先不使用参数，直接输出，看看效果：
 
 ```sh
-$ cat test.json |jq{  "name": "网站",  "num": 3,  "sites": [    "Google",    "Runoob",    "Taobao"  ]}$
+$ cat test.json |jq
+{
+  "name": "网站",
+  "num": 3,
+  "sites": [
+    "Google",
+    "Runoob",
+    "Taobao"
+  ]
+}
 ```
 
 使用`-s`或`--slurp`参数，查看输出结果：
 
 ```sh
-$ cat test.json |jq -s[  {    "name": "网站",    "num": 3,    "sites": [      "Google",      "Runoob",      "Taobao"    ]  }]$ cat test.json |jq --slurp[  {    "name": "网站",    "num": 3,    "sites": [      "Google",      "Runoob",      "Taobao"    ]  }]$
+$ cat test.json |jq -s
+[
+  {
+    "name": "网站",
+    "num": 3,
+    "sites": [
+      "Google",
+      "Runoob",
+      "Taobao"
+    ]
+  }
+]
 ```
 
 可以看到，在输出结果中多出了第一行的`[`和最后一行的`]`。
