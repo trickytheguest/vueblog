@@ -989,6 +989,8 @@ $
 - `--seq `：使用 application/json-seq MIME 类型方案在 jq 的输入和输出中分隔 JSON 文本。
 - `--stream`: 以流形式解析输入。
 - `--unbuffered`: 如果有慢速数据源输入到`jq`的话，打印每个JSON对象后刷新输出。
+- `-Ldirectory` / `-L directory`: 在指定目录搜索模块，此时将忽略内置模块。
+- `-e` / `--exit-status`: 退出码设置。
 
 
 
@@ -1668,3 +1670,73 @@ $ cat data.json |jq --from-file test.jq
 
 
 这样，当学习了`jq`更复杂的语法后，可以在文件中写出更加复杂的过滤器。这个使用通过文件加载过滤器会更加方便。此处只是一个简单的示例。
+
+#### 3.1.15 向过滤中传递参数
+
+- `--arg name value`:
+
+> This option passes a value to the jq program as a predefined  variable. If you run jq with `--arg foo bar`, then `$foo` is  available in the program and has the value `"bar"`. Note that  `value` will be treated as a string, so `--arg foo 123` will  bind `$foo` to `"123"`.
+
+该参数可以向`jq`程序中传递变量，注意，使用`--arg foo 123`传递的变量`foo`的值是字符串`123`，不是整数。
+
+```sh
+$ echo '[1,2,3]'|jq --arg tool "jq " '.[]*$tool'
+"jq "
+"jq jq "
+"jq jq jq "
+$
+```
+
+可以看到，整数和字符串相乘，是将字符串进行重复拼接在一起。
+
+```sh
+$ echo '[1,2,3]'|jq --arg num "2" '.[]*$num'
+"2"
+"22"
+"222"
+```
+
+此时，可以看到`num`变量的值`2`是一个字符串，不是整型，使用乘法也是对字符串进行多次重复拼接的。
+
+
+
+```sh
+$ echo '["one", "two", "three"]'|jq --arg tool "jq"  --arg num "1" '.[] + " " + $tool + " and " + $num + " string"'
+"one jq and 1 string"
+"two jq and 1 string"
+"three jq and 1 string"
+$
+```
+
+此例中，可以看到，传递的参数`tool`和`num`都在过滤器中正常引用了，`$tool`引用`tool`变量，`$num`引用`num`变量，注意，变量名不需要使用`{}`包裹起来。
+
+
+
+- 可以通过`$ARGS.named`来获取命名参数对象。
+
+```sh
+$ echo '[1,2,3]'|jq --arg num "2" --arg flag "true" '$ARGS.named'
+{
+  "num": "2",
+  "flag": "true"
+}
+```
+
+可以看到，我们提供的两个参数都包含在最终显示的对象中了。
+
+也可以在命名参数对象中获取我们定义的参数：
+
+```sh
+$ echo '[1,2,3]'|jq --arg num "2" --arg flag "true" '$ARGS.named.flag + " " + $ARGS.named.num'
+"true 2"
+```
+
+或者直接获取：
+
+```sh
+$ echo '[1,2,3]'|jq --arg num "2" --arg flag "true" '$flag + " " + $num'
+"true 2"
+```
+
+获取的结果一样。
+
