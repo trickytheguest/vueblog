@@ -1673,6 +1673,8 @@ $ cat data.json |jq --from-file test.jq
 
 #### 3.1.15 向过滤中传递参数
 
+##### 3.1.15.1 向过滤中传递字符串参数
+
 - `--arg name value`:
 
 > This option passes a value to the jq program as a predefined  variable. If you run jq with `--arg foo bar`, then `$foo` is  available in the program and has the value `"bar"`. Note that  `value` will be treated as a string, so `--arg foo 123` will  bind `$foo` to `"123"`.
@@ -1739,4 +1741,44 @@ $ echo '[1,2,3]'|jq --arg num "2" --arg flag "true" '$flag + " " + $num'
 ```
 
 获取的结果一样。
+
+##### 3.1.15.2 向过滤器传递JSON数据参数
+
+上述使用`--arg`传输的参数都是字符串类型。如果我们需要传递JSON数据类型的参数到`jq`过滤器中，则需要使用以下的`--argjson`参数。
+
+- `--argjson name JSON-text`:
+
+> This option passes a JSON-encoded value to the jq program as a  predefined variable. If you run jq with `--argjson foo 123`, then  `$foo` is available in the program and has the value `123`.
+
+注意，对于字符串参数和对象参数，必须要用单引号包裹起来，其他类型的参数可以包裹也可以不包裹。
+
+```sh
+# 查看命名参数对象中的内容
+$ echo '[1,2,3]'|jq --argjson mystr '"string"' --argjson myobject '{"key":"value"}' --argjson myarray [1,2,3,4] --argjson mynum 2 --argjson mybool true --argjson mynull null '$ARGS.named'
+{
+  "mystr": "string",
+  "myobject": {
+    "key": "value"
+  },
+  "myarray": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "mynum": 2,
+  "mybool": true,
+  "mynull": null
+}
+$
+
+# 查看各传入参数的类型，此条命令不懂没关系，要以忽略，后面专门会讲内置方法type等
+$ echo '[1,2,3]'|jq --argjson mystr '"string"' --argjson myobject '{"key":"value"}' --argjson myarray '[1,2,3,4]' --argjson mynum '2' --argjson mybool 'true' --argjson mynull null '$ARGS.named|.[]|type'
+"string"
+"object"
+"array"
+"number"
+"boolean"
+"null"
+```
 
