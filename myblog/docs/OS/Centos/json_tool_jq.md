@@ -1565,9 +1565,106 @@ $
 
 可以看到，每个对象中的字段名称已经排序了。
 
+#### 3.1.13 输出原始字符串而非JSON字符串
+
+- `--raw-output` / `-r`: 直接原样输出字符串而不是JSON数据。
+
+```sh
+$ echo '"non-JSON-based systems."'|jq
+"non-JSON-based systems."
+$ echo '"non-JSON-based systems."'|jq -r
+non-JSON-based systems.
+$ echo '"non-JSON-based systems."'|jq --raw-output
+non-JSON-based systems.
+$
+```
+
+可以看到使用`-r`参数后，输出没有最外面的双引号。
 
 
 
+另外，还有一个参数：
+
+- `--join-output` / `-j`: 与`-r`参数类似，但是不自动添加换行符。
+
+```sh
+$ echo '"non-JSON-based systems."'|jq -j
+non-JSON-based systems.$
+$
+$ echo '"non-JSON-based systems."'|jq --join-output
+non-JSON-based systems.$
+$
+```
+
+可以看到，输出`non-JSON-based systems.`信息后，控制台直接在后面输出了终端控制符`$ `。
 
 
 
+#### 3.1.14 从文件中读取过滤器
+
+`jq`支持类似`awk -f`命令一样的参数：
+
+- `-f filename` / `--from-file filename`
+
+通过该参数，我们可以直接将过滤器写在文件中，然后进行过滤操作。
+
+我们以2.1.5节的对所有元素进行过滤的示例，来进行说明。
+
+获取所有的提交的提交消息和提交人信息。
+
+```sh
+$ cat data.json |jq '.[] | {message: .commit.message, name: .commit.committer.name}'
+{
+  "message": "Fix msys2 installation on AppVeyor\n\nRef: https://www.msys2.org/news/#2020-06-29-new-packagers",
+  "name": "William Langford"
+}
+{
+  "message": "Fix incorrect if empty string example",
+  "name": "William Langford"
+}
+{
+  "message": "update the version available through Chocolatey",
+  "name": "William Langford"
+}
+```
+
+我们将过滤器字符串`.[] | {message: .commit.message, name: .commit.committer.name}`写入到`test.jq`文件(**注意，不要两侧的单引号**)。
+
+```sh
+$ cat test.jq
+# filter in the file
+.[] | {message: .commit.message, name: .commit.committer.name}
+
+$ cat data.json |jq -f test.jq
+{
+  "message": "Fix msys2 installation on AppVeyor\n\nRef: https://www.msys2.org/news/#2020-06-29-new-packagers",
+  "name": "William Langford"
+}
+{
+  "message": "Fix incorrect if empty string example",
+  "name": "William Langford"
+}
+{
+  "message": "update the version available through Chocolatey",
+  "name": "William Langford"
+}
+$ cat data.json |jq --from-file test.jq
+{
+  "message": "Fix msys2 installation on AppVeyor\n\nRef: https://www.msys2.org/news/#2020-06-29-new-packagers",
+  "name": "William Langford"
+}
+{
+  "message": "Fix incorrect if empty string example",
+  "name": "William Langford"
+}
+{
+  "message": "update the version available through Chocolatey",
+  "name": "William Langford"
+}
+```
+
+可以看到，执行的结果与在命令行的输出是一致的。
+
+
+
+这样，当学习了`jq`更复杂的语法后，可以在文件中写出更加复杂的过滤器。这个使用通过文件加载过滤器会更加方便。此处只是一个简单的示例。
