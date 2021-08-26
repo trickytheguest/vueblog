@@ -1,3 +1,7 @@
+
+
+
+
 # JSON解析工具-jq
 
 [[toc]]
@@ -1781,4 +1785,183 @@ $ echo '[1,2,3]'|jq --argjson mystr '"string"' --argjson myobject '{"key":"value
 "boolean"
 "null"
 ```
+
+
+
+
+
+##### 3.1.15.3 通过文件向过滤器中传递参数
+
+我们也可以通过在JSON文件中定义好数据，然后再传入到变量中。使用以下参数：
+
+- `--slurpfile variable-name filename`:
+
+> This option reads all the JSON texts in the named file and binds  an array of the parsed JSON values to the given global variable.  If you run jq with `--slurpfile foo bar`, then `$foo` is available  in the program and has an array whose elements correspond to the  texts in the file named `bar`.
+
+该参数会读取文件中的JSON文件，并解析JSON数据，然后放在一个array列表中，然后再绑定该列表到你定义的变量上。
+
+现在假如我们有两个`json`文件，分别查看其内容：
+
+```sh
+$ cat arguments1.json
+{
+  "mystr": "string",
+  "myobject": {
+    "key": "value"
+  },
+  "myarray": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "mynum": 2,
+  "mybool": true,
+  "mynull": null
+}
+$ cat arguments2.json
+"tool"
+$
+```
+
+使用`--slurpfile`参数解析JSON文件数据作为变量内容。
+
+```sh
+# 从JSON文件中读取数据并解析到array列表中，然后绑定到参数中
+$ echo 'null'|jq --slurpfile data1 arguments1.json --slurpfile data2 arguments2.json '$ARGS.named'
+{
+  "data1": [
+    {
+      "mystr": "string",
+      "myobject": {
+        "key": "value"
+      },
+      "myarray": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "mynum": 2,
+      "mybool": true,
+      "mynull": null
+    }
+  ],
+  "data2": [
+    "tool"
+  ]
+}
+
+# 查看获取的两个参数的类型，可以看到，是array列表类型
+$ echo 'null'|jq --slurpfile data1 arguments1.json --slurpfile data2 arguments2.json '$ARGS.named|.[]|type'
+"array"
+"array"
+$
+
+# 获取data1参数的值
+$ echo 'null'|jq --slurpfile data1 arguments1.json --slurpfile data2 arguments2.json '$ARGS.named|.data1'
+[
+  {
+    "mystr": "string",
+    "myobject": {
+      "key": "value"
+    },
+    "myarray": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "mynum": 2,
+    "mybool": true,
+    "mynull": null
+  }
+]
+
+
+# 获取data2参数的值
+$ echo 'null'|jq --slurpfile data1 arguments1.json --slurpfile data2 arguments2.json '$ARGS.named|.data2'
+[
+  "tool"
+]
+$
+```
+
+也可以直接像下面这样获取变量的值：
+
+```sh
+$ echo 'null'|jq --slurpfile data1 arguments1.json --slurpfile data2 arguments2.json '$data1'
+[
+  {
+    "mystr": "string",
+    "myobject": {
+      "key": "value"
+    },
+    "myarray": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "mynum": 2,
+    "mybool": true,
+    "mynull": null
+  }
+]
+$ echo 'null'|jq --slurpfile data1 arguments1.json --slurpfile data2 arguments2.json '$data2'
+[
+  "tool"
+]
+$
+```
+
+
+
+##### 3.1.15.4 通过文件向过滤器中传递原始字符串参数
+
+我们也可在一个普通文件定义好数据，然后再传入到变量中。使用以下参数：
+
+- `--rawfile variable-name filename`:
+
+> This option reads in the named file and binds its contents to the given  global variable.  If you run jq with `--rawfile foo bar`, then `$foo` is  available in the program and has a string whose contents are to the texts  in the file named `bar`.
+
+该参数会读取文件中的所有内容，然后直接当普通文本绑定到你定义的变量上。
+
+请看下面示例。
+
+```sh
+# 复制文件
+$ cp arguments1.json arguments1.txt
+$ cp arguments2.json arguments2.txt
+$ cat arguments2.txt
+"tool"
+
+# 查看命名参数对象中的值
+$ echo 'null'|jq --rawfile data1 arguments1.txt --rawfile data2 arguments2.txt '$ARGS.named'
+{
+  "data1": "{\n  \"mystr\": \"string\",\n  \"myobject\": {\n    \"key\": \"value\"\n  },\n  \"myarray\": [\n    1,\n    2,\n    3,\n    4\n  ],\n  \"mynum\": 2,\n  \"mybool\": true,\n  \"mynull\": null\n}\n",
+  "data2": "\"tool\"\n"
+}
+
+# 查看data1参数的值
+$ echo 'null'|jq --rawfile data1 arguments1.txt --rawfile data2 arguments2.txt '$data1'
+"{\n  \"mystr\": \"string\",\n  \"myobject\": {\n    \"key\": \"value\"\n  },\n  \"myarray\": [\n    1,\n    2,\n    3,\n    4\n  ],\n  \"mynum\": 2,\n  \"mybool\": true,\n  \"mynull\": null\n}\n"
+
+# 查看data2参数的值
+$ echo 'null'|jq --rawfile data1 arguments1.txt --rawfile data2 arguments2.txt '$data2'
+"\"tool\"\n"
+$
+```
+
+
+
+
+
+
+
+
+
+
+
+
 
