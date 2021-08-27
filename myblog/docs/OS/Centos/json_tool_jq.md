@@ -1859,7 +1859,7 @@ $ echo 'null'|jq --slurpfile data1 arguments1.json --slurpfile data2 arguments2.
 $
 
 # 获取data1参数的值
-$ echo 'null'|jq --slurpfile data1 arguments1.json --slurpfile data2 arguments2.json '$ARGS.named|.data1'
+$ echo 'null'|jq --slurpfile data1 arguments1.json --slurpfile data2 arguments2.json '$ARGS.named.data1'
 [
   {
     "mystr": "string",
@@ -1880,7 +1880,7 @@ $ echo 'null'|jq --slurpfile data1 arguments1.json --slurpfile data2 arguments2.
 
 
 # 获取data2参数的值
-$ echo 'null'|jq --slurpfile data1 arguments1.json --slurpfile data2 arguments2.json '$ARGS.named|.data2'
+$ echo 'null'|jq --slurpfile data1 arguments1.json --slurpfile data2 arguments2.json '$ARGS.named.data2'
 [
   "tool"
 ]
