@@ -11,6 +11,7 @@ jq 是一个轻量级而且灵活的命令行 JSON 解析器，类似用于 JSON
 - jq官网地址：[https://stedolan.github.io/jq/](https://stedolan.github.io/jq/)
 - 官方教程：[https://stedolan.github.io/jq/tutorial/](https://stedolan.github.io/jq/tutorial/)
 - 官方手册：[https://stedolan.github.io/jq/manual/](https://stedolan.github.io/jq/manual/)
+- 源码地址：[https://github.com/stedolan/jq/](https://github.com/stedolan/jq/)
 
 ## 1. 安装
 
@@ -2112,9 +2113,189 @@ $
 
 
 
+#### 3.1.16 运行测试用例
+
+最后一个参数。
+
+- `--run-tests [filename]`:
+
+> Runs the tests in the given file or standard input.  This must  be the last option given and does not honor all preceding  options.  The input consists of comment lines, empty lines, and  program lines followed by one input line, as many lines of  output as are expected (one per output), and a terminating empty  line.  Compilation failure tests start with a line containing  only "%%FAIL", then a line containing the program to compile,  then a line containing an error message to compare to the  actual.
+>
+> Be warned that this option can change backwards-incompatibly.
+
+在给定的文件或标准输入中运行测试，该参数是命令行最后一个参数。将会忽略前面的命令行参数选项。
+
+测试文件的写法是这样的：
+
+- 可以包含备注行，空行、程序行、输入行、输出行、终止的空行等。
 
 
-`
+
+你可以使用`git clone https://github.com/stedolan/jq.git`或`git clone git@github.com:stedolan/jq.git`下载`jq`的源码到本地，我这边已经下载好了。
+
+```sh
+[mzh@MacBookPro jq (master)]$ git remote -v
+origin	git@github.com:meizhaohui/jq.git (fetch)
+origin	git@github.com:meizhaohui/jq.git (push)
+[mzh@MacBookPro jq (master)]$ ls
+AUTHORS        Dockerfile     NEWS           appveyor.yml   config         jq.1.prebuilt  m4             sig
+COPYING        KEYS           README         build          configure.ac   jq.spec        modules        src
+ChangeLog      Makefile.am    README.md      compile-ios.sh docs           libjq.pc.in    scripts        tests
+[mzh@MacBookPro jq (master)]$ ls tests/*.test
+tests/base64.test   tests/jq.test       tests/man.test      tests/onig.test     tests/optional.test
+```
+
+可以看到在`tests`目录下面有几个以`.test`结尾的文件。这几个就是测试用例文件。
+
+我们来看一下`tests.jq.test`文件，文件内容比较长，我们只看前100行：
+
+```sh
+[mzh@MacBookPro jq (master)]$ head -n 100 tests/jq.test
+# Tests are groups of three lines: program, input, expected output
+# Blank lines and lines starting with # are ignored
+
+#
+# Simple value tests to check parser. Input is irrelevant
+#
+
+true
+null
+true
+
+false
+null
+false
+
+null
+42
+null
+
+1
+null
+1
+
+
+-1
+null
+-1
+
+# FIXME: much more number testing needed
+
+{}
+null
+{}
+
+[]
+null
+[]
+
+{x: -1}
+null
+{"x": -1}
+
+# The input line starts with a 0xFEFF (byte order mark) codepoint
+# No, there is no reason to have a byte order mark in UTF8 text.
+# But apparently people do, so jq shouldn't break on it.
+.
+"byte order mark"
+"byte order mark"
+
+# We test escapes by matching them against Unicode codepoints
+# FIXME: more tests needed for weird unicode stuff (e.g. utf16 pairs)
+"Aa\r\n\t\b\f\u03bc"
+null
+"Aa\u000d\u000a\u0009\u0008\u000c\u03bc"
+
+.
+"Aa\r\n\t\b\f\u03bc"
+"Aa\u000d\u000a\u0009\u0008\u000c\u03bc"
+
+"inter\("pol" + "ation")"
+null
+"interpolation"
+
+@text,@json,([1,.] | (@csv, @tsv)),@html,@uri,@sh,@base64,(@base64 | @base64d)
+"<>&'\"\t"
+"<>&'\"\t"
+"\"<>&'\\\"\\t\""
+"1,\"<>&'\"\"\t\""
+"1\t<>&'\"\\t"
+"&lt;&gt;&amp;&apos;&quot;\t"
+"%3C%3E%26'%22%09"
+"'<>&'\\''\"\t'"
+"PD4mJyIJ"
+"<>&'\"\t"
+
+# regression test for #436
+@base64
+"foóbar\n"
+"Zm/Ds2Jhcgo="
+
+@base64d
+"Zm/Ds2Jhcgo="
+"foóbar\n"
+
+@uri
+"\u03bc"
+"%CE%BC"
+
+@html "<b>\(.)</b>"
+"<script>hax</script>"
+"<b>&lt;script&gt;hax&lt;/script&gt;</b>"
+
+[.[]|tojson|fromjson]
+["foo", 1, ["a", 1, "b", 2, {"foo":"bar"}]]
+["foo",1,["a",1,"b",2,{"foo":"bar"}]]
+
+#
+# Dictionary construction syntax
+#
+
+[mzh@MacBookPro jq (master)]$
+```
+
+我们直接将这100行保存到一个新的文件中去。
+
+```sh
+[mzh@MacBookPro jq (master)]$ head -n 100 tests/jq.test  > myjq.test
+```
+
+然后我们执行命令：
+```sh
+[mzh@MacBookPro jq (master ✗)]$ echo 'null'|jq '$ARGS.named' --arg tool "jq"
+{
+  "tool": "jq"
+}
+[mzh@MacBookPro jq (master ✗)]$ echo 'null'|jq '$ARGS.named' --arg tool "jq" --run-tests  myjq.test
+Testing 'true' at line number 8
+Testing 'false' at line number 12
+Testing 'null' at line number 16
+Testing '1' at line number 20
+Testing '-1' at line number 25
+Testing '{}' at line number 31
+Testing '[]' at line number 35
+Testing '{x: -1}' at line number 39
+Testing '.' at line number 46
+Testing '"Aa\r\n\t\b\f\u03bc"' at line number 52
+Testing '.' at line number 56
+Testing '"inter\("pol" + "ation")"' at line number 60
+Testing '@text,@json,([1,.] | (@csv, @tsv)),@html,@uri,@sh,@base64,(@base64 | @base64d)' at line number 64
+Testing '@base64' at line number 77
+Testing '@base64d' at line number 81
+Testing '@uri' at line number 85
+Testing '@html "<b>\(.)</b>"' at line number 89
+Testing '[.[]|tojson|fromjson]' at line number 93
+18 of 18 tests passed (0 malformed)
+[mzh@MacBookPro jq (master ✗)]$ echo $?
+0
+[mzh@MacBookPro jq (master ✗)]$
+```
+
+可以看到，`jq`直接忽略了`--run-tests`参数前的` '$ARGS.named' --arg tool "jq"`，只运行了测试用例。
+
+我们来对比一下测试文件和输出结果，说明详见下图：
+
+`![](https://meizhaohui.gitee.io/imagebed/img/20210827224132.png)
 
 
 
