@@ -1955,7 +1955,7 @@ $
 
 
 
-##### 3.1.15.5 向过滤器中传递位置参数
+##### 3.1.15.5 向过滤器中传递字符串位置参数
 
 我们也可以将位置参数传递到过滤器中。使用以下参数：
 
@@ -2040,10 +2040,77 @@ $ echo $?
 3
 ```
 
-结果上面的执行可以知道：
+结合上面的执行结果可以知道，有以下结论：
 
 - 位置参数应放在命令行参数的最后的位置。
 - 位置参数的字符串默认不需要使用单引号包裹。
+
+
+
+##### 3.1.15.6 向过滤器中传递JSON位置参数
+
+我们也可以将位置参数传递到过滤器中。使用以下参数：
+
+- `--jsonargs`:
+
+> Remaining arguments are positional JSON text arguments.  These  are available to the jq program as `$ARGS.positional[]`.
+
+
+
+剩下的参数是JSON位置参数，可以使用`$ARGS.positional[]`获取位置参数。
+
+有了上一节的测试，此处就知道直接将JSON型的位置参数放置在命令行的最后面，直接看下面的示例：
+
+```sh
+# 同时传递命名参数、字符串型位置参数、JSON型的位置参数到过滤器中
+# 通过'$ARGS'可以打印所有的位置参数和命名参数
+$ echo 'null'|jq '$ARGS' --arg tool "jq" --args '"positional argument one"' "positional argument two" --jsonargs true false '{"key":"value"}' null 2 '"string"'
+{
+  "positional": [
+    "\"positional argument one\"",
+    "positional argument two",
+    true,
+    false,
+    {
+      "key": "value"
+    },
+    null,
+    2,
+    "string"
+  ],
+  "named": {
+    "tool": "jq"
+  }
+}
+
+# 获取位置参数列表
+$ echo 'null'|jq '$ARGS.positional[]' --arg tool "jq" --args '"positional argument one"' "positional argument two" --jsonargs true false '{"key":"value"}' null 2 '"string"'
+"\"positional argument one\""
+"positional argument two"
+true
+false
+{
+  "key": "value"
+}
+null
+2
+"string"
+
+
+# 查看位置参数的各元素的数据类型
+$ echo 'null'|jq '$ARGS.positional[]|type' --arg tool "jq" --args '"positional argument one"' "positional argument two" --jsonargs true false '{"key":"value"}' null 2 '"string"'
+"string"
+"string"
+"boolean"
+"boolean"
+"object"
+"null"
+"number"
+"string"
+$
+```
+
+
 
 
 
