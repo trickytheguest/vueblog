@@ -2305,9 +2305,55 @@ Testing '[.[]|tojson|fromjson]' at line number 93
 
 
 
+## 4. 基本过滤器
+
+### 4.1 身份运算符`.`
+
+> Identity: `.`                                      
+>
+> The absolute simplest filter is `.` .  This is a filter that takes its input and produces it unchanged as output.  That is, this is the identity operator.
+>
+> Since jq by default pretty-prints all output, this trivial program can be a useful way of formatting JSON output from, say, `curl`.
+
+- 身份运算符是最简单的过滤器。
+
+- 身份运算符会将输入流直接输出。由于`jq`默认会美化JSON字符的输出，因此，身份运算符默认会将输入流美化后然后输出输出。
+- 在处理十进制数时，可以无损转换。
+- `jq`默认不会截断字面数字，除非要进行算术运算。
+- `jq`尽量会保持数字的原始精度。
+
+国内访问`jq`的官方时，查看示例时，经常点击`Examples`没有反应，不显示给出的示例。这个时候最好使用科学上网(翻墙)，然后再查看示例。
+
+使用科学上网看到的示例：
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210827235913.png)
+
+你可以点击`Run`按钮跳转到`jq play`页面 [https://jqplay.org/jq?q=.&j=%22Hello%2C%20world!%22](https://jqplay.org/jq?q=.&j=%22Hello%2C%20world!%22)：
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210828000232.png)
+
+当你没有安装`jq`程序的时候，可以在这个网站上面进行一些测试。
 
 
 
+我们就在本地按示例进行测试。
+
+```sh
+$ echo '"Hello, world!"'|jq '.'
+"Hello, world!"
+$ echo '12345678909876543212345'|jq '.|tojson'
+"12345678909876543000000"
+$ echo [1, 1.000, 1.0, 100e-2]|jq 'map([., . == 1]) | tojson'
+"[[1,true],[1,true],[1,true],[1,true]]"
+$ echo '10000000000000000000000000000001'|jq '. as $big | [$big, $big + 1] | map(. > 10000000000000000000000000000000)'
+[
+  false,
+  false
+]
+$
+```
+
+可以看到，我们执行的结果与官方给出的示例的结果存在一些差异。
 
 
 
