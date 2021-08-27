@@ -1955,6 +1955,100 @@ $
 
 
 
+##### 3.1.15.5 向过滤器中传递位置参数
+
+我们也可以将位置参数传递到过滤器中。使用以下参数：
+
+- `--args`:
+
+> Remaining arguments are positional string arguments.  These are  available to the jq program as `$ARGS.positional[]`.
+
+
+
+剩下的参数是位置参数，可以使用`$ARGS.positional[]`获取位置参数。
+
+可以像下面这样使用：
+
+```sh
+$ echo 'null'|jq '$ARGS' --arg tool "jq" --args '"positional argument one"' "positional argument two"
+{
+  "positional": [
+    "\"positional argument one\"",
+    "positional argument two"
+  ],
+  "named": {
+    "tool": "jq"
+  }
+}
+$ echo 'null'|jq '$ARGS.positional[]' --arg tool "jq" --args '"positional argument one"' "positional argument two"
+"\"positional argument one\""
+"positional argument two"
+$
+```
+
+可以看到：
+
+- 使用位置参数时，默认不需要使用单引号将需要传递的参数包裹起来。使用单引号包裹时，`'"positional argument one"'`，会将包裹字符的双引号也作为位置参数的一部分输出。
+
+另外，位置参数必须放在命令的最后的位置，否则会仅输出第一个位置参数。这个是经过多次试验才发现的，请看下面的示例：
+
+```sh
+$ echo 'null'|jq --arg tool "jq" --args '"positional argument one"' "positional argument two"  '$ARGS.positional[]'
+"positional argument one"
+$ echo 'null'|jq --arg tool "jq" --args '"positional argument one"' "positional argument two"  '$ARGS.positional'
+"positional argument one"
+$ echo 'null'|jq --arg tool "jq" --args '"positional argument one"' "positional argument two"  '$ARGS'
+"positional argument one"
+$ echo 'null'|jq --arg tool "jq" --args '"positional argument one"' "positional argument two"  '$'
+"positional argument one"
+$ echo 'null'|jq --arg tool "jq" --args '"positional argument one"' "positional argument two"  ''
+"positional argument one"
+$ echo 'null'|jq --arg tool "jq" --args '"positional argument one"' "positional argument two"
+"positional argument one"
+$
+```
+
+示例中，我将过滤器放在了位置参数后面，这个时候，无论我怎么修改后面的过滤器字符，如最开始的` '$ARGS.positional[]'`，到最后直接没有过滤器，`jq`输出的结果一直都是第一个位置参数`"positional argument one"`。
+
+上面的将过滤器放在位置参数后面，实质是`jq`执行的是以下命令：
+
+```sh
+$ echo 'null'|jq '"positional argument one"'
+"positional argument one"
+```
+
+如果将`'"positional argument one"'`两侧的单引号去掉，再执行则会抛出异常：
+
+```sh
+$ echo 'null'|jq --arg tool "jq" --args "positional argument one" '"positional argument two"'
+jq: error: syntax error, unexpected IDENT, expecting $end (Unix shell quoting issues?) at <top-level>, line 1:
+positional argument one
+jq: 1 compile error
+$ echo $?
+3
+$
+```
+
+可以看到异常退出，退出码是3。与执行下面的命令的异常是一样的：
+
+```sh
+$ echo 'null'|jq "positional argument one"
+jq: error: syntax error, unexpected IDENT, expecting $end (Unix shell quoting issues?) at <top-level>, line 1:
+positional argument one
+jq: 1 compile error
+$ echo $?
+3
+```
+
+结果上面的执行可以知道：
+
+- 位置参数应放在命令行参数的最后的位置。
+- 位置参数的字符串默认不需要使用单引号包裹。
+
+
+
+`
+
 
 
 
