@@ -2299,6 +2299,10 @@ Testing '[.[]|tojson|fromjson]' at line number 93
 
 
 
+至此，我们已经实验完成所有的参数了！
+
+可以看到，`jq`非常的强大，连参数都有这么多知识！加油！！
+
 
 
 
