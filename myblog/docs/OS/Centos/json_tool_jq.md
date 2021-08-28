@@ -2431,3 +2431,126 @@ $ echo '999999999999990'|jq '.|tojson'
 
 
 
+### 4.2 对象标识符-索引`.foo`、`.foo.bar`
+
+- 最简单的有用过滤器是`.foo`，当输入值是JSON对象时，它会生成键对应的值，如果该键不存在，则返回`null`。
+- `.foo.bar`的过滤器与`.foo|.bar`等效。
+- 此语法仅适用于简单的类似标识符的键，即全部由字母数字字符和下划线组成且不以数字开头的键。
+- 如果键包含特殊字符或以数字开头，则需要用双引号将其括起来，如下所示：`."foo$"`，否则为` .["foo$"]`。
+- 例如 `.["foo::bar"]` 和 `.["foo.bar"]` 能工作，然而  `.foo::bar` 不能工作, 并且 `.foo.bar` 等价 `.["foo"].["bar"]`。
+
+```sh
+$ echo '{"foo": 42, "bar": "less interesting data"}'|jq '.foo'
+42
+$ echo '{"notfoo": true, "alsonotfoo": false}'|jq '.["foo"]'
+null
+$ echo '{"foo": 42, "bar": "less interesting data"}'|jq '.["foo"]'
+42
+```
+
+下面我们来测试一些特殊的字符，如包含点号的键、以数字开头的键、包含其他特殊字符的键。
+
+#### 4.2.1 包含点号的键
+
+父键和子键中都包含了`.`点号，如父键名是`parent.key`，而子键名是`sub.key`，我们来看一下下面的解析：
+
+```sh
+# 直接解析`.parent.key`，没有获取到正确的值，返回的是null
+$ echo '{"parent.key": {"sub.key": "value"}}'|jq '.parent.key'
+null
+
+# 将键名使用双引号包裹起来，能正常获取到父键"parent.key"对应的值
+$ echo '{"parent.key": {"sub.key": "value"}}'|jq '."parent.key"'
+{
+  "sub.key": "value"
+}
+
+# 也可以这样，在用双引号包裹父键后，再用中括号包裹起来，感觉多此一举
+$ echo '{"parent.key": {"sub.key": "value"}}'|jq '.["parent.key"]'
+{
+  "sub.key": "value"
+}
+```
+
+如果我们同时要获取到子键对应的值，可以像下面这样操作：
+
+```sh
+# 连接两次将键名用双引号包裹起来。用双引号包裹父键`parent.key`,同时用双引号包裹父键`sub.key`，可以获取到最后的`value`
+# 推荐使用此种方法！！！！
+$ echo '{"parent.key": {"sub.key": "value"}}'|jq '."parent.key"."sub.key"'
+"value"
+
+# 也可以将父键用中括号括起来
+$ echo '{"parent.key": {"sub.key": "value"}}'|jq '.["parent.key"]."sub.key"'
+"value"
+
+# 若我们把子键也用中括号括起来，抛出异常
+$ echo '{"parent.key": {"sub.key": "value"}}'|jq '.["parent.key"].["sub.key"]'
+jq: error: syntax error, unexpected '[', expecting FORMAT or QQSTRING_START (Unix shell quoting issues?) at <top-level>, line 1:
+.["parent.key"].["sub.key"]
+jq: 1 compile error
+
+# 若我们仅只把子键用中括号括起来，一样也抛出异常
+$ echo '{"parent.key": {"sub.key": "value"}}'|jq '."parent.key".["sub.key"]'
+jq: error: syntax error, unexpected '[', expecting FORMAT or QQSTRING_START (Unix shell quoting issues?) at <top-level>, line 1:
+."parent.key".["sub.key"]
+jq: 1 compile error
+$
+
+# 若子键也要使用中括号括起来，那应在中间加一上管道符|
+$ echo '{"parent.key": {"sub.key": "value"}}'|jq '."parent.key" | .["sub.key"]'
+"value"
+$ echo '{"parent.key": {"sub.key": "value"}}'|jq '.["parent.key"] | .["sub.key"]'
+"value"
+$
+```
+
+因此，如果我们在键名中包含点号，建议使用双引号包裹键名的方式来过滤！！！
+
+#### 4.2.2 包含双引号的键
+
+假如我们父键和子键中都包含双引号`"`，这时候该怎么处理。
+
+```sh
+$ echo '{"parent\"key": {"sub\"key": "value"}}'|jq '."parent\"key"."sub\"key"'
+"value"
+```
+
+当我们键名中包含双引号时，应使用`\"`进行转义！！再过滤器中也使用`\"`进行转义！！才能正常获取到值。
+
+
+
+#### 4.2.3 包含其他特殊字符的键
+
+假如我们父键和子键中都包含两个冒号`::`，这时候该怎么处理。
+
+```sh
+$ echo '{"parent::key": {"sub::key": "value"}}'|jq '."parent::key"  ."sub::key"'
+"value"
+$ echo '{"parent::key": {"sub::key": "value"}}'|jq '."parent::key"           ."sub::key"'
+"value"
+$ echo '{"parent::key": {"sub::key": "value"}}'|jq '."parent::key"           .      "sub::key"'
+"value"
+```
+
+此时，我们只用将键名用双引号包裹起来就可以，不用转义。注意，此处，我们在父键和子键之间加了几个空格，你可以随意加多个空格，用于区分开不同的键。
+
+
+
+#### 4.2.4 数字处于键的开始位置
+
+假如我们父键和子键键名开头都是数字，这时候该怎么处理。
+
+```sh
+$ echo '{"1parentkey": {"2subkey": "value"}}'|jq '."1parentkey"  ."2subkey"'
+"value"
+
+# 如果不加双引号，则会抛出异常
+$ echo '{"1parentkey": {"2subkey": "value"}}'|jq '.1parentkey.2subkey'
+jq: error: syntax error, unexpected IDENT, expecting $end (Unix shell quoting issues?) at <top-level>, line 1:
+.1parentkey.2subkey
+jq: 1 compile error
+```
+
+此时，我们只用将键名用双引号包裹起来就可以，不用转义。
+
