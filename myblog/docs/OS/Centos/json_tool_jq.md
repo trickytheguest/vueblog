@@ -2307,6 +2307,12 @@ Testing '[.[]|tojson|fromjson]' at line number 93
 
 ## 4. 基本过滤器
 
+::: 特别说明
+
+对于官网中的`array`数据类型，可以译为`数组`或`列表`,本总结中两种都是是`array`！
+
+:::
+
 ### 4.1 身份运算符`.`
 
 > Identity: `.`                                      
@@ -2553,4 +2559,137 @@ jq: 1 compile error
 ```
 
 此时，我们只用将键名用双引号包裹起来就可以，不用转义。
+
+
+
+#### 4.2.5 可选的对象标识符`.foo?`
+
+`.foo?`类似`.foo`标识符，但当`.`不是`array`列表或`object`对象时，不抛出异常。
+
+与`.foo`标识符相似的行为：
+
+```sh
+$ echo '{"foo": 42, "bar": "less interesting data"}'|jq '.foo?'
+42
+$ echo '{"foo": 42, "bar": "less interesting data"}'|jq '.["foo"]?'
+42
+$ echo '{"notfoo": true, "alsonotfoo": false}'|jq '.foo?'
+null
+```
+
+不同的行为：
+
+```sh
+# 输入是字符串时，不带?时抛出异常，退出码是5
+$ echo '"not array"'|jq '.foo'
+jq: error (at <stdin>:1): Cannot index string with string "foo"
+$ echo $?
+5
+
+# 输入是字符串时，带?时正常退出，退出码是0
+$ echo '"not array"'|jq '.foo?'
+$ echo $?
+0
+
+# 输入是列表时，不带?时抛出异常，退出码是5
+$ echo '[1,2]'|jq '.foo'
+jq: error (at <stdin>:1): Cannot index array with string "foo"
+$ echo $?
+5
+
+# 输入是列表时，带?时正常退出，退出码是0
+$ echo '[1,2]'|jq '.foo?'
+$ echo $?
+0
+
+# 输入是列表时，不带?时抛出异常
+$ echo '[1,2]'|jq '[.foo]'
+jq: error (at <stdin>:1): Cannot index array with string "foo"
+
+# 输入是列表时，带?时正常退出，由于我们在`.foo?`两侧加了中括号，最后输出的是`[]`，一个空列表
+$ echo '[1,2]'|jq '[.foo?]'
+[]
+```
+
+上面的异常时，抛出的提示是`Cannot index array with string`，即不能用字符串索引数组(列表)！
+
+下面我们来看一下列表索引。
+
+
+
+
+
+#### 4.3.6 对象索引`.[<string>]`
+
+- 你可以通过`.[<string>]`的方式来获取对象索引的元素，如`.["foo"]`, `.foo`是一个简写。
+
+```sh
+$ echo '{"name":"JSON", "good":true}'|jq '.["name"]'
+"JSON"
+$ echo '{"name":"JSON", "good":true}'|jq '.name'
+"JSON"
+```
+
+
+
+### 4.3 列表索引`.[2]`
+
+- 当索引值是整数时，`.[<value>]`能够对数组(列表)进行索引。
+- 列表索引默认从`0`开始。`.[2]`是返回的是第3个元素。
+- 支持负数索引，`-1`表示最后一个元素，`-2`表示倒数第二个元素。
+
+```sh
+# 获取列表第1个元素
+$ echo '[{"name":"JSON", "good":true}, {"name":"XML", "good":false}]'|jq '.[0]'
+{
+  "name": "JSON",
+  "good": true
+}
+
+# 获取列表第2个元素
+$ echo '[{"name":"JSON", "good":true}, {"name":"XML", "good":false}]'|jq '.[1]'
+{
+  "name": "XML",
+  "good": false
+}
+
+# 获取列表第3个元素，超过索引最大值，返回null
+$ echo '[{"name":"JSON", "good":true}, {"name":"XML", "good":false}]'|jq '.[2]'
+null
+
+# 获取列表倒数第1个元素
+$ echo '[1,2,3,4,5]'|jq '.[-1]'
+5
+
+# 获取列表倒数第2个元素
+$ echo '[1,2,3,4,5]'|jq '.[-2]'
+4
+
+# 获取列表倒数第3个元素
+$ echo '[1,2,3,4,5]'|jq '.[-3]'
+3
+
+# 获取列表第1个元素
+$ echo '[1,2,3,4,5]'|jq '.[0]'
+1
+
+# 获取列表第2个元素
+$ echo '[1,2,3,4,5]'|jq '.[1]'
+2
+
+# 获取列表第3个元素
+$ echo '[1,2,3,4,5]'|jq '.[2]'
+3
+
+# 获取列表第5个元素
+$ echo '[1,2,3,4,5]'|jq '.[4]'
+5
+
+# 获取列表第6个元素，超出索引最大值，返回null
+$ echo '[1,2,3,4,5]'|jq '.[5]'
+null
+$
+```
+
+
 
