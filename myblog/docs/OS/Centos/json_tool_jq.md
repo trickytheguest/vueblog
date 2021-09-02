@@ -2872,8 +2872,117 @@ $ echo '"ab"'|jq '( . +  "cd") * 5'
 
 - jq 支持与 JSON 相同的一组数据类型 - 数字、字符串、布尔值、数组、对象（在 JSON 中是只有字符串键的哈希）和`null`空。
 - 布尔值、空值、字符串和数字的编写方式与 JavaScript 相同。
-- jq 中的数字在内部由它们的 IEEE754 双精度近似表示。 任何对数字的算术运算，无论是文字还是先前过滤器的结果，都将产生双精度浮点结果。
+- jq 中的数字在内部由它们的 **IEEE754 双精度**近似表示。 任何对数字的算术运算，无论是文字还是先前过滤器的结果，都将产生双精度浮点结果。
 - 在解析文字时 jq 将存储原始文字字符串。 如果没有对这个值应用任何改变，那么它将以其原始形式输出到输出。但是进行转换时将会导致数据失真。
 
 疑问： IEEE754 双精度是怎么表示的？
+
+### 5.1 数组
+
+- 数组由`[]`包裹。如`[1,2,3]`。
+- 数组的表达式可以是任意的jq表达式，包括管道符`|`。
+- 可以使用`[]`将jq输出流的结果转换成一个数组。
+- 表达式`[1,2,3]`不是使用逗号分隔数组的内置语法，而是用`[]`应用到`1,2,3`而收集的结果。
+
+```sh
+$ echo '{"user":"stedolan", "projects": ["jq", "wikiflow"]}'|jq '[.user, .projects[]]'
+[
+  "stedolan",
+  "jq",
+  "wikiflow"
+]
+$ echo '[1,2,3]'|jq '[ .[] | . * 2]'
+[
+  2,
+  4,
+  6
+]
+```
+
+### 5.2 对象
+
+- 使用`{}`来构建对象。如`{"a": 42, "b": 17}`。
+- 如果键是类似标识符的，那么可以进行简写，省略掉双引号，如`{a: 42, b: 17}`。
+- 如果键是由表达式组成，则应用操作包裹起来，如`{("a"+"b"): 59}`。
+- 键的值可以是任意值。
+- 如果输入对象中包含 "user", "title", "id", "content"等字段，你想访问"user"和"title"字段，那么你可以这样`{user: .user, title: .title}`。由于这种很常用，可以简写成`{user, title}`。
+- 如果一个表达式产生多个输出结果，输出会产生多个对象。
+- 如果使用表达式使用键，则应使用小括号包裹起来。
+
+```sh
+# 获取键a的值
+$ echo '{"a": 42, "b": 17}'|jq '.a'
+42
+
+# 获取键a的值，并作为对象中键“a”的值
+$ echo '{"a": 42, "b": 17}'|jq '{"a":.a}'
+{
+  "a": 42
+}
+
+# 由于"a"和"b"都是标识符，键外侧的双引号可以省略
+$ echo '{"a": 42, "b": 17}'|jq '{a: .a, b: .b}'
+{
+  "a": 42,
+  "b": 17
+}
+
+# 使用简写形式，直接获取到键a和键b的值
+$ echo '{"a": 42, "b": 17}'|jq '{a, b}'
+{
+  "a": 42,
+  "b": 17
+}
+```
+
+同样，使用简写形式获取键的值：
+
+```sh
+$ echo '{"user":"stedolan","title":  "More JQ"}'|jq '{user: .user, title: .title}'
+{
+  "user": "stedolan",
+  "title": "More JQ"
+}
+$ echo '{"user":"stedolan","title":  "More JQ"}'|jq '{user, title}'
+{
+  "user": "stedolan",
+  "title": "More JQ"
+}
+```
+
+产生多个对象的情况：
+
+```sh
+# 获取titles键的每个元素
+$ echo '{"user":"stedolan","titles":["JQ Primer", "More JQ"]}'|jq '.titles[]'
+"JQ Primer"
+"More JQ"
+
+# 由于.titles[]产生2个输出，每个输出都需要与`user`的输出组成一个子对象，这样最终也产生了2个对象输出
+$ echo '{"user":"stedolan","titles":["JQ Primer", "More JQ"]}'|jq '{user, title: .titles[]}'
+{
+  "user": "stedolan",
+  "title": "JQ Primer"
+}
+{
+  "user": "stedolan",
+  "title": "More JQ"
+}
+```
+
+键是表达式的情况：
+
+```sh
+$ echo '{"user":"stedolan","titles":["JQ Primer", "More JQ"]}'|jq '{(.user): .titles}'
+{
+  "stedolan": [
+    "JQ Primer",
+    "More JQ"
+  ]
+}
+```
+
+
+
+
 
