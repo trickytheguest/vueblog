@@ -2982,6 +2982,75 @@ $ echo '{"user":"stedolan","titles":["JQ Primer", "More JQ"]}'|jq '{(.user): .ti
 }
 ```
 
+### 5.3 递归下降
+
+- 使用`..`符号可以递归产生每个值。
+- 请注意`..a`不起作用，而应使用`..|.a`。
+
+可以看一下下面简单的示例:
+
+```sh
+$ echo '[[{"a":1}]]'|jq '..'
+[
+  [
+    {
+      "a": 1
+    }
+  ]
+]
+[
+  {
+    "a": 1
+  }
+]
+{
+  "a": 1
+}
+1
+$ echo '[[{"a":1}]]'|jq '..|.a'
+jq: error (at <stdin>:1): Cannot index array with string "a"
+$ echo '[[{"a":1}]]'|jq '..|.a?'
+1
+```
+
+另一个示例：
+
+```sh
+# ..会递归产生所有的可能的子元素
+$ echo '{"user":"stedolan","titles":["JQ Primer", "More JQ"]}'|jq '..'
+{
+  "user": "stedolan",
+  "titles": [
+    "JQ Primer",
+    "More JQ"
+  ]
+}
+"stedolan"
+[
+  "JQ Primer",
+  "More JQ"
+]
+"JQ Primer"
+"More JQ"
+
+
+# 直接..user不起作用
+$ echo '{"user":"stedolan","titles":["JQ Primer", "More JQ"]}'|jq '..user'
+jq: error: syntax error, unexpected IDENT, expecting $end (Unix shell quoting issues?) at <top-level>, line 1:
+..user
+jq: 1 compile error
+
+# 使用..|.user，因为有元素不是对象，是字符串或数组，将不能应用.user作为索引，因为会抛出异常
+$ echo '{"user":"stedolan","titles":["JQ Primer", "More JQ"]}'|jq '..|.user'
+"stedolan"
+jq: error (at <stdin>:1): Cannot index string with string "user"
+
+
+# 加上?问号，避免抛出异常
+$ echo '{"user":"stedolan","titles":["JQ Primer", "More JQ"]}'|jq '..|.user?'
+"stedolan"
+```
+
 
 
 
