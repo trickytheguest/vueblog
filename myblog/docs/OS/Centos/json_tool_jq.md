@@ -3209,7 +3209,7 @@ $ source ~/.bashrc
 
 ### 7.1 加法运算符
 
-- `+`加法运算符会根据进行运算的参数的类型进行不同的行为。
+- `+`加法运算符(Addition)会根据进行运算的参数的类型进行不同的行为。
 - 数字相加，则进行算术运算。
 - 数组相加，则通过连接形成一个更大的数组。
 - 字符串相加，则通过连接形成一个更大的字符串。
@@ -3261,5 +3261,92 @@ $ echo 'null'|jq '{a: 1} + {b: 2} + {c: 3} + {a: 42}'
   "b": 2,
   "c": 3
 }
+
+# 尝试布尔值相加，抛出异常，布尔值和布尔值不能相加
+$ echo '{"boolean": true}'|jq '.boolean + false'
+jq: error (at <stdin>:1): boolean (true) and boolean (false) cannot be added
+$ echo $?
+5
+
+# 布尔值可以和null空相加
+$ echo '{"boolean": true}'|jq '.boolean + null'
+true
 ```
+
+
+
+### 7.2 减法运算符
+
+- 减法(Subtraction)运算符是`-`。
+- 作用于数字时，进行普通的算术减法运算。
+- 作用于数组时，从第一个数组中删除所有出现在第二个数组中的元素。
+- 对象和对象之间不能相减。
+- 布尔和布尔之间也不能相减。
+
+```sh
+# 整数相减
+$ echo '{"a":3}'|jq '4 - .a'
+1
+
+# 浮点数相减，存在精度问题
+$ echo '{"a":3.1415}'|jq '4 - .a'
+0.8584999999999998
+
+# 浮点数相减，存在精度问题
+$ echo '{"a": -3.1415}'|jq '4 - .a'
+7.141500000000001
+
+# 数组相减，会移除数组中相同的元素
+$ echo '["xml", "yaml", "json"]'|jq '. - ["xml", "yaml"]'
+[
+  "json"
+]
+
+# 数组相减，不会理会第二个数组中多出的元素，如"other"
+$ echo '["xml", "yaml", "json"]'|jq '. - ["xml", "yaml", "other"]'
+[
+  "json"
+]
+
+# 数组相减，判断元素是否相同，是大小写敏感的，只有完全一样的才会移除掉
+$ echo '["xml", "yaml", "json"]'|jq '. - ["XML", "yaml"]'
+[
+  "xml",
+  "json"
+]
+
+# 尝试对象减对象，抛出异常，对象和对象不能相减
+$ echo '{"tool": "JQ"}'|jq '. - {"tool": "other"}'
+jq: error (at <stdin>:1): object ({"tool":"JQ"}) and object ({"tool":"ot...) cannot be subtracted
+$ echo $?
+5
+
+# 尝试布尔值相减，抛出异常，布尔值和布尔值不能相减
+$ echo '{"boolean": true}'|jq '.boolean - false'
+jq: error (at <stdin>:1): boolean (true) and boolean (false) cannot be subtracted
+$ echo $?
+5
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
