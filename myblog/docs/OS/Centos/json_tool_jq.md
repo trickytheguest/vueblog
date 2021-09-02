@@ -3330,6 +3330,113 @@ $ echo $?
 
 
 
+### 7.3 乘法
+
+- 乘法(Multiplication)运算符使用`*`。
+- 两数相乘，进行算术相乘。
+- 字符串乘以数字，则多次拼接字符串，形成一个长的字符串。字符串乘以0，则返回空。
+- 两个对象相乘，则对对象进行递归拼接，工作方法类似于加法运算，相同键时，以右边键为准。
+- 布尔值不能与数字相乘，布尔值也不能与布尔值相乘，布尔值也不能与字符串相乘。
+- 数组不能与数字相乘，也不能与数组相乘。
+
+
+
+```sh
+# 数字相乘
+$ echo '3.14'|jq '. * 2'
+6.28
+$ echo '3.1415926'|jq '. * 2'
+6.2831852
+
+# 数字相乘，也存在精度问题
+$ echo '3.1415926'|jq '. * 3'
+9.424777800000001
+$ echo '3'|jq '. * 3'
+9
+
+$ echo '"jq"'|jq
+"jq"
+
+# 字符串与数字相乘，会多次拼接该字符串
+$ echo '"jq"'|jq '. * 3'
+"jqjqjq"
+
+# 字符串与数字相乘，当数大于1时，数字会向下取整，然后再与字符串相乘
+$ echo '"jq"'|jq '. * 3.14'
+"jqjqjq"
+$ echo '"jq"'|jq '. * 3.14155'
+"jqjqjq"
+$ echo '"jq"'|jq '. * 3.9'
+"jqjqjq"
+$ echo '"jq"'|jq '. * 3.99999'
+"jqjqjq"
+
+# 字符串与数字相乘，当数大于0且小于1时，数字会向上取整得到1，然后再与字符串相乘，即输出字符串本身
+$ echo '"jq"'|jq '. * 0.99999'
+"jq"
+$ echo '"jq"'|jq '. * 0.5999'
+"jq"
+$ echo '"jq"'|jq '. * 0.5'
+"jq"
+$ echo '"jq"'|jq '. * 0.4'
+"jq"
+$ echo '"jq"'|jq '. * 0.1'
+"jq"
+$ echo '"jq"'|jq '. * 0.0001'
+"jq"
+$ echo '"jq"'|jq '. * 0.000000000001'
+"jq"
+
+# 字符串与0相乘，得到空null
+$ echo '"jq"'|jq '. * 0'
+null
+$ echo '"jq"'|jq '. * -0'
+null
+
+# 字符串与负数相乘，得到空null
+$ echo '"jq"'|jq '. * -1'
+null
+$ echo '"jq"'|jq '. * -1.2'
+null
+$ echo '"jq"'|jq '. * -100'
+null
+
+# 字符串与字符串不能相乘
+$ echo '"jq"'|jq '. * "JQ"'
+jq: error (at <stdin>:1): string ("jq") and string ("JQ") cannot be multiplied
+$
+
+# 布尔值不能与数字相乘
+$ echo 'true'|jq '. * 1'
+jq: error (at <stdin>:1): boolean (true) and number (1) cannot be multiplied
+
+# 布尔值也不能与布尔值相乘
+$ echo 'true'|jq '. * false'
+jq: error (at <stdin>:1): boolean (true) and boolean (false) cannot be multiplied
+
+# 布尔值也不能与字符串相乘
+$ echo 'true'|jq '. * "JQ"'
+jq: error (at <stdin>:1): boolean (true) and string ("JQ") cannot be multiplied
+
+# 数组不能与数字相乘
+$ echo '[1,2,3]'|jq '.*3'
+jq: error (at <stdin>:1): array ([1,2,3]) and number (3) cannot be multiplied
+
+# 数组与数组也不能相乘
+$ echo '[1,2,3]'|jq '.* [1,2]'
+jq: error (at <stdin>:1): array ([1,2,3]) and array ([1,2]) cannot be multiplied
+
+# 对象和对象相乘，进行递归拼接
+$ echo 'null'|jq '{"k": {"a": 1, "b": 2}} * {"k": {"a": 0,"c": 3}}'
+{
+  "k": {
+    "a": 0,
+    "b": 2,
+    "c": 3
+  }
+}
+```
+
 
 
 
