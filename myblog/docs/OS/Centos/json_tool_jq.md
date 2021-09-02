@@ -3053,5 +3053,146 @@ $ echo '{"user":"stedolan","titles":["JQ Primer", "More JQ"]}'|jq '..|.user?'
 
 
 
+## 6. 配色方案设置
 
+在我们继续下一章的`Builtin operators and functions`内置运算符和函数之前，我们先跳到手册最后一章`Colors配钯方案设置。
+
+- 要替换默认的配色方案，我们只需要设置一个`JQ_COLORS`环境变量即可。
+- 需要将`JQ_COLORS`设置为以`:`冒号分隔的终端转义颜色，并且按以下顺序设置：
+    - `null`的颜色。
+    - `false`的颜色。
+    - `true`的颜色。
+    - `number`数字的颜色。
+    - `string`字符串的颜色。
+    - `array`数组、列表的颜色。
+    - `object`对象的颜色。
+- 默认配置方案，与设置`JQ_COLORS=1;30:0;37:0;37:0;37:0;32:1;37:1;37`是作用相同的。
+- 每个颜色都由两个部分组成，中间用分号分隔开。
+- 其中，第一部分可以是以下值：
+    - 1 (bright) 高亮
+    - 2 (dim) 暗
+    - 4 (underscore) 下划线
+    - 5 (blink) 闪烁
+    - 7 (reverse) 反显
+    - 8 (hidden) 隐藏
+- 第二部分可以是以下值：
+    - 30 (black) 黑色
+    - 31 (red) 红色
+    - 32 (green) 绿色
+    - 33 (yellow) 花色
+    - 34 (blue) 蓝色
+    - 35 (magenta) 品红色
+    - 36 (cyan) 青色
+    - 37 (white) 白色
+
+相关定义可以在源码`src/jv_print.c`中看到：
+
+```sh
+$ cat -n src/jv_print.c|sed -n '24,36p'
+    24	#define COL(c) (ESC "[" c "m")
+    25	#define COLRESET (ESC "[0m")
+    26
+    27	// Color table. See https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
+    28	// for how to choose these.
+    29	static const jv_kind color_kinds[] =
+    30	  {JV_KIND_NULL,   JV_KIND_FALSE, JV_KIND_TRUE, JV_KIND_NUMBER,
+    31	   JV_KIND_STRING, JV_KIND_ARRAY, JV_KIND_OBJECT};
+    32	static char color_bufs[sizeof(color_kinds)/sizeof(color_kinds[0])][16];
+    33	static const char *color_bufps[8];
+    34	static const char* def_colors[] =
+    35	  {COL("1;30"),    COL("0;37"),      COL("0;37"),     COL("0;37"),
+    36	   COL("0;32"),      COL("1;37"),     COL("1;37")};
+$
+```
+
+我们构建一个包含所有类型的输出：
+
+```sh
+$ echo '{"name":"JSON", "good":true, "null": null, "boolean_false": false, "array": [1,2,3.14], "object":{"tool": "jq"}}'|jq
+{
+  "name": "JSON",
+  "good": true,
+  "null": null,
+  "boolean_false": false,
+  "array": [
+    1,
+    2,
+    3.14
+  ],
+  "object": {
+    "tool": "jq"
+  }
+}
+```
+
+效果图如下：
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210902224044.png)
+
+
+
+我们改变一下配色方案：
+
+```sh
+$ export JQ_COLORS="1;31:7;31:1;32:0;37:0;32:1;33:1;37"
+$ echo $JQ_COLORS
+1;31:7;31:1;32:0;37:0;32:1;33:1;37
+```
+
+
+
+再次查看效果：
+
+```sh
+$ echo '{"name":"JSON", "good":true, "null": null, "boolean_false": false, "array": [1,2,3.14], "object":{"tool": "jq"}}'|jq
+{
+  "name": "JSON",
+  "good": true,
+  "null": null,
+  "boolean_false": false,
+  "array": [
+    1,
+    2,
+    3.14
+  ],
+  "object": {
+    "tool": "jq"
+  }
+}
+```
+
+效果图如下：
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210902225836.png)
+
+我们将`null`、`false`、`true`和`array`的配置分别设置为高亮红色、反显红色、高亮绿色、高亮黄色。数字和对象的配色保持不变。
+
+这样我们可以一眼就看出空值和布尔值的不一样！数组的`[]`能及中间的`,`逗号都变成黄色了。
+
+
+
+如果想还原jq的默认配色方案，我们可以使用删除`JQ_COLORS`环境变量：
+
+```sh
+$ unset JQ_COLORS
+```
+
+然后`jq`输出的颜色就是默认配色方案了。
+
+
+
+如果后续我们想一直使用这种配色方案，可以将环境变量保存到`~/.bashrc`文件中。
+
+```sh
+$ echo -e '# Set the JQ color scheme\nexport JQ_COLORS="1;31:7;31:1;32:0;37:0;32:1;33:1;37"' >> ~/.bashrc
+$ tail -n 2 ~/.bashrc
+# Set the JQ color scheme
+export JQ_COLORS="1;31:7;31:1;32:0;37:0;32:1;33:1;37"
+```
+
+可以使用命令`source ~/.bashrc`使配置生效。
+
+```sh
+$ source ~/.bashrc
+```
 
