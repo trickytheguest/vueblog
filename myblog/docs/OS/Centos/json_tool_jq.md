@@ -3520,6 +3520,57 @@ $ echo '[6,7,8,9]'|jq '.[]| . % 1'
 
 #### 7.2.1 length长度
 
+- 字符串的长度是它包含的 Unicode 代码点的数量（如果它是纯 ASCII，它将与以字节为单位的 JSON 编码长度相同）。
+- 数组的长度是元素的个数。
+- 对象的长度是键值对的数量。
+- `null`的长度是0。
+- 布尔值没有长度。
+
+```sh
+$ echo '[[1,2,3], "string", {"a":2, "b":[3,4,5]}, null]'|jq '.[] | length'
+3
+6
+2
+0
+$ echo 'true'|jq '.|length'
+jq: error (at <stdin>:1): boolean (true) has no length
+```
+
+
+
+#### 7.2.2 utf8bytelength UTF8字节长度
+
+- 将字符串以UTF-8编码后的字节长度。
+- 仅字符串支持该函数。
+
+```sh
+# 测试希腊字母
+$ echo -e '"\u03bc"'
+"μ"
+$ echo -e '"\u03bc"'|jq ".|length"
+1
+$ echo -e '"\u03bc"'|jq ".|utf8bytelength"
+2
+
+# 测试中文
+$ echo '"测试"'|jq '.|length'
+2
+$ echo '"测试"'|jq '.|utf8bytelength'
+6
+
+# 测试字母
+$ echo '"JQ"'| jq ".|length"
+2
+$ echo '"JQ"'| jq ".|utf8bytelength"
+2
+
+# 仅字符串支持UTF-8编码长度
+$ echo 'true'| jq ".|utf8bytelength"
+jq: error (at <stdin>:1): boolean (true) only strings have UTF-8 byte length
+$ echo '{"tool": "jq"}'| jq ".|utf8bytelength"
+jq: error (at <stdin>:1): object ({"tool":"jq"}) only strings have UTF-8 byte length
+```
+
 
 
 
