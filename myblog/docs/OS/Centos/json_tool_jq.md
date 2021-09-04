@@ -3751,6 +3751,47 @@ $ echo '["foo", "bar", "baz"]'|jq 'del(.[2])'
 
 
 
+#### 7.2.7 to_entries 对象转换成健值对组成的列表
+
+- `to_entries`内置函数可以将对象进行转换，对于每一个`k: v`键值对，会转换成以下对象`{"key": k, "value": v}`，将将这些对象放在数组中。
+- `from_entries`刚好进行相反的操作。
+- 而`with_entries(foo)`是操作`to_entries | map(foo) | from_entries`的快捷方式。
+- `from_entries`支持以下名称的键:`key`,'Key`,`name`,`Name`,`value`,`Value`。
+
+看以下示例：
+
+```sh
+# 将对象转换成了包含键值对的数组
+$ echo '{"a": 1, "b": 2}'|jq 'to_entries'
+[{"key":"a","value":1},{"key":"b","value":2}]
+$
+# 反向操作，最后得到相应的对象
+$ echo '[{"key":"a","value":1},{"key":"b","value":2}]'|jq 'from_entries'
+{"a":1,"b":2}
+```
+
+`from_entries`支持不同的键的名称：
+
+```sh
+# 使用key或Key作为键，使用value或Value作为健
+$ echo '[{"key":"a","value":1},{"Key":"b","Value":2}]'|jq 'from_entries'
+{"a":1,"b":2}
+
+# 使用name或Name作为键，使用value或Value作为健
+$ echo '[{"name":"a","value":1},{"Name":"b","Value":2}]'|jq 'from_entries'
+{"a":1,"b":2}
+```
+
+注意，不能用其他值作为键：
+
+```sh
+# 用NAME作为键，抛出异常
+$ echo '[{"name":"a","value":1},{"NAME":"b","v":2}]'|jq 'from_entries'
+jq: error (at <stdin>:1): Cannot use null (null) as object key
+```
+
+
+
 
 
 
