@@ -3782,7 +3782,7 @@ $ echo '[{"name":"a","value":1},{"Name":"b","Value":2}]'|jq 'from_entries'
 {"a":1,"b":2}
 ```
 
-注意，不能用其他值作为键：
+**注意，不能用其他值作为键**：
 
 ```sh
 # 用NAME作为键，抛出异常
@@ -3791,6 +3791,44 @@ jq: error (at <stdin>:1): Cannot use null (null) as object key
 ```
 
 
+
+#### 7.2.8 select 筛选
+
+- 如果对输入流进行`foo`过滤后返回`true`的话，那么`select(foo)`将会原样返回输出，否则没有输出。
+- 这个对过滤数组非常有用，如`[1,2,3] | map(select(. >= 2))`将会返回`[2,3]`。
+
+```sh
+# 检查定义
+$ echo '2'|jq '. > 1'
+true
+$ echo '2'|jq '. > 2'
+false
+
+# 由于. > 1 返回的true, 因此select(. > 1)返回输入流2本身
+$ echo '2'|jq 'select(. > 1)'
+2
+
+# 由于. > 2 返回的false, 因此select(. > 2)不返回任何东西
+$ echo '2'|jq 'select(. > 2)'
+$
+```
+
+筛选过滤数组：
+
+```sh
+# 筛选出数组中大于2的元素
+$ echo '[1,5,3,0,7]'|jq 'map(select(. >= 2))'
+[5,3,7]
+
+# 筛选出数组中子元素对象的键id的值是"second"的元素
+$ echo '[{"id": "first", "val": 1}, {"id": "second", "val": 2}]'|jq '.[] | select(.id == "second")'
+{"id":"second","val":2}
+
+# 迭代显示数组中每一个对象元素
+$ echo '[{"id": "first", "val": 1}, {"id": "second", "val": 2}]'|jq '.[]'
+{"id":"first","val":1}
+{"id":"second","val":2}
+```
 
 
 
