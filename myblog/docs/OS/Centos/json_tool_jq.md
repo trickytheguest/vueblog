@@ -3934,6 +3934,32 @@ false
 "bar"
 ```
 
+#### 7.2.10 empty 不返回任何值
+
+- 内置函数`empty`不返回任何值，也不会输出`null`，什么也不输出。有时会很有用。
+- 我理解可以类似于Python中的`pass`进行占位。
+
+```sh
+$ echo 'null'|jq '1, empty, 2'
+1
+2
+$ echo 'null'|jq '[1,2,empty,3]'
+[1,2,3]
+```
+
+
+
+#### 7.2.11 自己抛出带消息的异常
+
+- 使用`error(message)`抛出带消息的异常。可以使用`try..catch`语法进行捕获。
+
+```sh
+$ echo 'null'|jq 'error("raise error by myself")'
+jq: error (at <stdin>:1): raise error by myself
+$ echo $?
+5
+```
+
 
 
 
