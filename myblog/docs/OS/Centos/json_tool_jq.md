@@ -3573,6 +3573,57 @@ jq: error (at <stdin>:1): object ({"tool":"jq"}) only strings have UTF-8 byte le
 
 
 
+#### 7.2.3 keys 所有的键
+
+- 内置函数`keys`用于返回对象的所有的键组成的列表。并按 unicode 代码点顺序“按字母顺序”排序。
+- 当内置函数`keys`作用于数组时，返回从0开始到数组长度-1的数字序列组成的数组。
+- `keys_unsorted`内置函数作用类似，但是按对象的键的原始顺序输出，不进行排序。
+
+```SH
+# 排序后的输出
+$ echo '{"abc": 1, "abcd": 2, "Foo": 3}'|jq 'keys'
+[
+  "Foo",
+  "abc",
+  "abcd"
+]
+
+# 输入流是数组时，直接输出数组对应的索引组成的序列数组
+$ echo '[42,3,35]'|jq 'keys'
+[
+  0,
+  1,
+  2
+]
+
+# 不排序，按原始顺序输出键的数组
+$ echo '{"abc": 1, "abcd": 2, "Foo": 3}'|jq 'keys_unsorted'
+[
+  "abc",
+  "abcd",
+  "Foo"
+]
+
+# 对于输入流是数组时，keys和keys_unsorted的作用相同
+$ echo '[42,3,35]'|jq 'keys_unsorted'
+[
+  0,
+  1,
+  2
+]
+```
+
+- `null`、字符串、布尔值都没有`keys`,不能使用该函数。
+
+```sh
+$ echo 'null'|jq 'keys'
+jq: error (at <stdin>:1): null (null) has no keys
+$ echo '"string"'|jq 'keys'
+jq: error (at <stdin>:1): string ("string") has no keys
+$ echo 'true'|jq 'keys'
+jq: error (at <stdin>:1): boolean (true) has no keys
+```
+
 
 
 
