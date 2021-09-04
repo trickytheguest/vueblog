@@ -3834,6 +3834,106 @@ $ echo '[{"id": "first", "val": 1}, {"id": "second", "val": 2}]'|jq '.[]'
 
 
 
+#### 7.2.9 arrays等 筛选出指定的元素
+
+- `arrays`筛选出所有数组。
+- `objects`筛选出所有对象。
+- `iterables`筛选出所有可迭代值。
+- `booleans`筛选出所有布尔值。
+- `numbers`筛选出所有数字。
+- `normals`筛选出所有普通数。
+- `finites`筛选出所有有限数。
+- `strings`筛选出所有字符串。
+- `nulls`筛选出所有空值。 
+- `values`筛选出所有非空值。
+- `scalars`筛选出所有不可迭代值。
+
+下面我们看一下示例：
+
+```sh
+# 获取数组
+$ echo '[[1,2],[3,4],{"tool": "jq"},1,"foo",5,-2,3.1415926,{"name": "JSON"},null,true,false,"bar"]'|jq '.[] | arrays'
+[1,2]
+[3,4]
+
+# 获取对象
+$ echo '[[1,2],[3,4],{"tool": "jq"},1,"foo",5,-2,3.1415926,{"name": "JSON"},null,true,false,"bar"]'|jq '.[] | objects'
+{"tool":"jq"}
+{"name":"JSON"}
+
+# 获取可迭代值，包括数组和对象是可迭代的
+$ echo '[[1,2],[3,4],{"tool": "jq"},1,"foo",5,-2,3.1415926,{"name": "JSON"},null,true,false,"bar"]'|jq '.[] | iterables'
+[1,2]
+[3,4]
+{"tool":"jq"}
+{"name":"JSON"}
+
+# 获取不可迭代值，包含数字、字符串、null、布尔值
+$ echo '[[1,2],[3,4],{"tool": "jq"},1,"foo",5,-2,3.1415926,{"name": "JSON"},null,true,false,"bar"]'|jq '.[] | scalars'
+1
+"foo"
+5
+-2
+3.1415926
+null
+true
+false
+"bar"
+$
+
+# 获取布尔值
+$ echo '[[1,2],[3,4],{"tool": "jq"},1,"foo",5,-2,3.1415926,{"name": "JSON"},null,true,false,"bar"]'|jq '.[] | booleans'
+true
+false
+
+# 获取所有数字
+$ echo '[[1,2],[3,4],{"tool": "jq"},1,"foo",5,-2,3.1415926,{"name": "JSON"},null,true,false,"bar"]'|jq '.[] | numbers'
+1
+5
+-2
+3.1415926
+
+# # 获取所有普通数
+$ echo '[[1,2],[3,4],{"tool": "jq"},1,"foo",5,-2,3.1415926,{"name": "JSON"},null,true,false,"bar"]'|jq '.[] | normals'
+1
+5
+-2
+3.1415926
+
+# 获取所有有限数
+$ echo '[[1,2],[3,4],{"tool": "jq"},1,"foo",5,-2,3.1415926,{"name": "JSON"},null,true,false,"bar"]'|jq '.[] | finites'
+1
+5
+-2
+3.1415926
+$
+
+# 获取所有字符串
+$ echo '[[1,2],[3,4],{"tool": "jq"},1,"foo",5,-2,3.1415926,{"name": "JSON"},null,true,false,"bar"]'|jq '.[] | strings'
+"foo"
+"bar"
+$
+
+# 获取所有空值null
+$ echo '[[1,2],[3,4],{"tool": "jq"},1,"foo",5,-2,3.1415926,{"name": "JSON"},null,true,false,"bar"]'|jq '.[] | nulls'
+null
+
+# # 获取所有非空值
+$ echo '[[1,2],[3,4],{"tool": "jq"},1,"foo",5,-2,3.1415926,{"name": "JSON"},null,true,false,"bar"]'|jq '.[] | values'
+[1,2]
+[3,4]
+{"tool":"jq"}
+1
+"foo"
+5
+-2
+3.1415926
+{"name":"JSON"}
+true
+false
+"bar"
+```
+
 
 
 
