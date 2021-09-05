@@ -4344,6 +4344,77 @@ $ echo '[{"foo":4, "bar":10}, {"foo":3, "bar":100}, {"foo":2, "bar":1}]'|jq 'sor
 [{"foo":2,"bar":1},{"foo":4,"bar":10},{"foo":3,"bar":100}]
 ```
 
+#### 7.2.22 group_by分组
+
+- 内置函数`group_by(.foo)`可以对数组中的对象按`.foo`的值进行排序(按`sort`函数的方式排序)，并按`foo`字段进行分组，形成一个大的分组后的数组。
+
+
+
+```sh
+# 获取每个子对象的foo字段的值
+$ echo '[{"foo":1, "bar":10}, {"foo":3, "bar":100}, {"foo":1, "bar":100}, {"other": "other value"}]'|jq 'map(.foo)'
+[1,3,1,null]
+
+# 第1和第3个子对象有相同的键值1，会分为一组。
+# 按sort排序的话，排序应为null，1，1，3
+# 因此，第4个元素排在第1位，第1个元素和第3个元素合并为一组，并排在第2位，而第2个元素对应的键foo的值3最大，排在最后一个位置，也就是第3位，最终形成3个子数组
+$ echo '[{"foo":1, "bar":10}, {"foo":3, "bar":100}, {"foo":1, "bar":100}, {"other": "other value"}]'|jq 'group_by(.foo)'
+[[{"other":"other value"}],[{"foo":1,"bar":10},{"foo":1,"bar":100}],[{"foo":3,"bar":100}]]
+
+# 获取每个子对象的bar字段的值
+$ echo '[{"foo":1, "bar":10}, {"foo":3, "bar":100}, {"foo":1, "bar":100}, {"other": "other value"}]'|jq 'map(.bar)'
+[10,100,100,null]
+
+# 第2和第3个子对象有相同的键值100，会分为一组。
+# 按sort排序的话，排序应为null，10，100，100
+# 因此，第4个元素排在第1位，第1个元素排在第2位，第2个元素和第3个元素合并为一组，并排在第3位，最终形成3个子数组
+$ echo '[{"foo":1, "bar":10}, {"foo":3, "bar":100}, {"foo":1, "bar":100}, {"other": "other value"}]'|jq 'group_by(.bar)'
+[[{"other":"other value"}],[{"foo":1,"bar":10}],[{"foo":3,"bar":100},{"foo":1,"bar":100}]]
+$
+
+# 获取每个子对象的other字段的值
+$ echo '[{"foo":1, "bar":10}, {"foo":3, "bar":100}, {"foo":1, "bar":100}, {"other": "other value"}]'|jq 'map(.other)'
+[null,null,null,"other value"]
+
+# 前3个子对象都没有键other，.other的值都是null空，会分为一组。
+# 第4个子对象有键other,对应的值非空，会被单独分为一组。因此最后形成两个子数组。
+# 分组组内元素按原始顺序输出。
+$ echo '[{"foo":1, "bar":10}, {"foo":3, "bar":100}, {"foo":1, "bar":100}, {"other": "other value"}]'|jq 'group_by(.other)'
+[[{"foo":1,"bar":10},{"foo":3,"bar":100},{"foo":1,"bar":100}],[{"other":"other value"}]]
+```
+
+看一下，下面这种`{"other": null}`这种更特殊的情况：
+
+```sh
+# 按foo字段排序时，与上面的{"other": "other value"}时一样
+$ echo '[{"foo":1, "bar":10}, {"foo":3, "bar":100}, {"foo":1, "bar":100}, {"other": null}]'|jq 'map(.foo)'
+[1,3,1,null]
+$ echo '[{"foo":1, "bar":10}, {"foo":3, "bar":100}, {"foo":1, "bar":100}, {"other": null}]'|jq 'group_by(.foo)'
+[[{"other":null}],[{"foo":1,"bar":10},{"foo":1,"bar":100}],[{"foo":3,"bar":100}]]
+
+# 按bar字段排序时，与上面的{"other": "other value"}时一样
+$ echo '[{"foo":1, "bar":10}, {"foo":3, "bar":100}, {"foo":1, "bar":100}, {"other": null}]'|jq 'map(.bar)'
+[10,100,100,null]
+$ echo '[{"foo":1, "bar":10}, {"foo":3, "bar":100}, {"foo":1, "bar":100}, {"other": null}]'|jq 'group_by(.bar)'
+[[{"other":null}],[{"foo":1,"bar":10}],[{"foo":3,"bar":100},{"foo":1,"bar":100}]]
+
+# 按other字段排序时，与上面的{"other": "other value"}时的结果就不一样了！！！！
+$ echo '[{"foo":1, "bar":10}, {"foo":3, "bar":100}, {"foo":1, "bar":100}, {"other": null}]'|jq 'map(.other)'
+[null,null,null,null]
+
+# 4个元素的other字段的输出结果都是null空
+# 前3个元素对象因为没有other字段，那么.other的值是null空；而第4个元素有other字段，但其.other的值直接是null空
+# 因此，4个元素的.other值都是null空，就会统一分配到一个组中
+# 也就是最后在数组中只会形成一个子的数组元素！
+# 这与{"other": "other value"}时是不一样的！！！！
+$ echo '[{"foo":1, "bar":10}, {"foo":3, "bar":100}, {"foo":1, "bar":100}, {"other": null}]'|jq 'group_by(.other)'
+[[{"foo":1,"bar":10},{"foo":3,"bar":100},{"foo":1,"bar":100},{"other":null}]]
+```
+
+
+
+
+
 
 
 
