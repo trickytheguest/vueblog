@@ -3999,7 +3999,41 @@ Other message.$ echo $?
 
 
 
+#### 7.2.13 add 操作
 
+- 内置函数`add`作用于`array`输入流，并将数组中的元素相加作为输出。
+- 根据元素类型不同，作用有可能是算术加法、字符串拼接等。作用与`+`操作符一样。
+
+```sh
+# 字符串序列的数组可以相加，将所有字符串拼接在一起
+$ echo '["a","b","c"]'|jq 'add'
+"abc"
+
+# 数字序列的数组可以相加，将所有数字进行算术加法求和
+$ echo '[1,2,3]'|jq 'add'
+6
+
+# 空元素相加返回null
+$ echo '[]'|jq 'add'
+null
+
+# 字符串与数字不能相加
+$ echo '["a","b",1]'|jq 'add'
+jq: error (at <stdin>:1): string ("ab") and number (1) cannot be added
+
+# 数字也不能和布尔值相加
+$ echo '[1,2,true]'|jq 'add'
+jq: error (at <stdin>:1): number (3) and boolean (true) cannot be added
+
+# 布尔值也不能相加
+$ echo '[false,true]'|jq 'add'
+jq: error (at <stdin>:1): boolean (false) and boolean (true) cannot be added
+$
+```
+
+
+
+#### 7.2.14 any有元素为true
 
 
 
