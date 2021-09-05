@@ -4035,5 +4035,54 @@ $
 
 #### 7.2.14 any有元素为true
 
+- 过滤器 `any`将布尔值数组作为输入，如果数组的任何元素为真(`true`)，则生成`true`作为输出。
+
+- 如果输入是空数组，则`any`返回`false`。
+
+- `any(condition)` 形式将给定的条件应用于输入数组的元素。
+
+```sh
+# 数组元素中有一个为true,any就会返回true
+$ echo '[true, false]'|jq 'any'
+true
+
+# 数组元素中没有true，则返回false
+$ echo '[false, false]'|jq 'any'
+false
+
+# 空数组时，any返回false
+$ echo '[]'|jq 'any'
+false
+
+# 数字元素组成的数组时，any返回也是true
+$ echo '[1,2]'|jq 'any'
+true
+
+# 数字0作为数组元素时，any返回也是true
+$ echo '[0]'|jq 'any'
+true
+
+
+# 字符串作为数组元素时，any返回也是true
+$ echo '["string"]'|jq 'any'
+true
+
+# 对象作为数组元素时，any返回也是true
+$ echo '[{"name": "JQ"}]'|jq 'any'
+true
+
+# 空数组作为数组元素时，any返回也是true
+$ echo '[[]]'|jq 'any'
+true
+
+# null空作为数组元素时，any返回是false
+$ echo '[null]'|jq 'any'
+false
+
+# 多个null空作为数组元素时，any返回也是false
+$ echo '[null,null]'|jq 'any'
+false
+```
+
 
 
