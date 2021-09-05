@@ -3960,6 +3960,43 @@ $ echo $?
 5
 ```
 
+可以看到使用`error`抛出异常时，退出码为5。
+
+#### 7.2.12 halt退出
+
+- 内置函数`halt`可以直接退出jq程序，并且不输出任何内容。退出码为0。
+- 内置函数`halt_error`会直接退出jq程序，并将输入流输出到标准异常中(注意：字符串没有两侧的双引号。程序不会自动换行。)
+- `halt_error`默认退出码是5，你可以通过`halt_error(exit_code)`设置不同的退出码。
+
+请看示例：
+
+```sh
+# 使用halt会直接退出，退出码是0，不会输出任何消息
+$ echo '"Error: somthing went wrong\nOther message."'|jq 'halt'
+$ echo $?
+0
+
+# 使用halt_error会异常退出，退出码默认是5，会直接将输入流输出
+# 字符串两侧的双引号不会输出，也不会自动添加换行符
+$ echo '"Error: somthing went wrong\nOther message."'|jq 'halt_error'
+Error: somthing went wrong
+Other message.$ echo $?
+5
+
+# 使用halt_error指定退出码为2
+$ echo '"Error: somthing went wrong\nOther message."'|jq 'halt_error(2)'
+Error: somthing went wrong
+Other message.$ echo $?
+2
+# 使用halt_error也可以指定退出码为0
+$ echo '"Error: somthing went wrong\nOther message."'|jq 'halt_error(0)'
+Error: somthing went wrong
+Other message.$ echo $?
+0
+```
+
+
+
 
 
 
