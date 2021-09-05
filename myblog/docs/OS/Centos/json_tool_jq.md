@@ -4086,3 +4086,17 @@ false
 
 
 
+#### 7.2.15 all所有元素为true
+
+- 内置函数`all`与`any`类似，只是需要数组中所有元素都是`true`才返回`true`。	
+- 如果输入流是`[]`空数组，输出是`true`。
+
+```sh
+$ echo '[true, false]'|jq 'all'
+false
+$ echo '[true, true]'|jq 'all'
+true
+$ echo '[]'|jq 'all'
+true
+```
+
