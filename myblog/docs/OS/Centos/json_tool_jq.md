@@ -4344,7 +4344,7 @@ $ echo '[{"foo":4, "bar":10}, {"foo":3, "bar":100}, {"foo":2, "bar":1}]'|jq 'sor
 [{"foo":2,"bar":1},{"foo":4,"bar":10},{"foo":3,"bar":100}]
 ```
 
-#### 7.2.22 group_by分组
+#### 7.2.23 group_by分组
 
 - 内置函数`group_by(.foo)`可以对数组中的对象按`.foo`的值进行排序(按`sort`函数的方式排序)，并按`foo`字段进行分组，形成一个大的分组后的数组。
 
@@ -4413,7 +4413,66 @@ $ echo '[{"foo":1, "bar":10}, {"foo":3, "bar":100}, {"foo":1, "bar":100}, {"othe
 
 
 
+#### 7.2.24 min/max 最小最大值
 
+- 内置函数`min`或`max`可以获取输入数组中的最小值、最大值。
+- 而`min_by(exp)`或`max_by(exp)`允许你指定一个特殊的字段或属性来获取最小最大值。如`min_by(.foo)`则按子元素中`foo`字段排序后，获取最小值。
+
+```sh
+# 获取数组中的最小值
+$ echo '[5,4,2,7]'|jq 'min'
+2
+
+# 获取数组中的最大值
+$ echo '[5,4,2,7]'|jq 'max'
+7
+
+# 按foo字段排序获取最小值
+$ echo '[{"foo":1, "bar":14}, {"foo":2, "bar":3}]'|jq 'min_by(.foo)'
+{"foo":1,"bar":14}
+
+# 按bar字段排序获取最小值
+$ echo '[{"foo":1, "bar":14}, {"foo":2, "bar":3}]'|jq 'min_by(.bar)'
+{"foo":2,"bar":3}
+
+# 按foo字段排序获取最大值
+$ echo '[{"foo":1, "bar":14}, {"foo":2, "bar":3}]'|jq 'max_by(.foo)'
+{"foo":2,"bar":3}
+
+# 按bar字段排序获取最大值
+$ echo '[{"foo":1, "bar":14}, {"foo":2, "bar":3}]'|jq 'max_by(.bar)'
+{"foo":1,"bar":14}
+```
+
+
+
+对字符串求最小最大值：
+
+```sh
+# 字符串会按字母升序排序
+$ echo '["one", "two", "three", "four"]'|jq 'sort'
+["four","one","three","two"]
+
+# 最小值是four
+$ echo '["one", "two", "three", "four"]'|jq 'min'
+"four"
+
+# 最大值是two
+$ echo '["one", "two", "three", "four"]'|jq 'max'
+"two"
+
+# 获取每个子元素的长度
+$ echo '["one", "two", "three", "four"]'|jq 'map(length)'
+[3,3,5,4]
+
+# 长度最小为3，one和two长度都为3，one排在前面，因此取one作为最小值
+$ echo '["one", "two", "three", "four"]'|jq 'min_by(length)'
+"one"
+
+# 长度最大为5，对应的值是three
+$ echo '["one", "two", "three", "four"]'|jq 'max_by(length)'
+"three"
+```
 
 
 
