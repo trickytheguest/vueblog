@@ -4476,6 +4476,45 @@ $ echo '["one", "two", "three", "four"]'|jq 'max_by(length)'
 
 
 
+#### 7.2.25 unique 数组去重
+
+- `unique`可以去除数组中重复的元素。
+- `unique_by(path_exp)`可以理解为使用`group_by`分组后，然后取每个组里面的一个元素，作为最终的数组元素。
+
+可参考**7.2.23 group_by分组** 小节。
+
+```sh
+# 对数字系列去重
+$ echo '[1,2,5,3,5,3,1,3]'|jq 'unique'
+[1,2,3,5]
+
+# 对字符串长度去重
+$ echo '["chunky", "bacon", "kitten", "cicada", "asparagus"]'|jq 'unique_by(length)'
+["bacon","chunky","asparagus"]
+
+# 对字符串长度去重
+$ echo '["one", "two", "three", "four"]'|jq 'unique_by(length)'
+["one","four","three"]
+
+# 按foo字段去重
+$ echo '[{"foo":1, "bar":10}, {"foo":3, "bar":100}, {"foo":1, "bar":100}, {"other": "other value"}]'|jq 'unique_by(.foo)'
+[{"other":"other value"},{"foo":1,"bar":10},{"foo":3,"bar":100}]
+
+# 按bar字段去重
+$ echo '[{"foo":1, "bar":10}, {"foo":3, "bar":100}, {"foo":1, "bar":100}, {"other": "other value"}]'|jq 'unique_by(.bar)'
+[{"other":"other value"},{"foo":1,"bar":10},{"foo":3,"bar":100}]
+
+# 按other字段去重
+# 前三个元素对象没有other字段，.other都是null空，只保留第一个元素{"foo":1, "bar":10}
+$ echo '[{"foo":1, "bar":10}, {"foo":3, "bar":100}, {"foo":1, "bar":100}, {"other": "other value"}]'|jq 'unique_by(.other)'
+[{"foo":1,"bar":10},{"other":"other value"}]
+
+# 当第4个元素对象的other键的值是null时，四个元素对象的.other值都是null空。
+# 因此只保留第一个元素对象
+$ echo '[{"foo":1, "bar":10}, {"foo":3, "bar":100}, {"foo":1, "bar":100}, {"other": null}]'|jq 'unique_by(.other)'
+[{"foo":1,"bar":10}]
+```
+
 
 
 
