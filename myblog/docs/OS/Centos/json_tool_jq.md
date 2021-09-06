@@ -4532,7 +4532,47 @@ $ echo '[{"foo":1, "bar":10}, {"foo":3, "bar":100}, {"foo":1, "bar":100}, {"othe
 
 
 
+#### 7.2.27 contains 包含
 
+- 内置函数`contains(element)`处理输入流是否完全包含元素`element`。最后返回布尔值。
+- 判断标准如下：
+    	- 如果元素B是字符串，并且是输入流(A是字符串)的子串的话，则认为A包含B。
+    	- 如果数组B中的所有元素都被A的元素所包含，那么认为数组A包含数组B。
+    	- 如果对象B中的所有值都包含在对象A中，则认为对象A包含对象B。
+
+看如下示例:
+
+```sh
+# 字符串foo包含在字符串foobar中，因此返回true
+$ echo '"foobar"'|jq 'contains("foo")'
+true
+# 字符串bar包含在字符串foobar中，因此也返回true
+$ echo '"foobar"'|jq 'contains("bar")'
+true
+
+# 数组["baz", "bar"]第一个元素baz包含在输入数组的第二个元素foobaz中
+# 数组["baz", "bar"]第二个元素bar包含在输入数组的第一个元素foobar中
+# 因此数组["baz", "bar"]中每一个元素都被输入流数组所包含
+# 因此返回true
+$ echo '["foobar", "foobaz", "blarp"]'|jq 'contains(["baz", "bar"])'
+true
+$ echo '["foobar", "foobaz", "blarp"]'|jq 'contains(["baz", "bar", "arp"])'
+true
+
+# 数组["bazzzzz", "bar"]第一个元素bazzzzz不被输入数组的任何一个元素包含
+# 因此两个数组不存在包含关系，返回false
+$ echo '["foobar", "foobaz", "blarp"]'|jq 'contains(["bazzzzz", "bar"])'
+false
+
+# 存在嵌套时，需要看对应的path是否真的存在
+$ echo '{"foo": 12, "bar":[1,2,{"barp":12, "blip":13}]}'|jq 'contains({foo: 12, bar: [{barp: 12}]})'
+true
+
+# 此处不存在 bar: [{barp: 15}] 这个子元素
+# 最终返回false
+$ echo '{"foo": 12, "bar":[1,2,{"barp":12, "blip":13}]}'|jq 'contains({foo: 12, bar: [{barp: 15}]})'
+false
+```
 
 
 
