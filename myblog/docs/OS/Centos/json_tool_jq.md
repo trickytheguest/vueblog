@@ -4574,7 +4574,63 @@ $ echo '{"foo": 12, "bar":[1,2,{"barp":12, "blip":13}]}'|jq 'contains({foo: 12, 
 false
 ```
 
+- `inside(b)`操作刚好是`contains`的反向操作。即检查输入流是否在`b`中。
 
+```sh
+$ echo '"bar"'|jq 'inside("foobar")'
+true
+$ echo '["baz", "bar"]'|jq 'inside(["foobar", "foobaz", "blarp"])'
+true
+$ echo '["bazzzzz", "bar"]'|jq 'inside(["foobar", "foobaz", "blarp"])'
+false
+$ echo '{"foo": 12, "bar": [{"barp": 12}]}'|jq 'inside({"foo": 12, "bar":[1,2,{"barp":12, "blip":13}]})'
+true
+$ echo '{"foo": 12, "bar": [{"barp": 15}]}'|jq 'inside({"foo": 12, "bar":[1,2,{"barp":12, "blip":13}]})'
+false
+```
+
+
+
+#### 7.2.28 indices 索引位置
+
+- 内置函数`indices(s)`可以输出`s`在输入字符串或数组中的索引位置。
+
+请看示例：
+
+```sh
+# 判断字符串`, `在长字符串的索引位置
+# 字符串位置从0开始标号
+$ echo '"a,b, cd, efg, hijk"'|jq 'indices(", ")'
+[3,7,12]
+$ echo '[0,1,2,1,3,1,4]'|jq 'indices(1)'
+[1,3,5]
+$ echo '[0,1,2,3,1,4,2,5,1,2,6,7]'|jq 'indices([1,2])'
+[1,8]
+```
+
+- 内置函数`index(s)`、`rindex(s)`会输出s在输入流中第一次或最后一次出现处的索引。当有多次匹配时，这两个函数的结果相当于`indices(s)`的第1个元素和最后一个元素的值。
+
+```sh
+$ echo '"a,b, cd, efg, hijk"'|jq 'index(", ")'
+3
+$ echo '"a,b, cd, efg, hijk"'|jq 'rindex(", ")'
+12
+$ echo '[0,1,2,1,3,1,4]'|jq 'index(1)'
+1
+$ echo '[0,1,2,1,3,1,4]'|jq 'rindex(1)'
+5
+$ echo '[0,1,2,3,1,4,2,5,1,2,6,7]'|jq 'index([1,2])'
+1
+$ echo '[0,1,2,3,1,4,2,5,1,2,6,7]'|jq 'rindex([1,2])'
+8
+$
+# 仅有一次匹配的情况
+# 此时index和rindex返回的结果是一样的
+$ echo '[1]'|jq 'index(1)'
+0
+$ echo '[1]'|jq 'rindex(1)'
+0
+```
 
 
 
