@@ -4517,6 +4517,19 @@ $ echo '[{"foo":1, "bar":10}, {"foo":3, "bar":100}, {"foo":1, "bar":100}, {"othe
 
 
 
+#### 7.2.26 reverse 数组反转
+
+- 内置函数`reverse`会将数组元素的前后次序进行颠倒（反转）。
+
+```sh
+$ echo '[1,2,3,4]'|jq 'reverse'
+[4,3,2,1]
+$ echo '["one", "two", "three", "four"]'|jq 'reverse'
+["four","three","two","one"]
+$ echo '[{"foo":1, "bar":10}, {"foo":3, "bar":100}, {"foo":1, "bar":100}, {"other": null}]'|jq 'reverse'
+[{"other":null},{"foo":1,"bar":100},{"foo":3,"bar":100},{"foo":1,"bar":10}]
+```
+
 
 
 
