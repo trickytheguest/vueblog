@@ -4658,3 +4658,69 @@ $ echo '["fo", "foo", "barfoo", "foobar", "barfoob"]'|jq '[.[]|endswith("foo")]'
 [false,true,true,false,false]
 ```
 
+
+
+
+
+#### 7.2.30 combinations数组元素组合
+
+- 内置函数`combinations`可以输出输入流数组中所有数组中元素的所有组合。
+- 如果给定参数`n`，即`combinations(n)`，将会输出输入数组的 n 次重复的所有组合。
+
+```sh
+# 不带参数时，输入流的数组必须包含子数组
+$ echo '[0, 1]'|jq 'combinations'
+jq: error (at <stdin>:1): Cannot iterate over number (0)
+
+$ echo '[[0, 1]]'|jq 'combinations'
+[0]
+[1]
+$ echo '[[1,2], [3, 4]]'|jq 'combinations'
+[1,3]
+[1,4]
+[2,3]
+[2,4]
+```
+
+带参数的情况：
+
+```sh
+$ echo '[0, 1]'|jq 'combinations(0)'
+[]
+$ echo '[0, 1]'|jq 'combinations(1)'
+[0]
+[1]
+$ echo '[0, 1]'|jq 'combinations(2)'
+[0,0]
+[0,1]
+[1,0]
+[1,1]
+$ echo '[0, 1]'|jq 'combinations(3)'
+[0,0,0]
+[0,0,1]
+[0,1,0]
+[0,1,1]
+[1,0,0]
+[1,0,1]
+[1,1,0]
+[1,1,1]
+
+$ echo '[[1,2], [3, 4]]'|jq 'combinations(1)'
+[[1,2]]
+[[3,4]]
+$ echo '[[1,2], [3, 4]]'|jq 'combinations(2)'
+[[1,2],[1,2]]
+[[1,2],[3,4]]
+[[3,4],[1,2]]
+[[3,4],[3,4]]
+$ echo '[[1,2], [3, 4]]'|jq 'combinations(3)'
+[[1,2],[1,2],[1,2]]
+[[1,2],[1,2],[3,4]]
+[[1,2],[3,4],[1,2]]
+[[1,2],[3,4],[3,4]]
+[[3,4],[1,2],[1,2]]
+[[3,4],[1,2],[3,4]]
+[[3,4],[3,4],[1,2]]
+[[3,4],[3,4],[3,4]]
+```
+
