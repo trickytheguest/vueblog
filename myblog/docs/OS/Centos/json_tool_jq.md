@@ -4916,3 +4916,36 @@ $ echo '"工具"'|jq -a 'explode'
 
 
 
+#### 7.2.33 字符串拆分与拼接
+
+- 内置函数`split(sep)`可以将将输入流中的字符串使用`sep`进行分隔拆分形成数组。
+- 内置函数`join(sep)`可以将数组中的元素拼接在一起，并使用`sep`作为分隔符，最后形成一个数组。
+- `join`在拼接前，会先将数字和布尔值转换成字符串，`null`转成空字符串，不支持数组和对象，然后再将这些字符串进行拼接。
+
+```sh
+# 将数级中的元素用`, `拼接在一起 
+$ echo '["a","b,c,d","e"]'|jq 'join(", ")'
+"a, b,c,d, e"
+
+# 将数级中的元素用`, `拼接在一起，然后再使用`, `进行拆分，得到原始的输入数组了
+$ echo '["a","b,c,d","e"]'|jq 'join(", ")'|jq 'split(", ")'
+["a","b,c,d","e"]
+
+# 对包含数字、布尔值和空值的元素进行拼接
+$ echo '["a",1,2.3,true,null,false]'|jq 'join(", ")'
+"a, 1, 2.3, true, , false"
+$ echo '["a",1,2.3,true,null,false]'|jq 'join("")'
+"a12.3truefalse"
+$ echo '["a",1,2.3,true,null,false]'|jq 'join(" ")'
+"a 1 2.3 true  false"
+```
+
+拼接连接不支持数组元素和对象元素：
+
+```sh
+$ echo '["a",1,2.3,true,null,false, {"tool": "jq"}]'|jq 'join(" ")'
+jq: error (at <stdin>:1): string ("a 1 2.3 tr...) and object ({"tool":"jq"}) cannot be added
+$ echo '["a",1,2.3,true,null,false, [1,2,3]]'|jq 'join(" ")'
+jq: error (at <stdin>:1): string ("a 1 2.3 tr...) and array ([1,2,3]) cannot be added
+```
+
