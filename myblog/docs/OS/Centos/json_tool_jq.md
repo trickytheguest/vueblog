@@ -4949,3 +4949,27 @@ $ echo '["a",1,2.3,true,null,false, [1,2,3]]'|jq 'join(" ")'
 jq: error (at <stdin>:1): string ("a 1 2.3 tr...) and array ([1,2,3]) cannot be added
 ```
 
+
+
+#### 7.2.34 字符串大小写转换
+
+- 内置函数`ascii_upcase`可以将字符串转换成全大写的形式。
+
+- 内置函数`ascii_downcase`可以将字符串转换成全小写的形式。
+
+```sh
+$ echo '"hello jq"'|jq 'ascii_upcase'
+"HELLO JQ"
+$ echo '"Hello JQ"'|jq 'ascii_downcase'
+"hello jq"
+```
+
+对于不包含字母的字符串，会保持原样：
+
+```sh
+$ echo '"工具"'|jq 'ascii_upcase'
+"工具"
+$ echo '"工具"'|jq 'ascii_downcase'
+"工具"
+```
+
