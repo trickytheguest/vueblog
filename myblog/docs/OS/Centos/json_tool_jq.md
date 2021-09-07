@@ -4797,3 +4797,22 @@ $ echo '[[1,2], [3, 4]]'|jq 'combinations(3)'
 [[3,4],[3,4],[3,4]]
 ```
 
+
+
+#### 7.2.31 移除字符串两端指定字符
+
+- 内置函数`ltrimstr(str)`移除输入流中字符串左侧的`str`字符串。
+- 内置函数`rtrimstr(str)`移除输入流中字符串右侧的`str`字符串。
+
+```sh
+$ echo '"start_end"'|jq 'ltrimstr("start")'
+"_end"
+$ echo '"start_end"'|jq 'rtrimstr("end")'
+"start_"
+
+$ echo '["fo", "foo", "barfoo", "foobar", "afoo"]'|jq '[.[]|ltrimstr("foo")]'
+["fo","","barfoo","bar","afoo"]
+$ echo '["fo", "foo", "barfoo", "foobar", "afoo"]'|jq '[.[]|rtrimstr("foo")]'
+["fo","","bar","foobar","a"]
+```
+
