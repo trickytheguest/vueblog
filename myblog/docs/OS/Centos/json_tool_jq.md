@@ -4634,3 +4634,27 @@ $ echo '[1]'|jq 'rindex(1)'
 
 
 
+#### 7.2.29 startswith/endswith 以字符串开头/结尾
+
+- `startswith(str)`判断给定输入流是否以`str`字符串开头。
+- `endswith(str)`判断给定输入流是否以`str`字符串结尾。
+- `startswith`和`endswith`的输入流应是字符串。
+
+```sh
+# 对单个字符串进行判断
+$ echo '"JQ"'|jq 'startswith("JQ")'
+true
+$ echo '"JQ"'|jq 'endswith("JQ")'
+true
+
+# 输入流应该是字符串
+$ echo 'true'|jq 'startswith("true")'
+jq: error (at <stdin>:1): startswith() requires string inputs
+
+# 对数组中多个字符串元素进行判断
+$ echo '["fo", "foo", "barfoo", "foobar", "barfoob"]'|jq '[.[]|startswith("foo")]'
+[false,true,false,true,false]
+$ echo '["fo", "foo", "barfoo", "foobar", "barfoob"]'|jq '[.[]|endswith("foo")]'
+[false,true,true,false,false]
+```
+
