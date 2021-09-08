@@ -5068,3 +5068,91 @@ $ echo '4'|jq '[.,1]|until(.[0] < 1; [.[0] - 1, .[1] * .[0]])|.[1]'
 9，最后 `|.[1]` 需要获取数组的第2个元素，也就是24。即24是最终的结果。这个正是jq返回的结果！ 
 ```
 
+
+
+
+
+
+
+#### 7.2.36 recurse 递归
+
+- `recurse(f)`函数允许您搜索递归结构，并从所有级别提取有趣的数据。
+
+假设你有如下数据：
+
+```json
+{"name": "/", "children": [
+  {"name": "/bin", "children": [
+    {"name": "/bin/ls", "children": []},
+    {"name": "/bin/sh", "children": []}]},
+  {"name": "/home", "children": [
+    {"name": "/home/stephen", "children": [
+      {"name": "/home/stephen/jq", "children": []}]}]}]}
+```
+
+现在假设您要提取所有存在的文件名。 您需要检索 `.name`、`.children[].name`、`.children[].children[].name` 等。 
+
+```sh
+$ echo '{"name": "/", "children": [{"name": "/bin", "children": [{"name": "/bin/ls", "children": []}, {"name": "/bin/sh", "children": []}]}, {"name": "/home", "children": [{"name": "/home/stephen", "children": [{"name": "/home/stephen/jq", "children": []}]}]}]}'|jq '.name'
+"/"
+$
+$ echo '{"name": "/", "children": [{"name": "/bin", "children": [{"name": "/bin/ls", "children": []}, {"name": "/bin/sh", "children": []}]}, {"name": "/home", "children": [{"name": "/home/stephen", "children": [{"name": "/home/stephen/jq", "children": []}]}]}]}'|jq '.children[].name'
+"/bin"
+"/home"
+$
+$ echo '{"name": "/", "children": [{"name": "/bin", "children": [{"name": "/bin/ls", "children": []}, {"name": "/bin/sh", "children": []}]}, {"name": "/home", "children": [{"name": "/home/stephen", "children": [{"name": "/home/stephen/jq", "children": []}]}]}]}'|jq '.children[].children[].name'
+"/bin/ls"
+"/bin/sh"
+"/home/stephen"
+```
+
+有了`recurse`你可以这样做：
+
+```sh
+$ echo '{"name": "/", "children": [{"name": "/bin", "children": [{"name": "/bin/ls", "children": []}, {"name": "/bin/sh", "children": []}]}, {"name": "/home", "children": [{"name": "/home/stephen", "children": [{"name": "/home/stephen/jq", "children": []}]}]}]}'|jq 'recurse(.children[]) | .name '
+"/"
+"/bin"
+"/bin/ls"
+"/bin/sh"
+"/home"
+"/home/stephen"
+"/home/stephen/jq"
+```
+
+可以看到程序递归获取到各级name属性了。
+
+
+
+- 当`recurse`不带参数时，`recurse`等价于`recurse(.[]?)`。
+- `recurse(f)`与 `recurse(f; . != null)`相同，可以在不考虑递归深度的情况下使用。
+- `recurse(f; condition)` 是一个生成器。
+
+
+
+我们来看一下例子。
+
+```sh
+# 这个例子我把官方示例中最后一级的空数组中加了数字1或数字2，便于观察
+# 可以看到递归函数做了以下事情：
+# 第1步，最开始打印了输入流本身，输出 {"foo":[{"foo":[1]},{"foo":[{"foo":[2]}]}]}
+# 第2步，取对象foo字段的值，输出 [{"foo":[1]},{"foo":[{"foo":[2]}]}]
+# 第3步，上一步输出的值是包含两个对象的数组，这一步就打印出两个数组元素，是两个对象，即 {"foo":[1]} 和 {"foo":[{"foo":[2]}]}
+#       观察输出可以看出，jq是先按深度进行递归处理的，即先把前面的元素处理完成，再处理后面的元素
+#       因此，后面的步骤是先把`{"foo" : [1]}`这个对象处理完成后，再处理`{"foo":[{"foo":[2]}`对象
+# 第4步，处理`{"foo" : [1]}`对象，打印其值，并输出foo字段的值[1]，然后再输出1。1已经是最内层的数据了，说明这个对象处理完成了。
+# 第5步，处理`{"foo":[{"foo":[2]}]}`对象，打印其值，并输出foo字段的值[{"foo":[2]}]，然后再输出数组中的元素{"foo":[2]}，然后对输出对象中foo字段的值[2]，最后输出数组中的元素2。 这个对象的所有层的数据都处理完成。
+$ echo '{"foo":[{"foo": [1]}, {"foo":[{"foo":[2]}]}]}'|jq 'recurse'
+{"foo":[{"foo":[1]},{"foo":[{"foo":[2]}]}]}
+[{"foo":[1]},{"foo":[{"foo":[2]}]}]
+{"foo":[1]}
+[1]
+1
+{"foo":[{"foo":[2]}]}
+[{"foo":[2]}]
+{"foo":[2]}
+[2]
+2
+```
+
+可以看到，程序会不断递归向下，获取对象或数组的值，并按深度优先的方式向更深层的数据进行处理。
+
