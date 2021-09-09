@@ -5435,3 +5435,59 @@ $ echo '[1, "foo", ["foo"]]'|jq '[.[]|tojson|fromjson]'
 [1,"foo",["foo"]]
 ```
 
+
+
+
+
+#### 7.2.43 格式化字符串和转义
+
+`@foo`语法用于格式化和转义字符串，这对于构建 URL、使用 HTML 或 XML 等语言的文档等很有用。 `@foo` 可以单独用作过滤器，可能的转义有：
+
+- `@text`: 调用`tostring`函数，返回字符串。
+- `@json`：将输入序列化为JSON。
+- `@html`： 应用HTML转义，对  `<>&'"`进行转义。
+- `@uri`: 通过将所有保留的 URI 字符映射到 %XX 序列来应用百分比编码。
+- `@csv`：将输入数组转换成CSV字符串。
+- `@tsv`：将输入数组转换成以TAB分隔的字符串数据。
+- `@base64`，将字符串转为base64编码。
+- `@base64d`:base64编码解码。
+
+
+
+示例：
+
+```sh
+# 将JSON欢乐时光转换成文本
+$ echo '{"tool": "jq"}'|jq '@text'
+"{\"tool\":\"jq\"}"
+
+$ echo '{"tool": "jq"}'|jq '@json'
+"{\"tool\":\"jq\"}"
+
+# uri转换
+$ echo '{"search":"what is jq?"}'|jq '@uri "https://www.google.com/search?q=\(.search)"'
+"https://www.google.com/search?q=what%20is%20jq%3F"
+
+# 将HTML特殊符号进行转义
+$ echo '"<head><body>HTML Body</body></body>"'|jq '@html'
+"&lt;head&gt;&lt;body&gt;HTML Body&lt;/body&gt;&lt;/body&gt;"
+
+
+# base64编码和解码
+$ echo '"This is a message"'|jq '@base64'
+"VGhpcyBpcyBhIG1lc3NhZ2U="
+$ echo '"This is a message"'|jq '@base64'|jq '@base64d'
+"This is a message"
+
+
+# 将数组转换为字符串
+$ echo '[[1,2,3],[4,5,6],[7,8,9]]'|jq '.[]|@csv'
+"1,2,3"
+"4,5,6"
+"7,8,9"
+$ echo '[[1,2,3],[4,5,6],[7,8,9]]'|jq '.[]|@tsv'
+"1\t2\t3"
+"4\t5\t6"
+"7\t8\t9"
+```
+
