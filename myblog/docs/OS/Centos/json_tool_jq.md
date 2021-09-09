@@ -5221,3 +5221,44 @@ $ echo '"__JQ"'|jq 'sub("^_+"; "This is ")'
 
 
 
+#### 7.2.38 $ENV,env环境变量
+
+-  `$ENV`是一个对象，表示 jq 程序启动时设置的环境变量。
+- `env`输出一个代表 jq 当前环境的对象。
+- 目前没有用于设置环境变量的内置函数。 
+
+获取所有的环境变量：
+
+```sh
+$ echo 'null'|jq '$ENV'
+{
+  "SHELL": "/bin/bash",
+  "HISTSIZE": "3000",
+  "SSH_TTY": "/dev/pts/0",
+  "USER": "meizhaohui",
+  "JQ_COLORS": "1;31:7;31:1;32:0;37:0;32:1;33:1;37",
+  "LANG": "en_US.UTF-8",
+  "_": "/usr/bin/jq"
+}
+$
+$ echo 'null'|jq 'env'
+{
+  "SHELL": "/bin/bash",
+  "HISTSIZE": "3000",
+  "SSH_TTY": "/dev/pts/0",
+  "USER": "meizhaohui",
+  "JQ_COLORS": "1;31:7;31:1;32:0;37:0;32:1;33:1;37",
+  "LANG": "en_US.UTF-8",
+  "_": "/usr/bin/jq"
+}
+```
+
+获取单个环境变量：
+
+```sh
+$ echo 'null'|jq '$ENV.JQ_COLORS'
+"1;31:7;31:1;32:0;37:0;32:1;33:1;37"
+$ echo 'null'|jq 'env.JQ_COLORS'
+"1;31:7;31:1;32:0;37:0;32:1;33:1;37"
+```
+
