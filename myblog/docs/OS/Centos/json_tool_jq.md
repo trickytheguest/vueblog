@@ -5415,3 +5415,23 @@ $ echo '{"tool":"JQ"}'|jq '"The input was \(.), the tool is \(.tool)"'
 "The input was {\"tool\":\"JQ\"}, the tool is JQ"
 ```
 
+
+
+
+
+
+
+#### 7.2.42 tojson/fromjson 将数据转为JSON
+
+- `tojson`将数据转为JSON数据。`fromjson`将JSON数据转换成值。
+- `tojson`与`tostring`是不同的。
+
+```sh
+$ echo '[1, "foo", ["foo"]]'|jq '[.[]|tostring]'
+["1","foo","[\"foo\"]"]
+$ echo '[1, "foo", ["foo"]]'|jq '[.[]|tojson]'
+["1","\"foo\"","[\"foo\"]"]
+$ echo '[1, "foo", ["foo"]]'|jq '[.[]|tojson|fromjson]'
+[1,"foo",["foo"]]
+```
+
