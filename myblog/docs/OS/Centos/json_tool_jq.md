@@ -3756,7 +3756,7 @@ $ echo '["foo", "bar", "baz"]'|jq 'del(.[2])'
 - `to_entries`内置函数可以将对象进行转换，对于每一个`k: v`键值对，会转换成以下对象`{"key": k, "value": v}`，将将这些对象放在数组中。
 - `from_entries`刚好进行相反的操作。
 - 而`with_entries(foo)`是操作`to_entries | map(foo) | from_entries`的快捷方式。
-- `from_entries`支持以下名称的键:`key`,'Key`,`name`,`Name`,`value`,`Value`。
+- `from_entries`支持以下名称的键:`key`,`Key`,`name`,`Name`,`value`,`Value`。
 
 看以下示例：
 
@@ -3790,7 +3790,14 @@ $ echo '[{"name":"a","value":1},{"NAME":"b","v":2}]'|jq 'from_entries'
 jq: error (at <stdin>:1): Cannot use null (null) as object key
 ```
 
+`with_entries`的使用：
 
+```sh
+$ echo '{"a": 1, "b": 2}'|jq 'with_entries(.key |= "KEY_" + .)'
+{"KEY_a":1,"KEY_b":2}
+```
+
+可以看到可以形成新的键。
 
 #### 7.2.8 select 筛选
 
@@ -5155,4 +5162,62 @@ $ echo '{"foo":[{"foo": [1]}, {"foo":[{"foo":[2]}]}]}'|jq 'recurse'
 ```
 
 可以看到，程序会不断递归向下，获取对象或数组的值，并按深度优先的方式向更深层的数据进行处理。
+
+
+
+看手册上简单的例子：
+
+```sh
+$ echo '{"foo":[{"foo": []}, {"foo":[{"foo":[]}]}]}'|jq 'recurse(.foo[])'
+{"foo":[{"foo":[]},{"foo":[{"foo":[]}]}]}
+{"foo":[]}
+{"foo":[{"foo":[]}]}
+{"foo":[]}
+$ echo '{"a":0,"b":[1]}'|jq 'recurse'
+{"a":0,"b":[1]}
+0
+[1]
+1
+$ echo '2'|jq 'recurse(. * .; . < 20)'
+2
+4
+16
+```
+
+
+
+#### 7.2.37 walk遍历
+
+- `walk`会递归处理输入流的每个元素。
+
+看一下示例：
+
+```sh
+# 如果子元素是列表，则对列表中的元素进行排序，是其他类型的话，则原样输出
+$ echo '[[4, 1, 7], [8, 5, 2], {"tool": "JQ"}, [3, 6, 9]]'|jq 'walk(if type == "array" then sort else . end)'
+[[1,4,7],[2,5,8],[3,6,9],{"tool":"JQ"}]
+
+# 首先判断子元素是否为object对象，是对象的话，就使用with_entries( .key |= sub( "^_+"; "") )将对象的键名进行替换，如果键名是以多个下划线_开头，则把下划线去掉；否则就什么也不做，直接输出对象。
+$ echo '[ { "_a": { "__b": 2 } } ]'|jq 'walk( if type == "object" then with_entries( .key |= sub( "^_+"; "") ) else . end )'
+[{"a":{"b":2}}]
+$ echo '[ { "_a": { "__b": 2 } }, {"tool": "JQ"} ]'|jq 'walk( if type == "object" then with_entries( .key |= sub( "^_+"; "") ) else . end )'
+[{"a":{"b":2}},{"tool":"JQ"}]
+```
+
+注意：
+
+- 此处的`with_entries`参考"7.2.7 to_entries 对象转换成健值对组成的列表"小节。
+
+- 此处的`sub`函数是一个正则替换函数。后面会讲。
+
+此处简单给出一个示例：
+
+```sh
+$ echo '"__JQ"'|jq 'sub("^_+"; "This is ")'
+"This is JQ"
+```
+
+可以看到，`sub`会将所有匹配的字符串`__`一起替换成新值`This is `。
+
+
 
