@@ -5402,3 +5402,16 @@ $ echo '[3,2,1]'|jq 'sort|bsearch(3)'
 
 
 
+
+
+#### 7.2.41 字符串插值
+
+- 在字符串中，您可以在反斜杠后的括号中放置表达式。 无论表达式返回什么，都将被插入到字符串中。
+
+```sh
+$ echo '42'|jq '"The input was \(.), which is one less than \(.+1)"'
+"The input was 42, which is one less than 43"
+$ echo '{"tool":"JQ"}'|jq '"The input was \(.), the tool is \(.tool)"'
+"The input was {\"tool\":\"JQ\"}, the tool is JQ"
+```
+
