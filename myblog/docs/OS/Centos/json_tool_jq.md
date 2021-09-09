@@ -5262,3 +5262,29 @@ $ echo 'null'|jq 'env.JQ_COLORS'
 "1;31:7;31:1;32:0;37:0;32:1;33:1;37"
 ```
 
+
+
+7.2.39 `transpose`转置
+
+> 矩阵转置：
+>
+> 例如：矩阵 ![[公式]](https://www.zhihu.com/equation?tex=%5Cmathbf%7BA%7D+%3D+%5Cbegin%7Bbmatrix%7D+2+%26+4+%5C%5C+1+%26+3%5Cend%7Bbmatrix%7D) 的转置矩阵就是 ![[公式]](https://www.zhihu.com/equation?tex=%5Cmathbf%7BA%7D%5ET+%3D+%5Cbegin%7Bbmatrix%7D+2+%26+1+%5C%5C+4+%26+3%5Cend%7Bbmatrix%7D)
+> 
+> 例如：矩阵 ![[公式]](https://www.zhihu.com/equation?tex=%5Cmathbf%7BB%7D+%3D+%5Cbegin%7Bbmatrix%7D+1+%26+2+%26+3+%5C%5C+4+%26+5+%26+6+%5Cend%7Bbmatrix%7D) 的转置矩阵就是 ![[公式]](https://www.zhihu.com/equation?tex=+%5Cmathbf%7BB%7D%5ET+%3D+%5Cbegin%7Bbmatrix%7D+1+%26+4+%5C%5C+2+%26+5+%5C%5C+3+%26+6%5Cend%7Bbmatrix%7D)
+
+- 转置可能是锯齿状的矩阵（数组的数组）。 行用`null`空值填充，因此结果始终为矩形。
+
+```sh
+$ echo '[[1], [2,3]]'|jq 'transpose'
+[[1,2],[null,3]]
+$ echo '[[1,0], [2,3]]'|jq 'transpose'
+[[1,2],[0,3]]
+
+$ echo '[[2,4], [1,3]]'|jq 'transpose'
+[[2,1],[4,3]]
+$ echo '[[1,2,3], [4,5,6]]'|jq 'transpose'
+[[1,4],[2,5],[3,6]]
+```
+
+
+
