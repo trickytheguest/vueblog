@@ -5572,4 +5572,4 @@ $ echo 'null'|jq 'builtins|sort|length'
 217
 ```
 
-可以看到，jq的多达217个内置函数！！！
+可以看到，jq的内置函数多达217个！！！
