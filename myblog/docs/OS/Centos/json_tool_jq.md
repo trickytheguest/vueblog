@@ -5630,3 +5630,57 @@ false
 false
 ```
 
+
+
+
+
+#### 8.1.3 if条件语法
+
+> `if A then B else C end` will act the same as `B` if `A` produces a value other than false or null, but act the same as `C` otherwise.
+>
+> Checking for false or null is a simpler notion of "truthiness" than is found in Javascript or Python, but it means that you'll sometimes have to be more explicit about the condition you want: you can't test whether, e.g. a string is empty using `if .name then A else B end`, you'll need something more like `if (.name | length) > 0 then A else B end` instead.
+>
+> If the condition `A` produces multiple results, then `B` is evaluated once for each result that is not false or null, and `C` is evaluated once for each false or null.
+>
+> More cases can be added to an if using `elif A then B` syntax.
+
+- `if A then B else C end`语句的意思是，如果A产生的值是真的（非`false`，也不是`null`）时，则执行B，否则执行C。
+- 不能直接测试是否，例如，你要判断一个字符串为空，你不能用`if .name then A else B end`来判断非空，而应像下面这样`if (.name | length) > 0 then A else B end`来判断。
+- 你也可以使用`elif A then B`语法。
+
+```sh
+# 同时使用if/elif/else的情况
+$ echo '[0,1,2,3]'|jq '.[]|if . == 0 then "zero" elif . == 1 then "one" else "other" end'
+"zero"
+"one"
+"other"
+"other"
+
+# 将结果转换成数组
+$ echo '[0,1,2,3]'|jq '[.[]|if . == 0 then "zero" elif . == 1 then "one" else "other" end]'
+["zero","one","other","other"]
+```
+
+下面来验证一下，判断字符串为空的情况：
+
+```sh
+$ echo '{"name": "JQ"}'|jq 'if .name then "not empty" else "empty" end'
+"not empty"
+$ echo '{"name": ""}'|jq 'if .name then "not empty" else "empty" end'
+"not empty"
+```
+
+此时，可以发现，就算我们对象的键name对应的值为空字符串时，这种方式判断也输出了`not empty`非空，说明判断异常。
+
+
+
+应该使用下面这种方式判断：
+
+```sh
+$ echo '{"name": "JQ"}'|jq 'if (.name | length ) > 0 then "not empty" else "empty" end'
+"not empty"
+$ echo '{"name": ""}'|jq 'if (.name | length ) > 0 then "not empty" else "empty" end'
+"empty"
+```
+
+这样通过字符串的长度值可以正常判断字符串是否非空。
