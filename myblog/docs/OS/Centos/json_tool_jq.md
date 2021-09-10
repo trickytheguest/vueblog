@@ -5602,3 +5602,31 @@ false
 
 
 
+#### 8.1.2 大于小于
+
+-  `>, >=, <=, <`大于、大于等于、小于等于、小于。
+-  进行判断时，按`sort`函数排序方式进行判断。参考：`7.2.22 sort数组排序`小节。
+
+```sh
+$ echo '[1, 1.0, "1", "banana"]'|jq '.[] < 1'
+false
+false
+false
+false
+$ echo '[1, 1.0, "1", "banana"]'|jq '.[] > 1'
+false
+false
+true
+true
+$ echo '[1, 1.0, "1", "banana"]'|jq '.[] >= 1'
+true
+true
+true
+true
+$ echo '[1, 1.0, "1", "banana"]'|jq '.[] <= 1'
+true
+true
+false
+false
+```
+
