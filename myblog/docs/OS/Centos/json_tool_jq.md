@@ -5647,6 +5647,7 @@ false
 - `if A then B else C end`语句的意思是，如果A产生的值是真的（非`false`，也不是`null`）时，则执行B，否则执行C。
 - 不能直接测试是否，例如，你要判断一个字符串为空，你不能用`if .name then A else B end`来判断非空，而应像下面这样`if (.name | length) > 0 then A else B end`来判断。
 - 你也可以使用`elif A then B`语法。
+- 在jq中认为false和null是假，empty不是真也不是假，其他的都是真。
 
 ```sh
 # 同时使用if/elif/else的情况
@@ -5743,5 +5744,61 @@ $ echo 'null'|jq 'empty'
 # 因此不会输出3也不会输出4，最后是一个空数组
 $ echo 'null'|jq '[if empty then 3 else 4 end]'
 []
+
+# 由于1永远是真，所有if语句返回3,4，然后形成数组，就是[3, 4]
+$ echo 'null'|jq '[if 1 then 3,4 else 5 end]'
+[3,4]
+
+# 在JQ中0也认为是真的，因此也会输出数组[3, 4]
+# 在jq中认为false和null是假，empty不是真也不是假，其他的都是真
+$ echo 'null'|jq '[if 0 then 3,4 else 5 end]'
+[3,4]
+
+# null空为假，那么会执行else后的语句，因此if输出5,6，最后形成数组[5,6]
+$ echo 'null'|jq '[if null then 3 else 5,6 end]'
+[5,6]
+
+# 当if语句中没有else部分的时候，jq会报异常！！！
+$ echo '7'|jq '[if true then 3 end]'
+jq: error: syntax error, unexpected end (Unix shell quoting issues?) at <top-level>, line 1:
+[if true then 3 end]
+jq: error: Possibly unterminated 'if' statement at <top-level>, line 1:
+[if true then 3 end]
+jq: 2 compile errors
+$ echo '7'|jq '[if false then 3 end]'
+jq: error: syntax error, unexpected end (Unix shell quoting issues?) at <top-level>, line 1:
+[if false then 3 end]
+jq: error: Possibly unterminated 'if' statement at <top-level>, line 1:
+[if false then 3 end]
+jq: 2 compile errors
+$ echo '7'|jq '[if false then 3 else . end]'
+[7]
+```
+
+可以看到`if`语句中如果没有`else`部分，被认为是一个异常的语句。
+
+
+
+再看测试用户中稍微复杂的例子：
+
+```sh
+# 如果输入数组中元素对象的foo键的值是真的话，则输出`yep`，否则输出为`nope`
+# {"foo":false},{"foo":null}和{}三个对象的foo键对应的值都是假的，因此会输出`nope`
+$ echo '[{"foo":0},{"foo":1},{"foo":[]},{"foo":true},{"foo":false},{"foo":null},{"foo":"foo"},{}]'|jq '[.[] | if .foo then "yep" else "nope" end]'
+["yep","yep","yep","yep","nope","nope","yep","nope"]
+
+# 此例中，当数组中元素对象的baz字段为真进输出strange，或者元素对象的foo键的值是真的话，则输出`yep`，其他情况则输出为`nope`
+$ echo '[{"foo":0},{"foo":1},{"foo":[]},{"foo":true},{"foo":false},{"foo":null},{"foo":"foo"},{}]'|jq '[.[] | if .baz then "strange" elif .foo then "yep" else "nope" end]'
+["yep","yep","yep","yep","nope","nope","yep","nope"]
+
+# 我们弄一个实际有baz键的示例
+# 可以看到strange能够正常显示出来
+$ echo '[{"baz":0},{"foo":1},{"baz":[]},{"foo":true},{"foo":false},{"foo":null},{"foo":"foo"},{}]'|jq '[.[] | if .baz then "strange" elif .foo then "yep" else "nope" end]'
+["strange","yep","strange","yep","nope","nope","yep","nope"]
+
+# if求阶乘，使用了递归函数fac
+# fac(n) = (n-1)fac(n-1)
+$ echo '[1,2,3,4]'|jq 'def fac: if . == 1 then 1 else . * (. - 1 | fac) end; [.[] | fac]'
+[1,2,6,24]
 ```
 
