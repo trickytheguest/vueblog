@@ -5813,7 +5813,7 @@ $ echo '[1,2,3,4]'|jq 'def fac: if . == 1 then 1 else . * (. - 1 | fac) end; [.[
 - `not`实际上是一个内置函数而不是一个操作符，可以通过过滤器管道使用。如`.foo|not`。
 - 这三个值仅会产生`true`或`false`。
 
-
+**注意一点，只有`null`和`false`才认为是假的，其他都是真的！！！**
 
 ```sh
 $ echo 'null'|jq '42 and "a string"'
@@ -5841,5 +5841,35 @@ $ echo 'null'|jq '[true, false | not]'
 [false,true]
 $ echo 'null'|jq '[(true, false) | not]'
 [false,true]
+```
+
+
+
+#### 8.1.5 替代运算符
+
+- `//`是替代运算符。
+- `a//b`的意思是，如果`a`的值是真的，则输出`a`； 如果`a`的值是假的，则用`b`替代，输出`b`的值。
+- 这对于给`.foo`提供默认值比较有用。
+
+```sh
+# 对象中存在`foo`键，对应的值19是真值，因此.foo // 42 会输出19
+$ echo '{"foo": 19}'|jq '.foo // 42'
+19
+
+# 对象中不存在`foo`键，.foo输出是`null`空，因此.foo // 42 会输出替代值42，因此输出42
+$ echo '{}'|jq '.foo // 42'
+42
+$ echo '{}'|jq '.foo'
+null
+
+# 就算对象的`foo`键存在，但其值是`null`或`false`，值是假的，因此最后输出的值也会使用替代值42进行替换。
+$ echo '{"foo": false}'|jq '.foo // 42'
+42
+$ echo '{"foo": null}'|jq '.foo // 42'
+42
+
+# 空字符串`""`是真的，不会被替换掉，因此最后输出空
+$ echo '{"foo": ""}'|jq '.foo // 42'
+""
 ```
 
