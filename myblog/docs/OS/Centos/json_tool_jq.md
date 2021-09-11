@@ -5684,3 +5684,64 @@ $ echo '{"name": ""}'|jq 'if (.name | length ) > 0 then "not empty" else "empty"
 ```
 
 这样通过字符串的长度值可以正常判断字符串是否非空。
+
+
+
+我们可以在`jq`源码的`tests/jq.test`文件中找到更多的测试用例，其中就有`if`语句相关的测试用例。我们试试看。
+
+```sh
+$ sed -n '1069,1106p' jq.test
+# Conditionals
+#
+
+[.[] | if .foo then "yep" else "nope" end]
+[{"foo":0},{"foo":1},{"foo":[]},{"foo":true},{"foo":false},{"foo":null},{"foo":"foo"},{}]
+["yep","yep","yep","yep","nope","nope","yep","nope"]
+
+[.[] | if .baz then "strange" elif .foo then "yep" else "nope" end]
+[{"foo":0},{"foo":1},{"foo":[]},{"foo":true},{"foo":false},{"foo":null},{"foo":"foo"},{}]
+["yep","yep","yep","yep","nope","nope","yep","nope"]
+
+[if 1,null,2 then 3 else 4 end]
+null
+[3,4,3]
+
+[if empty then 3 else 4 end]
+null
+[]
+
+[if 1 then 3,4 else 5 end]
+null
+[3,4]
+
+[if null then 3 else 5,6 end]
+null
+[5,6]
+
+[if true then 3 end]
+7
+[3]
+
+[if false then 3 end]
+7
+[7]
+
+[if false then 3 else . end]
+7
+[7]
+```
+
+我们来测试一下：
+
+```sh
+# 可以盾到，在if条件中，会对每一个项（如1，null，2）分别判断是否是真的，1和2是真，而null是假，因此1和2对应输出的是3，null对应输出4
+$ echo 'null'|jq '[if 1,null,2 then 3 else 4 end]'
+[3,4,3]
+
+# 由于empty不返回任何东西，也不返回null，因此，其既不是真也不是假
+$ echo 'null'|jq 'empty'
+# 因此不会输出3也不会输出4，最后是一个空数组
+$ echo 'null'|jq '[if empty then 3 else 4 end]'
+[]
+```
+
