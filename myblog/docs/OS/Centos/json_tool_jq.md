@@ -5802,3 +5802,44 @@ $ echo '[1,2,3,4]'|jq 'def fac: if . == 1 then 1 else . * (. - 1 | fac) end; [.[
 [1,2,6,24]
 ```
 
+
+
+
+
+#### 8.1.4 布尔运算符
+
+- `jq`支持`and`,`or`,`not`等布尔运算符。`false`和`null`认为是假，其他都是真。
+- 如果操作数产生多个结果，则运算符将会与每个输入产生一个结果。
+- `not`实际上是一个内置函数而不是一个操作符，可以通过过滤器管道使用。如`.foo|not`。
+- 这三个值仅会产生`true`或`false`。
+
+
+
+```sh
+$ echo 'null'|jq '42 and "a string"'
+true
+$ echo 'null'|jq '42 and "0"'
+true
+$ echo 'null'|jq '0 and "0"'
+true
+$ echo 'null'|jq '0 and null'
+false
+$ echo 'null'|jq '0 or null'
+true
+
+$ echo 'null'|jq '(true, false) or false'
+true
+false
+
+$ echo 'null'|jq '(true, true) and (true, false)'
+true
+false
+true
+false
+
+$ echo 'null'|jq '[true, false | not]'
+[false,true]
+$ echo 'null'|jq '[(true, false) | not]'
+[false,true]
+```
+
