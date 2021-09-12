@@ -6059,11 +6059,55 @@ $ echo '"name=JQ"'|jq 'capture("(?<option>[a-z]+)=(?<value>[A-Z]+)")|.value'
 
 
 
-
-
-
-
-
-
 ### 9.3 match显示匹配对象
+
+- `match`匹配时，会返回匹配对象，匹配对象中的关键字意义如下：
+
+    - `offset` - UTF-8 代码点中从输入开始的偏移量
+    - `length` - 匹配的 UTF-8 代码点长度
+    - `string` - 匹配的字符串
+    - `captures` - 表示捕获组的对象数组。
+
+- 捕获组对象具有以下字段：
+
+    - `offset` - UTF-8 代码点中从输入开始的偏移量
+    - `length` - 此捕获组的 UTF-8 代码点长度
+    - `string` - 被捕获的字符串
+    - `name` - 捕获组的名称（如果未命名，则为`null`）
+
+```sh
+# 不区分大小写匹配一次或多次`abc`字符串，因为没有加`g`全局搜索开关，仅匹配到开头位置的`abc`就停止匹配了。
+$ echo '"abc Abc"'|jq 'match("(abc)+"; "i")'
+{"offset":0,"length":3,"string":"abc","captures":[{"offset":0,"length":3,"string":"abc","name":null}]}
+
+# 不区分大小写匹配一次或多次`abc`字符串，`g`全局搜索开关开启，会进行多次匹配
+# 所以会匹配到位置0-2处`abc`，以及位置`4-6`处的`Abc`
+$ echo '"abc Abc"'|jq 'match("(abc)+"; "gi")'
+{"offset":0,"length":3,"string":"abc","captures":[{"offset":0,"length":3,"string":"abc","name":null}]}
+{"offset":4,"length":3,"string":"Abc","captures":[{"offset":4,"length":3,"string":"Abc","name":null}]}
+
+# 区分大小写匹配字符串`foo`，并且只匹配第一次后就不再继续匹配
+# 仅匹配到开头处的字符串`foo`，由于匹配正则中没有使用`()`进行分组，`captures`将是一个空的数组。
+$ echo '"foo bar foo"'|jq 'match("foo")'
+{"offset":0,"length":3,"string":"foo","captures":[]}
+
+# 区分大小写匹配字符串`foo`，开启`g`全局搜索开关，因此在匹配第一次后，还会继续匹配
+# 因此先匹配到开头处的字符串`foo`，由于匹配正则中没有使用`()`进行分组，`captures`将是一个空的数组。
+# 再匹配到结尾处的字符串`FOO`，由于匹配正则中没有使用`()`进行分组，`captures`将是一个空的数组。
+$ echo '"foo bar FOO"'|jq 'match(["foo", "ig"])'
+{"offset":0,"length":3,"string":"foo","captures":[]}
+{"offset":8,"length":3,"string":"FOO","captures":[]}
+
+# 如果我们在正则中加上`()`进行组匹配，则会捕获到组，但此时仍然是无名称的捕获组
+$ echo '"foo bar FOO"'|jq 'match(["(foo)", "ig"])'
+{"offset":0,"length":3,"string":"foo","captures":[{"offset":0,"length":3,"string":"foo","name":null}]}
+{"offset":8,"length":3,"string":"FOO","captures":[{"offset":8,"length":3,"string":"FOO","name":null}]}
+
+# 我们可以给捕获组指定一个名称，叫做test，使用`(?<test>foo)`来指定，即匹配到`foo`字符串作为一个捕获组，并命名为`test`
+$ echo '"foo bar FOO"'|jq 'match(["(?<test>foo)", "ig"])'
+{"offset":0,"length":3,"string":"foo","captures":[{"offset":0,"length":3,"string":"foo","name":"test"}]}
+{"offset":8,"length":3,"string":"FOO","captures":[{"offset":8,"length":3,"string":"FOO","name":"test"}]}
+```
+
+
 
