@@ -6044,6 +6044,17 @@ true
 # 匹配小写字母组成的字符串放在键a中，匹配数字组成的字符串放在键n中
 $ echo '"xyzzy-14"'|jq 'capture("(?<a>[a-z]+)-(?<n>[0-9]+)")'
 {"a":"xyzzy","n":"14"}
+
+# 匹配类似配置文件中键值对，获取到相应的option键的值为name，value键的值为JQ
+$ echo '"name=JQ"'|jq 'capture("(?<option>[a-z]+)=(?<value>[A-Z]+)")'
+{"option":"name","value":"JQ"}
+
+# 使用捕获组进行匹配后，可以方便对捕获到数据进行再处理
+# 如下直接读取到了对应的捕获组的信息
+$ echo '"name=JQ"'|jq 'capture("(?<option>[a-z]+)=(?<value>[A-Z]+)")|.option'
+"name"
+$ echo '"name=JQ"'|jq 'capture("(?<option>[a-z]+)=(?<value>[A-Z]+)")|.value'
+"JQ"
 ```
 
 
