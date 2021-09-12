@@ -5632,9 +5632,9 @@ false
 
 
 
+### 8.2 条件语句
 
-
-#### 8.1.3 if条件语法
+#### 8.2.1 if条件语法
 
 > `if A then B else C end` will act the same as `B` if `A` produces a value other than false or null, but act the same as `C` otherwise.
 >
@@ -5804,9 +5804,9 @@ $ echo '[1,2,3,4]'|jq 'def fac: if . == 1 then 1 else . * (. - 1 | fac) end; [.[
 
 
 
+### 8.3 其他
 
-
-#### 8.1.4 布尔运算符
+#### 8.3.1 布尔运算符
 
 - `jq`支持`and`,`or`,`not`等布尔运算符。`false`和`null`认为是假，其他都是真。
 - 如果操作数产生多个结果，则运算符将会与每个输入产生一个结果。
@@ -5845,7 +5845,7 @@ $ echo 'null'|jq '[(true, false) | not]'
 
 
 
-#### 8.1.5 替代运算符
+#### 8.3.2 替代运算符
 
 - `//`是替代运算符。
 - `a//b`的意思是，如果`a`的值是真的，则输出`a`； 如果`a`的值是假的，则用`b`替代，输出`b`的值。
@@ -5875,7 +5875,7 @@ $ echo '{"foo": ""}'|jq '.foo // 42'
 
 
 
-#### 8.1.6 异常捕获try..catch
+#### 8.3.3 异常捕获try..catch
 
 - 错误可以通过使用`try EXP catch EXP`来捕获。 如果执行第一个表达式失败，则执行第二个表达式并显示错误消息。
 - `try EXP`使用空作为异常处理程序,即异常了不输出任何东西。
@@ -5917,7 +5917,7 @@ $ echo $?
 
 
 
-#### 8.1.7 跳出控制语句
+#### 8.3.4 跳出控制语句
 
 - `try/catch`的一个方便用途是打破像`reduce`、`foreach`、`while`等控制结构。
 - JQ中有一个命名语法标签的语法，用于中断或跳转。语法如下`label $out | ... break $out ...`
@@ -5943,5 +5943,27 @@ $ echo '[0,2,1]'|jq '[(label $here | .[] | if .>1 then break $here else . end), 
 [0,"hi!"]
 $ echo '[0,2,1]'|jq '[(label $here | .[] | if .>1 then break $here else . end)]'
 [0]
+```
+
+
+
+#### 8.3.5 错误抑制/可选运算符
+
+- `?`可以进行错误抑制。如`EXP?`，是`try EXP`的简化形式。
+
+```sh
+# 不使用错误抑制，抛出异常
+$ echo '[{}, true, {"a":1}]'|jq '[.[]|.a]'
+jq: error (at <stdin>:1): Cannot index boolean with string "a"
+
+# 使用错误抑制，就是布尔值没有键a也不会报错
+$ echo '[{}, true, {"a":1}]'|jq '[.[]|.a?]'
+[null,1]
+$ echo '[{}, true, {"a":1}]'|jq '[.[]|(.a)?]'
+[null,1]
+
+# 使用异常捕获，也不会抛出异常
+$ echo '[{}, true, {"a":1}]'|jq '[.[]|try .a]'
+[null,1]
 ```
 
