@@ -5873,3 +5873,43 @@ $ echo '{"foo": ""}'|jq '.foo // 42'
 ""
 ```
 
+
+
+#### 8.1.6 异常捕获try..catch
+
+- 错误可以通过使用`try EXP catch EXP`来捕获。 如果执行第一个表达式失败，则执行第二个表达式并显示错误消息。
+- `try EXP`使用空作为异常处理程序,即异常了不输出任何东西。
+
+```sh
+# 直接尝试在输入流中找a键，抛出异常，并且退出码是5
+$ echo 'true'|jq '.a'
+jq: error (at <stdin>:1): Cannot index boolean with string "a"
+$ echo $?
+5
+
+# 当使用try .. catch捕获异常后，执行了catch后面的语句，显示了后面的字符串，并且退出码是0，正常退出
+$ echo 'true'|jq 'try .a catch ". is not an object"'
+". is not an object"
+$ echo $?
+0
+
+# try对数组每个元素进行处理，由于没有catch后面的部分，只会显示没有异常的元素的结果
+# {}空对象的.a是null空，{"a":1}的.a是1，而true的.a会抛出异常，不会显示
+# 此时整体的退出码是0
+$ echo '[{}, true, {"a":1}]'|jq '[.[]|try .a]'
+[null,1]
+$ echo $?
+0
+# true是没有a键的，抛出异常
+$ echo '[{}, true, {"a":1}]'|jq '[.[]|.a]'
+jq: error (at <stdin>:1): Cannot index boolean with string "a"
+$ echo $?
+5
+
+# 捕获自定义异常
+$ echo 'null'|jq 'try error("some exception") catch .'
+"some exception"
+$ echo $?
+0
+```
+
