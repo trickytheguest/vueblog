@@ -6001,7 +6001,7 @@ STRING | FILTER( [REGEX, FLAGS] )
 
 
 
-### 9.1 test测试
+### 9.1 test测试是否匹配
 
 - `test`关键字语法如下：`test(val)`或`test(regex;  flags)`。
 - `test`类似于`match`,但不返回匹配对象，只返回`true`或`false`。
@@ -6023,9 +6023,36 @@ true
 $ echo '"fo"'|jq 'test("foo")'
 false
 
-# 使用扩展模式，并忽略大小写进行匹配字符`aBc`
+# 使用扩展模式(x)，并忽略大小写(i)进行匹配字符`aBc`,只要能够匹配上就返回true,匹配不上则返回false
 $ echo '["xabcd", "ABC"]'|jq '.[] | test("a B c # spaces are ignored"; "ix")'
 true
 true
 ```
+
+虽然`test`可以测试出正则是否匹配上，但我们不能知道到底哪里匹配上了。
+
+
+
+### 9.2 capture捕获组
+
+由于`match`匹配中涉及到`captures`捕获组的概念，因此此处先测试`capture`的使用。
+
+- `capture`的语法`capture(val)`或 `capture(regex; flags)`。
+- 将命名的捕获收集到一个 JSON 对象中，以每个捕获的名称作为键，匹配的字符串作为对应的值。
+
+```sh
+# 匹配小写字母组成的字符串放在键a中，匹配数字组成的字符串放在键n中
+$ echo '"xyzzy-14"'|jq 'capture("(?<a>[a-z]+)-(?<n>[0-9]+)")'
+{"a":"xyzzy","n":"14"}
+```
+
+
+
+
+
+
+
+
+
+### 9.3 match显示匹配对象
 
