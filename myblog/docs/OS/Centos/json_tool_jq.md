@@ -5967,3 +5967,65 @@ $ echo '[{}, true, {"a":1}]'|jq '[.[]|try .a]'
 [null,1]
 ```
 
+
+
+
+
+## 9 正则表达式PCRE
+
+- jq 使用 Oniguruma 正则表达式库，php、ruby、TextMate、Sublime Text 等也是如此，所以这里的描述将集中在 jq 的细节上。
+
+可以按如下方式定义过滤器的模式来使用正则表达式：
+
+```
+STRING | FILTER( REGEX )
+STRING | FILTER( REGEX; FLAGS )
+STRING | FILTER( [REGEX] )
+STRING | FILTER( [REGEX, FLAGS] )
+```
+
+- `STRING`、`FILTER`、`REGEX`是jq字符串，并受字符串插值的影响。`REGEX`在字符串插值后，`REGEX`应该是一个有效的PCRE表达式。`FILTER`过滤器则是下面定义的像`test`、`match`、`capture`等关键字之一。
+- `FLAGS`表示标志，支持以下标志开关。
+    - `g`全局搜索，不仅仅匹配第一个。
+    - `i`大小写不敏感。
+    - `m`多行模式搜索，'.' 将匹配换行符。
+    - `s`单行模式，('^' -> '\A', '$' -> '\Z')。
+    - `n`忽略空匹配。
+    - `p`表示`s`和`m`都开启，即同时开启单行模式和多行模式。
+    - `l`查找最长的匹配。
+    - `x`扩展正则表达式格式，忽略空格和注释。要匹配此模式下的空格，请使用转义`\s`，如`test( "a\sb", "x" )`。
+
+
+
+此处不详细介绍正则表达式怎么使用。 正则表达式 - 语法 可参考菜鸟教程上面的这篇教程 [正则表达式 - 语法](https://www.runoob.com/regexp/regexp-syntax.html) 。
+
+
+
+### 9.1 test测试
+
+- `test`关键字语法如下：`test(val)`或`test(regex;  flags)`。
+- `test`类似于`match`,但不返回匹配对象，只返回`true`或`false`。
+
+```sh
+# 先匹配`fo`字符，再匹配0次或1次字符`o`
+$ echo '"fo"'|jq 'test("foo?")'
+true
+
+# 先匹配`fo`字符，再匹配1次或多次字符`o`
+$ echo '"fo"'|jq 'test("foo+")'
+false
+
+# 先匹配`fo`字符，再匹配0次或多次字符`o`
+$ echo '"fo"'|jq 'test("foo*")'
+true
+
+# 先匹配`fo`字符，再匹配1次字符`o`
+$ echo '"fo"'|jq 'test("foo")'
+false
+
+# 使用扩展模式，并忽略大小写进行匹配字符`aBc`
+$ echo '["xabcd", "ABC"]'|jq '.[] | test("a B c # spaces are ignored"; "ix")'
+true
+true
+```
+
