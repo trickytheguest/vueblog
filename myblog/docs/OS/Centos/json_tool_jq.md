@@ -5913,3 +5913,35 @@ $ echo $?
 0
 ```
 
+
+
+
+
+#### 8.1.7 跳出控制语句
+
+- `try/catch`的一个方便用途是打破像`reduce`、`foreach`、`while`等控制结构。
+- JQ中有一个命名语法标签的语法，用于中断或跳转。语法如下`label $out | ... break $out ...`
+- 中断实际效果像左侧的标签输出为`empty`一样。
+- 中断和相应标签之间的关系是词法上的：标签必须从中断处“可见”。
+- 打破`reduce`可以这样`label $out | reduce .[] as $item (null; if .==false then break $out else ... end)`。
+
+
+
+我们看一下测试用例中的示例：
+
+```sh
+# 当数组中的元素大于1时，就跳出if判断语句，不执行后续元素的if判断操作
+# 最后"hi!"表示执行完前面的过滤器后，应在数组中加上一个元素"hi!"
+$ echo '[0,1,2]'|jq '[(label $here | .[] | if .>1 then break $here else . end), "hi!"]'
+[0,1,"hi!"]
+$ echo '[0,1,2]'|jq '[(label $here | .[] | if .>1 then break $here else . end)]'
+[0,1]
+
+# 由于第2个元素2应满足大于1的要求，执行break $here退出操作
+# 后面的第3个元素1直接不会再进行判断，直接忽略掉
+$ echo '[0,2,1]'|jq '[(label $here | .[] | if .>1 then break $here else . end), "hi!"]'
+[0,"hi!"]
+$ echo '[0,2,1]'|jq '[(label $here | .[] | if .>1 then break $here else . end)]'
+[0]
+```
+
