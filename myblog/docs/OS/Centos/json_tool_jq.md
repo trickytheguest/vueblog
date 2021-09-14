@@ -6109,5 +6109,33 @@ $ echo '"foo bar FOO"'|jq 'match(["(?<test>foo)", "ig"])'
 {"offset":8,"length":3,"string":"FOO","captures":[{"offset":8,"length":3,"string":"FOO","name":"test"}]}
 ```
 
+我们修改一下官方示例：
+
+```sh
+# 匹配0到1个bar形成命名组
+$ echo '"foo bar foo foo  Foo  FOO barbar foo"'|jq 'match("foo (?<bar123>bar)? foo"; "ig")'
+{"offset":0,"length":11,"string":"foo bar foo","captures":[{"offset":4,"length":3,"string":"bar","name":"bar123"}]}
+{"offset":12,"length":8,"string":"foo  Foo","captures":[{"offset":-1,"string":null,"length":0,"name":"bar123"}]}
+$
+
+# 匹配0个或多个bar形成命名组
+$ echo '"foo bar foo foo  Foo  FOO barbar foo"'|jq 'match("foo (?<bar123>bar)* foo"; "ig")'
+{"offset":0,"length":11,"string":"foo bar foo","captures":[{"offset":4,"length":3,"string":"bar","name":"bar123"}]}
+{"offset":12,"length":8,"string":"foo  Foo","captures":[{"offset":-1,"string":null,"length":0,"name":"bar123"}]}
+{"offset":22,"length":14,"string":"FOO barbar foo","captures":[{"offset":29,"length":3,"string":"bar","name":"bar123"}]}
+
+# 匹配任意字符，最后计算形成的数组的长度
+$ echo '"abc"'|jq '[ match("."; "g")] | length'
+3
+
+# 计算字符串的长度
+$ echo '"abc"'|jq 'length'
+3
+
+# 匹配任意字符
+$ echo '"abc"'|jq '[ match("."; "g")]'
+[{"offset":0,"length":1,"string":"a","captures":[]},{"offset":1,"length":1,"string":"b","captures":[]},{"offset":2,"length":1,"string":"c","captures":[]}]
+```
+
 
 
