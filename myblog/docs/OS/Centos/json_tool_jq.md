@@ -1,3 +1,5 @@
+
+
 # JSON解析工具-jq
 
 [[toc]]
@@ -6158,4 +6160,87 @@ $ echo '["a,b, c, d, e,f",", a,b, c, d, e,f, "]'|jq '[.[] | scan(", ")]'
 $ echo '["a,b, c, d, e,f",", a,b, c, d, e,f, abc"]'|jq '[.[] | scan(", [a-z]+")]'
 [", c",", d",", e",", a",", c",", d",", e",", abc"]
 ```
+
+注意,`scan`不能加`flag`，否则会抛出异常：
+
+```sh
+$ echo '["a,b, c, d, e,f",", a,b, c, d, e,f, ABC"]'|jq '.[] | scan(", [a-z]+"; "i")'
+jq: error: scan/2 is not defined at <top-level>, line 1:
+.[] | scan(", [a-z]+"; "i")
+jq: 1 compile error
+```
+
+
+
+### 9.5 split 拆分字符串
+
+- 为了向后兼容，`split`只是进行字符串拆分，不是正则表达式。参考`7.2.33 字符串拆分与拼接`小节。
+- 而`splits`可以接受正则，输出是流而不是数组。
+
+`split`只有一个参数的时候:
+
+```sh
+$ echo '"abc123Def456Ghi[1-9]+JK[a-z]+789Lm"'|jq 'split("[1-9]+")'
+["abc123Def456Ghi","JK[a-z]+789Lm"]
+$ echo '"abc123Def456Ghi[1-9]+JK[a-z]+789Lm"'|jq 'split("[a-z]+")'
+["abc123Def456Ghi[1-9]+JK","789Lm"]
+```
+
+可以看到，当`split`只有一个参数时，此时该参数不是正则表达式，而被当作普通的字符。
+
+
+
+`split`有两个参数的情况：
+
+```sh
+$ echo '"abc123Def456Ghi[1-9]+JK[a-z]+789Lm"'|jq 'split("[1-9]+"; "i")'
+["abc","Def","Ghi[","-","]+JK[a-z]+","Lm"]
+$ echo '"abc123Def456Ghi[1-9]+JK[a-z]+789Lm"'|jq 'split("[a-z]+"; "i")'
+["","123","456","[1-9]+","[","-","]+789",""]
+```
+
+当`split`有两个参数时，第一个参数是正则表达式，第二个参数是`flags`。此时会按正则方式进行拆分。
+
+
+
+而使用`splits`的结果有些不一样：
+
+```sh
+$ echo '"abc123Def456Ghi[1-9]+JK[a-z]+789Lm"'|jq 'splits("[1-9]+")'
+"abc"
+"Def"
+"Ghi["
+"-"
+"]+JK[a-z]+"
+"Lm"
+$ echo '"abc123Def456Ghi[1-9]+JK[a-z]+789Lm"'|jq 'splits("[a-z]+")'
+""
+"123D"
+"456G"
+"[1-9]+JK["
+"-"
+"]+789L"
+""
+$ echo '"abc123Def456Ghi[1-9]+JK[a-z]+789Lm"'|jq 'splits("[1-9]+"; "i")'
+"abc"
+"Def"
+"Ghi["
+"-"
+"]+JK[a-z]+"
+"Lm"
+$ echo '"abc123Def456Ghi[1-9]+JK[a-z]+789Lm"'|jq 'splits("[a-z]+"; "i")'
+""
+"123"
+"456"
+"[1-9]+"
+"["
+"-"
+"]+789"
+""
+$
+```
+
+可以看到，`splits`无论一个参数还是两个参数，第一个都是正则表达式，第二个是`flags`标志。最终输出是流，而不是数组。
+
+
 
