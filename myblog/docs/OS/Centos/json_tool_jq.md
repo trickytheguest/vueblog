@@ -6101,12 +6101,12 @@ $ echo '"foo bar FOO"'|jq 'match(["foo", "ig"])'
 {"offset":8,"length":3,"string":"FOO","captures":[]}
 
 # 如果我们在正则中加上`()`进行组匹配，则会捕获到组，但此时仍然是无名称的捕获组
-$ echo '"foo bar FOO"'|jq 'match(["(foo)", "ig"])'
+$ echo '"foo bar FOO"'|jq 'match("(foo)"; "ig")'
 {"offset":0,"length":3,"string":"foo","captures":[{"offset":0,"length":3,"string":"foo","name":null}]}
 {"offset":8,"length":3,"string":"FOO","captures":[{"offset":8,"length":3,"string":"FOO","name":null}]}
 
 # 我们可以给捕获组指定一个名称，叫做test，使用`(?<test>foo)`来指定，即匹配到`foo`字符串作为一个捕获组，并命名为`test`
-$ echo '"foo bar FOO"'|jq 'match(["(?<test>foo)", "ig"])'
+$ echo '"foo bar FOO"'|jq 'match("(?<test>foo)"; "ig")'
 {"offset":0,"length":3,"string":"foo","captures":[{"offset":0,"length":3,"string":"foo","name":"test"}]}
 {"offset":8,"length":3,"string":"FOO","captures":[{"offset":8,"length":3,"string":"FOO","name":"test"}]}
 ```
@@ -6241,6 +6241,85 @@ $
 ```
 
 可以看到，`splits`无论一个参数还是两个参数，第一个都是正则表达式，第二个是`flags`标志。最终输出是流，而不是数组。
+
+
+
+
+
+### 9.6 sub替换
+
+- `sub`语法格式 `sub(regex; tostring)`, `sub(regex; tostring; flags)` 。
+- `gsub`语法格式`gsub(regex; string)`, `gsub(regex; string; flags)`。
+
+```sh
+# 将匹配到的多个小写字母组成的字符串替换成@@@,可以看到，默认只替换第一个
+$ echo '"abc123Def456Ghi[1-9]+JK[a-z]+789Lm"'|jq 'sub("[a-z]+"; "@@@"; "i")'
+"@@@123Def456Ghi[1-9]+JK[a-z]+789Lm"
+
+# 全局替换
+$ echo '"abc123Def456Ghi[1-9]+JK[a-z]+789Lm"'|jq 'sub("[a-z]+"; "@@@"; "ig")'
+"@@@123@@@456@@@[1-9]+@@@[@@@-@@@]+789@@@"
+
+# 将匹配到的数字字符串替换成@@@,默认只替换第一个
+$ echo '"abc123Def456Ghi[1-9]+JK[a-z]+789Lm"'|jq 'sub("[1-9]+"; "@@@")'
+"abc@@@Def456Ghi[1-9]+JK[a-z]+789Lm"
+
+# 全局替换
+$ echo '"abc123Def456Ghi[1-9]+JK[a-z]+789Lm"'|jq 'sub("[1-9]+"; "@@@"; "g")'
+"abc@@@Def@@@Ghi[@@@-@@@]+JK[a-z]+@@@Lm"
+```
+
+我们在`tostring`中也可以使用命名捕获的引用。
+
+```sh
+# 获取任意字符作为head命名捕获组，然后将捕获组进行替换成后面的字符
+# 在第二个参数中`\(.head)`表示捕获组head的值，即字符a，因此最后就输出了"Head=a Tail=bcdef"
+# 也就是将捕获组替换成第二个参数对象的字符串
+$ echo '"abcdef"'|jq 'sub("^(?<head>.)"; "Head=\(.head) Tail=")'
+"Head=a Tail=bcdef"
+
+# 对test捕获命名组进行替换
+# 不区分大小写对匹配到`foo`，将其替换成`__foo^^`这样的字符串
+$ echo '"foo bar FOO"'|jq 'sub("(?<test>foo)";  "__\(.test)^^"; "ig")'
+"__foo^^ bar __FOO^^"
+```
+
+我们再看一个复杂的：
+
+```sh
+# 不区分捕获字母组成的字符串，并将其设置为捕获命名组char，并对其进行替换，在其前面加上`_AA_`，在其后面加上`_BB_`字符串
+$ echo '"abc123Def456Ghi[1-9]+JK[a-z]+789Lm"'|jq 'sub("(?<char>[a-z]+)"; "_AA_\(.char)_BB_"; "ig")'
+"_AA_abc_BB_123_AA_Def_BB_456_AA_Ghi_BB_[1-9]+_AA_JK_BB_[_AA_a_BB_-_AA_z_BB_]+789_AA_Lm_BB_"
+
+# 捕获数字组成的字符串，并将其设置为捕获命名组char，并对其进行替换，在其前面加上`_AA_`，在其后面加上`_BB_`字符串
+$ echo '"abc123Def456Ghi[1-9]+JK[a-z]+789Lm"'|jq 'sub("(?<num>[1-9]+)"; "_AA_\(.num)_BB_"; "g")'
+"abc_AA_123_BB_Def_AA_456_BB_Ghi[_AA_1_BB_-_AA_9_BB_]+JK[a-z]+_AA_789_BB_Lm"
+```
+
+当然，我们在替换字符串中可以不使用捕获命名组的：
+
+```sh
+$ echo '"abc123Def456Ghi[1-9]+JK[a-z]+789Lm"'|jq 'sub("(?<num>[1-9]+)"; "_AA__BB_"; "g")'
+"abc_AA__BB_Def_AA__BB_Ghi[_AA__BB_-_AA__BB_]+JK[a-z]+_AA__BB_Lm"
+```
+
+此时，可以看到数字的数字字符串都被替换成`_AA__BB_`字符串了。
+
+
+
+`gsub`类似于`sub`，只是在全局进行搜索替换：
+
+```sh
+# 使用sub只替换第一个
+$ echo '"abc123Def456Ghi[1-9]+JK[a-z]+789Lm"'|jq 'sub("(?<num>[1-9]+)"; "_AA_\(.num)_BB_")'
+"abc_AA_123_BB_Def456Ghi[1-9]+JK[a-z]+789Lm"
+
+# 使用gsub则都会替换，等价于sub增加`g`标志
+$ echo '"abc123Def456Ghi[1-9]+JK[a-z]+789Lm"'|jq 'gsub("(?<num>[1-9]+)"; "_AA_\(.num)_BB_")'
+"abc_AA_123_BB_Def_AA_456_BB_Ghi[_AA_1_BB_-_AA_9_BB_]+JK[a-z]+_AA_789_BB_Lm"
+```
+
+
 
 
 
