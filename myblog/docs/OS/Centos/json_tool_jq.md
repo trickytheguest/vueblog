@@ -6646,3 +6646,101 @@ $
 
 可以看到，我们使用`jq`获取到的值与百度百科上面定义的数据是一样。
 
+
+
+### 10.3 Reduce
+
+- `reduce`允许你将多个值合并在一起形成一个单一的值。
+
+如：
+
+```sh
+# 依次将输入流中的每个数作为item变量，并与初始值0进行相加，得到最后的值为10
+$ echo '[1,2,3,4]'|jq 'reduce .[] as $item (0; . + $item)'
+10
+
+# 依次将输入流中的每个数作为item变量，并与初始值20进行相加，得到最后的值为30
+$ echo '[1,2,3,4]'|jq 'reduce .[] as $item (20; . + $item)'
+30
+
+# 依次将输入流中的每个数作为item变量，并与初始值40进行相加，得到最后的值为50
+$ echo '[1,2,3,4]'|jq 'reduce .[] as $item (40; . + $item)'
+50
+```
+
+
+
+### 10.4 isempty是否为空
+
+- `isempty(exp)`，如果exp表达式输出为空(no outputs)，则输出为`true`，否则输出为`false`。
+
+```sh
+$ echo 'null'|jq 'isempty(.)'
+false
+$ echo 'null'|jq 'isempty(null)'
+false
+$ echo 'null'|jq 'isempty(empty)'
+true
+$ echo 'null'|jq 'isempty("")'
+false
+```
+
+只有不输出任何东西的时候，`isempty(exp)`才会返回`true`真。
+
+
+
+### 10.5 limit输出最多n个值
+
+- `limit(n; exp)`可以输出表达式exp中的前n个结果。
+- `first(exp)`输出第一个元素。
+- `last(exp)`输出最后一个元素。
+- `nth(n; exp)`输出第n+1个元素。
+
+```sh
+$ echo 'null'|jq 'range(10)'
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+
+# 输出3个元素
+$ echo 'null'|jq '[range(10)]|[limit(3; .[])]'
+[0,1,2]
+$ echo 'null'|jq '[range(10)]|[limit(5; .[])]'
+[0,1,2,3,4]
+$ echo 'null'|jq '[range(10)]|[limit(10; .[])]'
+[0,1,2,3,4,5,6,7,8,9]
+$ echo 'null'|jq '[range(10)]|[limit(12; .[])]'
+[0,1,2,3,4,5,6,7,8,9]
+
+# 输出第1个元素
+$ echo 'null'|jq '[range(10)]|first(.[])'
+0
+
+# 输出最后一个元素
+$ echo 'null'|jq '[range(10)]|last(.[])'
+9
+
+# 输出第 2 + 1 个元素
+$ echo 'null'|jq '[range(10)]|nth(2;.[])'
+2
+
+# 输出第 1 + 1 个元素
+$ echo 'null'|jq '[range(10)]|nth(1;.[])'
+1
+
+# 输出第 0 + 1 个元素
+$ echo 'null'|jq '[range(10)]|nth(0;.[])'
+0
+
+# 输出第 9 + 1 个元素
+$ echo 'null'|jq '[range(10)]|nth(9;.[])'
+9
+```
+
