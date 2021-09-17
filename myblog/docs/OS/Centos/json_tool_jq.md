@@ -6358,3 +6358,139 @@ $ echo '[1,2,3,4,5]'|jq 'length as $len | add / $len'
 
 
 
+再看官方手册上面的一个介绍。
+
+现在我们有一个输入：
+
+```json
+{"posts": [{"title": "Frist psot", "author": "anon"},
+           {"title": "A well-written article", "author": "person1"}],
+ "realnames": {"anon": "Anonymous Coward",
+               "person1": "Person McPherson"}}
+```
+
+现在想获取每篇博客的作者的真实名称。像下面这样：
+
+```
+{"title": "Frist psot", "author": "Anonymous Coward"}
+{"title": "A well-written article", "author": "Person McPherson"}
+```
+
+
+
+测试这个示例：
+
+将JSON数据写入到posts.json文件，文件内容如下：
+
+```json
+{
+  "posts": [
+    {
+      "title": "Frist psot",
+      "author": "anon"
+    },
+    {
+      "title": "A well-written article",
+      "author": "person1"
+    }
+  ],
+  "realnames": {
+    "anon": "Anonymous Coward",
+    "person1": "Person McPherson"
+  }
+}
+```
+
+获取每篇博客的真实作者信息：
+
+```sh
+# 非简写形式，通过指定.realnames的值作为$names变量
+# .posts[]将会获取每个博客对象。
+# .title 则会获取每个博客对象的title标题的值
+# .author 则会获取每个博客对象的author作者的值
+# 再将.atuhor的值作为键名，求得$names里面对应键的值，也就是作者的真名，将其作为author字段的值
+$ cat posts.json |jq '.realnames as $names | .posts[] | {"title": .title, "author": $names[.author]}'
+{
+  "title": "Frist psot",
+  "author": "Anonymous Coward"
+}
+{
+  "title": "A well-written article",
+  "author": "Person McPherson"
+}
+
+# 简写形式
+$ cat posts.json |jq '.realnames as $names | .posts[] | {title, author: $names[.author]}'
+{
+  "title": "Frist psot",
+  "author": "Anonymous Coward"
+}
+{
+  "title": "A well-written article",
+  "author": "Person McPherson"
+}
+```
+
+再看几个手册上的示例：
+
+```sh
+# .bar的值是200，将其做为变量x
+# .foo 则会获取到值10
+# . + $x 则会使用 10 + x变量的值200=210
+$ echo '{"foo":10, "bar":200}'|jq '.bar as $x | .foo | . + $x'
+210
+
+# 首先 `. as $i` 将当前输入值赋值给变量i
+# `[(.*2|. as $i| $i), $i]` 这个数组表达式要分两部分来看
+# 先看右边的`$i`，这是第二个元素，是直接将变量i的值作为第二个元素，也就是5
+# 再看左边的`(.*2|. as $i| $i)`, 刚开始输入值是5，也就是.是5，那么 .*2 就变成了10
+# 这个时候又有一个`|. as $i`，即将乘以2后的值10作为变量i的值，
+# 这个时候注意啦，变量i相当于被重新赋值了，只对数组第1个元素产生影响，对第二个元素无影响
+# 最后`| $i`则会打印变量i的值10作为第一个元素的值
+$ echo '5'|jq '. as $i|[(.*2|. as $i| $i), $i]'
+[
+  10,
+  5
+]
+
+
+# 这个例子中，同时对数组中的多个元素进行一一对应的变量定义，然后求变量的和
+$ echo '[2, 3, {"c": 4, "d": 5}]'|jq '. as [$a, $b, {c: $c}] | $a + $b + $c'
+9
+
+# 可以看到，变量按定义的前后顺序，依次与对应的元素进行匹配
+# 当数组元素是对象时，则通过对象的键来进行匹配，如对象的键是"c"，匹配变量c,对象的键是"d"，匹配变量d
+$ echo '[2, 3, {"c": 4, "d": 5}]'|jq '. as [$a, $b, {c: $c}] | [$a, $b,$c]'
+[
+  2,
+  3,
+  4
+]
+$ echo '[2, 3, {"c": 4, "d": 5}]'|jq '. as [$a, $b, {c: $c, d: $d}] | [$a, $b,$c, $d]'
+[
+  2,
+  3,
+  4,
+  5
+]
+
+# 对多个变量进行求和运算
+$ echo '[2, 3, {"c": 4, "d": 5}]'|jq '. as [$a, $b, {c: $c, d: $d}] | [$a, $b, $c, $d]|add'
+14
+
+# 对输入流多个元素进行变量处理
+$ echo '[[0], [0, 1], [2, 1, 0]]'|jq '.[] as [$a, $b] | {a: $a, b: $b}'
+{
+  "a": 0,
+  "b": null
+}
+{
+  "a": 0,
+  "b": 1
+}
+{
+  "a": 2,
+  "b": 1
+}
+```
+
