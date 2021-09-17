@@ -6494,3 +6494,155 @@ $ echo '[[0], [0, 1], [2, 1, 0]]'|jq '.[] as [$a, $b] | {a: $a, b: $b}'
 }
 ```
 
+
+
+
+
+### 10.2 函数
+
+- 可以通过`def`关键字来定义函数。函数定义后，就可以将其作为过滤器使用。
+
+如定义`increment`自增过滤器：
+
+```sh
+$ echo '[1,2,3,4]'|jq 'def increment: . + 1; [.[]|increment]'
+[2,3,4,5]
+```
+
+按同样的思路，我们可以定义一个`double`过滤器：
+
+```sh
+$ echo '[1,2,3,4]'|jq 'def double: . * 2; [.[]|double]'
+[2,4,6,8]
+```
+
+再复杂一点，定义一个乘方运算：
+
+```sh
+# 定义乘方时，函数中还使用了递归
+$ echo '[1,2,3,4]'|jq 'def power(n): if n > 1 then . * power( n - 1) else . end; [.[]|power(1)]'
+[1,2,3,4]
+$ echo '[1,2,3,4]'|jq 'def power(n): if n > 1 then . * power( n - 1) else . end; [.[]|power(2)]'
+[1,4,9,16]
+$ echo '[1,2,3,4]'|jq 'def power(n): if n > 1 then . * power( n - 1) else . end; [.[]|power(3)]'
+[1,8,27,64]
+$ echo '[1,2,3,4]'|jq 'def power(n): if n > 1 then . * power( n - 1) else . end; [.[]|power(4)]'
+[1,16,81,256]
+$ echo '[1,2,3,4]'|jq 'def power(n): if n > 1 then . * power( n - 1) else . end; [.[]|power(5)]'
+[1,32,243,1024]
+
+$ echo '2'|jq 'def power(n): if n > 1 then . * power( n - 1) else . end; power(1)'
+2
+$ echo '2'|jq 'def power(n): if n > 1 then . * power( n - 1) else . end; power(2)'
+4
+$ echo '2'|jq 'def power(n): if n > 1 then . * power( n - 1) else . end; power(3)'
+8
+$ echo '2'|jq 'def power(n): if n > 1 then . * power( n - 1) else . end; power(4)'
+16
+```
+
+看手册上的例子：
+
+```sh
+$ echo '5'|jq 'def foo(f): f|f; foo(. * 2)'
+20
+$ echo '5'|jq 'def foo(f): f|f|f; foo(. * 2)'
+40
+
+# 输入流的值是5，函数中需要执行三次f。
+# 第一次执行用户的表达式 5 * 2 + 2 = 12
+# 第二次执行用户的表达式 12 * 2 + 2 = 26
+# 第三次执行用户的表达式 26 * 2 + 2 = 54
+# 因此最后输出为54
+$ echo '5'|jq 'def foo(f): f|f|f; foo(. * 2 + 2)'
+54
+```
+
+可以看到，使用`foo`过滤器可以多次重复执行用户定义的表达式。
+
+
+
+再看手册的两个例子：
+
+```sh
+# 基础知识
+# 数字相加，是将新数组中的元素追加到原数组中
+$ echo '[1,2]'|jq '. + [3,4]'
+[1,2,3,4]
+# map的话，会对数组中每个元素执行表达式`.[0]`，然后就结果组成新的数组
+$ echo '[[1,2],[10,20]]'|jq 'map(.[0])'
+[1,10]
+
+# 测试map定义，可以看到，与上在贩结果一致
+$ echo '[[1,2],[10,20]]'|jq 'def mmap(f): [.[] | f]; mmap(.[0])'
+[1,10]
+
+# addvalue函数，会将用户定义的表达式的值与输入流相加
+# 对于`map(addvalue(.[0])`的意思就是将数组中每个元素(即子数组)的第一个元素，追加到原来的数组后面
+$ echo '[[1,2],[10,20]]'|jq 'def addvalue(f): . + [f]; map(addvalue(.[0]))'
+[[1,2,1],[10,20,10]]
+
+# 这个addvalue函数的定义与上面有所不同，将map移到函数定义里面了
+# addvalue(.[0]) 表达式，先计算`.[0]`，因为输入流是'[[1,2],[10,20]]'，因此`.[0]`其实就是第一个子元素，也就是数组`[1,2]`
+# 再看函数定义里面`f as $x | map(. + $x)`，将用户定义的表达式获取的值作为变量x的值，然后使用map过滤器对输入流的每一个元素与变量x相加，将结果形式数组
+# 也就是用第一个元素`[1,2]`与表达式`.[0]`的值`[1,2]`相加，得到`[1,2,1,2]`
+# 用第二个元素`[10,20]`与表达式`.[0]`的值`[1,2]`相加，得到`[10,20,1,2]`
+# 再将两个值作为元素放在数组中，形成最后的结果`[[1,2,1,2],[10,20,1,2]]`
+$ echo '[[1,2],[10,20]]'|jq 'def addvalue(f): f as $x | map(. + $x); addvalue(.[0])'
+[[1,2,1,2],[10,20,1,2]]
+```
+
+
+
+更复杂的，求斐波那契数列：
+
+```sh
+$ echo '[0,1,2,3,4,5,6,7,8,9]'|jq 'def fib(n): if n == 0 then 0 elif n == 1 then 1 elif n >= 2 then fib(n-1) + fib(n-2) else . end; map(fib(.))'
+[0,1,1,2,3,5,8,13,21,34]
+
+$ echo '9'|jq 'def fib(n): if n == 0 then 0 elif n == 1 then 1 elif n >= 2 then fib(n-1) + fib(n-2) else . end; fib(.)'
+34
+$ echo '10'|jq 'def fib(n): if n == 0 then 0 elif n == 1 then 1 elif n >= 2 then fib(n-1) + fib(n-2) else . end; fib(.)'
+55
+$ echo '11'|jq 'def fib(n): if n == 0 then 0 elif n == 1 then 1 elif n >= 2 then fib(n-1) + fib(n-2) else . end; fib(.)'
+89
+
+$ echo 'null'|jq 'def fib(n): if n == 0 then 0 elif n == 1 then 1 elif n >= 2 then fib(n-1) + fib(n-2) else . end; fib(12)'
+144
+$ echo 'null'|jq 'def fib(n): if n == 0 then 0 elif n == 1 then 1 elif n >= 2 then fib(n-1) + fib(n-2) else . end; fib(13)'
+233
+$ echo 'null'|jq 'def fib(n): if n == 0 then 0 elif n == 1 then 1 elif n >= 2 then fib(n-1) + fib(n-2) else . end; fib(14)'
+377
+$ echo 'null'|jq 'def fib(n): if n == 0 then 0 elif n == 1 then 1 elif n >= 2 then fib(n-1) + fib(n-2) else . end; fib(15)'
+610
+$ echo 'null'|jq 'def fib(n): if n == 0 then 0 elif n == 1 then 1 elif n >= 2 then fib(n-1) + fib(n-2) else . end; fib(16)'
+987
+$ echo 'null'|jq 'def fib(n): if n == 0 then 0 elif n == 1 then 1 elif n >= 2 then fib(n-1) + fib(n-2) else . end; fib(17)'
+1597
+$ echo 'null'|jq 'def fib(n): if n == 0 then 0 elif n == 1 then 1 elif n >= 2 then fib(n-1) + fib(n-2) else . end; fib(18)'
+2584
+$ echo 'null'|jq 'def fib(n): if n == 0 then 0 elif n == 1 then 1 elif n >= 2 then fib(n-1) + fib(n-2) else . end; fib(19)'
+4181
+$ echo 'null'|jq 'def fib(n): if n == 0 then 0 elif n == 1 then 1 elif n >= 2 then fib(n-1) + fib(n-2) else . end; fib(20)'
+6765
+$ echo 'null'|jq 'def fib(n): if n == 0 then 0 elif n == 1 then 1 elif n >= 2 then fib(n-1) + fib(n-2) else . end; fib(21)'
+10946
+$ echo 'null'|jq 'def fib(n): if n == 0 then 0 elif n == 1 then 1 elif n >= 2 then fib(n-1) + fib(n-2) else . end; fib(22)'
+17711
+$ echo 'null'|jq 'def fib(n): if n == 0 then 0 elif n == 1 then 1 elif n >= 2 then fib(n-1) + fib(n-2) else . end; fib(23)'
+28657
+$ echo 'null'|jq 'def fib(n): if n == 0 then 0 elif n == 1 then 1 elif n >= 2 then fib(n-1) + fib(n-2) else . end; fib(24)'
+46368
+$
+```
+
+> 斐波那契数列（Fibonacci sequence），又称[黄金分割](https://baike.baidu.com/item/黄金分割/115896)数列，因数学家莱昂纳多·斐波那契（Leonardo Fibonacci）以兔子繁殖为例子而引入，故又称为“兔子数列”，指的是这样一个数列：0、1、1、2、3、5、8、13、21、34、……在数学上，斐波那契数列以如下被以递推的方法定义：*F*(0)=0，*F*(1)=1, *F*(n)=*F*(n - 1)+*F*(n - 2)（*n* ≥ 2，*n* ∈ N*）在现代物理、准[晶体结构](https://baike.baidu.com/item/晶体结构/10401467)、化学等领域，斐波纳契数列都有直接的应用，为此，美国数学会从 1963 年起出版了以《斐波纳契数列季刊》为名的一份数学杂志，用于专门刊载这方面的研究成果。
+>
+> **斐波那契数列**指的是这样一个数列：
+>
+> ![img](https://bkimg.cdn.bcebos.com/formula/791a16929ce9804e0900f0f5bf495f7e.svg)
+>
+> 这个数列从第3项开始，每一项都等于前两项之和。
+
+可以看到，我们使用`jq`获取到的值与百度百科上面定义的数据是一样。
+
