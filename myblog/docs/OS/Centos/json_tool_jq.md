@@ -6744,3 +6744,31 @@ $ echo 'null'|jq '[range(10)]|nth(9;.[])'
 9
 ```
 
+
+
+### 10.6 foreach对每个元素执行操作
+
+```sh
+$ echo '[[2,1], [5,3], [6,4]]'|jq '[foreach .[] as [$i, $j] (0; . + $i - $j)]'
+[1,3,5]
+
+$ echo '[1,2,null,3,4,null,"a","b",null]'|jq '[foreach .[] as $item ([[],[]]; if $item == null then [[],.[0]] else  [(.[0] + [$item]),[]] end;if $item == null then .[1] else empty end )]'
+[[1,2],[3,4],["a","b"]]
+```
+
+
+
+### 10.7 其他主题
+
+- 数字函数。
+
+> One-input C math functions: `acos` `acosh` `asin` `asinh` `atan` `atanh` `cbrt` `ceil` `cos` `cosh` `erf` `erfc` `exp` `exp10` `exp2` `expm1` `fabs` `floor` `gamma` `j0` `j1` `lgamma` `log` `log10` `log1p` `log2` `logb` `nearbyint` `pow10` `rint` `round` `significand` `sin` `sinh` `sqrt` `tan` `tanh` `tgamma` `trunc` `y0` `y1`.
+> 
+> Two-input C math functions: `atan2` `copysign` `drem` `fdim` `fmax` `fmin` `fmod` `frexp` `hypot` `jn` `ldexp` `modf` `nextafter` `nexttoward` `pow` `remainder` `scalb` `scalbln` `yn`.
+> 
+> Three-input C math functions: `fma`.
+
+
+
+- 手册中`Recursion`、`Generators and iterators`、 `I/O`、`Streaming`等其他主题相对复杂。此处不提。忽略。
+
