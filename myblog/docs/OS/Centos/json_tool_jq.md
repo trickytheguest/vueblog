@@ -6760,7 +6760,7 @@ $ echo '[1,2,null,3,4,null,"a","b",null]'|jq '[foreach .[] as $item ([[],[]]; if
 
 ### 10.7 其他主题
 
-- 数字函数。
+- 数学函数。
 
 > One-input C math functions: `acos` `acosh` `asin` `asinh` `atan` `atanh` `cbrt` `ceil` `cos` `cosh` `erf` `erfc` `exp` `exp10` `exp2` `expm1` `fabs` `floor` `gamma` `j0` `j1` `lgamma` `log` `log10` `log1p` `log2` `logb` `nearbyint` `pow10` `rint` `round` `significand` `sin` `sinh` `sqrt` `tan` `tanh` `tgamma` `trunc` `y0` `y1`.
 > 
