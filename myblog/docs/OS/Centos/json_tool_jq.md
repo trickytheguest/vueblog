@@ -6768,6 +6768,57 @@ $ echo '[1,2,null,3,4,null,"a","b",null]'|jq '[foreach .[] as $item ([[],[]]; if
 > 
 > Three-input C math functions: `fma`.
 
+向上取整：
+```sh
+$ echo '2.1'|jq 'ceil'
+3
+$ echo '2.4'|jq 'ceil'
+3
+$ echo '2.5'|jq 'ceil'
+3
+$ echo '2.9'|jq 'ceil'
+3
+```
+
+向下取整：
+```sh
+$ echo '2.1'|jq 'floor'
+2
+$ echo '2.4'|jq 'floor'
+2
+$ echo '2.5'|jq 'floor'
+2
+$ echo '2.9'|jq 'floor'
+2
+```
+
+四舍五入:
+```sh
+$ echo '2.1'|jq 'round'
+2
+$ echo '2.4'|jq 'round'
+2
+$ echo '2.45'|jq 'round'
+2
+$ echo '2.5'|jq 'round'
+3
+$ echo '2.9'|jq 'round'
+3
+```
+
+幂：
+
+```sh
+$ echo 'null'|jq 'pow(2;3)'
+8
+$ echo 'null'|jq 'pow(2;4)'
+16
+$ echo 'null'|jq 'pow(2;5)'
+32
+$ echo 'null'|jq 'pow(2;6)'
+64
+```
+
 
 
 - 手册中`Recursion`、`Generators and iterators`、 `I/O`、`Streaming`等其他主题相对复杂。此处不提。忽略。
