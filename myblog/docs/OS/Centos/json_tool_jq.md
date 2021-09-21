@@ -6756,9 +6756,235 @@ $ echo '[1,2,null,3,4,null,"a","b",null]'|jq '[foreach .[] as $item ([[],[]]; if
 [[1,2],[3,4],["a","b"]]
 ```
 
+### 10.7 模块
+
+- `jq`也有库、模块系统，模块是后缀为`.jq`的文件。
+- `jq`默认从默认的搜索路径搜索模块。你可以通过`import`或`include`改变搜索路径。
+- `~`是家目录，`.`是当前目录。`$ORIGIN`是`jq`可执行程序所在目录。
+- 默认搜索路径是给`-L`命令行选项的搜索路径，否则是`["~/.jq", "$ORIGIN/../lib/jq", "$ORIGIN/../lib"]`。
+- 不允许具有相同名称的连续组件以避免歧义（例如，`foo/foo`）。
+- 使用`-L$HOME/.jq`可以在``$HOME/.jq/foo.jq`和`$HOME/.jq/foo/foo.jq`中找到模块`foo`。
+- 如果 `$HOME/.jq` 是一个文件，则它会被导入到主程序中。
+
+这个主题，官方文档并没有给出示例，我们只能通过其源码仓库进行搜索一下，如我们搜索`module`关键字，可以搜索到类似如下这样的信息：
+
+```sh
+[mzh@MacBookPro jq (master ✗)]$ grep -Rn 'module' *|grep -v '\.c'|grep '\.test:'|grep module
+tests/jq.test:1454:# module system
+tests/jq.test:1484:module (.+1); 0
+tests/jq.test:1503:modulemeta
+tests/jq.test:1507:modulemeta | .deps |= length
+tests/jq.test:1513:jq: error: syntax error, unexpected ';', expecting $end (Unix shell quoting issues?) at /home/nico/ws/jq/tests/modules/syntaxerror/syntaxerror.jq, line 1:
+tests/jq.test:1551:{if:0,and:1,or:2,then:3,else:4,elif:5,end:6,as:7,def:8,reduce:9,foreach:10,try:11,catch:12,label:13,import:14,include:15,module:16}
+tests/jq.test:1553:{"if":0,"and":1,"or":2,"then":3,"else":4,"elif":5,"end":6,"as":7,"def":8,"reduce":9,"foreach":10,"try":11,"catch":12,"label":13,"import":14,"include":15,"module":16}
+tests/jq.test:1668:#["as","def","module","import","include","if","then","else","elif","end","reduce","foreach","and","or","try","catch","label","break","__loc__"]
+tests/jq.test:1672:#["as","def","module","import","include","if","then","else","elif","end","reduce","foreach","and","or","try","catch","label","break","__loc__"]
+```
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210921153332.png)
+
+可以看到`jq.test`1454行处就是关于模块的测试用例：
+
+```sh
+[mzh@MacBookPro jq (master ✗)]$ sed -n '1454,1482p' tests/jq.test
+# module system
+import "a" as foo; import "b" as bar; def fooa: foo::a; [fooa, bar::a, bar::b, foo::a]
+null
+["a","b","c","a"]
+
+import "c" as foo; [foo::a, foo::c]
+null
+[0,"acmehbah"]
+
+include "c"; [a, c]
+null
+[0,"acmehbah"]
+
+import "data" as $e; import "data" as $d; [$d[].this,$e[].that,$d::d[].this,$e::e[].that]|join(";")
+null
+"is a test;is too;is a test;is too"
+
+include "shadow1"; e
+null
+2
+
+include "shadow1"; include "shadow2"; e
+null
+3
+
+import "shadow1" as f; import "shadow2" as f; import "shadow1" as e; [e::e, f::e]
+null
+[2,3]
+
+[mzh@MacBookPro jq (master ✗)]$
+```
+
+我们在`tests`目录中发现了`modules`目录，看一下其中的文件：
+
+```sh
+[mzh@MacBookPro modules (master ✗)]$ ls
+a.jq                c                   home1               lib                 shadow2.jq          test_bind_order.jq  test_bind_order1.jq
+b                   data.json           home2               shadow1.jq          syntaxerror         test_bind_order0.jq test_bind_order2.jq
+[mzh@MacBookPro modules (master ✗)]$
+```
+
+看一下文件内容：
+
+```sh
+./shadow2.jq:1:def e: 3;
+./test_bind_order1.jq:1:def sym1: 1;
+./test_bind_order1.jq:2:def sym2: 1;
+./home1/.jq:1:def foo: "baz";
+./home1/.jq:2:def f: "wat";
+./home1/.jq:3:def f: "foo";
+./home1/.jq:4:def g: "bar";
+./home1/.jq:5:def fg: f+g;
+./test_bind_order0.jq:1:def sym0: 0;
+./test_bind_order0.jq:2:def sym1: 0;
+./test_bind_order.jq:1:import "test_bind_order0" as t;
+./test_bind_order.jq:2:import "test_bind_order1" as t;
+./test_bind_order.jq:3:import "test_bind_order2" as t;
+./test_bind_order.jq:4:def check: if [t::sym0,t::sym1,t::sym2] == [0,1,2] then true else false end;
+./a.jq:1:module {version:1.7};
+./a.jq:2:def a: "a";
+./test_bind_order2.jq:1:def sym2: 2;
+./lib/jq/f.jq:1:def f: "f is here";
+./lib/jq/e/e.jq:1:def bah: "bah";
+./home2/.jq/g.jq:1:def g: 1;
+./c/c.jq:1:module {whatever:null};
+./c/c.jq:2:import "a" as foo;
+./c/c.jq:3:import "d" as d {search:"./"};
+./c/c.jq:4:import "d" as d2{search:"./"};
+./c/c.jq:5:import "e" as e {search:"./../lib/jq"};
+./c/c.jq:6:import "f" as f {search:"./../lib/jq"};
+./c/c.jq:7:import "data" as $d;
+./c/c.jq:8:def a: 0;
+./c/c.jq:9:def c:
+./c/c.jq:10:  if $d::d[0] != {this:"is a test",that:"is too"} then error("data import is busted")
+./c/c.jq:11:  elif d2::meh != d::meh then error("import twice doesn't work")
+./c/c.jq:12:  elif foo::a != "a" then error("foo::a didn't work as expected")
+./c/c.jq:13:  elif d::meh != "meh" then error("d::meh didn't work as expected")
+./c/c.jq:14:  elif e::bah != "bah" then error("e::bah didn't work as expected")
+./c/c.jq:15:  elif f::f != "f is here" then error("f::f didn't work as expected")
+./c/c.jq:16:  else foo::a + "c" + d::meh + e::bah end;
+./c/d.jq:1:def meh: "meh";
+./syntaxerror/syntaxerror.jq:1:wat;
+./b/b.jq:1:def a: "b";
+./b/b.jq:2:def b: "c";
+./shadow1.jq:1:def e: 1;
+./shadow1.jq:2:def e: 2;
+[mzh@MacBookPro modules (master ✗)]$
+```
+
+可以看到，模块文件里面的内部大部分都是定义的函数。
 
 
-### 10.7 其他主题
+
+我们来测试一下。
+
+假如我们编写一个`mymodule.jq`的文件，查看其内容如下：
+
+```sh
+$ cat mymodule.jq
+#!/bin/jq
+# 自定义模块
+# 以#井号开头的行是注释
+# Filename: mymodule.jq
+# Author: meizhaohui
+
+# 两倍
+def double:
+   . * 2;
+
+# 自增1
+def increment: . + 1;
+
+# 幂
+def power(n):
+    if (n > 1) then
+        . * power( n - 1)
+    else
+        .
+    end;
+
+# 斐波那契数列
+def fib(n):
+    if n == 0 then
+        0
+    elif n == 1 then
+        1
+    elif n >= 2 then
+        fib(n-1) + fib(n-2)
+    else
+        .
+    end;
+
+# 大写
+def upper:
+    .|ascii_upcase;
+
+# 小写：
+def lower:
+    .|ascii_downcase;
+
+```
+
+现在我们来测试一下使用我们的模块。
+
+#### 10.7.1 导入自定义模块
+
+- 我们使用`import RelativePathString as NAME`这种方式导入模块。然后使用`NAME::youfunname`的方式调用自定义的函数。
+
+```sh
+$ echo '2'|jq 'import "mymodule" as M; M::double'
+4
+$ echo '2'|jq 'import "mymodule" as M; M::increment'
+3
+$ echo '2'|jq 'import "mymodule" as M; M::power(3)'
+8
+$ echo 'null'|jq 'import "mymodule" as M; M::fib(2)'
+1
+$ echo 'null'|jq 'import "mymodule" as M; M::fib(3)'
+2
+$ echo 'null'|jq 'import "mymodule" as M; M::fib(4)'
+3
+$ echo '"JQ is cool!"'|jq 'import "mymodule" as M; M::upper'
+"JQ IS COOL!"
+$ echo '"JQ is cool!"'|jq 'import "mymodule" as M; M::lower'
+"jq is cool!"
+```
+
+#### 10.7.2 包含模块文件
+
+- 我们也可以使用`include RelativePathString;`这种方式导入模块文件。
+
+看以下示例：
+
+```sh
+$ echo '2'|jq 'include "mymodule"; double'
+4
+$ echo '2'|jq 'include "mymodule"; increment'
+3
+$ echo '2'|jq 'include "mymodule"; power(3)'
+8
+$ echo 'null'|jq 'include "mymodule"; fib(2)'
+1
+$ echo 'null'|jq 'include "mymodule"; fib(3)'
+2
+$ echo 'null'|jq 'include "mymodule"; fib(4)'
+3
+$ echo '"JQ is cool!"'|jq 'include "mymodule"; upper'
+"JQ IS COOL!"
+$ echo '"JQ is cool!"'|jq 'include "mymodule"; lower'
+"jq is cool!"
+```
+
+可以看到此种方式的输出结果与上一节的相同。
+
+
+
+
+### 10.8 其他主题
 
 - 数学函数。
 
