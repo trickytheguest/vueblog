@@ -6981,6 +6981,58 @@ $ echo '"JQ is cool!"'|jq 'include "mymodule"; lower'
 
 可以看到此种方式的输出结果与上一节的相同。
 
+#### 10.7.3 导入JSON数据
+
+可以使用`import RelativePathString as $NAME`方式导入JSON文件(`.json`文件)中的数据，并使用`$NAME::NAME`调用数据。
+
+如我们有一个`data.json`的文件，其内容如下：
+
+```json
+{
+  "this": "is a test",
+  "that": "is too"
+}
+```
+
+测试：
+
+```sh
+$ echo 'null'|jq 'import "data" as $DATA; $DATA::DATA'
+[
+  {
+    "this": "is a test",
+    "that": "is too"
+  }
+]
+$ echo 'null'|jq 'import "data" as $DATA; $DATA[]'
+{
+  "this": "is a test",
+  "that": "is too"
+}
+$ echo 'null'|jq 'import "data" as $DATA; $DATA[].this'
+"is a test"
+$ echo 'null'|jq 'import "data" as $DATA; $DATA[].that'
+"is too"
+```
+
+#### 10.7.4 将模块放在`~/.jq`文件中
+
+如果我们将我们的模块文件复制为`.jq`，则`jq`程序会自动加载模块文件的内容。
+
+```sh
+$ cp mymodule.jq .jq
+$ echo '2'|jq 'double'
+4
+$ echo '2'|jq 'power(2)'
+4
+$ echo '"JQ is cool!"'|jq 'upper'
+"JQ IS COOL!"
+$ echo '"JQ is cool!"'|jq 'lower'
+"jq is cool!"
+```
+
+可以看到，此时我们的自定义模块可以直接使用。
+
 
 
 
