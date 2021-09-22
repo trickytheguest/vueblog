@@ -6763,7 +6763,7 @@ $ echo '[1,2,null,3,4,null,"a","b",null]'|jq '[foreach .[] as $item ([[],[]]; if
 - `~`是家目录，`.`是当前目录。`$ORIGIN`是`jq`可执行程序所在目录。
 - 默认搜索路径是给`-L`命令行选项的搜索路径，否则是`["~/.jq", "$ORIGIN/../lib/jq", "$ORIGIN/../lib"]`。
 - 不允许具有相同名称的连续组件以避免歧义（例如，`foo/foo`）。
-- 使用`-L$HOME/.jq`可以在``$HOME/.jq/foo.jq`和`$HOME/.jq/foo/foo.jq`中找到模块`foo`。
+- 使用`-L$HOME/.jq`可以在`$HOME/.jq/foo.jq`和`$HOME/.jq/foo/foo.jq`中找到模块`foo`。
 - 如果 `$HOME/.jq` 是一个文件，则它会被导入到主程序中。
 
 这个主题，官方文档并没有给出示例，我们只能通过其源码仓库进行搜索一下，如我们搜索`module`关键字，可以搜索到类似如下这样的信息：
