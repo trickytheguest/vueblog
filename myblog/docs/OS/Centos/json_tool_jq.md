@@ -4890,7 +4890,7 @@ $ echo '"工具"'|jq 'explode'|jq 'implode'
 
 实际上，对于这种不能用ASCII码表示的字符，`jq`会将其转换成UTF-8编码，然后再获取对应数据的十进制数。
 
-你要以在 [http://www.mytju.com/classcode/tools/encode_utf8.asp](http://www.mytju.com/classcode/tools/encode_utf8.asp) 进行中文字符串的查询。
+你可以在 [http://www.mytju.com/classcode/tools/encode_utf8.asp](http://www.mytju.com/classcode/tools/encode_utf8.asp) 进行中文字符串的查询。
 
 如，我们查询"工具"这个字符串。
 
@@ -4912,14 +4912,14 @@ $ echo '"工具"'|jq -a
 
 可以看到，其对应的UTF-8编码与上表中的”Unicode编码16进制“列的数据相同。
 
-我们再将其转换成”Unicode编码10进制“组成的数组：
+我们再将其转换成"Unicode编码10进制"组成的数组：
 
 ```sh
 $ echo '"工具"'|jq -a 'explode'
 [24037,20855]
 ```
 
-可以看到，对应的10进制数与上表中的”Unicode编码10进制“列的数据相同。
+可以看到，对应的10进制数与上表中的"Unicode编码10进制"列的数据相同。
 
 
 
@@ -4989,7 +4989,7 @@ $ echo '"工具"'|jq 'ascii_downcase'
 
 
 
-我们先看一`while`的使用：
+我们先看一下`while`的使用：
 
 ```sh
 # .的值满足条件时，输出.的值，然后将.的值进行更新，. = . * 2
@@ -5449,7 +5449,7 @@ $ echo '[1, "foo", ["foo"]]'|jq '[.[]|tojson|fromjson]'
 - `@uri`: 通过将所有保留的 URI 字符映射到 %XX 序列来应用百分比编码。
 - `@csv`：将输入数组转换成CSV字符串。
 - `@tsv`：将输入数组转换成以TAB分隔的字符串数据。
-- `@base64`，将字符串转为base64编码。
+- `@base64`：将字符串转为base64编码。
 - `@base64d`:base64编码解码。
 
 
@@ -5602,7 +5602,7 @@ false
 false
 ```
 
-可以看到，数字1与1相等，同样1.0也与1相等，但字符串`1`与1不相等。同样字符串`banana`也数字1也不相等。
+可以看到，数字1与1相等，同样1.0也与1相等，但字符串`1`与1不相等。同样字符串`banana`与数字1也不相等。
 
 
 
@@ -5783,7 +5783,7 @@ $ echo '7'|jq '[if false then 3 else . end]'
 
 
 
-再看测试用户中稍微复杂的例子：
+再看测试用例中稍微复杂的例子：
 
 ```sh
 # 如果输入数组中元素对象的foo键的值是真的话，则输出`yep`，否则输出为`nope`
