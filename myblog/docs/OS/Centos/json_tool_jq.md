@@ -6642,7 +6642,7 @@ $
 >
 > **斐波那契数列**指的是这样一个数列：
 >
-> ![img](https://bkimg.cdn.bcebos.com/formula/791a16929ce9804e0900f0f5bf495f7e.svg)
+> ![](https://meizhaohui.gitee.io/imagebed/img/20210924225901.png)
 >
 > 这个数列从第3项开始，每一项都等于前两项之和。
 
@@ -7103,3 +7103,12 @@ $ echo 'null'|jq 'pow(2;6)'
 
 - 手册中`Recursion`、`Generators and iterators`、 `I/O`、`Streaming`等其他主题相对复杂。此处不提。忽略。
 
+
+
+
+
+
+
+本文完！
+
+========================================================================== 
