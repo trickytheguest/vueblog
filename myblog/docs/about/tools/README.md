@@ -148,3 +148,11 @@ PicGo的使用可参考： [PicGo：免费搭建个人图床](https://zhuanlan.z
 
 
 
+## 12. JSON解析工具jq
+
+非常好用的json解析工具`jq`。
+
+![](https://meizhaohui.gitee.io/imagebed/img/20210821171120.png)
+
+- 官方地址：[https://github.com/stedolan/jq](https://github.com/stedolan/jq) 。
+- 你也可以参考我写的总结文档 [JSON解析工具-jq](../../OS/Centos/json_tool_jq.html) 。
