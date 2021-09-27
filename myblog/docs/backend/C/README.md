@@ -4511,4 +4511,14 @@ q
 
 - 通常`static`声明通常多用于变量，也可以用于函数。通常函数名是全局可访问的，对整个程序的各个部分而言都可见。但是如果把函数声明为`static`类型，则该函数名除了对该函数声明所在的文件可见外，其他文件都无法访问。
 
-    
+如：
+```c
+static char buf[BUFSIZE]; /* ungetch函数使用的缓冲区 */
+static int bufp = 0; /* 缓冲区buf的下一个空闲位置 */
+
+int getch(void) (...)
+
+void ungetch(int c) (...)
+```
+
+在其他函数中不能访问变量`buf`和`bufp`。
