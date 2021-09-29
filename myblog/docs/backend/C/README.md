@@ -4646,3 +4646,36 @@ printf("sizeof(mystr) = %d\n", sizeof(mystr));
 // sizeof(mystr) = 15
 ```
 
+
+
+### 4.10 递归
+
+- C语言中的函数可以递归调用，即函数可以直接或间接调用自身。
+
+看下来的示例，将一个整数作为字符串打印出来。
+
+```c
+#include <stdio.h>
+
+void printd(int n)
+{
+    if (n < 0) {
+        putchar('-');
+        n = -n;
+    }
+
+    if (n / 10)
+        printd(n / 10);
+
+    putchar(n % 10 + '0');
+}
+
+int main( )
+{
+    printd(-123); // output: -123
+    printf("\n");
+
+    return 0;
+}
+```
+
