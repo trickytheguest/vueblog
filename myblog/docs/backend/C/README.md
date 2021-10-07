@@ -4840,7 +4840,7 @@ int qsort(int v[], int left, int right)
         return 1;
     int partition_index = partition(v, left, right);
     printf("基准值应在的索引位置:%d\n", partition_index);
-    printa(v, 8);
+    printa(v, 7);
     qsort(v, left, partition_index - 1);
     qsort(v, partition_index + 1, right);
     return 0;
@@ -4851,7 +4851,6 @@ int main( )
     // int v[] = {4, 5, 1, 10, 3, 6, 9, 2};
     int v[] = {3, 5, 1, 2, 7, 6, 4};
     printf("排序前的数组:");
-    
     int len = sizeof(v) / sizeof(v[0]);
     printa(v, len);
     qsort(v, 0, len - 1);
