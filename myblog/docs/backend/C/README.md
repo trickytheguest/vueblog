@@ -4679,3 +4679,202 @@ int main( )
 }
 ```
 
+#### 4.10.1 快速排序
+
+书上的示例，不是很好懂，测试代码如下：
+
+```c
+/*
+ *      Filename: qsort.c
+ *        Author: Zhaohui Mei<mzh.whut@gmail.com>
+ *   Description: 快速排序
+ *   Create Time: 2021-10-02 16:34:56
+ * Last Modified: 2021-10-07 23:25:07
+ */
+
+#include <stdio.h>
+
+/* swap函数，交换v[i]与v[j]的值 */
+void swap(int v[], int i, int j)
+{
+    int temp;
+
+    temp = v[i];
+    v[i] = v[j];
+    v[j] = temp;
+}
+/* 打印数组 */
+void printa(int v[], int length)
+{
+
+    printf("[ ");
+
+    for (int i = 0; i < length; i++)
+        printf("%d ", v[i]);
+
+    printf("]\n");
+}
+
+/* qsort函数，以递增顺序对v[left] ... v[right]进行排序 */
+void qsort(int v[], int left, int right)
+{
+    int i, last;
+    void swap(int v[], int i, int j);
+
+    if (left >= right)
+        return;
+
+    swap(v, left, (left + right) / 2);
+    last = left;
+    for (i = left + 1; i <= right; i++) {
+        if (v[i] < v[left]) {
+            swap(v, ++last, i);
+        }
+    }
+    swap(v, left, last);
+    // 注意，此处为显示中间过过程，加了一个打印输出！！！
+    printa(v, 7);
+    qsort(v, left, last - 1);
+    qsort(v, last + 1, right);
+}
+
+int main( )
+{
+    // int v[] = {4, 5, 1, 10, 3, 6, 9, 2};
+    int v[] = {3, 5, 1, 2, 7, 6, 4};
+    int len = sizeof(v) / sizeof(v[0]);
+    printf("排序前的数组: ");
+    printa(v, len);
+    qsort(v, 0, len - 1);
+    printf("排序后的数组: ");
+    printa(v, len);
+}
+
+```
+
+编译运行：
+
+```sh
+$ qsort.out
+排序前的数组: [ 3 5 1 2 7 6 4 ]
+[ 1 2 5 3 7 6 4 ]
+[ 1 2 4 3 5 6 7 ]
+[ 1 2 3 4 5 6 7 ]
+[ 1 2 3 4 5 6 7 ]
+排序后的数组: [ 1 2 3 4 5 6 7 ]
+```
+
+
+
+通过查看小姐姐的视频 [图解快速排序quick sort](https://haokan.baidu.com/v?pd=wisenatural&vid=190736151353458762)，通过使用快慢指针的方法，分而自治的思想，这里写了另外一个实现代码，看起来更容易理解一些。
+
+```c
+/**********************************
+ * 语言: C语言
+ * 功能: 快速排序
+ * 作者: 梅朝辉
+ * 日期: 2021-10-07 22:51:38
+ **********************************/
+#include <stdio.h>
+
+/* swap函数，交换v[i]与v[j]的值 */
+void swap(int v[], int i, int j)
+{
+    int temp;
+
+    temp = v[i];
+    v[i] = v[j];
+    v[j] = temp;
+}
+
+/* 打印数组 */
+void printa(int v[], int length)
+{
+
+    printf("[ ");
+
+    for (int i = 0; i < length; i++)
+        printf("%d ", v[i]);
+
+    printf("]\n");
+}
+
+/* 获取pivot基准值对应的索引位置 */
+int partition(int v[], int left, int right)
+{
+    /* 快速排序使用快慢指针，分而自治的思想
+     * 首先选取数组最后一个元素作为一个pivot基准值
+     * 然后利用pivot基准值将数组分为两个部分
+     * 第一个部分，也就是这个数组的前半部分，是所有的数都比pivot基准值要小
+     * 然后数组的后半部分，所有的数都是比pivot基准值要大
+     * 一旦分成这两个部分，我们就可以在每个部分里面重新进行这样的快速排序，这样最后得到的数组就是从小到大的排列的
+     * 具体如何操作呢？我们需要用到快慢指针
+     */
+    int pivot = right;
+    int index = pivot - 1;
+    // 设定一个慢指针i
+    int i = left - 1;
+    // 同时设定一个快指针j，然后快指针从数组的第一个数一直扫到pivot前面的这个数，也就是从left索引开始，一直到index索引处
+    int j = left;
+    while (j <= index) {
+        // 如果快指针对应的值小于基准值，则慢指针进一位，并将快指针j扫到的数与慢指针i对应的数交互位置
+        // 如果快指针对应的值大于基准值，则不做任何操作
+        if (v[j] < v[pivot]) {
+        	// 慢指针向前进一步
+            i++;
+            // 交互快慢指针两个位置的数
+            swap(v, i, j);
+        }
+        j++; // 快指针继续向前跑
+    }
+    // 最后将慢指针右边一位的数字与pivot数据交互
+    swap(v, i + 1, pivot);
+    // 交换后，基准值pivot就在其最后排序该在的位置，左侧的值都比其小，右侧的值都比其大
+    return i + 1;
+}
+
+/* 快速排序算法 */
+int qsort(int v[], int left, int right)
+{
+    if (left >= right)
+        return 1;
+    int partition_index = partition(v, left, right);
+    printf("基准值应在的索引位置:%d\n", partition_index);
+    printa(v, 8);
+    qsort(v, left, partition_index - 1);
+    qsort(v, partition_index + 1, right);
+    return 0;
+}
+
+int main( )
+{
+    // int v[] = {4, 5, 1, 10, 3, 6, 9, 2};
+    int v[] = {3, 5, 1, 2, 7, 6, 4};
+    printf("排序前的数组:");
+    
+    int len = sizeof(v) / sizeof(v[0]);
+    printa(v, len);
+    qsort(v, 0, len - 1);
+    printf("排序后的数组:");
+    printa(v, len);
+}
+```
+
+编译后运行结果如下：
+
+```sh
+$ qsort.out
+排序前的数组:[ 3 5 1 2 7 6 4 ]
+基准值应在的索引位置:3
+[ 3 1 2 4 7 6 5 ]
+基准值应在的索引位置:1
+[ 1 2 3 4 7 6 5 ]
+基准值应在的索引位置:4
+[ 1 2 3 4 5 6 7 ]
+基准值应在的索引位置:6
+[ 1 2 3 4 5 6 7 ]
+排序后的数组:[ 1 2 3 4 5 6 7 ]
+[Finished in 0.6s]
+```
+
+可以看出，两种方式选取的基准值方式不一样。后一种方式每次都是选取该部分最后一个值作为基准值pivot。
