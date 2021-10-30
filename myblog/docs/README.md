@@ -10,7 +10,7 @@ features:
     details: Go 是互联网时代的C语言
   - title: Hello VuePress 
     details: 手把手教你学搭建个人博客
-footer: MIT Licensed | Copyright © 2019-2021 Zhaohui Mei. 京ICP备19051502号-1 
+# footer: MIT Licensed | Copyright © 2019-2021 Zhaohui Mei. 京ICP备19051502号-1 
 ---
 
 
@@ -39,3 +39,9 @@ footer: MIT Licensed | Copyright © 2019-2021 Zhaohui Mei. 京ICP备19051502号-
 
 - NextCloud私有网盘 [https://nextcloud.hellogitlab.com/](https://nextcloud.hellogitlab.com/)
 - Gogs私有代码仓库 [https://gogs.hellogitlab.com/](https://gogs.hellogitlab.com/)
+
+
+
+
+<p style="text-align:center;">MIT Licensed | Copyright © 2019-2021 梅朝辉的博客 | ICP证：<a href="https://beian.miit.gov.cn" target="_blank" rel="noopener noreferrer">京ICP备19051502号</a></p>
+
