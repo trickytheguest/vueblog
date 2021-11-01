@@ -5021,8 +5021,17 @@ printf("x/y = %g\n", x/y);
 - 在实际参数中，每个双引号`"`将被替换成`\"`，反斜杠`\`将会被替换成`\\`，因此替换后的字符串是合法的字符串常量。
 
 
-
 虽然上面看到宏定义可能存在一些缺陷，但宏还是很有价值的。
+
+- 定义退出码
+
+`stdlib.h`中定义退出码：
+
+```c
+#define	EXIT_FAILURE	1
+#define	EXIT_SUCCESS	0
+```
+
 
 
 ##### 4.11.2.2 `#undef`指令
@@ -5036,5 +5045,47 @@ printf("x/y = %g\n", x/y);
 int getchar(void) { ... }
 ```
 
-这样后续只用调用函数`getchar`。
+这样后续只能调用函数`getchar`。
 
+#### 4.11.3 条件包含
+
+- 可以使用条件语句对预处理本身进行控制。条件语句的值是在预处理执行的过程中进行计算的。这样可以选择性地包含不同代码。
+- `#if`语句对其中的常量整型表达式(其中不能包含`sizeof`、类型转换运算符或`enum`常量)进行求值。若该表达式的值不等于0，则包含其后各行，直到遇到`#endif`、`#elif`或`#else`语句为止(预处理器语句`#elif`类似`else if`)。
+- 在`#if`语句中可以使用表达式`defined(名字)`，该表达式的值遵循下列规则：当*名字*已经定义时，其值为1；否则其值为0。
+
+- `#ifdef`和`#ifndef`指令，用于测试某个名字的宏是否定义。
+
+
+
+如定义`PI`的宏：
+
+```c
+#if !defined(PI)
+    #define PI 3.1415
+#endif
+```
+
+当未定义`PI`的宏时，则定义宏`PI`。
+
+与下面的代码是等价的。
+
+```c
+#ifndef PI
+    #define PI 3.1415
+#endif
+```
+
+
+
+- `#error`停止编译并显示错误信息。
+
+```c
+//#define SYSTEM MACOS
+#ifndef SYSTEM
+    #error "No define the SYSTEM"
+#endif
+```
+
+如果将第一行的`#define SYSTEM MACOS`注释掉，则第3行的编译会抛出异常，提示未定义`SYSTEM`。如下图所示：
+
+![](https://meizhaohui.gitee.io/imagebed/img/20211101225952.png)
