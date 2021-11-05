@@ -168,7 +168,7 @@ docker run --name postgres-server --restart=always -p 5432:5432 -v /dockerdata/p
 命令释义：
 
 - `docker run` 运行容器。
-- `--name postgres-server' 指定容器名称。
+- `--name postgres-server`指定容器名称。
 - `--restart=always` docker服务重启后本容器自动启动。
 - `-p 5432:5432` 将容器中的5432端口映射到宿主机端口的5432端口， `-p 宿主机端口:容器内部端口`。
 - `-v /dockerdata/postgresql/data:/var/lib/postgresql/data` 将容器中路径`/var/lib/postgresql/data`挂载到宿主机的`/dockerdata/postgresql/data`目录，实现数据持久化。
