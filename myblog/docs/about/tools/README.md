@@ -156,3 +156,40 @@ PicGo的使用可参考： [PicGo：免费搭建个人图床](https://zhuanlan.z
 
 - 官方地址：[https://github.com/stedolan/jq](https://github.com/stedolan/jq) 。
 - 你也可以参考我写的总结文档 [JSON解析工具-jq](../../OS/Centos/json_tool_jq.html) 。
+
+## 13. Mac  App 启动和切换工具Manico
+
+Manico 是一个为 macOS 设计的快速的 App 启动和切换工具。参考：[https://manico.im/](https://manico.im/)
+
+![](https://manico.im/static/img/manico-homepage-banner@2x.5948f72d46dc.png)
+
+按`Option`键⌥则可以调出app选择切换器，按住⌥的同时再按相应的数字键则可以快速切换到对应的应用。
+
+Manico 默认使用 Option + 数字组件键。
+
+## 14.终端连接工具termius
+
+- 官网地址：[https://www.termius.com/](https://www.termius.com/)
+
+
+
+![](https://assets-global.website-files.com/5c7036349b5477bf13f828cf/6126f64cecfe794c371ddf30_6112100c32644a0172698ab3_hero_new_semaphore_2x-min.png)
+
+优点：
+
+- 免费
+- 支持用户名密码和密钥模式
+- 常用脚本片段（同时发送到多个主机）
+- 全平台
+- 云同步（注册一个账号即可）
+
+缺点：
+
+- SFTP需要付费才能使用
+- 云同步需要付费版才可使用
+- 默认为英文界面
+
+快捷键：
+
+![](https://meizhaohui.gitee.io/imagebed/img/20211120221017.png)
+
