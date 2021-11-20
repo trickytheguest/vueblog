@@ -4066,6 +4066,68 @@ mei@4144e8c22fff:~/git$
 
 
 
+#### 6.4.2 `git blame`代码行最后是谁修改的
+
+- `git blame`可以告诉你一个文件中的每一行最后是谁修改的和哪次提交做出了变更。
+- `blame`是责备，责任的意思，即这一行代码最后由谁负责，因为你最后修改了这一行，你就需要为你的修改负责。
+
+我们测试一下。
+
+先查看`README.md`文件30-37行的内容：
+
+```sh
+mei@4144e8c22fff:~/git$ sed -n '30,37p' README.md
+installed).
+
+The user discussion and development of Git take place on the Git
+mailing list -- everyone is welcome to post bug reports, feature
+requests, comments and patches to git@vger.kernel.org (read
+[Documentation/SubmittingPatches][] for instructions on patch submission).
+To subscribe to the list, send an email with just "subscribe git" in
+the body to majordomo@vger.kernel.org. The mailing list archives are
+mei@4144e8c22fff:~/git$
+```
+
+再修改`git blame`查看一下这些行最后是由谁修改的：
+
+```sh
+mei@4144e8c22fff:~/git$ git blame -L 30,37 README.md
+aa98eb3d658 README    (Christian Couder 2009-02-24 21:16:37 +0100 30) installed).
+556b6600b25 README    (Nicolas Pitre    2007-01-17 13:04:39 -0500 31)
+556b6600b25 README    (Nicolas Pitre    2007-01-17 13:04:39 -0500 32) The user discussion and development of Git take place on the Git
+556b6600b25 README    (Nicolas Pitre    2007-01-17 13:04:39 -0500 33) mailing list -- everyone is welcome to post bug reports, feature
+07f050c9996 README    (Matthieu Moy     2012-02-23 13:52:06 +0100 34) requests, comments and patches to git@vger.kernel.org (read
+6164972018b README.md (Matthieu Moy     2016-02-25 09:37:27 +0100 35) [Documentation/SubmittingPatches][] for instructions on patch submission).
+07f050c9996 README    (Matthieu Moy     2012-02-23 13:52:06 +0100 36) To subscribe to the list, send an email with just "subscribe git" in
+07f050c9996 README    (Matthieu Moy     2012-02-23 13:52:06 +0100 37) the body to majordomo@vger.kernel.org. The mailing list archives are
+mei@4144e8c22fff:~/git$
+```
+
+对于`git`的源代码，其`README.md`文件的第30到37行分别由哪些人修改的。比如，32行的内容`The user discussion and development of Git take place on the Git`，最后是由`Nicolas Pitre`这个开发人员于2007-01-17 13:04:39 -0500这个时间修改的，对应的提交ID是`556b6600b25`。
+
+我们使用`git show`查看一下该提交到底修改了什么：
+
+```sh
+mei@4144e8c22fff:~/git$ git show 556b6600b25|head
+commit 556b6600b25713054430b1dcaa731120eefbbd5b
+Author: Nicolas Pitre <nico@fluxnic.net>
+Date:   Wed Jan 17 13:04:39 2007 -0500
+
+    sanitize content of README file
+
+    Current README content is way too esoteric for someone looking at GIT
+    for the first time. Instead it should provide a quick summary of what
+    GIT is with a few pointers to other resources.
+
+mei@4144e8c22fff:~/git$ git show 556b6600b25|grep 'The user'
++The user discussion and development of Git take place on the Git
+mei@4144e8c22fff:~/git$
+```
+
+由于此次修改的内容比较多，你可以直接使用`git show 556b6600b25`查看修改的内容，此处仅显示前十行，然后通过过滤可以看到，的确有一个`+The user discussion and development of Git take place on the Git`,表示此次修改增加了一行，其内容是`The user discussion and development of Git take place on the Git`,这刚好与我们使用`git blame`显示出来的结果是对应的。说明的确可以通过`git blame`找到是谁修改了这行代码！！
+
+
+
 
 
 
