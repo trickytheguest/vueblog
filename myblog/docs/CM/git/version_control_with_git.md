@@ -4148,7 +4148,196 @@ Git把列出的这些分支视为特性分支(topic branch)或开发分支(devel
 
 
 
+#### 7.1.1 分支还是标签
 
+- 标签和分支用于不同的目的。
+- 标签是一个静态的名字，它不随着时间的推移而改变。一旦应用，你不应该对它做任何改动。它相当于地上的一个支柱和参考点。
+- 分支是动态的，并且随着你的每次提交而移动。分支名用来跟随你的持续开发。
+- 可以用同一个名字来命名分支和标签。但应避免使用相同的名称命名分支和标签。
+
+
+
+### 7.2 分支名
+
+- 版本库中的默认分支是`master`，大多数开发人员在这个分支上保持版本库中最强大和最可靠的开发线。
+- 最佳实践是不要修改`master`分支的名称，也不要删除它。
+- 为了支持可扩展性和分类组织，可以创建一个带层次的分支名，类似于UNIX的路径名。如`bug/pr-01`，`bug/pr-02`。
+- Git支持Unix类似的通配符，如`*`。
+
+分支名的限制，可以使用`git check-ref-format --help`来查看分支名的要求。该命令会检查`refname`是否是可接受的，如果不是的话，则会以非零状态退出。
+
+```sh
+mei@4144e8c22fff:~/git$ git check-ref-format --help|cat
+GIT-CHECK-REF-FOR(1)                                  Git Manual                                 GIT-CHECK-REF-FOR(1)
+
+NAME
+       git-check-ref-format - Ensures that a reference name is well formed
+
+SYNOPSIS
+       git check-ref-format [--normalize]
+              [--[no-]allow-onelevel] [--refspec-pattern]
+              <refname>
+       git check-ref-format --branch <branchname-shorthand>
+
+DESCRIPTION
+       Checks if a given refname is acceptable, and exits with a non-zero status if it is not.
+
+       A reference is used in Git to specify branches and tags. A branch head is stored in the refs/heads hierarchy,
+       while a tag is stored in the refs/tags hierarchy of the ref namespace (typically in $GIT_DIR/refs/heads and
+       $GIT_DIR/refs/tags directories or, as entries in file $GIT_DIR/packed-refs if refs are packed by git gc).
+
+       Git imposes the following rules on how references are named:
+
+        1. They can include slash / for hierarchical (directory) grouping, but no slash-separated component can begin
+           with a dot .  or end with the sequence .lock.
+
+        2. They must contain at least one /. This enforces the presence of a category like heads/, tags/ etc. but the
+           actual names are not restricted. If the --allow-onelevel option is used, this rule is waived.
+
+        3. They cannot have two consecutive dots ..  anywhere.
+
+        4. They cannot have ASCII control characters (i.e. bytes whose values are lower than \040, or \177 DEL),
+           space, tilde ~, caret ^, or colon : anywhere.
+
+        5. They cannot have question-mark ?, asterisk *, or open bracket [ anywhere. See the --refspec-pattern option
+           below for an exception to this rule.
+
+        6. They cannot begin or end with a slash / or contain multiple consecutive slashes (see the --normalize
+           option below for an exception to this rule)
+
+        7. They cannot end with a dot ..
+
+        8. They cannot contain a sequence @{.
+
+        9. They cannot be the single character @.
+
+       10. They cannot contain a \.
+
+       These rules make it easy for shell script based tools to parse reference names, pathname expansion by the
+       shell when a reference name is used unquoted (by mistake), and also avoid ambiguities in certain reference
+       name expressions (see gitrevisions(7)):
+
+        1. A double-dot ..  is often used as in ref1..ref2, and in some contexts this notation means ^ref1 ref2 (i.e.
+           not in ref1 and in ref2).
+
+        2. A tilde ~ and caret ^ are used to introduce the postfix nth parent and peel onion operation.
+
+        3. A colon : is used as in srcref:dstref to mean "use srcref's value and store it in dstref" in fetch and
+           push operations. It may also be used to select a specific object such as with git cat-file: "git cat-file
+           blob v1.3.3:refs.c".
+
+        4. at-open-brace @{ is used as a notation to access a reflog entry.
+
+       With the --branch option, the command takes a name and checks if it can be used as a valid branch name (e.g.
+       when creating a new branch). But be cautious when using the previous checkout syntax that may refer to a
+       detached HEAD state. The rule git check-ref-format --branch $name implements may be stricter than what git
+       check-ref-format refs/heads/$name says (e.g. a dash may appear at the beginning of a ref component, but it is
+       explicitly forbidden at the beginning of a branch name). When run with --branch option in a repository, the
+       input is first expanded for the "previous checkout syntax" @{-n}. For example, @{-1} is a way to refer the
+       last thing that was checked out using "git switch" or "git checkout" operation. This option should be used by
+       porcelains to accept this syntax anywhere a branch name is expected, so they can act as if you typed the
+       branch name. As an exception note that, the "previous checkout operation" might result in a commit object name
+       when the N-th last thing checked out was not a branch.
+
+OPTIONS
+       --[no-]allow-onelevel
+           Controls whether one-level refnames are accepted (i.e., refnames that do not contain multiple /-separated
+           components). The default is --no-allow-onelevel.
+
+       --refspec-pattern
+           Interpret <refname> as a reference name pattern for a refspec (as used with remote repositories). If this
+           option is enabled, <refname> is allowed to contain a single * in the refspec (e.g., foo/bar*/baz or
+           foo/bar*baz/ but not foo/bar*/baz*).
+
+       --normalize
+           Normalize refname by removing any leading slash (/) characters and collapsing runs of adjacent slashes
+           between name components into a single slash. If the normalized refname is valid then print it to standard
+           output and exit with a status of 0, otherwise exit with a non-zero status. (--print is a deprecated way to
+           spell --normalize.)
+
+EXAMPLES
+       o   Print the name of the previous thing checked out:
+
+               $ git check-ref-format --branch @{-1}
+
+       o   Determine the reference name to use for a new branch:
+
+               $ ref=$(git check-ref-format --normalize "refs/heads/$newbranch")||
+               { echo "we do not like '$newbranch' as a branch name." >&2 ; exit 1 ; }
+
+GIT
+       Part of the git(1) suite
+
+Git 2.25.1                                            03/04/2021                                 GIT-CHECK-REF-FOR(1)
+mei@4144e8c22fff:~/git$
+```
+
+
+
+下面列出帮助信息中，10条引用命名的规则：
+
+- 1. 可以使用`/`斜杠创建分层的命名方案，但是，分支名不能以`.`开头，也不能是`.lock`结尾。
+- 2. 必须至少包含一个`/`，由于我们一版使用的是相对引用，此条是非必须的。
+- 3. 不包包含两个点号`..`。
+- 4. 不能包含ASCII码控制符，如低于`\040`的字符、空格、波浪号`~`、插入符`^`、冒号`:`。
+- 5. 不能包含`?`、`*`、`[`等。
+- 6. 不能以`/`斜杠开头。
+- 7. 不能以`.`圆点结尾。
+- 8. 不能包含`@{`序列。
+- 9. 不能包含单一的`@`字符。
+- 10. 不能包含`\`反斜杠。
+
+可以看到，规则真复杂。建议使用英文小写开头、后接英文小写、数字、`-`等组成的引用命名。
+
+
+
+我们使用`git chec-ref-format`进行命名检查一下。
+
+```sh
+# 分支名异常的示例
+mei@4144e8c22fff:~/git$ git check-ref-format --branch "@{"
+fatal: '@{' is not a valid branch name
+mei@4144e8c22fff:~/git$ git check-ref-format --branch "/"
+fatal: '/' is not a valid branch name
+mei@4144e8c22fff:~/git$ git check-ref-format --branch "/bug"
+fatal: '/bug' is not a valid branch name
+mei@4144e8c22fff:~/git$ git check-ref-format --branch "/.bug"
+fatal: '/.bug' is not a valid branch name
+mei@4144e8c22fff:~/git$ git check-ref-format --branch ".bug"
+fatal: '.bug' is not a valid branch name
+mei@4144e8c22fff:~/git$ git check-ref-format --branch "bug/"
+fatal: 'bug/' is not a valid branch name
+mei@4144e8c22fff:~/git$ git check-ref-format --branch "bug."
+fatal: 'bug.' is not a valid branch name
+mei@4144e8c22fff:~/git$ git check-ref-format --branch "bug\\"
+fatal: 'bug\' is not a valid branch name
+
+
+# 分支名正确的示例
+mei@4144e8c22fff:~/git$ git check-ref-format --branch "bug/pr-1"
+bug/pr-1
+mei@4144e8c22fff:~/git$ git check-ref-format --branch "bug/pr-2"
+bug/pr-2
+mei@4144e8c22fff:~/git$ git check-ref-format --branch "develop"
+develop
+mei@4144e8c22fff:~/git$ git check-ref-format --branch "master"
+master
+mei@4144e8c22fff:~/git$ git check-ref-format --branch "feature-01"
+feature-01
+mei@4144e8c22fff:~/git$ git check-ref-format --branch "feature-02"
+feature-02
+mei@4144e8c22fff:~/git$
+```
+
+可以看到使用英文字母开头+横线`-`+数字序列作为分支名比较靠谱。
+
+
+
+### 7.3 使用分支
+
+- 在任何给定的时间里， 版本库中可能有许多不同的分支。但最多只有一个当前的或活动的分支。
+- 活动分支决定在工作目录中检出哪些文件。
+- 默认情况下，`master`分支是活动分支，但可以把任何分支设置成当前分支。
 
 
 
