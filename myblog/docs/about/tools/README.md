@@ -193,3 +193,18 @@ Manico 默认使用 Option + 数字组件键。
 
 ![](https://meizhaohui.gitee.io/imagebed/img/20211120221017.png)
 
+
+
+## 15. windows终端连接工具MobaXterm
+
+这也是一款非常不错的终端连接工具。
+
+- 官网地址：[https://mobaxterm.mobatek.net/](https://mobaxterm.mobatek.net/)
+
+![](https://mobaxterm.mobatek.net/img/moba/features/feature-terminal.png)
+
+## 16. 文本编辑器Sublime Text
+
+- 官网地址： [https://www.sublimetext.com/](https://www.sublimetext.com/)
+
+![](https://www.sublimetext.com/screenshots/sublime_text_4_multi_select.gif)
