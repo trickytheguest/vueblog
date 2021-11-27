@@ -208,3 +208,42 @@ Manico 默认使用 Option + 数字组件键。
 - 官网地址： [https://www.sublimetext.com/](https://www.sublimetext.com/)
 
 ![](https://www.sublimetext.com/screenshots/sublime_text_4_multi_select.gif)
+
+## 17. SwitchHosts
+
+SwitchHosts是一个管理、快速切换Hosts小工具，开源软件，一键切换Hosts配置，非常实用，高效。
+
+下载地址: [https://github.com/oldj/SwitchHosts/releases](https://github.com/oldj/SwitchHosts/releases)
+
+
+
+## 18. 对比工具Beyound Compare
+
+
+
+## 19. 远程文件复制工具WinSCP
+
+
+
+## 20. FinalShell
+
+FinalShell也可以进行远程终端连接，文件复制等！
+
+
+
+## 21. Everything
+
+Windows系统上面快速搜索文件。
+
+官网地址：[https://www.voidtools.com/zh-cn/](https://www.voidtools.com/zh-cn/)
+
+## 22. 变量名搜索CODELF
+
+当在写代码时，有个变量名不知道用英文怎么表示，可以去这个网站上搜索一下，看看别的大佬是怎么表示的。
+
+官网地址： [https://unbug.github.io/codelf/](https://unbug.github.io/codelf/)
+
+## 23. 生成代码图片carbon
+
+官网地址: https://carbon.now.sh/
+
