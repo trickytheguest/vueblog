@@ -4347,6 +4347,124 @@ mei@4144e8c22fff:~/git$
 
 
 
+### 7.4 创建分支
+
+- 新的分支基于版本库中现在的提交。
+- 可以使用`git branch branchName`创建分支。
+- `git branch`命令只是把分支名引进版本库。并没有改变工作目录去使用新的分支。
+
+如创建`dev`分支：
+
+```sh
+mei@4144e8c22fff:~/git$ git branch dev
+mei@4144e8c22fff:~/git$ git branch
+  dev
+* master
+mei@4144e8c22fff:~/git$
+```
+
+可以看到虽然创建新的分支`dev`，但当前分支还是`master`，并没有切换到`dev`分支。
+
+### 7.5 列出分支名
+
+- 可以直接使用`git branch`列出版本库中的分支名。
+- `git branch -r`则会列出远程分支。
+- `git branch -a`则会列出本地分支和远程分支。
+
+```sh
+mei@4144e8c22fff:~/git$ git branch -r
+  origin/HEAD -> origin/master
+  origin/maint
+  origin/master
+  origin/next
+  origin/seen
+  origin/todo
+mei@4144e8c22fff:~/git$ git branch -a
+  dev
+* master
+  remotes/origin/HEAD -> origin/master
+  remotes/origin/maint
+  remotes/origin/master
+  remotes/origin/next
+  remotes/origin/seen
+  remotes/origin/todo
+```
+
+
+
+### 7.6 查看分支
+
+- `git show-branch`则可以提供比`git branch`更详细的分支信息。
+
+```sh
+mei@4144e8c22fff:~/git$ git show-branch
+! [dev] The second batch
+ * [master] The second batch
+--
++* [dev] The second batch
+mei@4144e8c22fff:~/git$
+```
+
+`git show-branch`的输出被一排破折号(如第4行的`--`)分为两部分。分隔符上方的部分列出分支名，并用方括号括起来，每行一个。每个分支名前会用感叹号或星号标记，如果该分支是当前分支，则会用星号`*`标记(如第3行的`master`分支是当前分支，用星号标记了)。输出的下半部分是一个表示每个分支中提交的矩阵。
+
+
+
+### 7.7 检出分支
+
+- 工作目录一次只能反映一个分支。
+- 要在不同的分支上开始工作，要发出`git checkout`命令。
+- 使用`git checkout branchName`可以使用`branchName`分支变成新的当前分支。它改变了工作树文件和目录结构来匹配给定分支的状态。
+
+如现在我们要切换到`dev`分支，则可以这样：
+
+```sh
+mei@4144e8c22fff:~/git$ git checkout dev
+Switched to branch 'dev'
+mei@4144e8c22fff:~/git$ git branch
+* dev
+  master
+mei@4144e8c22fff:~/git$ git show-branch
+* [dev] The second batch
+ ! [master] The second batch
+--
+*+ [dev] The second batch
+mei@4144e8c22fff:~/git$
+```
+
+可以看到当前分支已经是`dev`分支了，在分支名`dev`前方也可以看到星号标记。
+
+
+
+选择一个新的当前分支可能会对工作树文件和目录结构产生巨大影响。如：
+
+- 在要被检出的分支中但不在当前分支中的文件和目录，会从对象库中检出并放置到工作树中。
+- 在当前分支中但不在要被检出的分支中的文件和目录，会从工作树中删除。
+- 这两个分支都有的文件会被修改为要被检出的分支的内容。
+
+
+
+如果想在创建分支的同时检出到该分支，则可以使用以下快捷命令：
+
+- `git checkout -b new-branch`，这样git会创建`new-branch`分支，并切换到该分支。
+
+```sh
+mei@4144e8c22fff:~/git$ git checkout -b test
+Switched to a new branch 'test'
+mei@4144e8c22fff:~/git$ git branch
+  dev
+  master
+* test
+mei@4144e8c22fff:~/git$
+```
+
+可以看到，此时我们直接切换到了`test`分支，并没有使用`git branch`命令来先创建`test`分支。
+
+
+
+
+
+
+
 
 
 
