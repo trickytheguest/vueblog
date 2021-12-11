@@ -4461,6 +4461,44 @@ mei@4144e8c22fff:~/git$
 
 
 
+### 7.8 删除分支
+
+- 可以使用`git branch -d branchName`删除版本库中的分支`branchName`。
+- 不能删除当前分支。
+- `git branch -D branchName`会强制删除分支。
+
+
+
+```sh
+# 当前分支是test分支
+mei@4144e8c22fff:~/git$ git branch
+  dev
+  master
+* test
+mei@4144e8c22fff:~/git$
+
+# 尝试删除当前分支，可以发现无法删除
+mei@4144e8c22fff:~/git$ git branch -d test
+error: Cannot delete branch 'test' checked out at '/home/mei/git'
+
+# 切换分支
+mei@4144e8c22fff:~/git$ git checkout dev
+Switched to branch 'dev'
+
+# 再次删除test分支，可以删除成功
+mei@4144e8c22fff:~/git$ git branch -d test
+Deleted branch test (was 670b81a890).
+
+# 再次查看分支情况，发现test分支已经没有了
+mei@4144e8c22fff:~/git$ git branch
+* dev
+  master
+```
+
+
+
+- Git不会保持任何形式的关于分支名创建、移动、操纵、合并或删除的历史记录。一旦某个分支名删除了，它就没了。
+
 
 
 
