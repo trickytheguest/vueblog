@@ -37,7 +37,6 @@ features:
 
 **个人网站**
 
-- NextCloud私有网盘 [https://nextcloud.hellogitlab.com/](https://nextcloud.hellogitlab.com/)
 - Gogs私有代码仓库 [https://gogs.hellogitlab.com/](https://gogs.hellogitlab.com/)
 
 
