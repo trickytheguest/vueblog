@@ -5064,6 +5064,84 @@ mei@4144e8c22fff:~/pick$
 
 
 
+### 10.5 reset、revert与checkout
+
+- 如果你想切换到不同的分支，使用`git checkout`，当前分支和HEAD引用会变为匹配给定分支的头。
+- `git reset`不会改变分支，会改变当前工作目录的状态，`git reset`会重置当前分支的HEAD引用。
+- `git revert`命令作用于全部提交，而不是文件。
+- 如果你的版本库已经公开发布，就不应用修改提交历史记录。此时可以使用`git revert`相"撤销"某次修改。
+
+
+
+### 10.6 修改最新提交git commit --amend
+
+- 改变当前分支最近一次提交的最简单的方法之一是使用`git commit --amend`。
+- 通常情况下，`amend`意味着提交内容基本相同，但某些方面需要调整或清理。
+- `git commit --amend`最频繁的用途是在刚做出一个提交后修改录入错误。
+
+看以下示例：
+
+```sh
+mei@4144e8c22fff:~/git$ echo 'test amend' >> http.h
+mei@4144e8c22fff:~/git$ git add .
+
+# 提交，填完日志信息
+mei@4144e8c22fff:~/git$ git commit -m"test commit"
+[master 4dbf579cfc] test commit
+ 1 file changed, 1 insertion(+)
+ 
+# 查看刚才提交的日志信息
+mei@4144e8c22fff:~/git$ git log --pretty=oneline -n 1
+4dbf579cfcc66d9071614cb9c55c0abbdb923169 (HEAD -> master) test commit
+
+# 尝试修改日志信息，运行`git commit --amend`会打开编辑器，重新编辑后，保存日志信息
+mei@4144e8c22fff:~/git$ git commit --amend
+[master 819e27d405] test commit amend
+ Date: Sun Jan 9 22:30:15 2022 +0800
+ 1 file changed, 1 insertion(+)
+ 
+# 再次查看日志信息，可以看到日志信息已经发生变更
+mei@4144e8c22fff:~/git$ git log --pretty=oneline -n 1
+819e27d4059c921d3d74fae1b3c0238f3fbf70bc (HEAD -> master) test commit amend
+mei@4144e8c22fff:~/git$
+```
+
+
+
+对文件进行修改：
+
+```sh
+mei@4144e8c22fff:~/git$ tail -n 1 http.h
+test amend
+
+# 尝试对文件进行修复
+mei@4144e8c22fff:~/git$ echo "test use amend" >> http.h
+mei@4144e8c22fff:~/git$ tail -n 2 http.h
+test amend
+test use amend
+
+# 追加文件
+mei@4144e8c22fff:~/git$ git add http.h
+
+# 使用git commit --amend 追加文件修改和日志信息
+mei@4144e8c22fff:~/git$ git commit --amend
+[master 1371b151a5] test use commit amend to change file and log info
+ Date: Sun Jan 9 22:30:15 2022 +0800
+ 1 file changed, 2 insertions(+)
+ 
+# 再次查看最后的提交
+mei@4144e8c22fff:~/git$ git log --pretty=oneline -n 1
+1371b151a5898e18a26e4535b9ed5bd35796a011 (HEAD -> master) test use commit amend to change file and log info
+mei@4144e8c22fff:~/git$
+
+# 查看最后的两次提交，可以看到除了1371b151a5898e18a26e4535b9ed5bd35796a011这个提交外，我们没有引入新的提交
+mei@4144e8c22fff:~/git$ git log --pretty=oneline -n 2
+1371b151a5898e18a26e4535b9ed5bd35796a011 (HEAD -> master) test use commit amend to change file and log info
+670b81a890388c60b7032a4f5b879f2ece8c4558 (origin/master, origin/HEAD, test1, dev) The second batch
+```
+
+
+
 
 
 
