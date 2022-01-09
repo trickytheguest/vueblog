@@ -4952,6 +4952,69 @@ mei@4144e8c22fff:~/reset$
 
 
 
+### 10.3 使用git cherry-pick
+
+- `git cherry-pick`提交命令会在当前分支上应用给定提交引入的变更。这将引入一个新的独特的提交。
+- 使用`git cherry-pick`并不改变版本库中的现有历史记录，而是添加历史记录。
+
+下面示例演示将`dev`分支上的提交应用到`master`分支：
+
+```sh
+mei@4144e8c22fff:~$ mkdir pick
+mei@4144e8c22fff:~$ cd pick/
+mei@4144e8c22fff:~/pick$ ls
+mei@4144e8c22fff:~/pick$ git init
+Initialized empty Git repository in /home/mei/pick/.git/
+mei@4144e8c22fff:~/pick$ echo 'foo' > bar.txt
+mei@4144e8c22fff:~/pick$ git add .
+mei@4144e8c22fff:~/pick$ git commit -m"add foo"
+[master (root-commit) 5c5d79e] add foo
+ 1 file changed, 1 insertion(+)
+ create mode 100644 bar.txt
+mei@4144e8c22fff:~/pick$ git log --pretty=oneline
+5c5d79eb96535fa83b35b3ae51b629ed77b546d2 (HEAD -> master) add foo
+
+# 切换到dev分支，并在分支上做修改
+mei@4144e8c22fff:~/pick$ git checkout -b dev
+Switched to a new branch 'dev'
+mei@4144e8c22fff:~/pick$ cat bar.txt
+foo
+mei@4144e8c22fff:~/pick$ echo 'foo dev' >> bar.txt
+
+# 提交dev分支上的修改
+mei@4144e8c22fff:~/pick$ git add .
+mei@4144e8c22fff:~/pick$ git status
+On branch dev
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+	modified:   bar.txt
+
+mei@4144e8c22fff:~/pick$ git commit -m"add foo in bar"
+[dev 196b823] add foo in bar
+ 1 file changed, 1 insertion(+)
+ 
+# 查看dev分支的提交日志
+mei@4144e8c22fff:~/pick$ git log --pretty=oneline
+196b82313ca6d577c5c680d2732eaad2cba0f616 (HEAD -> dev) add foo in bar
+5c5d79eb96535fa83b35b3ae51b629ed77b546d2 (master) add foo
+
+# 切换到master分支
+mei@4144e8c22fff:~/pick$ git checkout master
+Switched to branch 'master'
+
+# 使用cherry-pick将dev分支提交合并到master分支
+mei@4144e8c22fff:~/pick$ git cherry-pick dev
+[master 6acedc9] add foo in bar
+ Date: Sun Jan 9 20:31:28 2022 +0800
+ 1 file changed, 1 insertion(+)
+ 
+# 查看master分支的提交信息，可以看到6acedc9f54dafeb9fed79333cf81427464b7c358这个提交已经引入到master分支
+mei@4144e8c22fff:~/pick$ git log --pretty=oneline
+6acedc9f54dafeb9fed79333cf81427464b7c358 (HEAD -> master) add foo in bar
+5c5d79eb96535fa83b35b3ae51b629ed77b546d2 add foo
+mei@4144e8c22fff:~/pick$
+```
+
 
 
 
