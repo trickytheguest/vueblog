@@ -4754,8 +4754,6 @@ nothing to commit, working tree clean
 mei@4144e8c22fff:~/git$
 ```
 
-
-
 可以看到，我们做的修改直接被还原了。
 
 
@@ -4798,6 +4796,163 @@ mei@4144e8c22fff:~/git$
 ```
 
 可以看到，我们使用`git checkout help.h`将`help.h`的修改还原了，现在只有`help.c`发生了变化。
+
+
+
+#### 10.2.1 还原提交示例
+
+`git reset`一个常见用法是简单地重做或清除分支上的最近提交。
+
+```sh
+mei@4144e8c22fff:~$ mkdir reset
+mei@4144e8c22fff:~$ cd reset
+mei@4144e8c22fff:~/reset$ ls
+
+# 创建存储库
+mei@4144e8c22fff:~/reset$ git init
+Initialized empty Git repository in /home/mei/reset/.git/
+
+# 创建第一个提交
+mei@4144e8c22fff:~/reset$ echo 'foo' > master_file
+mei@4144e8c22fff:~/reset$ git add master_file
+mei@4144e8c22fff:~/reset$ git commit -m"Add master_file to master branch."
+[master (root-commit) e8b365c] Add master_file to master branch.
+ 1 file changed, 1 insertion(+)
+ create mode 100644 master_file
+
+# 创建第二个提交
+mei@4144e8c22fff:~/reset$ echo 'more foo' >> master_file
+mei@4144e8c22fff:~/reset$ git add .
+mei@4144e8c22fff:~/reset$ git commit -m"Add more foo."
+[master d0662a8] Add more foo.
+ 1 file changed, 1 insertion(+)
+ 
+# 查看分支信息 
+mei@4144e8c22fff:~/reset$ git show-branch --more=5
+[master] Add more foo.
+[master^] Add master_file to master branch.
+mei@4144e8c22fff:~/reset$
+
+# 查看日志信息
+mei@4144e8c22fff:~/reset$ git log --pretty=oneline -n 2
+d0662a8b18600abb8850bdae44dd92e6716760f6 (HEAD -> master) Add more foo.
+e8b365c2dad8235f8bedac9cb1a7ebc4e20253e5 Add master_file to master branch.
+
+# 查看HEAD和HEAD^对应的commit id
+mei@4144e8c22fff:~/reset$ git rev-parse HEAD
+d0662a8b18600abb8850bdae44dd92e6716760f6
+mei@4144e8c22fff:~/reset$ git rev-parse HEAD^
+e8b365c2dad8235f8bedac9cb1a7ebc4e20253e5
+```
+
+我们备份一个`reset`目录，便于下面做测试时还原数据。
+
+```sh
+mei@4144e8c22fff:~/reset$ cp -rf ~/reset ~/reset.bak
+```
+
+
+
+假设现在意识到第二个提交是错的，要返回改变一下。这是`git reset --mixed HEAD^`的典型应用，`HEAD^`是指向当前master HEAD的父提交，代表完成第二个有缺陷的提交之前的状态。
+
+现在我们来还原：
+
+```sh
+# 查看当前文件的内容
+mei@4144e8c22fff:~/reset$ cat master_file
+foo
+more foo
+mei@4144e8c22fff:~/reset$ 
+
+# 还原
+# --mixed 是默认的
+mei@4144e8c22fff:~/reset$ git reset HEAD^
+Unstaged changes after reset:
+M	master_file
+
+# 查看分支状况，可以看到，刚才第二次的提交已经没有了
+mei@4144e8c22fff:~/reset$ git show-branch --more=5
+[master] Add master_file to master branch.
+
+# 这时查看日志信息，可以看到第二次的提交也没有了
+mei@4144e8c22fff:~/reset$ git log --pretty=oneline
+e8b365c2dad8235f8bedac9cb1a7ebc4e20253e5 (HEAD -> master) Add master_file to master branch.
+
+# 查看文件内容，可以看到，我们修改后的文件内容还保持原样
+mei@4144e8c22fff:~/reset$ cat master_file
+foo
+more foo
+
+# 查看分支状态，此时可以看到，状态还原到第二次执行git add之前的状态
+mei@4144e8c22fff:~/reset$ git status
+On branch master
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   master_file
+
+no changes added to commit (use "git add" and/or "git commit -a")
+mei@4144e8c22fff:~/reset$
+```
+
+因为`git reset --mixed`会重置索引，所有必须重新暂存你想要提交的修改。这让你有什么我发错在做出新提交之前重新编辑你的文件，添加其他文件，或者执行其他修改。
+
+
+
+我们复制一下备份数据。
+
+```sh
+mei@4144e8c22fff:~/reset$ cp -rf ~/reset.bak ~/reset
+```
+
+
+
+假如你要完全取消第二次提交，不再关心它的内容了，在这种情况下，使用`--hard`选项：
+
+```sh
+# 强制还原，这样第二次做的修改都不会保存
+mei@4144e8c22fff:~/reset$ git reset --hard HEAD^
+HEAD is now at e8b365c Add master_file to master branch.
+mei@4144e8c22fff:~/reset$ git show-branch --more=5
+[master] Add master_file to master branch.
+mei@4144e8c22fff:~/reset$ git log
+commit e8b365c2dad8235f8bedac9cb1a7ebc4e20253e5 (HEAD -> master)
+Author: Zhaohui Mei <mzh@hellogitlab.com>
+Date:   Sun Jan 9 19:13:59 2022 +0800
+
+    Add master_file to master branch.
+mei@4144e8c22fff:~/reset$
+
+# 此时master_file变成最原始的状态
+mei@4144e8c22fff:~/reset$ cat master_file
+foo
+```
+
+
+
+#### 10.2.2 查看版本库引用变化的历史记录
+
+你可以使用`git reflog`查看版本库中引用变化的历史记录：
+
+```sh
+mei@4144e8c22fff:~/reset$ git reflog
+e8b365c (HEAD -> master) HEAD@{0}: reset: moving to HEAD
+e8b365c (HEAD -> master) HEAD@{1}: reset: moving to HEAD^
+d0662a8 HEAD@{2}: commit: Add more foo.
+e8b365c (HEAD -> master) HEAD@{3}: commit (initial): Add master_file to master branch.
+mei@4144e8c22fff:~/reset$
+```
+
+
+
+总结：
+
+- `git reset --mixed HEAD^`，取消本次提交，但不还原本次所做的修改。
+- `git reset --hard HEAD^`，取消本次提交，并且将本次做的修改都还原成原始状态。
+
+
+
+
 
 
 
