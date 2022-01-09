@@ -3826,10 +3826,11 @@ GIt中特殊的符号引用：
 
 - `master^`始终指的是在`master`分支中的倒数第二个提交。
 - 除了第一个根提交之外，每一个提交都来自至少一个比它更早的提交，这其中的直接祖先称作该提交的父提交。
-- 若一个提交存在多个父提交，那么它必定是由合并操作产生的。
-- 在同一代提交中，插入符号`^`是用来选择不同的父提交的。给定一个提交`C`，则`C^1`是其第一个父提交，`C^2`是其第二个父提交，`C^3`是其第三个父提交，依次类推。
+- 若一个提交存在多个父提交，那么它必定是由合并操作产生的。只有当存在合并时，才会有多个父提交！
+- 在同一代提交中，插入符号`^`是用来选择不同的父提交的。给定一个提交`C`，则`C^1`是其第一个父提交，`C^2`是其第二个父提交，`C^3`是其第三个父提交，依次类推。一个提交至少有一个父提交，不一定有多个父提交！！
 - 波浪线`~`用于返回父提交之前并选择上一代提交。`C~1`表示提交`C`的第一个父提交，`C~2`是祖父提交，`C~3`是曾祖父提交。
 - Git也支持其他形式的简写，如`C^`和`C~`两种形式的简写分别等同于`C^1`和`C~1`。
+- 注意，`C^^^`与`C^3`不是等价的，而是等价于`C^1^1^1`。
 
 
 
@@ -3858,6 +3859,116 @@ mei@4144e8c22fff:~/git$ git rev-parse master~14
 ccf03789058e9fd2a6120d88a3ad1ceac478e5ab
 mei@4144e8c22fff:~/git$ git rev-parse master~14^2
 8013d7d9ee7674774f6dbdbaeab11ce173bee016
+```
+
+我们也可以通过`git log`查看提交对应的父提交的父提交的哈希值。
+
+```sh
+mei@4144e8c22fff:~/git$ git log --pretty="commit:%h    parents:%p" -n 20
+commit:670b81a890    parents:98f3f03bcb
+commit:98f3f03bcb    parents:2019256717 7ba3016729
+commit:2019256717    parents:c189dba20e f0d4d398e2
+commit:c189dba20e    parents:d9d3b76fee 5317dfeaed
+commit:d9d3b76fee    parents:ac2158649d 225f7fa847
+commit:ac2158649d    parents:8e444e66df 4e0a64a713
+commit:8e444e66df    parents:169914ede2 f5bfcc823b
+commit:169914ede2    parents:4dd75a195b 25e65b6dd5
+commit:4dd75a195b    parents:0dd2fd18f8 ae1a7eefff
+commit:0dd2fd18f8    parents:f4f7304b44 f6e2cd0625
+commit:f4f7304b44    parents:135997254a 6aacb7d861
+commit:135997254a    parents:289af16300 cd5b33fbdc
+commit:289af16300    parents:211eca0895 1197f1a463
+commit:211eca0895    parents:ccf0378905
+commit:ccf0378905    parents:3153c83c77 8013d7d9ee
+commit:3153c83c77    parents:7ce7a617b9 09667e9516
+commit:7ce7a617b9    parents:8e1d2fc0cc a84216c684
+commit:8e1d2fc0cc    parents:7f06d94e72 3127ff90ea
+commit:7f06d94e72    parents:e4b5d2a83f e22f2daed0
+commit:e4b5d2a83f    parents:b009fd41e8 e2c5993744
+mei@4144e8c22fff:~/git$
+```
+
+如第一行记录的提交`670b81a890`，其只有一个父提交`98f3f03bcb`:
+
+```sh
+mei@4144e8c22fff:~/git$ git rev-parse 670b81a890^
+98f3f03bcbf4e0eda498f0a0c01d9bd90de9e106
+mei@4144e8c22fff:~/git$ git rev-parse 670b81a890^1
+98f3f03bcbf4e0eda498f0a0c01d9bd90de9e106
+mei@4144e8c22fff:~/git$ git rev-parse 670b81a890^2
+670b81a890^2
+fatal: ambiguous argument '670b81a890^2': unknown revision or path not in the working tree.
+Use '--' to separate paths from revisions, like this:
+'git <command> [<revision>...] -- [<file>...]'
+mei@4144e8c22fff:~/git$
+```
+
+使用`670b81a890^2`抛出了异常，因为该提交只有一个父提交，没有两个父提交。
+
+
+
+而`98f3f03bcb`有两个父提交`2019256717`和`7ba3016729`:
+
+```sh
+mei@4144e8c22fff:~/git$ git rev-parse 98f3f03bcb^
+2019256717d70bcfa1c6cd3869cfdc02310adb7a
+mei@4144e8c22fff:~/git$ git rev-parse 98f3f03bcb^1
+2019256717d70bcfa1c6cd3869cfdc02310adb7a
+mei@4144e8c22fff:~/git$ git rev-parse 98f3f03bcb^2
+7ba30167291eb89f2e587b7cabfa4e7555de4ed5
+mei@4144e8c22fff:~/git$ git rev-parse 98f3f03bcb^3
+98f3f03bcb^3
+fatal: ambiguous argument '98f3f03bcb^3': unknown revision or path not in the working tree.
+Use '--' to separate paths from revisions, like this:
+'git <command> [<revision>...] -- [<file>...]'
+mei@4144e8c22fff:~/git$
+```
+
+可以看到，通过`98f3f03bcb^1`获取到第一个父提交，通过`98f3f03bcb^2`获取到第2个父提交。
+
+
+
+我们可以通过以下命令来获取所有提交有哪些父提交、父提交个数等。
+
+```sh
+# 获取提交的父提交哈希ID
+mei@4144e8c22fff:~/git$ git log --pretty="commit:%h    parents:%p" -n 5
+commit:670b81a890    parents:98f3f03bcb
+commit:98f3f03bcb    parents:2019256717 7ba3016729
+commit:2019256717    parents:c189dba20e f0d4d398e2
+commit:c189dba20e    parents:d9d3b76fee 5317dfeaed
+commit:d9d3b76fee    parents:ac2158649d 225f7fa847
+
+# 获取提交的父提交个数
+mei@4144e8c22fff:~/git$ git log --pretty="commit:%h    parents:%p" -n 5|awk '{print $1"\tparents:"NF-1}'
+commit:670b81a890	parents:1
+commit:98f3f03bcb	parents:2
+commit:2019256717	parents:2
+commit:c189dba20e	parents:2
+commit:d9d3b76fee	parents:2
+
+# 获取提交的父提交个数最多的提交
+mei@4144e8c22fff:~/git$ git log --pretty="commit:%h    parents:%p"|awk '{print $1"\tparents:"NF-1}'|sort -nr -t":" -k3|head
+commit:16d7601e17	parents:10
+commit:d425142e2a	parents:6
+commit:addafaf92e	parents:5
+commit:5401f3040b	parents:5
+commit:211232bae6	parents:5
+commit:92643a27cc	parents:4
+commit:7bd1527d2d	parents:4
+commit:63c2fcefd8	parents:4
+commit:474bc4e274	parents:4
+commit:2d310d8a01	parents:4
+mei@4144e8c22fff:~/git$
+```
+
+可以知道`16d7601e17`这次提交有10个父提交，我们检查一下：
+
+```sh
+mei@4144e8c22fff:~/git$ git log --pretty="commit:%h    parents:%p"|grep 16d7601e17
+commit:b71c6c3b64    parents:16d7601e17
+commit:16d7601e17    parents:f7a8834ba4 492595cfc7 63100874c1 474642b4a4 331450f18a 76756d6706 6a47fa0efa 146a6f1097 f50d5055bf 5440eb0ea2
+mei@4144e8c22fff:~/git$
 ```
 
 
@@ -4576,15 +4687,117 @@ $ git merge other_branch
 - `git reset`命令的重点是`HEAD`、索引和工作目录建立与恢复已知的状态。
 - `git reset`有三个主要选项:`--soft`、`--mixed`、`--hard`。
 
+`git reset`不同选项对HEAD、索引和工作目录的内容的影响：
+
+| 选项      | HEAD | 索引 | 工作目录 |
+| --------- | ---- | ---- | -------- |
+| `--soft`  | 是   | 否   | 否       |
+| `--mixed` | 是   | 是   | 否       |
+| `--hard`  | 是   | 是   | 是       |
+
+即：
+
+- 使用`--soft`选项时，会将HEAD引用指赂给定提交，但索引和工作目录的内容保持不变。
+- 使用`--mixed`选项时，会将HEAD引用指赂给定提交，索引内容也跟着改变以符合给定提交的树结构，但工作目录的内容保持不变。这种是`git reset`的默认模式。
+- 使用`--soft`选项时，会将HEAD引用指赂给定提交，索引内容也跟着改变以符合给定提交的树结构，同时工作目录的内容也改变以反映给定提交表示的树的状态。
+
+我们简单的使用`git reset --hard`可以将本次做的修改全部还原。如果我们只想恢复某一个文件，可以使用`git checkout filename`。
 
 
 
+如我们假设在`git`源码仓库中做一些修改，然后进行恢复。
+
+我们先查看当前最新的日志信息：
+
+```sh
+mei@4144e8c22fff:~/git$ git log --pretty=oneline -n 1
+670b81a890388c60b7032a4f5b879f2ece8c4558 (HEAD -> master, origin/master, origin/HEAD, dev) The second batch
+```
+
+随意做一些修改：
+
+```sh
+mei@4144e8c22fff:~/git$ echo 'add test 1' > help.c
+mei@4144e8c22fff:~/git$ echo 'add test 2' > help.h
+mei@4144e8c22fff:~/git$ git status
+On branch master
+Your branch is up to date with 'origin/master'.
+
+You are currently bisecting, started from branch 'master'.
+  (use "git bisect reset" to get back to the original branch)
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   help.c
+	modified:   help.h
+
+no changes added to commit (use "git add" and/or "git commit -a")
+mei@4144e8c22fff:~/git$
+```
 
 
 
+还原所有修改：
+
+```sh
+mei@4144e8c22fff:~/git$ git reset --hard
+HEAD is now at 670b81a890 The second batch
+mei@4144e8c22fff:~/git$ git status
+On branch master
+Your branch is up to date with 'origin/master'.
+
+You are currently bisecting, started from branch 'master'.
+  (use "git bisect reset" to get back to the original branch)
+
+nothing to commit, working tree clean
+mei@4144e8c22fff:~/git$
+```
 
 
 
+可以看到，我们做的修改直接被还原了。
+
+
+
+使用`git checkout filename`还原单个文件：
+
+```sh
+mei@4144e8c22fff:~/git$ echo 'add test 1' > help.c
+mei@4144e8c22fff:~/git$ echo 'add test 2' > help.h
+mei@4144e8c22fff:~/git$ gs
+On branch master
+Your branch is up to date with 'origin/master'.
+
+You are currently bisecting, started from branch 'master'.
+  (use "git bisect reset" to get back to the original branch)
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   help.c
+	modified:   help.h
+
+no changes added to commit (use "git add" and/or "git commit -a")
+mei@4144e8c22fff:~/git$ git checkout help.h
+Updated 1 path from the index
+mei@4144e8c22fff:~/git$ gs
+On branch master
+Your branch is up to date with 'origin/master'.
+
+You are currently bisecting, started from branch 'master'.
+  (use "git bisect reset" to get back to the original branch)
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   help.c
+
+no changes added to commit (use "git add" and/or "git commit -a")
+mei@4144e8c22fff:~/git$
+```
+
+可以看到，我们使用`git checkout help.h`将`help.h`的修改还原了，现在只有`help.c`发生了变化。
 
 
 
