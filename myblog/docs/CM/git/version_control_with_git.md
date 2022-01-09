@@ -5017,6 +5017,49 @@ mei@4144e8c22fff:~/pick$
 
 
 
+### 10.4 使用git revert撤销修改
+
+- `git revert`提交命令跟`git cherry-pick`提交命令大致是相同的，但有一个重要区别：它应用给定提交的逆过程。因此，此命令用于引入一个新提交来抵消给定提交的影响。
+
+```sh
+# 在上一节的基础上，执行`git revert dev`撤销dev提交的影响
+mei@4144e8c22fff:~/pick$ git revert dev
+[master 2b73916] Revert "add foo in bar"
+ 1 file changed, 1 deletion(-)
+ 
+# 查看日志，可以看到引入了一次新的提交2b73916a83e13a0e29b50f1257933771f3782fd7
+mei@4144e8c22fff:~/pick$ git log
+commit 2b73916a83e13a0e29b50f1257933771f3782fd7 (HEAD -> master)
+Author: Zhaohui Mei <mzh@hellogitlab.com>
+Date:   Sun Jan 9 22:06:32 2022 +0800
+
+    Revert "add foo in bar"
+
+    This reverts commit 196b82313ca6d577c5c680d2732eaad2cba0f616.
+
+commit 6acedc9f54dafeb9fed79333cf81427464b7c358
+Author: Zhaohui Mei <mzh@hellogitlab.com>
+Date:   Sun Jan 9 20:31:28 2022 +0800
+
+    add foo in bar
+
+commit 5c5d79eb96535fa83b35b3ae51b629ed77b546d2
+Author: Zhaohui Mei <mzh@hellogitlab.com>
+Date:   Sun Jan 9 20:30:26 2022 +0800
+
+    add foo
+mei@4144e8c22fff:~/pick$ gs
+On branch master
+nothing to commit, working tree clean
+mei@4144e8c22fff:~/pick$ ls
+bar.txt
+
+# bar.txt已经还原到最初的状态
+mei@4144e8c22fff:~/pick$ cat bar.txt
+foo
+mei@4144e8c22fff:~/pick$
+```
+
 
 
 
