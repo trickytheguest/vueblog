@@ -5144,7 +5144,223 @@ mei@4144e8c22fff:~/git$ git log --pretty=oneline -n 2
 
 
 
+### 10.7 变基提交git rebase
 
+- `git rebase`命令是用来改变一串提交以什么为基础的。
+
+我们来模拟书上面的变基操作。
+
+```sh
+A <-- B <-- C <-- D <-- E    master 分支
+      \<-- W  <-- X  <-- Y <-- Z  topic 分支 
+```
+
+master分支和topic分支都在开发中。最初topic分支是从master分支的提交B处开始的。在此期间master分支已经进展到了提交E。
+
+我们创建一个`rebase`的存储库，模拟这个操作。
+
+```sh
+# 创建存储库目录
+mei@4144e8c22fff:~$ mkdir rebase
+
+# 切换到存储库
+mei@4144e8c22fff:~$ cd rebase/
+
+# 初始化存储库
+mei@4144e8c22fff:~/rebase$ git init
+Initialized empty Git repository in /home/mei/rebase/.git/
+
+# 创建提交A
+mei@4144e8c22fff:~/rebase$ echo 'a' > A && git add A && git commit -m"Add A"
+[master (root-commit) fd70500] Add A
+ 1 file changed, 1 insertion(+)
+ create mode 100644 A
+ 
+# 查看提交A的日志信息
+mei@4144e8c22fff:~/rebase$ git log -n 1
+commit fd705000b6bfb7c7060df2adb3268be7e3c77b33 (HEAD -> master)
+Author: Zhaohui Mei <mzh@hellogitlab.com>
+Date:   Mon Jan 10 20:38:05 2022 +0800
+
+    Add A
+    
+# 创建提交B
+mei@4144e8c22fff:~/rebase$ echo 'b' > B && git add B && git commit -m"Add B"
+[master 36904cd] Add B
+ 1 file changed, 1 insertion(+)
+ create mode 100644 B
+ 
+# 查看提交日志信息
+mei@4144e8c22fff:~/rebase$ git log -n 2
+commit 36904cd4d7b4c7ab75aba7b372fb0ade885e089c (HEAD -> master)
+Author: Zhaohui Mei <mzh@hellogitlab.com>
+Date:   Mon Jan 10 20:38:26 2022 +0800
+
+    Add B
+
+commit fd705000b6bfb7c7060df2adb3268be7e3c77b33
+Author: Zhaohui Mei <mzh@hellogitlab.com>
+Date:   Mon Jan 10 20:38:05 2022 +0800
+
+    Add A
+    
+# 此时，创建分支topic
+mei@4144e8c22fff:~/rebase$ git checkout -b topic
+Switched to a new branch 'topic'
+
+# 可以看到，现在有两个分支了
+mei@4144e8c22fff:~/rebase$ git branch
+  master
+* topic
+
+# 在topic分支上创建提交W
+mei@4144e8c22fff:~/rebase$ echo 'w' > W && git add W && git commit -m"Add W"
+[topic 9cdde64] Add W
+ 1 file changed, 1 insertion(+)
+ create mode 100644 W
+ 
+# 查看提交日志信息
+mei@4144e8c22fff:~/rebase$ git log --pretty=oneline -n 3
+9cdde64114925f1887aeaf42b5debb9a76e94283 (HEAD -> topic) Add W
+36904cd4d7b4c7ab75aba7b372fb0ade885e089c (master) Add B
+fd705000b6bfb7c7060df2adb3268be7e3c77b33 Add A
+
+# 此时切换到master分支，创建一下C/D/E提交
+mei@4144e8c22fff:~/rebase$ git branch
+* master
+  topic
+mei@4144e8c22fff:~/rebase$ git log --pretty=oneline -n 3
+36904cd4d7b4c7ab75aba7b372fb0ade885e089c (HEAD -> master) Add B
+fd705000b6bfb7c7060df2adb3268be7e3c77b33 Add A
+mei@4144e8c22fff:~/rebase$ echo 'c' > C && git add C && git commit -m"Add C"
+[master 9f08e45] Add C
+ 1 file changed, 1 insertion(+)
+ create mode 100644 C
+mei@4144e8c22fff:~/rebase$ echo 'd' > D && git add D && git commit -m"Add D"
+[master 907cf80] Add D
+ 1 file changed, 1 insertion(+)
+ create mode 100644 D
+mei@4144e8c22fff:~/rebase$ echo 'e' > E && git add E && git commit -m"Add E"
+[master 631842e] Add E
+ 1 file changed, 1 insertion(+)
+ create mode 100644 E
+mei@4144e8c22fff:~/rebase$ git log --pretty=oneline -n 5
+631842e0953b80805f2201230f5fd8cbdc5609f2 (HEAD -> master) Add E
+907cf80fbc1b42c104987774510709f7b7c244f8 Add D
+9f08e450f4ee748bfff9ecfbe0864532de7404fd Add C
+36904cd4d7b4c7ab75aba7b372fb0ade885e089c Add B
+fd705000b6bfb7c7060df2adb3268be7e3c77b33 Add A
+
+# 切换到topic分支
+mei@4144e8c22fff:~/rebase$ git checkout topic
+Switched to branch 'topic'
+
+# 查看日志信息
+mei@4144e8c22fff:~/rebase$ git log --pretty=oneline -n 5
+9cdde64114925f1887aeaf42b5debb9a76e94283 (HEAD -> topic) Add W
+36904cd4d7b4c7ab75aba7b372fb0ade885e089c Add B
+fd705000b6bfb7c7060df2adb3268be7e3c77b33 Add A
+
+# 在topic分支上创建X/Y/Z提交
+mei@4144e8c22fff:~/rebase$ echo 'x' > X && git add X && git commit -m"Add X"
+[topic 8dfcf31] Add X
+ 1 file changed, 1 insertion(+)
+ create mode 100644 X
+mei@4144e8c22fff:~/rebase$ echo 'y' > Y && git add Y && git commit -m"Add Y"
+[topic 3d0770b] Add Y
+ 1 file changed, 1 insertion(+)
+ create mode 100644 Y
+mei@4144e8c22fff:~/rebase$ echo 'z' > Z && git add Z && git commit -m"Add Z"
+[topic 0872d60] Add Z
+ 1 file changed, 1 insertion(+)
+ create mode 100644 Z
+ 
+# 在topic分支上面查看日志信息
+mei@4144e8c22fff:~/rebase$ git log --pretty=oneline -n 6
+0872d60010af2ea43361e97c55450ec35330ceff (HEAD -> topic) Add Z
+3d0770b0d8fac5f30eed43d55cfe911ab46de91e Add Y
+8dfcf3132e09bf6ed119e093bbf9c118d5bba77b Add X
+9cdde64114925f1887aeaf42b5debb9a76e94283 Add W
+36904cd4d7b4c7ab75aba7b372fb0ade885e089c Add B
+fd705000b6bfb7c7060df2adb3268be7e3c77b33 Add A
+
+# 查看分支信息
+mei@4144e8c22fff:~/rebase$ git show-branch
+! [master] Add E
+ * [topic] Add Z
+--
+ * [topic] Add Z
+ * [topic^] Add Y
+ * [topic~2] Add X
+ * [topic~3] Add W
++  [master] Add E
++  [master^] Add D
++  [master~2] Add C
++* [topic~4] Add B
+
+# rebase前，查看日志信息
+mei@4144e8c22fff:~/rebase$ git log --graph --pretty=oneline --abbrev-commit
+* 0872d60 (HEAD -> topic) Add Z
+* 3d0770b Add Y
+* 8dfcf31 Add X
+* 9cdde64 Add W
+* 36904cd Add B
+* fd70500 Add A
+
+# 进行变基提交，将master后面的提交应用到topic分支上
+mei@4144e8c22fff:~/rebase$ git rebase master
+First, rewinding head to replay your work on top of it...
+Applying: Add W
+Applying: Add X
+Applying: Add Y
+Applying: Add Z
+
+# rebase后，再次查看日志信息
+mei@4144e8c22fff:~/rebase$ git log --graph --pretty=oneline --abbrev-commit
+* ccd953d (HEAD -> topic) Add Z
+* c3a4594 Add Y
+* 01cb615 Add X
+* dbf846b Add W
+* 631842e (master) Add E
+* 907cf80 Add D
+* 9f08e45 Add C
+* 36904cd Add B
+* fd70500 Add A
+mei@4144e8c22fff:~/rebase$
+
+# 查看当前分支是topic分支
+mei@4144e8c22fff:~/rebase$ git branch
+  master
+* topic
+
+# 切换到master分支
+mei@4144e8c22fff:~/rebase$ git checkout master
+Switched to branch 'master'
+
+# 查看master分支的提交信息，可以看到master分支的提交还是A/B/C/D/E，没有发生变化
+mei@4144e8c22fff:~/rebase$ git log --graph --pretty=oneline --abbrev-commit
+* 631842e (HEAD -> master) Add E
+* 907cf80 Add D
+* 9f08e45 Add C
+* 36904cd Add B
+* fd70500 Add A
+mei@4144e8c22fff:~/rebase$
+```
+
+对于rebase前后的日志显示：
+
+![](https://meizhaohui.gitee.io/imagebed/img/20220110213338.png)
+
+可以看到，master分支的提交C/D/E被移到W的前面，W/X/Y/Z被重新提交，原来的W/X/Y/Z的提交已经不存在，对应的commit id也没有。
+
+此时，新的提交图如下：
+
+```sh
+A <-- B <-- C <-- D <-- E    master 分支
+                        \<-- W'  <-- X'  <-- Y' <-- Z'  topic 分支 
+```
+
+rebase是一个非常强大的操作，可以实现一些神奇的功能，但是强大也意味着有隐患，因为如果使用得不好可能给团队的代码造成非常大的问题，成为团队当中被无情指责的背锅侠。所以我们在使用之前一定要先了解清楚原理，之后再小心谨慎地使用，否则很有可能会产生问题。
 
 
 
