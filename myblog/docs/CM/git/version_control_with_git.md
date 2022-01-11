@@ -5370,6 +5370,107 @@ rebase是一个非常强大的操作，可以实现一些神奇的功能，但�
 
 
 
+## 第11章 储藏和引用日志
+
+### 11.1 储藏stash
+
+在日常开发周期中，当要经常中断、修复bug、处理来自同事或领导的紧急需求，导致你必须停止你正在进行的工作时，你这个时候就可以使用储藏(stash)功能。
+
+- 储藏可以捕获你的工作进度，允许你保存工作进度并且当你方便时再回到该进度。你可以通过Git提供的分支及提交机制来实现该功能。但储藏是一种快捷方式。它让你仅通过一条简单的命令就全面彻底地捕获工作目录和索引。
+
+为了便于测试，我们增加一些快捷命令，`acf`用于快速创建文件，并进行提交, `gone`用于查看单行日志信息：
+
+```sh
+alias acf='add_commit_file'
+function add_commit_file() {
+    file="$1"
+    echo "${file}" > "${file}" && git add "${file}" && git commit -m"Add ${file}"
+}
+# shorthand: git log --oneline
+alias gone='git log --pretty=oneline  --abbrev-commit'
+```
+
+尝试创建一些文件并提交：
+
+```sh
+# 创建测试目录
+mei@4144e8c22fff:~$ mkdir stash
+
+# 切换目录
+mei@4144e8c22fff:~$ cd stash/
+
+# 初始化存储库
+mei@4144e8c22fff:~/stash$ git init
+Initialized empty Git repository in /home/mei/stash/.git/
+
+# 创建并提交文件A
+mei@4144e8c22fff:~/stash$ acf A
+[master (root-commit) 29dbfc6] Add A
+ 1 file changed, 1 insertion(+)
+ create mode 100644 A
+ 
+# 创建并提交文件B
+mei@4144e8c22fff:~/stash$ acf B
+[master 5e7d6de] Add B
+ 1 file changed, 1 insertion(+)
+ create mode 100644 B
+ 
+# 查看日志信息
+mei@4144e8c22fff:~/stash$ gone
+5e7d6de (HEAD -> master) Add B
+29dbfc6 Add A
+```
+
+假设我们现在尝试使用`git stash save`储藏我们现在的修改。
+
+```sh
+# 查看当前存储库状态
+mei@4144e8c22fff:~/stash$ gs
+On branch master
+nothing to commit, working tree clean
+
+# 此时使用git stash save，可以看到，由于本地没有任何修改，没有存储任何修改
+mei@4144e8c22fff:~/stash$ git stash save
+No local changes to save
+mei@4144e8c22fff:~/stash$
+```
+
+在我们本地没有做任何修改时，`git stash save`没有储藏任何修改。
+
+因此，我们需要做一些修改。
+
+```sh
+mei@4144e8c22fff:~/stash$ echo 'C' > C
+mei@4144e8c22fff:~/stash$ gs
+On branch master
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	C
+
+nothing added to commit but untracked files present (use "git add" to track)
+mei@4144e8c22fff:~/stash$ acf 'D'
+[master 98bb58b] Add D
+ 1 file changed, 1 insertion(+)
+ create mode 100644 D
+mei@4144e8c22fff:~/stash$ gs
+On branch master
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	C
+
+nothing added to commit but untracked files present (use "git add" to track)
+mei@4144e8c22fff:~/stash$ gone
+98bb58b (HEAD -> master) Add D
+5e7d6de Add B
+29dbfc6 Add A
+mei@4144e8c22fff:~/stash$ git stash save "WIP: Doing real work about C"
+No local changes to save
+```
+
+我们尝试添加了C文件，但没有进行提交，同时，添加了D文件，并进行了提交。此时使用`git stash save`储藏文件，仍然显示`No local changes to save`，说明我们的储藏没有起作用。
+
+
+
 
 
 
