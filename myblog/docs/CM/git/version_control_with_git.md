@@ -5378,6 +5378,39 @@ rebase是一个非常强大的操作，可以实现一些神奇的功能，但�
 
 - 储藏可以捕获你的工作进度，允许你保存工作进度并且当你方便时再回到该进度。你可以通过Git提供的分支及提交机制来实现该功能。但储藏是一种快捷方式。它让你仅通过一条简单的命令就全面彻底地捕获工作目录和索引。
 
+查看`git stash`的帮助信息：
+
+```sh
+mei@4144e8c22fff:~/stash$ git stash --help|awk NF|head -n 24
+GIT-STASH(1)                                                                     Git Manual                                                                     GIT-STASH(1)
+NAME
+       git-stash - Stash the changes in a dirty working directory away
+SYNOPSIS
+       git stash list [<options>]
+       git stash show [<options>] [<stash>]
+       git stash drop [-q|--quiet] [<stash>]
+       git stash ( pop | apply ) [--index] [-q|--quiet] [<stash>]
+       git stash branch <branchname> [<stash>]
+       git stash [push [-p|--patch] [-k|--[no-]keep-index] [-q|--quiet]
+                    [-u|--include-untracked] [-a|--all] [-m|--message <message>]
+                    [--] [<pathspec>...]]
+       git stash clear
+       git stash create [<message>]
+       git stash store [-m|--message <message>] [-q|--quiet] <commit>
+DESCRIPTION
+       Use git stash when you want to record the current state of the working directory and the index, but want to go back to a clean working directory. The command saves
+       your local modifications away and reverts the working directory to match the HEAD commit.
+       The modifications stashed away by this command can be listed with git stash list, inspected with git stash show, and restored (potentially on top of a different
+       commit) with git stash apply. Calling git stash without any arguments is equivalent to git stash push. A stash is by default listed as "WIP on branchname ...", but
+       you can give a more descriptive message on the command line when you create one.
+       The latest stash you created is stored in refs/stash; older stashes are found in the reflog of this reference and can be named using the usual reflog syntax (e.g.
+       stash@{0} is the most recently created stash, stash@{1} is the one before it, stash@{2.hours.ago} is also possible). Stashes may also be referenced by specifying
+       just the stash index (e.g. the integer n is equivalent to stash@{n}).
+mei@4144e8c22fff:~/stash$
+```
+
+
+
 为了便于测试，我们增加一些快捷命令，`acf`用于快速创建文件，并进行提交, `gone`用于查看单行日志信息：
 
 ```sh
@@ -5470,6 +5503,212 @@ No local changes to save
 我们尝试添加了C文件，但没有进行提交，同时，添加了D文件，并进行了提交。此时使用`git stash save`储藏文件，仍然显示`No local changes to save`，说明我们的储藏没有起作用。
 
 
+
+我们再添加一个E文件，并将C文件追加到暂存区：
+
+```sh
+mei@4144e8c22fff:~/stash$ echo 'E' > E
+mei@4144e8c22fff:~/stash$ gs
+On branch master
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	C
+	E
+
+nothing added to commit but untracked files present (use "git add" to track)
+mei@4144e8c22fff:~/stash$ git add C
+mei@4144e8c22fff:~/stash$ gs
+On branch master
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+	new file:   C
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	E
+```
+
+此时再使用`git stash`命令：
+
+```sh
+mei@4144e8c22fff:~/stash$ git stash save "WIP: Doing real work about C"
+Saved working directory and index state On master: WIP: Doing real work about C
+mei@4144e8c22fff:~/stash$ gs
+On branch master
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	E
+
+nothing added to commit but untracked files present (use "git add" to track)
+mei@4144e8c22fff:~/stash$
+```
+
+可以看到，追加到暂存区的C文件的修改被`stash`处理了，但E文件没有被处理。
+
+
+
+说明我们对C文件的修改已经被储藏了。
+
+```sh
+# 列出储藏的实体列表
+mei@4144e8c22fff:~/stash$ git stash list
+stash@{0}: On master: WIP: Doing real work about C
+
+# 显示储藏实体的变更记录
+mei@4144e8c22fff:~/stash$ git stash show
+ C | 1 +
+ 1 file changed, 1 insertion(+)
+```
+
+
+
+现在我们可以做别的事情了，比如重新生成一个C文件，并且让C文件的内容是CC：
+
+```sh
+# 显示当前的文件列表，可以看到C文件已经不在当前文件列表中
+mei@4144e8c22fff:~/stash$ ls
+A  B  D  E
+
+# 现在我们重新创建一个文件C
+mei@4144e8c22fff:~/stash$ echo 'CC' > C
+
+# 追加并提交
+mei@4144e8c22fff:~/stash$ git add C
+mei@4144e8c22fff:~/stash$ git commit -m"add C with content CC"
+[master 8271041] add C with content CC
+ 1 file changed, 1 insertion(+)
+ create mode 100644 C
+ 
+# 查看存储库状态
+mei@4144e8c22fff:~/stash$ gs
+On branch master
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	E
+
+nothing added to commit but untracked files present (use "git add" to track)
+
+# 查看此时C文件的内容
+mei@4144e8c22fff:~/stash$ cat C
+CC
+
+# 此时我们想恢复我们的储藏的数据，发现存在冲突，恢复失败
+mei@4144e8c22fff:~/stash$ git stash pop
+CONFLICT (add/add): Merge conflict in C
+Auto-merging C
+The stash entry is kept in case you need it again.
+
+# 储藏列表中仍然存在一个实体
+mei@4144e8c22fff:~/stash$ git stash list
+stash@{0}: On master: WIP: Doing real work about C
+
+# 查看文件C的内容，要以看到有上游的CC，以及储藏的C
+mei@4144e8c22fff:~/stash$ cat C
+<<<<<<< Updated upstream
+CC
+=======
+C
+>>>>>>> Stashed changes
+mei@4144e8c22fff:~/stash$
+```
+
+此时，需要解决冲突。
+
+此时，我们可以手动将上游的数据删除掉，仅保存储藏的数据，使用VIM编辑C文件，编辑完成后，查看C文件：
+
+```sh
+mei@4144e8c22fff:~/stash$ cat C
+C
+mei@4144e8c22fff:~/stash$ gs
+On branch master
+Unmerged paths:
+  (use "git restore --staged <file>..." to unstage)
+  (use "git add <file>..." to mark resolution)
+	both added:      C
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	E
+
+no changes added to commit (use "git add" and/or "git commit -a")
+mei@4144e8c22fff:~/stash$ git stash list
+stash@{0}: On master: WIP: Doing real work about C
+```
+
+此时，我们的储藏栈的还存在一个实体，应将其删除，此时可以使用`git stash drop`删除它：
+
+```sh
+mei@4144e8c22fff:~/stash$ git stash drop
+Dropped refs/stash@{0} (30e4a98630cd9a879949b88ce6d1ff236338c9bd)
+mei@4144e8c22fff:~/stash$ git stash list
+mei@4144e8c22fff:~/stash$ gs
+On branch master
+Unmerged paths:
+  (use "git restore --staged <file>..." to unstage)
+  (use "git add <file>..." to mark resolution)
+	both added:      C
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	E
+
+no changes added to commit (use "git add" and/or "git commit -a")
+mei@4144e8c22fff:~/stash$
+```
+
+似乎我们删除错了，因为现在的状态因为看到`both added`，我们尝试恢复删除的储藏实体。
+
+```sh
+# 重新应用stash一下
+mei@4144e8c22fff:~/stash$ git stash apply 30e4a98630cd9a879949b88ce6d1ff236338c9bd
+On branch master
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+	modified:   C
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	E
+
+mei@4144e8c22fff:~/stash$ echo $?
+0
+# 储藏栈已经清空了
+mei@4144e8c22fff:~/stash$ git stash list
+
+# 再次查看状态，C文件已经恢复到原来的状态了
+mei@4144e8c22fff:~/stash$ gs
+On branch master
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+	modified:   C
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	E
+
+# C文件已经恢复到原来状态
+mei@4144e8c22fff:~/stash$ cat C
+C
+mei@4144e8c22fff:~/stash$
+```
+
+
+
+总结：
+
+- `git stash push -m"stash message"`将变更存储到储藏栈中，用于代替`git stash save`。
+
+- `git stash list`显示储藏栈中实体列表。
+
+- `git stash show`显示给定储藏条目相对于它的父提交的索引和文件变更记录。
+
+- `git stash drop`删除储藏栈状态。
+
+- `git stash apply`应用储藏栈状态。
+
+- `git stash pop`应用储藏栈状态并删除储藏栈状态，等价于`apply`后再执行`drop`。
+
+    
 
 
 
