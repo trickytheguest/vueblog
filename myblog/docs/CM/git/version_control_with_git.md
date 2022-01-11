@@ -5697,18 +5697,218 @@ mei@4144e8c22fff:~/stash$
 总结：
 
 - `git stash push -m"stash message"`将变更存储到储藏栈中，用于代替`git stash save`。
-
 - `git stash list`显示储藏栈中实体列表。
-
 - `git stash show`显示给定储藏条目相对于它的父提交的索引和文件变更记录。
-
 - `git stash drop`删除储藏栈状态。
-
 - `git stash apply`应用储藏栈状态。
-
 - `git stash pop`应用储藏栈状态并删除储藏栈状态，等价于`apply`后再执行`drop`。
 
-    
+
+
+### 11.2 引用日志
+
+- 引用日志(reflog)记录非祼版本库中分支头的改变。
+- 每次对引用的更新，包括对`HEAD`的，引用日志都会更新以记录这些引用发生了哪些变化。
+- 把引用日志当和面包屑轨迹一样指示你和你的引用去过哪里。
+- 你可以通过引用日志来跟随你的足迹并回溯你的分支操作。
+- 从根本上讲，任何修改引用或更改分支头的Git操作都会记录。
+
+我们先来看一下这个命令的帮助信息：
+
+```sh
+mei@4144e8c22fff:~$ git reflog --help|awk NF
+GIT-REFLOG(1)                                                                    Git Manual                                                                    GIT-REFLOG(1)
+NAME
+       git-reflog - Manage reflog information
+SYNOPSIS
+       git reflog <subcommand> <options>
+DESCRIPTION
+       The command takes various subcommands, and different options depending on the subcommand:
+           git reflog [show] [log-options] [<ref>]
+           git reflog expire [--expire=<time>] [--expire-unreachable=<time>]
+                   [--rewrite] [--updateref] [--stale-fix]
+                   [--dry-run | -n] [--verbose] [--all [--single-worktree] | <refs>...]
+           git reflog delete [--rewrite] [--updateref]
+                   [--dry-run | -n] [--verbose] ref@{specifier}...
+           git reflog exists <ref>
+       Reference logs, or "reflogs", record when the tips of branches and other references were updated in the local repository. Reflogs are useful in various Git commands,
+       to specify the old value of a reference. For example, HEAD@{2} means "where HEAD used to be two moves ago", master@{one.week.ago} means "where master used to point
+       to one week ago in this local repository", and so on. See gitrevisions(7) for more details.
+       This command manages the information recorded in the reflogs.
+       The "show" subcommand (which is also the default, in the absence of any subcommands) shows the log of the reference provided in the command-line (or HEAD, by
+       default). The reflog covers all recent actions, and in addition the HEAD reflog records branch switching. git reflog show is an alias for git log -g --abbrev-commit
+       --pretty=oneline; see git-log(1) for more information.
+       The "expire" subcommand prunes older reflog entries. Entries older than expire time, or entries older than expire-unreachable time and not reachable from the current
+       tip, are removed from the reflog. This is typically not used directly by end users -- instead, see git-gc(1).
+       The "delete" subcommand deletes single entries from the reflog. Its argument must be an exact entry (e.g. "git reflog delete master@{2}"). This subcommand is also
+       typically not used directly by end users.
+       The "exists" subcommand checks whether a ref has a reflog. It exits with zero status if the reflog exists, and non-zero status if it does not.
+OPTIONS
+   Options for show
+       git reflog show accepts any of the options accepted by git log.
+   Options for expire
+       --all
+           Process the reflogs of all references.
+       --single-worktree
+           By default when --all is specified, reflogs from all working trees are processed. This option limits the processing to reflogs from the current working tree
+           only.
+       --expire=<time>
+           Prune entries older than the specified time. If this option is not specified, the expiration time is taken from the configuration setting gc.reflogExpire, which
+           in turn defaults to 90 days.  --expire=all prunes entries regardless of their age; --expire=never turns off pruning of reachable entries (but see
+           --expire-unreachable).
+       --expire-unreachable=<time>
+           Prune entries older than <time> that are not reachable from the current tip of the branch. If this option is not specified, the expiration time is taken from the
+           configuration setting gc.reflogExpireUnreachable, which in turn defaults to 30 days.  --expire-unreachable=all prunes unreachable entries regardless of their
+           age; --expire-unreachable=never turns off early pruning of unreachable entries (but see --expire).
+       --updateref
+           Update the reference to the value of the top reflog entry (i.e. <ref>@{0}) if the previous top entry was pruned. (This option is ignored for symbolic
+           references.)
+       --rewrite
+           If a reflog entry's predecessor is pruned, adjust its "old" SHA-1 to be equal to the "new" SHA-1 field of the entry that now precedes it.
+       --stale-fix
+           Prune any reflog entries that point to "broken commits". A broken commit is a commit that is not reachable from any of the reference tips and that refers,
+           directly or indirectly, to a missing commit, tree, or blob object.
+           This computation involves traversing all the reachable objects, i.e. it has the same cost as git prune. It is primarily intended to fix corruption caused by
+           garbage collecting using older versions of Git, which didn't protect objects referred to by reflogs.
+       -n, --dry-run
+           Do not actually prune any entries; just show what would have been pruned.
+       --verbose
+           Print extra information on screen.
+   Options for delete
+       git reflog delete accepts options --updateref, --rewrite, -n, --dry-run, and --verbose, with the same meanings as when they are used with expire.
+GIT
+       Part of the git(1) suite
+Git 2.25.1                                                                       03/04/2021                                                                    GIT-REFLOG(1)
+mei@4144e8c22fff:~$
+```
+
+通过帮助文档，通常我们只用使用`git reflog show`或`git reflog`这个命令就可以。
+
+
+
+现在我们进行一些简单的测试。
+
+```sh
+# 创建测试目录
+mei@4144e8c22fff:~$ mkdir reflog
+
+# 切换到测试目录下
+mei@4144e8c22fff:~$ cd reflog/
+
+# 初始化存储库
+mei@4144e8c22fff:~/reflog$ git init
+Initialized empty Git repository in /home/mei/reflog/.git/
+
+# 创建并提交文件A
+# 快捷命令请参考11.1节
+mei@4144e8c22fff:~/reflog$ acf A
+[master (root-commit) 5ef601f] Add A
+ 1 file changed, 1 insertion(+)
+ create mode 100644 A
+ 
+# 创建并提交文件B
+mei@4144e8c22fff:~/reflog$ acf B
+[master bad84bf] Add B
+ 1 file changed, 1 insertion(+)
+ create mode 100644 B
+ 
+# 此时使用git reflog查看引用日志记录
+# 可以看到，每次提交都会记录一条引用日志记录，此时已经有两条记录了
+mei@4144e8c22fff:~/reflog$ git reflog
+bad84bf (HEAD -> master) HEAD@{0}: commit: Add B
+5ef601f HEAD@{1}: commit (initial): Add A
+
+# 切换一下当前分支到dev分支
+mei@4144e8c22fff:~/reflog$ git checkout -b dev
+Switched to a new branch 'dev'
+
+# 创建并提交文件C
+mei@4144e8c22fff:~/reflog$ acf C
+[dev 39abfab] Add C
+ 1 file changed, 1 insertion(+)
+ create mode 100644 C
+ 
+# 此时使用git reflog查看引用日志记录
+# 可以看到，切换分支和提交文件会记录一条引用日志记录，此时已经有4条记录了
+mei@4144e8c22fff:~/reflog$ git reflog
+39abfab (HEAD -> dev) HEAD@{0}: commit: Add C
+bad84bf (master) HEAD@{1}: checkout: moving from master to dev
+bad84bf (master) HEAD@{2}: commit: Add B
+5ef601f HEAD@{3}: commit (initial): Add A
+
+# 切换一下当前分支到master分支
+mei@4144e8c22fff:~/reflog$ git checkout master
+Switched to branch 'master'
+
+# 查看当前分支
+mei@4144e8c22fff:~/reflog$ git branch
+  dev
+* master
+
+# 创建并提交文件D
+mei@4144e8c22fff:~/reflog$ acf D
+[master 75e59b2] Add D
+ 1 file changed, 1 insertion(+)
+ create mode 100644 D
+
+# 此时使用git reflog查看引用日志记录
+# 可以看到，切换分支和提交文件会记录一条引用日志记录，此时已经有6条记录了
+mei@4144e8c22fff:~/reflog$ git reflog show
+75e59b2 (HEAD -> master) HEAD@{0}: commit: Add D
+bad84bf HEAD@{1}: checkout: moving from dev to master
+39abfab (dev) HEAD@{2}: commit: Add C
+bad84bf HEAD@{3}: checkout: moving from master to dev
+bad84bf HEAD@{4}: commit: Add B
+5ef601f HEAD@{5}: commit (initial): Add A
+
+# git reflog show 是git reflog的默认选项
+mei@4144e8c22fff:~/reflog$ git reflog
+75e59b2 (HEAD -> master) HEAD@{0}: commit: Add D
+bad84bf HEAD@{1}: checkout: moving from dev to master
+39abfab (dev) HEAD@{2}: commit: Add C
+bad84bf HEAD@{3}: checkout: moving from master to dev
+bad84bf HEAD@{4}: commit: Add B
+5ef601f HEAD@{5}: commit (initial): Add A
+
+# 仅查看某个分支(dev)的引用日志信息
+mei@4144e8c22fff:~/reflog$ git reflog dev
+39abfab (dev) dev@{0}: commit: Add C
+bad84bf dev@{1}: branch: Created from HEAD
+
+# 仅查看某个分支(master)的引用日志信息
+mei@4144e8c22fff:~/reflog$ git reflog master
+75e59b2 (HEAD -> master) master@{0}: commit: Add D
+bad84bf master@{1}: commit: Add B
+5ef601f master@{2}: commit (initial): Add A
+mei@4144e8c22fff:~/reflog$
+```
+
+可以看到，单独查看分支master和dev的引用日志信息的总数与直接使用`git reflog`的总数不一样！
+
+我们再来创建一个分支`feature`分支：
+
+```sh
+# 创建分支
+mei@4144e8c22fff:~/reflog$ git branch feature
+
+# 查看分支信息
+mei@4144e8c22fff:~/reflog$ git branch
+  dev
+  feature
+* master
+
+# 查看引用日志信息，可以看到，仅创建分支时，不会新增引用日志记录
+mei@4144e8c22fff:~/reflog$ git reflog
+75e59b2 (HEAD -> master, feature) HEAD@{0}: commit: Add D
+bad84bf HEAD@{1}: checkout: moving from dev to master
+39abfab (dev) HEAD@{2}: commit: Add C
+bad84bf HEAD@{3}: checkout: moving from master to dev
+bad84bf HEAD@{4}: commit: Add B
+5ef601f HEAD@{5}: commit (initial): Add A
+mei@4144e8c22fff:~/reflog$
+```
+
+
 
 
 
