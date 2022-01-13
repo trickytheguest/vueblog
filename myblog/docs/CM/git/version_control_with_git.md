@@ -6229,3 +6229,123 @@ Common subdirectories: nonbare/.git/refs and bare/refs
 
 
 
+#### 12.1.2 版本库克隆
+
+- `git clone`命令会创建一个新的Git版本库，基于你通过文件系统或网络地址指定的原始版本库。
+- Git并不需要复制原始版本库的所有信息，相反，Git会忽略只跟原始版本库相关的信息，如远程追踪分支。
+- 在正常使用`git clone`命令时，原始版本库中存储在`refs/heads/`下的本地开发分支，会成为新的克隆版本库中`refs/remotes/`下的远程追踪分支。原始版本库中`refs/remotes/`下的远程追踪分支不会克隆。
+- 跟从复制的引用可达的所有对象一样，原始版本库中的标签被复制到克隆版本库中。然后，版本库特定的信息，如原始版本库中的钩子(hooks)、配置文件、引用日志(reflog)和储藏(stash)都不在克隆中重现。
+
+为了便于测试，我们创建两个目录`remotes`和`locals`，然后将上面的两个目录`nonbare`和`bare`存储库移动到`remotes`目录下。
+
+```sh
+# 创建远程和本地文件夹目录
+mei@4144e8c22fff:~$ mkdir remotes locals
+
+# 将祼存储库bare移动到remotes目录下
+mei@4144e8c22fff:~$ mv bare/ remotes/
+
+# 将非祼存储库nonbare移动到remotes目录下
+mei@4144e8c22fff:~$ mv nonbare/ remotes/
+```
+
+我们在`bare`和`nonbare`存储库分别做一些修改。
+
+```sh
+# 切换到远程测试目录
+mei@4144e8c22fff:~$ cd remotes/
+
+# 切换到祼存储库
+mei@4144e8c22fff:~/remotes$ cd bare/
+
+# 尝试在祼存储库中添加和提交文件，提示致命错误，该操作必须在工作树中进行，说明在祼存储库不能进行该操作
+mei@4144e8c22fff:~/remotes/bare$ acf A
+fatal: this operation must be run in a work tree
+
+# 切换到非祼存储库nonbare下
+mei@4144e8c22fff:~/remotes/bare$ cd ..
+mei@4144e8c22fff:~/remotes$ cd nonbare/
+
+# 创建并提交文件A
+mei@4144e8c22fff:~/remotes/nonbare$ acf A
+[master (root-commit) 4be9a60] Add A
+ 1 file changed, 1 insertion(+)
+ create mode 100644 A
+ 
+# 创建并提交文件B
+mei@4144e8c22fff:~/remotes/nonbare$ acf B
+[master 7ecb4a0] Add B
+ 1 file changed, 1 insertion(+)
+ create mode 100644 B
+ 
+# 查看单行日志记录
+mei@4144e8c22fff:~/remotes/nonbare$ gone
+7ecb4a0 (HEAD -> master) Add B
+4be9a60 Add A
+
+# 创建并切换到dev分支
+mei@4144e8c22fff:~/remotes/nonbare$ git checkout -b dev
+Switched to a new branch 'dev'
+
+# 查看引用日志信息
+mei@4144e8c22fff:~/remotes/nonbare$ git reflog
+7ecb4a0 (HEAD -> dev, master) HEAD@{0}: checkout: moving from master to dev
+7ecb4a0 (HEAD -> dev, master) HEAD@{1}: commit: Add B
+4be9a60 HEAD@{2}: commit (initial): Add A
+```
+
+现在我们在`locals`本地目录中尝试克隆远程目录下的存储库。
+
+```sh
+mei@4144e8c22fff:~/locals$ git clone ~/remotes/nonbare/
+Cloning into 'nonbare'...
+done.
+mei@4144e8c22fff:~/locals$ git clone ~/remotes/bare/
+Cloning into 'bare'...
+warning: You appear to have cloned an empty repository.
+done.
+mei@4144e8c22fff:~/locals$ ls -lah
+total 16K
+drwxrwxr-x 4 mei mei 4.0K Jan 13 22:47 .
+drwxr-xr-x 6 mei mei 4.0K Jan 13 22:09 ..
+drwxrwxr-x 3 mei mei 4.0K Jan 13 22:47 bare
+drwxrwxr-x 3 mei mei 4.0K Jan 13 22:47 nonbare
+```
+
+可以看到，祼存储库和非祼存储库都能正常克隆下来。
+
+查看配置信息：
+
+```sh
+mei@4144e8c22fff:~/locals$ cd bare/
+mei@4144e8c22fff:~/locals/bare$ git config --list
+user.email=mzh@hellogitlab.com
+user.name=Zhaohui Mei
+alias.simple=log --graph --abbrev-commit --pretty=oneline
+core.editor=vim
+core.repositoryformatversion=0
+core.filemode=true
+core.bare=false
+core.logallrefupdates=true
+remote.origin.url=/home/mei/remotes/bare/
+remote.origin.fetch=+refs/heads/*:refs/remotes/origin/*
+branch.master.remote=origin
+branch.master.merge=refs/heads/master
+mei@4144e8c22fff:~/locals/bare$ cd ../nonbare/
+mei@4144e8c22fff:~/locals/nonbare$ git config --list
+user.email=mzh@hellogitlab.com
+user.name=Zhaohui Mei
+alias.simple=log --graph --abbrev-commit --pretty=oneline
+core.editor=vim
+core.repositoryformatversion=0
+core.filemode=true
+core.bare=false
+core.logallrefupdates=true
+remote.origin.url=/home/mei/remotes/nonbare/
+remote.origin.fetch=+refs/heads/*:refs/remotes/origin/*
+branch.master.remote=origin
+branch.master.merge=refs/heads/master
+mei@4144e8c22fff:~/locals/nonbare$
+```
+
+![](https://meizhaohui.gitee.io/imagebed/img/20220113230059.png)
