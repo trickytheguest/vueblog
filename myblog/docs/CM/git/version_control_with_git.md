@@ -6109,9 +6109,102 @@ mei@4144e8c22fff:~/reflog$
 
 ### 12.1 版本库概念
 
+#### 12.1.1 祼版本库和开发版本库
 
+- 一个Git版本库要么是一个祼(bare)版本库，要么是一个开发(非祼)(development, nonbare)版本库。
+- 开发版本库用于常规的日常开发。它保持当前分支的概念，并在工作目录中提供检出当前分支的副本。使用`git init`创建。
+- 相反，一个祼版本库没有工作目录，并且不应该用于正常开发。祼版本库没有检出分支的概念。使用`git init --bare`创建。
+- 祼版本库可以简单地看做`.git`目录的内容。不应该在祼版本库中进行提交操作。
+- 祼版本库看起来似乎没有多大用处，但它的角色是关键的：作为协作开发的权威焦点。其他开发人员从祼版本库中克隆(clone)和抓取(fetch)，并推送(push)更新。
 
+我们来看一下祼版本库与非祼版本库的区别。
 
+```sh
+mei@4144e8c22fff:~$ mkdir nonbare
+mei@4144e8c22fff:~$ mkdir bare
+
+# 创建非祼版本库
+mei@4144e8c22fff:~$ git init nonbare
+Initialized empty Git repository in /home/mei/nonbare/.git/
+
+# 创建祼版本库
+mei@4144e8c22fff:~$ git init --bare bare
+Initialized empty Git repository in /home/mei/bare/
+
+# 查看两个目录的差异
+mei@4144e8c22fff:~$ diff bare nonbare
+Only in nonbare: .git
+Only in bare: HEAD
+Only in bare: branches
+Only in bare: config
+Only in bare: description
+Only in bare: hooks
+Only in bare: info
+Only in bare: objects
+Only in bare: refs
+
+# 查看非祼版本库的文件列表
+mei@4144e8c22fff:~$ find nonbare/
+nonbare/
+nonbare/.git
+nonbare/.git/branches
+nonbare/.git/config
+nonbare/.git/hooks
+nonbare/.git/hooks/pre-rebase.sample
+nonbare/.git/hooks/pre-commit.sample
+nonbare/.git/hooks/pre-push.sample
+nonbare/.git/hooks/fsmonitor-watchman.sample
+nonbare/.git/hooks/pre-applypatch.sample
+nonbare/.git/hooks/post-update.sample
+nonbare/.git/hooks/commit-msg.sample
+nonbare/.git/hooks/pre-merge-commit.sample
+nonbare/.git/hooks/update.sample
+nonbare/.git/hooks/applypatch-msg.sample
+nonbare/.git/hooks/pre-receive.sample
+nonbare/.git/hooks/prepare-commit-msg.sample
+nonbare/.git/HEAD
+nonbare/.git/description
+nonbare/.git/refs
+nonbare/.git/refs/heads
+nonbare/.git/refs/tags
+nonbare/.git/info
+nonbare/.git/info/exclude
+nonbare/.git/objects
+nonbare/.git/objects/pack
+nonbare/.git/objects/info
+
+# 查看祼版本库的文件列表
+mei@4144e8c22fff:~$ find bare/
+bare/
+bare/branches
+bare/config
+bare/hooks
+bare/hooks/pre-rebase.sample
+bare/hooks/pre-commit.sample
+bare/hooks/pre-push.sample
+bare/hooks/fsmonitor-watchman.sample
+bare/hooks/pre-applypatch.sample
+bare/hooks/post-update.sample
+bare/hooks/commit-msg.sample
+bare/hooks/pre-merge-commit.sample
+bare/hooks/update.sample
+bare/hooks/applypatch-msg.sample
+bare/hooks/pre-receive.sample
+bare/hooks/prepare-commit-msg.sample
+bare/HEAD
+bare/description
+bare/refs
+bare/refs/heads
+bare/refs/tags
+bare/info
+bare/info/exclude
+bare/objects
+bare/objects/pack
+bare/objects/info
+mei@4144e8c22fff:~$
+```
+
+可以看到，非祼版本库多了一层`.git`目录，祼版本库中没有`,git`目录。
 
 
 
