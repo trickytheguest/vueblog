@@ -5908,11 +5908,49 @@ bad84bf HEAD@{4}: commit: Add B
 mei@4144e8c22fff:~/reflog$
 ```
 
+可以看到，仅创建分支时，不会新增引用日志记录。
 
 
 
+引用日志记录每条记录信息，是引用日志记录中记录的单次事务，从最近的变更开始倒序显示：
+
+- 最左侧的一列，是发生变更时的提交ID。
+- 第二列中形如`HEAD@{1}`的条目为每个事务的提交提供方便的别名。
+- 每一行的冒号后面是对发生事务的描述。
 
 
 
+我们通过别名，使用一些Git命令，如：
 
+```sh
+mei@4144e8c22fff:~/reflog$ git show HEAD@{3}
+commit bad84bfcea7bc1b106ec057a6768cc68f3424a74
+Author: Zhaohui Mei <mzh@hellogitlab.com>
+Date:   Tue Jan 11 21:22:35 2022 +0800
+
+    Add B
+
+diff --git a/B b/B
+new file mode 100644
+index 0000000..223b783
+--- /dev/null
++++ b/B
+@@ -0,0 +1 @@
++B
+mei@4144e8c22fff:~/reflog$
+```
+
+
+
+如果Git为版本库中每个引用的每次操作都维护一个事务历史记录，那么引用日志最终不就会变得非常巨大吗？
+
+
+
+幸运的是，这并不会发生。Git会时不时地自动执行垃圾回收进程。在这个过程中，一些老旧的引用日志条目会过期并被丢弃。
+
+通常情况下，一个提交，如果既不能从某个分支或引用指向，也不可达，将会默认在30天后过期，而那些可达的提交将默认在90天后过期。
+
+如果这样的安排不理想，那么可以通过设置版本库中的配置变量`gc.reflogExpireUnreachable`和`gc.reflgExpire`的值来满足需求。
+
+可以使用`git reflog delete`命令来删除单个条目，或使用`git reflog expire`命令直接让条目过期并被立即删除。它也可以用来强制使引用日志过期。
 
