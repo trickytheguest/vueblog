@@ -1,3 +1,5 @@
+
+
 # Git版本控制管理
 
 [[toc]]
@@ -5953,4 +5955,135 @@ mei@4144e8c22fff:~/reflog$
 如果这样的安排不理想，那么可以通过设置版本库中的配置变量`gc.reflogExpireUnreachable`和`gc.reflgExpire`的值来满足需求。
 
 可以使用`git reflog delete`命令来删除单个条目，或使用`git reflog expire`命令直接让条目过期并被立即删除。它也可以用来强制使引用日志过期。
+
+
+
+我们尝试一下清理引用日志：
+
+```sh
+# 在测试前，先备份一下reflog目录
+mei@4144e8c22fff:~/reflog$ cd ..
+mei@4144e8c22fff:~$ cp -rf reflog{,.bak}
+mei@4144e8c22fff:~$ cd reflog
+
+# 查看引用日志，可以发现有6条记录
+mei@4144e8c22fff:~/reflog$ git reflog
+75e59b2 (HEAD -> master, feature) HEAD@{0}: commit: Add D
+bad84bf HEAD@{1}: checkout: moving from dev to master
+39abfab (dev) HEAD@{2}: commit: Add C
+bad84bf HEAD@{3}: checkout: moving from master to dev
+bad84bf HEAD@{4}: commit: Add B
+5ef601f HEAD@{5}: commit (initial): Add A
+
+# 设置引用日志的过期时间为现在，并处理所有条目，也就是删除所有的引用日志记录信息
+mei@4144e8c22fff:~/reflog$ git reflog expire --expire=now --all
+
+# 此时再次查看引用日志信息，可以看到已经没有记录了
+mei@4144e8c22fff:~/reflog$ git reflog
+mei@4144e8c22fff:~/reflog$
+```
+
+
+
+我们查看一下清理后的文件夹与清理前的文件夹对比情况：
+
+```sh
+mei@4144e8c22fff:~/reflog$ cd ..
+mei@4144e8c22fff:~$ diff -r reflog reflog.bak
+diff -r reflog/.git/logs/HEAD reflog.bak/.git/logs/HEAD
+0a1,6
+> 0000000000000000000000000000000000000000 5ef601f87cbd1d74097ceee9e32d4c274a694d6f Zhaohui Mei <mzh@hellogitlab.com> 1641907352 +0800	commit (initial): Add A
+> 5ef601f87cbd1d74097ceee9e32d4c274a694d6f bad84bfcea7bc1b106ec057a6768cc68f3424a74 Zhaohui Mei <mzh@hellogitlab.com> 1641907355 +0800	commit: Add B
+> bad84bfcea7bc1b106ec057a6768cc68f3424a74 bad84bfcea7bc1b106ec057a6768cc68f3424a74 Zhaohui Mei <mzh@hellogitlab.com> 1641907369 +0800	checkout: moving from master to dev
+> bad84bfcea7bc1b106ec057a6768cc68f3424a74 39abfab9d8798548226cda03bd87841a9e40b3dd Zhaohui Mei <mzh@hellogitlab.com> 1641907381 +0800	commit: Add C
+> 39abfab9d8798548226cda03bd87841a9e40b3dd bad84bfcea7bc1b106ec057a6768cc68f3424a74 Zhaohui Mei <mzh@hellogitlab.com> 1641907399 +0800	checkout: moving from dev to master
+> bad84bfcea7bc1b106ec057a6768cc68f3424a74 75e59b25c80c1479fd47cea279fe378366ca7fff Zhaohui Mei <mzh@hellogitlab.com> 1641907409 +0800	commit: Add D
+diff -r reflog/.git/logs/refs/heads/dev reflog.bak/.git/logs/refs/heads/dev
+0a1,2
+> 0000000000000000000000000000000000000000 bad84bfcea7bc1b106ec057a6768cc68f3424a74 Zhaohui Mei <mzh@hellogitlab.com> 1641907369 +0800	branch: Created from HEAD
+> bad84bfcea7bc1b106ec057a6768cc68f3424a74 39abfab9d8798548226cda03bd87841a9e40b3dd Zhaohui Mei <mzh@hellogitlab.com> 1641907381 +0800	commit: Add C
+diff -r reflog/.git/logs/refs/heads/feature reflog.bak/.git/logs/refs/heads/feature
+0a1
+> 0000000000000000000000000000000000000000 75e59b25c80c1479fd47cea279fe378366ca7fff Zhaohui Mei <mzh@hellogitlab.com> 1641913892 +0800	branch: Created from master
+diff -r reflog/.git/logs/refs/heads/master reflog.bak/.git/logs/refs/heads/master
+0a1,3
+> 0000000000000000000000000000000000000000 5ef601f87cbd1d74097ceee9e32d4c274a694d6f Zhaohui Mei <mzh@hellogitlab.com> 1641907352 +0800	commit (initial): Add A
+> 5ef601f87cbd1d74097ceee9e32d4c274a694d6f bad84bfcea7bc1b106ec057a6768cc68f3424a74 Zhaohui Mei <mzh@hellogitlab.com> 1641907355 +0800	commit: Add B
+> bad84bfcea7bc1b106ec057a6768cc68f3424a74 75e59b25c80c1479fd47cea279fe378366ca7fff Zhaohui Mei <mzh@hellogitlab.com> 1641907409 +0800	commit: Add D
+mei@4144e8c22fff:~$
+```
+
+![](https://meizhaohui.gitee.io/imagebed/img/20220113163404.png)
+
+可以看到:
+
+- 引用日志都存储在`.git/logs`目录下。
+- `.git/logs/HEAD`文件包含`HEAD`值的历史记录。
+- 子目录`.git/logs/refs/`包含所有引用的历史记录。
+- 二级子目录`.git/logs/refs/heads`包含分支头的历史记录。
+
+
+
+此时，我们查看一下`core.logallrefupdates`配置的信息，然后再尝试切换一下分支：
+
+```sh
+mei@4144e8c22fff:~$ cd reflog
+
+# 查看引用日志的配置选项core.logallrefupdates，可以发现其值为true,即表示开启引用日志记录
+mei@4144e8c22fff:~/reflog$ git config core.logallrefupdates
+true
+
+# 查看当前分支，当前分支是master分支
+mei@4144e8c22fff:~/reflog$ git branch
+  dev
+  feature
+* master
+
+# 切换一下分支
+mei@4144e8c22fff:~/reflog$ git checkout dev
+Switched to branch 'dev'
+
+# 查看分支情况，已经切换到dev分支
+mei@4144e8c22fff:~/reflog$ git branch
+* dev
+  feature
+  master
+
+# 查看引用日志记录
+mei@4144e8c22fff:~/reflog$ git reflog
+39abfab (HEAD -> dev) HEAD@{0}: checkout: moving from master to dev
+```
+
+设置`core.logallrefupdates`的值为`false`。
+
+```sh
+# 设置关闭引用日志记录
+mei@4144e8c22fff:~/reflog$ git config core.logallrefupdates false
+
+# 查看配置值，可以看到已经变成false了
+mei@4144e8c22fff:~/reflog$ git config core.logallrefupdates
+false
+
+# 此时，查看引用日志记录，看到记录仍然存在
+mei@4144e8c22fff:~/reflog$ git reflog
+39abfab (HEAD -> dev) HEAD@{0}: checkout: moving from master to dev
+
+# 切换分支
+mei@4144e8c22fff:~/reflog$ git checkout feature
+Switched to branch 'feature'
+
+# 查看分支情况
+mei@4144e8c22fff:~/reflog$ git branch
+  dev
+* feature
+  master
+  
+# 查看引用日志记录情况，发现还在记录引用日志信息，说明我们的配置没有生效
+mei@4144e8c22fff:~/reflog$ git reflog
+75e59b2 (HEAD -> feature, master) HEAD@{0}: checkout: moving from dev to feature
+39abfab (dev) HEAD@{1}: checkout: moving from master to dev
+mei@4144e8c22fff:~/reflog$
+```
+
+上面的测试尝试我们通过`git config core.logallrefupdates false`没有生效！！
 
