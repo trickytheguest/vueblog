@@ -6202,9 +6202,28 @@ bare/objects
 bare/objects/pack
 bare/objects/info
 mei@4144e8c22fff:~$
+
+# 查看开发库中.git目录与祼版本库的差异
+# 可以看到配置文件存在差异，但子目录情况完全一样！
+mei@4144e8c22fff:~$ diff nonbare/.git/ bare/
+Common subdirectories: nonbare/.git/branches and bare/branches
+diff nonbare/.git/config bare/config
+4,5c4
+< 	bare = false
+< 	logallrefupdates = true
+---
+> 	bare = true
+Common subdirectories: nonbare/.git/hooks and bare/hooks
+Common subdirectories: nonbare/.git/info and bare/info
+Common subdirectories: nonbare/.git/objects and bare/objects
+Common subdirectories: nonbare/.git/refs and bare/refs
 ```
 
-可以看到，非祼版本库多了一层`.git`目录，祼版本库中没有`,git`目录。
+可以看到，非祼版本库多了一层`.git`目录，祼版本库中没有`.git`目录。
+
+- 默认情况下，Git在开发版本库中可以使用引用日志(reflog)，可以看到`logallrefupdates = true`配置，但在祼版本库中不行。
+- 祼版本库中不能创建远程版本库。
+- 如果你要创建一个版本库供开发人员推送修改，那么它应该是祼版本库。
 
 
 
